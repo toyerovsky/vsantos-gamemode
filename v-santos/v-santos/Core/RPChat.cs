@@ -33,9 +33,9 @@ namespace Serverside
             ChatMessageType = chatMessageType;
         }
 
-        public Client Player { get; private set; }
-        public string Message { get; private set; }
-        public ChatMessageType ChatMessageType { get; private set; }
+        public Client Player { get; }
+        public string Message { get; }
+        public ChatMessageType ChatMessageType { get; }
     }
 
     public sealed class RPChat : Script
