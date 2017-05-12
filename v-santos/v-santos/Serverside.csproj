@@ -76,7 +76,9 @@
     <Compile Include="Database\TelephoneMessageDO.cs" />
     <Compile Include="Database\VehicleDO.cs" />
     <Compile Include="Database\WorkerDO.cs" />
+    <Compile Include="Core\Login\Login.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Core\Login\RPLogin.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
