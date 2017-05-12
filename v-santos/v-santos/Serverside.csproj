@@ -57,8 +57,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Core\Finders\PlayerFinder.cs" />
     <Compile Include="Core\FullPosition.cs" />
+    <Compile Include="Core\Money\MoneyManager.cs" />
+    <Compile Include="Core\Money\RPMoney.cs" />
     <Compile Include="Core\Player.cs" />
     <Compile Include="Core\RPChat.cs" />
     <Compile Include="Core\RPCore.cs" />
@@ -91,6 +93,12 @@
     <TypeScriptCompile Include="types-gtanetwork\System.d.ts" />
     <TypeScriptCompile Include="types-gtanetwork\System.Drawing.dll.d.ts" />
     <TypeScriptCompile Include="types-gtanetwork\Xilium.CefGlue.dll.d.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="_Clientside\Cef.js" />
+    <Content Include="_Clientside\Core.js" />
+    <Content Include="_Clientside\Diagnostics.js" />
+    <Content Include="_Clientside\MoneyText.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

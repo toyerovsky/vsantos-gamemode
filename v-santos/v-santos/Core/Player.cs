@@ -30,9 +30,7 @@ namespace Serverside.Core
             Aid = aid;
             Helper = new MySqlDatabaseHelper();
             PlayerMoneyManager = new MoneyManager();
-            Description = new Description.Description(this);
             OnPlayerDimensionChanged += Player_OnPlayerDimensionChanged;
-            CefController = new CefController(this);
         }
 
         private void Player_OnPlayerDimensionChanged(DimensionEventArgs args)
@@ -63,15 +61,11 @@ namespace Serverside.Core
 
         public List<TelephoneMessageList> CellphoneMessages => Helper.SelectMessagesList(CellphoneId);
 
-        public CefController CefController { get; }
-
         //Id postaci
         public long Cid
         {
             get { return Client.getData("CharacterID"); }
         }
-
-        public Description.Description Description { get; }
 
         public CharacterEditor Editor => Helper.SelectCharacter(Cid);
 
@@ -304,10 +298,10 @@ namespace Serverside.Core
         private void Dispose(bool disposing)
         {
             ReleaseUnmanagedResources();
-            if (disposing)
-            {
-                Description?.Dispose();
-            }
+            //if (disposing)
+            //{
+            //    Description?.Dispose();
+            //}
         }
 
         public void Dispose()

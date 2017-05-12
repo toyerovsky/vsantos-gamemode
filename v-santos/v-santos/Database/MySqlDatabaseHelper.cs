@@ -1,6 +1,5 @@
 ﻿using GTANetworkShared;
 using MySql.Data.MySqlClient;
-using Serverside.Items;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -113,14 +112,8 @@ namespace Serverside.Database
     public class MySqlDatabaseHelper
     {
         #region Nie patrzeć publicznie
-        //private readonly MySqlConnection Connection = new MySqlConnection
-        //    ("server=v-santos.pl;uid=srv;pwd=WL8oTnufAAEFgoIt;database=rp;");
-        //private readonly MySqlConnection ForumConnection = new MySqlConnection
-        //    ("server=v-santos.pl;uid=srv;pwd=WL8oTnufAAEFgoIt;database=vsantos;");
-
         private readonly string ServerConnectionString = "server=v-santos.pl;uid=srv;pwd=WL8oTnufAAEFgoIt;database=rp;";
         private readonly string ForumConnectionString = "server=v-santos.pl;uid=srv;pwd=WL8oTnufAAEFgoIt;database=vsantos;";
-
         #endregion
 
         public bool GetPassword(string login, out string password)
@@ -222,8 +215,7 @@ namespace Serverside.Database
                         return long.MinValue;
                     }
                     catch (Exception ex)
-                    {
-                        //trzeba jakos obsluzyc i przekazac do etapu logowania ze zly nick prawdopodobnie?                  
+                    {                
                         throw new Exception(ex.Message);
                     }
                     finally
@@ -324,62 +316,59 @@ namespace Serverside.Database
             }
         }
 
+        //public List<ItemEditor> SelectAllItemsForSpecifiedItemType(ItemType itemType)
+        //{
+        //    List<ItemEditor> items = new List<ItemEditor>();
 
+        //    using (MySqlConnection connection = new MySqlConnection(ServerConnectionString))
+        //    using (MySqlCommand command = new MySqlCommand())
+        //    {
+        //        connection.Open();
+        //        command.Connection = connection;
+        //        command.CommandType = CommandType.Text;
+        //        command.CommandText =
+        //            "SELECT ID_PRZED, TYP_WLASC, ID_WLASC, NAZWA, PRZED_HASH, PARAM_1, PARAM_2, PARAM_3, OBECNIE_UZYWANY FROM srv_przedmioty WHERE TYP_PRZED = @P0";
 
-        public List<ItemEditor> SelectAllItemsForSpecifiedItemType(ItemType itemType)
-        {
-            List<ItemEditor> items = new List<ItemEditor>();
+        //        command.Parameters.Add(new MySqlParameter("@P0", (int)itemType));
 
-            using (MySqlConnection connection = new MySqlConnection(ServerConnectionString))
-            using (MySqlCommand command = new MySqlCommand())
-            {
-                connection.Open();
-                command.Connection = connection;
-                command.CommandType = CommandType.Text;
-                command.CommandText =
-                    "SELECT ID_PRZED, TYP_WLASC, ID_WLASC, NAZWA, PRZED_HASH, PARAM_1, PARAM_2, PARAM_3, OBECNIE_UZYWANY FROM srv_przedmioty WHERE TYP_PRZED = @P0";
+        //        using (MySqlDataReader reader = command.ExecuteReader())
+        //        {
+        //            try
+        //            {
+        //                while (reader.Read())
+        //                {
+        //                    ItemEditor item = new ItemEditor()
+        //                    {
+        //                        IID = reader.GetInt64(0),
+        //                        OwnerType = reader.GetInt32(1),
+        //                        OID = reader.GetInt64(2),
+        //                        Name = reader.GetString(3),
+        //                        ItemHash = reader.GetInt32(4),
+        //                        ItemType = (int)itemType,
+        //                        CurrentlyInUse = reader.GetBoolean(8),
+        //                        FirstParameter = reader.IsDBNull(5) ? (int?)null : reader.GetInt32(5),
+        //                        SecondParameter = reader.IsDBNull(6) ? (int?)null : reader.GetInt32(6),
+        //                        ThirdParameter = reader.IsDBNull(7) ? (int?)null : reader.GetInt32(7),
 
-                command.Parameters.Add(new MySqlParameter("@P0", (int)itemType));
+        //                    };
 
-                using (MySqlDataReader reader = command.ExecuteReader())
-                {
-                    try
-                    {
-                        while (reader.Read())
-                        {
-                            ItemEditor item = new ItemEditor()
-                            {
-                                IID = reader.GetInt64(0),
-                                OwnerType = reader.GetInt32(1),
-                                OID = reader.GetInt64(2),
-                                Name = reader.GetString(3),
-                                ItemHash = reader.GetInt32(4),
-                                ItemType = (int)itemType,
-                                CurrentlyInUse = reader.GetBoolean(8),
-                                FirstParameter = reader.IsDBNull(5) ? (int?)null : reader.GetInt32(5),
-                                SecondParameter = reader.IsDBNull(6) ? (int?)null : reader.GetInt32(6),
-                                ThirdParameter = reader.IsDBNull(7) ? (int?)null : reader.GetInt32(7),
+        //                    items.Add(item);
 
-                            };
-
-                            items.Add(item);
-
-                        }
-                        return items;
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception(ex.Message);
-                    }
-                    finally
-                    {
-                        connection.Close();
-                        reader.Close();
-                    }
-                }
-            }
-        }
-
+        //                }
+        //                return items;
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                throw new Exception(ex.Message);
+        //            }
+        //            finally
+        //            {
+        //                connection.Close();
+        //                reader.Close();
+        //            }
+        //        }
+        //    }
+        //}
 
         public ItemEditor SelectItem(long itemId)
         {
