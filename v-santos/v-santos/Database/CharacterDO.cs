@@ -22,7 +22,6 @@ namespace Serverside.Database
     {
         
         public long CID { get; set; }
-        //TODO Zmienic w helperze
         public long AID { get; set; }
 
         public DateTime? LastLoginTime { get; set; }
@@ -46,7 +45,6 @@ namespace Serverside.Database
         public short RunningEfficiency { get; set; }
         public short DivingEfficiency { get; set; }
 
-        //TODO Zmienić w helperze
         public long? FirstGID { get; set; }
         public long? SecondGID { get; set; }
         public long? ThirdGID { get; set; }
