@@ -7,8 +7,8 @@ namespace Serverside.DatabaseEF6.Models
     {
         [Key]
         public long VehicleId { get; set; }
-        public Character CharacterId { get; set; }
-        public Group GroupId { get; set; }
+        public Character Character { get; set; }
+        public Group Group { get; set; }
         //Zamysł: Przy tworzeniu przedmiotu będzie zapisywane kto go stworzył, a jak stworzy go serwer to 0
         public long CreatorId { get; set; }
 

@@ -7,7 +7,7 @@ namespace Serverside.DatabaseEF6.Models
     {
         [Key]
         public long BotId { get; set; }
-        public Group GroupId { get; set; }
+        public Group Group { get; set; }
         public string Name { get; set; }
 
         //public Dictionary<string, decimal?> GunsCost { get; set; }

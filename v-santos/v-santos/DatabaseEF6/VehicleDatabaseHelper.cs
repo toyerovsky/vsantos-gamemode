@@ -8,12 +8,12 @@ namespace Serverside.DatabaseEF6
     {
         public static List<Vehicle> SelectVehiclesList(Character character)
         {
-            return ContextFactory.Instance.Vehicles.Where(x => x.CharacterId == character).ToList();
+            return ContextFactory.Instance.Vehicles.Where(x => x.Character.CharacterId == character.CharacterId).ToList();
         }
 
         public static List<Vehicle> SelectVehiclesList(Group group)
         {
-            return ContextFactory.Instance.Vehicles.Where(x => x.GroupId == group).ToList();
+            return ContextFactory.Instance.Vehicles.Where(x => x.Group.GroupId == group.GroupId).ToList();
         }
 
         public static Vehicle SelectVehicle(long vid)

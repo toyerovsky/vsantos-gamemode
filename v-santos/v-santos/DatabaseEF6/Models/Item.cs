@@ -10,8 +10,8 @@ namespace Serverside.DatabaseEF6.Models
         public string Name { get; set; }
 
         //Id właściciela
-        public Character CharacterId { get; set; }
-        public Building BuildingId { get; set; }
+        public Character Character { get; set; }
+        public Building Building { get; set; }
         //Typ właściciela przedmiotu 0 leży na ziemi 1 gracz 2 grupa 3 budynek(sejf)
         //public int OwnerType { get; set; } // lepiej sprawdzać czy characterid lub BuildingId == null
 

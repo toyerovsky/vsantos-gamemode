@@ -8,7 +8,7 @@ namespace Serverside.DatabaseEF6
     {
         public static List<Description> SelectDescriptionsList(Character cid)
         {
-            return ContextFactory.Instance.Descriptions.Where(x => x.CharacterId == cid).ToList();
+            return ContextFactory.Instance.Descriptions.Where(x => x.Character.CharacterId == cid.CharacterId).ToList();
         }
 
         public static Description SelectDescription(long did)
@@ -31,7 +31,7 @@ namespace Serverside.DatabaseEF6
 
         public static void DeleteDescription(Character UID)
         {
-            Description delobj = ContextFactory.Instance.Descriptions.Where(x => x.CharacterId == UID).FirstOrDefault();
+            Description delobj = ContextFactory.Instance.Descriptions.Where(x => x.Character == UID).FirstOrDefault();
             ContextFactory.Instance.Descriptions.Remove(delobj);
             ContextFactory.Instance.SaveChanges();
         }
