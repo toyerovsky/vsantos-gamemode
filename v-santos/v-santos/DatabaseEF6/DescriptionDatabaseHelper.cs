@@ -13,7 +13,7 @@ namespace Serverside.DatabaseEF6
 
         public static Description SelectDescription(long did)
         {
-            return ContextFactory.Instance.Descriptions.Where(x => x.DID == did).FirstOrDefault();
+            return ContextFactory.Instance.Descriptions.Where(x => x.DescriptionId == did).FirstOrDefault();
         }
 
         public static void AddDescription(Description description)
@@ -29,9 +29,9 @@ namespace Serverside.DatabaseEF6
             ContextFactory.Instance.SaveChanges();
         }
 
-        public static void DeleteDescription(Character UID)
+        public static void DeleteDescription(long did)
         {
-            Description delobj = ContextFactory.Instance.Descriptions.Where(x => x.Character == UID).FirstOrDefault();
+            Description delobj = ContextFactory.Instance.Descriptions.Where(x => x.DescriptionId == did).FirstOrDefault();
             ContextFactory.Instance.Descriptions.Remove(delobj);
             ContextFactory.Instance.SaveChanges();
         }
