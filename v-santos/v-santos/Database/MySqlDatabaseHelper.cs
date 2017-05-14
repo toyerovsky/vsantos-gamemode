@@ -339,7 +339,7 @@ namespace Serverside.Database
         //                {
         //                    ItemEditor item = new ItemEditor()
         //                    {
-        //                        IID = reader.GetInt64(0),
+        //                        ItemId = reader.GetInt64(0),
         //                        OwnerType = reader.GetInt32(1),
         //                        OID = reader.GetInt64(2),
         //                        Name = reader.GetString(3),

@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="style.css" >
+</head>
+
+<body onselectstart="return false;">
+    <div class="center">
+        <div class="description">
+            <span class="special">V</span>-Santos.pl<br />
+            <span class="adddescription">Odkryj Role Play na nowo!</span><br />
+            <span class="info">Aby rozpocząć grę na serwerze zaloguj się na swoje konto.</span>
+        </div>
+        <div id="panel">
+            <label for="login">Nazwa użytkownika:</label>
+            <input type="text" id="login" name="login" onkeydown="if (event.keyCode == 13) document.getElementById('loginbutton').click();">
+            <label for="password">Hasło:</label>
+            <input type="password" id="password" name="password" onkeydown="if (event.keyCode == 13) document.getElementById('loginbutton').click();">
+            <div id="lower">
+                <div class="login">
+                    <button id="loginbutton">Zaloguj się</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById("loginbutton").onclick = function ()
+        {
+            var login = document.getElementById("login").value;
+            var password = document.getElementById("password").value;
+            resourceCall("Login", login, password);
+        };
+    </script>
+</body>
+</html>
