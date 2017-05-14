@@ -11,6 +11,69 @@ namespace Serverside.DatabaseEF6
         private readonly string ForumConnectionString = "server=v-santos.pl;uid=srv;pwd=WL8oTnufAAEFgoIt;database=vsantos;";
         #endregion
 
+        public long CheckPasswordMatch(string email, string password)
+        {
+            if (UserExist(email))
+            {
+                long id = 0;
+                string hash = string.Empty;
+                string salt = string.Empty;
+                using (MySqlConnection connection = new MySqlConnection(ForumConnectionString))
+                using (MySqlCommand command = new MySqlCommand())
+                {
+                    connection.Open();
+                    command.Connection = connection;
+                    command.CommandType = CommandType.Text;
+                    command.CommandText = "SELECT member_id, members_pass_hash, members_pass_salt FROM core_members WHERE email = @P0";
+
+                    command.Parameters.Add(new MySqlParameter("@P0", email));
+
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        try
+                        {
+                            if (reader.Read())
+                            {
+                                id = reader.GetInt64(0);
+                                hash = reader.GetString(1);
+                                salt = reader.GetString(2);
+                                if (hash != "" && salt != "")
+                                {
+                                    if (hash.Equals(GenerateIpbHash(password, salt)))
+                                    {
+                                        return id;
+                                    }
+                                    else
+                                    {
+                                        return -1;
+                                    }
+
+                                }
+                            }
+                            return -1;
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception(ex.Message + " | " + ex.StackTrace);
+                        }
+                        finally
+                        {
+                            reader.Close();
+                            connection.Close();
+                        }
+                    }
+                }
+            }
+            return -1;
+        }
+
+        public static string GenerateIpbHash(string plaintext, string salt)
+        {
+            //return CalculateMD5Hash(CalculateMD5Hash(salt) + CalculateMD5Hash(plaintext));
+            return BCrypt.Net.BCrypt.HashPassword(plaintext, "$2a$13$" + salt);
+            //return CreateMD5(CreateMD5(plaintext) + "$2a$13$" + salt);
+        }
+
         public bool GetPassword(string login, out string password)
         {
             using (MySqlConnection connection = new MySqlConnection(ForumConnectionString))

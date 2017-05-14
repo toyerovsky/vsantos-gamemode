@@ -24,6 +24,8 @@ namespace Serverside.DatabaseEF6
             builder.Conventions.Remove<PluralizingTableNameConvention>();
         }
 
+        public virtual DbSet<Account> Accounts { get; set; }
+        public virtual DbSet<Ban> Bans { get; set; }
         public virtual DbSet<Character> Characters { get; set; }
         public virtual DbSet<Vehicle> Vehicles { get; set; }
         public virtual DbSet<Group> Groups { get; set; }
