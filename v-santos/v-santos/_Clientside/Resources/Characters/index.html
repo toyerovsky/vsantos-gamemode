@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body onkeydown="NextCharacter(event)" onselectstart="return false;">
+    <div class="center">
+        <div class="description">
+            <span class="special">V</span>-Santos.pl<br />
+            <span class="adddescription">Odkryj Role Play na nowo!</span><br />
+            <span class="info">Gratulacje! Logowanie pomyślne...</span>
+        </div>
+        <div id="panel">
+            <div class="input-group">
+                <span class="input-group-addon" style="background: url(Images/id-card.png); background-repeat: no-repeat; background-color: #eee; background-position: center;"></span>
+                <input type="text" class="input" id="uid" name="uid" disabled="disabled">
+            </div>
+            <div id="box3d"></div>
+            <div class="input-group">
+                <span class="input-group-addon" style="background: url(Images/name-card.png); background-repeat: no-repeat; background-color: #eee; background-position: center;"></span>
+                <input type="text" class="input" id="name" name="name" disabled="disabled">
+            </div>
+            <div id="box3d"></div>
+            <div class="input-group">
+                <span class="input-group-addon" style="background: url(Images/surname-card.png); background-repeat: no-repeat; background-color: #eee; background-position: center;"></span>
+                <input type="text" class="input" id="surname" name="surname" disabled="disabled">
+            </div>
+            <div id="box3d"></div>
+            <div class="input-group">
+                <span class="input-group-addon" style="background: url(Images/money-card.png); background-repeat: no-repeat; background-color: #eee; background-position: center;"></span>
+                <input type="text" class="input" id="money" name="money" disabled="disabled">
+            </div>
+            <div id="box3d"></div>
+            <div class="input-group">
+                <span class="input-group-addon" style="background: url(Images/credit-card.png); background-repeat: no-repeat; background-color: #eee; background-position: center;"></span>
+                <input type="text" class="input" id="moneyBank" name="moneyBank" disabled="disabled">
+            </div>
+            <div id="box3d"></div>
+            <div id="lower">
+                <div class="login">
+                    <button id="loginbutton">Wybierz postać</button>
+                </div>
+            </div>
+        </div>
+        <script>
+            var index = 0;
+
+            document.addEventListener("DOMContentLoaded", function (event) {
+                var collection = JSON.parse(resourceCall("GetPlayerCharacters"));
+
+                document.getElementById("uid").value = collection[index].CID.toString();
+                document.getElementById("name").value = collection[index].Name.toString();
+                document.getElementById("surname").value = collection[index].Surname.toString();
+                document.getElementById("money").value = "$" + collection[index].Money.toString();
+                document.getElementById("moneyBank").value = "$" + collection[index].MoneyBank.toString();
+            });
+
+            document.getElementById("loginbutton").onclick = function () {
+                resourceCall("SelectCharacter", document.getElementById("uid").value);
+            };
+
+            function NextCharacter(event) {
+                var x = event.keyCode;
+                var collection = resourceCall("GetPlayerCharacters");
+
+                if (x != 65 && x != 68) return;
+                if (x == 65 && index > 0) index--;
+                if (x == 68 && index < collection.length) index++;
+
+                document.getElementById("uid").value = collection[index].CID.toString();
+                document.getElementById("name").value = collection[index].Name.toString();
+                document.getElementById("surname").value = collection[index].Surname.toString();
+                document.getElementById("money").value = "$" + collection[index].Money.toString();
+                document.getElementById("moneyBank").value = "$" + collection[index].MoneyBank.toString();
+
+            }
+        </script>
+    </div>
+</body>
+</html>
