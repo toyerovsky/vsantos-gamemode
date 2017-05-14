@@ -4,36 +4,41 @@ using System.Linq;
 
 namespace Serverside.DatabaseEF6
 {
-    public class BuildingDatabaseHelper
+    public static class BuildingDatabaseHelper
     {
-        public List<Building> SelectBuildingList(long ownerId, int ownerType)
+        public static List<Building> SelectBuildingList(Character character)
         {
-            return RoleplayConnection.Instance.Buildings.Where(x => x.OwnerUID == ownerId && x.OwnerType == ownerType).ToList();
+            return ContextFactory.Instance.Buildings.Where(x => x.CharacterId == character).ToList();
         }
 
-        public Building SelectBuilding(long buildingId)
+        public static List<Building> SelectBuildingList(Group group)
         {
-            return RoleplayConnection.Instance.Buildings.Where(x => x.BID == buildingId).FirstOrDefault();
+            return ContextFactory.Instance.Buildings.Where(x => x.GroupId == group).ToList();
         }
 
-        public void AddBuilding(Building buliding)
+        public static Building SelectBuilding(long buildingId)
         {
-            RoleplayConnection.Instance.Buildings.Add(buliding);
-            RoleplayConnection.Instance.SaveChanges();
+            return ContextFactory.Instance.Buildings.Where(x => x.BuildingId == buildingId).FirstOrDefault();
         }
 
-        public void UpdateBuilding(Building buliding)
+        public static void AddBuilding(Building buliding)
         {
-            RoleplayConnection.Instance.Buildings.Attach(buliding);
-            RoleplayConnection.Instance.Entry(buliding).State = System.Data.Entity.EntityState.Modified;
-            RoleplayConnection.Instance.SaveChanges();
+            ContextFactory.Instance.Buildings.Add(buliding);
+            ContextFactory.Instance.SaveChanges();
         }
 
-        public void DeleteBuilding(long buildingId)
+        public static void UpdateBuilding(Building buliding)
         {
-            Building delobj = RoleplayConnection.Instance.Buildings.Where(x => x.BID == buildingId).FirstOrDefault();
-            RoleplayConnection.Instance.Buildings.Remove(delobj);
-            RoleplayConnection.Instance.SaveChanges();
+            ContextFactory.Instance.Buildings.Attach(buliding);
+            ContextFactory.Instance.Entry(buliding).State = System.Data.Entity.EntityState.Modified;
+            ContextFactory.Instance.SaveChanges();
+        }
+
+        public static void DeleteBuilding(long buildingId)
+        {
+            Building delobj = ContextFactory.Instance.Buildings.Where(x => x.BuildingId == buildingId).FirstOrDefault();
+            ContextFactory.Instance.Buildings.Remove(delobj);
+            ContextFactory.Instance.SaveChanges();
         }
     }
 }

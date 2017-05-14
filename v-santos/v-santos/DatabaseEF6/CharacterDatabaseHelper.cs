@@ -4,36 +4,36 @@ using System.Linq;
 
 namespace Serverside.DatabaseEF6
 {
-    public class CharacterDatabaseHelper
+    public static class CharacterDatabaseHelper
     {
-        public List<Character> SelectCharactersList(long accountId)
+        public static List<Character> SelectCharactersList(Account account)
         {
-            return RoleplayConnection.Instance.Characters.Where(x => x.AID == accountId).ToList();
+            return ContextFactory.Instance.Characters.Where(x => x.Account == account).ToList();
         }
 
-        public Character SelectCharacter(long cid)
+        public static Character SelectCharacter(long characterid)
         {
-            return RoleplayConnection.Instance.Characters.Where(x => x.CID == cid).FirstOrDefault();
+            return ContextFactory.Instance.Characters.Where(x => x.CharacterId == characterid).FirstOrDefault();
         }
 
-        public void AddCharacter(Character buliding)
+        public static void AddCharacter(Character character)
         {
-            RoleplayConnection.Instance.Characters.Add(buliding);
-            RoleplayConnection.Instance.SaveChanges();
+            ContextFactory.Instance.Characters.Add(character);
+            ContextFactory.Instance.SaveChanges();
         }
 
-        public void UpdateCharacter(Character buliding)
+        public static void UpdateCharacter(Character buliding)
         {
-            RoleplayConnection.Instance.Characters.Attach(buliding);
-            RoleplayConnection.Instance.Entry(buliding).State = System.Data.Entity.EntityState.Modified;
-            RoleplayConnection.Instance.SaveChanges();
+            ContextFactory.Instance.Characters.Attach(buliding);
+            ContextFactory.Instance.Entry(buliding).State = System.Data.Entity.EntityState.Modified;
+            ContextFactory.Instance.SaveChanges();
         }
 
-        public void DeleteCharacter(long cid)
+        public static void DeleteCharacter(long character)
         {
-            Character delobj = RoleplayConnection.Instance.Characters.Where(x => x.CID == cid).FirstOrDefault();
-            RoleplayConnection.Instance.Characters.Remove(delobj);
-            RoleplayConnection.Instance.SaveChanges();
+            Character delobj = ContextFactory.Instance.Characters.Where(x => x.CharacterId == character).FirstOrDefault();
+            ContextFactory.Instance.Characters.Remove(delobj);
+            ContextFactory.Instance.SaveChanges();
         }
     }
 }

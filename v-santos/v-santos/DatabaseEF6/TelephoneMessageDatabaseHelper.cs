@@ -4,36 +4,36 @@ using System.Linq;
 
 namespace Serverside.DatabaseEF6
 {
-    public class TelephoneMessageDatabaseHelper
+    public static class TelephoneMessageDatabaseHelper
     {
-        public List<TelephoneMessage> SelectMessagesList(long tid)
+        public static List<TelephoneMessage> SelectMessagesList(long phonenumber)
         {
-            return RoleplayConnection.Instance.TelephoneMessages.Where(x => x.TID == tid).ToList();
+            return ContextFactory.Instance.TelephoneMessages.Where(x => x.PhoneNumber == phonenumber).ToList();
         }
 
         //public TelephoneContact SelectContact(long did)
         //{
-        //    return RoleplayConnection.Instance.TelephoneContacts.Where(x => x.DID == did).FirstOrDefault();
+        //    return ContextFactory.Instance.TelephoneContacts.Where(x => x.DID == did).FirstOrDefault();
         //}
 
-        public void AddMessage(TelephoneMessage message)
+        public static void AddMessage(TelephoneMessage message)
         {
-            RoleplayConnection.Instance.TelephoneMessages.Add(message);
-            RoleplayConnection.Instance.SaveChanges();
+            ContextFactory.Instance.TelephoneMessages.Add(message);
+            ContextFactory.Instance.SaveChanges();
         }
 
-        public void UpdateMessage(TelephoneMessage message)
+        public static void UpdateMessage(TelephoneMessage message)
         {
-            RoleplayConnection.Instance.TelephoneMessages.Attach(message);
-            RoleplayConnection.Instance.Entry(message).State = System.Data.Entity.EntityState.Modified;
-            RoleplayConnection.Instance.SaveChanges();
+            ContextFactory.Instance.TelephoneMessages.Attach(message);
+            ContextFactory.Instance.Entry(message).State = System.Data.Entity.EntityState.Modified;
+            ContextFactory.Instance.SaveChanges();
         }
 
-        public void DeleteMessage(long mid)
+        public static void DeleteMessage(long mid)
         {
-            TelephoneMessage delobj = RoleplayConnection.Instance.TelephoneMessages.Where(x => x.MID == mid).FirstOrDefault();
-            RoleplayConnection.Instance.TelephoneMessages.Remove(delobj);
-            RoleplayConnection.Instance.SaveChanges();
+            TelephoneMessage delobj = ContextFactory.Instance.TelephoneMessages.Where(x => x.MessageId == mid).FirstOrDefault();
+            ContextFactory.Instance.TelephoneMessages.Remove(delobj);
+            ContextFactory.Instance.SaveChanges();
         }
     }
 }

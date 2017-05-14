@@ -4,36 +4,36 @@ using System.Linq;
 
 namespace Serverside.DatabaseEF6
 {
-    public class TelephoneContactDatabaseHelper
+    public static class TelephoneContactDatabaseHelper
     {
-        public List<TelephoneContact> SelectContactsList(long tid)
+        public static List<TelephoneContact> SelectContactsList(long phonenumber)
         {
-            return RoleplayConnection.Instance.TelephoneContacts.Where(x => x.TID == tid).ToList();
+            return ContextFactory.Instance.TelephoneContacts.Where(x => x.PhoneNumber == phonenumber).ToList();
         }
 
         //public TelephoneContact SelectContact(long did)
         //{
-        //    return RoleplayConnection.Instance.TelephoneContacts.Where(x => x.DID == did).FirstOrDefault();
+        //    return ContextFactory.Instance.TelephoneContacts.Where(x => x.DID == did).FirstOrDefault();
         //}
 
-        public void AddContact(TelephoneContact contact)
+        public static void AddContact(TelephoneContact contact)
         {
-            RoleplayConnection.Instance.TelephoneContacts.Add(contact);
-            RoleplayConnection.Instance.SaveChanges();
+            ContextFactory.Instance.TelephoneContacts.Add(contact);
+            ContextFactory.Instance.SaveChanges();
         }
 
-        public void UpdateContact(TelephoneContact contact)
+        public static void UpdateContact(TelephoneContact contact)
         {
-            RoleplayConnection.Instance.TelephoneContacts.Attach(contact);
-            RoleplayConnection.Instance.Entry(contact).State = System.Data.Entity.EntityState.Modified;
-            RoleplayConnection.Instance.SaveChanges();
+            ContextFactory.Instance.TelephoneContacts.Attach(contact);
+            ContextFactory.Instance.Entry(contact).State = System.Data.Entity.EntityState.Modified;
+            ContextFactory.Instance.SaveChanges();
         }
 
-        public void DeleteContact(long coid)
+        public static void DeleteContact(long coid)
         {
-            TelephoneContact delobj = RoleplayConnection.Instance.TelephoneContacts.Where(x => x.COID == coid).FirstOrDefault();
-            RoleplayConnection.Instance.TelephoneContacts.Remove(delobj);
-            RoleplayConnection.Instance.SaveChanges();
+            TelephoneContact delobj = ContextFactory.Instance.TelephoneContacts.Where(x => x.ContactId == coid).FirstOrDefault();
+            ContextFactory.Instance.TelephoneContacts.Remove(delobj);
+            ContextFactory.Instance.SaveChanges();
         }
     }
 }

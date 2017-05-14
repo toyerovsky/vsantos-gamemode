@@ -6,34 +6,39 @@ namespace Serverside.DatabaseEF6
 {
     public class ItemDatabaseHelper
     {
-        public List<Item> SelectItemsList(long ownerId, int ownerType)
+        public static List<Item> SelectItemsList(Character character)
         {
-            return RoleplayConnection.Instance.Items.Select(x => new Item { IID = x.IID, Name = x.Name, ItemType = x.ItemType } ).Where(x => x.OID == ownerId && x.OwnerType == ownerType).ToList();
+            return ContextFactory.Instance.Items.Where(x => x.CharacterId == character).ToList();
         }
 
-        public Item SelectItem(long itemId)
+        public static List<Item> SelectItemsList(Building building)
         {
-            return RoleplayConnection.Instance.Items.Where(x => x.IID == itemId).FirstOrDefault();
+            return ContextFactory.Instance.Items.Where(x => x.BuildingId == building).ToList();
         }
 
-        public void AddItem(Item item)
+        public static Item SelectItem(long itemId)
         {
-            RoleplayConnection.Instance.Items.Add(item);
-            RoleplayConnection.Instance.SaveChanges();
+            return ContextFactory.Instance.Items.Where(x => x.ItemId == itemId).FirstOrDefault();
         }
 
-        public void UpdateItem(Item item)
+        public static void AddItem(Item item)
         {
-            RoleplayConnection.Instance.Items.Attach(item);
-            RoleplayConnection.Instance.Entry(item).State = System.Data.Entity.EntityState.Modified;
-            RoleplayConnection.Instance.SaveChanges();
+            ContextFactory.Instance.Items.Add(item);
+            ContextFactory.Instance.SaveChanges();
         }
 
-        public void DeleteItem(long itemId)
+        public static void UpdateItem(Item item)
         {
-            Item delitem = RoleplayConnection.Instance.Items.Where(x => x.IID == itemId).FirstOrDefault();
-            RoleplayConnection.Instance.Items.Remove(delitem);
-            RoleplayConnection.Instance.SaveChanges();
+            ContextFactory.Instance.Items.Attach(item);
+            ContextFactory.Instance.Entry(item).State = System.Data.Entity.EntityState.Modified;
+            ContextFactory.Instance.SaveChanges();
+        }
+
+        public static void DeleteItem(long itemId)
+        {
+            Item delitem = ContextFactory.Instance.Items.Where(x => x.ItemId == itemId).FirstOrDefault();
+            ContextFactory.Instance.Items.Remove(delitem);
+            ContextFactory.Instance.SaveChanges();
         }
     }
 }

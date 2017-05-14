@@ -4,36 +4,36 @@ using System.Linq;
 
 namespace Serverside.DatabaseEF6
 {
-    public class GroupDatabaseHelper
+    public static class GroupDatabaseHelper
     {
-        public List<Group> SelectAllGroups()
+        public static List<Group> SelectAllGroups()
         {
-            return RoleplayConnection.Instance.Groups.ToList();
+            return ContextFactory.Instance.Groups.ToList();
         }
 
-        public Group SelectGroup(long gid)
+        public static Group SelectGroup(long gid)
         {
-            return RoleplayConnection.Instance.Groups.Where(x => x.GID == gid).FirstOrDefault();
+            return ContextFactory.Instance.Groups.Where(x => x.GroupId == gid).FirstOrDefault();
         }
 
-        public void AddGroup(Group group)
+        public static void AddGroup(Group group)
         {
-            RoleplayConnection.Instance.Groups.Add(group);
-            RoleplayConnection.Instance.SaveChanges();
+            ContextFactory.Instance.Groups.Add(group);
+            ContextFactory.Instance.SaveChanges();
         }
 
-        public void UpdateGroup(Group group)
+        public static void UpdateGroup(Group group)
         {
-            RoleplayConnection.Instance.Groups.Attach(group);
-            RoleplayConnection.Instance.Entry(group).State = System.Data.Entity.EntityState.Modified;
-            RoleplayConnection.Instance.SaveChanges();
+            ContextFactory.Instance.Groups.Attach(group);
+            ContextFactory.Instance.Entry(group).State = System.Data.Entity.EntityState.Modified;
+            ContextFactory.Instance.SaveChanges();
         }
 
-        public void DeleteGroup(long gid)
+        public static void DeleteGroup(long gid)
         {
-            Group delobj = RoleplayConnection.Instance.Groups.Where(x => x.GID == gid).FirstOrDefault();
-            RoleplayConnection.Instance.Groups.Remove(delobj);
-            RoleplayConnection.Instance.SaveChanges();
+            Group delobj = ContextFactory.Instance.Groups.Where(x => x.GroupId == gid).FirstOrDefault();
+            ContextFactory.Instance.Groups.Remove(delobj);
+            ContextFactory.Instance.SaveChanges();
         }
     }
 }

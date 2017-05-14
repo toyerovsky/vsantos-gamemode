@@ -5,7 +5,7 @@ namespace Serverside.DatabaseEF6.Models
     public class Group
     {
         [Key]
-        public long GID { get; set; }
+        public long GroupId { get; set; }
 
         public string Name { get; set; }
         public string Tag { get; set; }

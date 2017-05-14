@@ -6,7 +6,7 @@ namespace Serverside.DatabaseEF6.Models
     {
         [Key]
         public long DID { get; set; }
-        public long CID { get; set; }
+        public Character CharacterId { get; set; }
         public string Title { get; set; }
         public string Descriptionn { get; set; }
     }

@@ -6,11 +6,11 @@ namespace Serverside.DatabaseEF6.Models
     {
         [Key]
         //ID pracownika
-        public long WID { get; set; }
+        public long WorkerId { get; set; }
         //ID grupy
-        public long GID { get; set; }
+        public Group GroupId { get; set; }
         //Id postaci
-        public long CID { get; set; }
+        public Character CharacterId { get; set; }
 
         public int Salary { get; set; }
         public int DutyMinutes { get; set; }

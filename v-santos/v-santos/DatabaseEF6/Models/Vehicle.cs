@@ -6,21 +6,30 @@ namespace Serverside.DatabaseEF6.Models
     public class Vehicle
     {
         [Key]
-        public long VID { get; set; }
-        public long OwnerID { get; set; }
+        public long VehicleId { get; set; }
+        public Character CharacterId { get; set; }
+        public Group GroupId { get; set; }
         //Zamysł: Przy tworzeniu przedmiotu będzie zapisywane kto go stworzył, a jak stworzy go serwer to 0
-        public long CreatorsID { get; set; }
+        public long CreatorId { get; set; }
 
         /// Typy właścicieli: 1 gracz, 2 grupa
-        public int OwnerType { get; set; }
+        //public int OwnerType { get; set; } // lepiej sprawdzać czy characterid lub groupid == null
 
         public string Name { get; set; }
         public string Registration { get; set; }
 
-        public int VehicleHash { get; set; }
+        public virtual VehicleHash VehicleHash { get; set; }
 
-        public Vector3 SpawnPosition { get; set; }
-        public Vector3 RotationPosition { get; set; }
+        //public Vector3 SpawnPosition { get; set; }
+        public float SpawnPositionX { get; set; }
+        public float SpawnPositionY { get; set; }
+        public float SpawnPositionZ { get; set; }
+
+        //public Vector3 RotationPosition { get; set; }
+        public float RotationPositionX { get; set; }
+        public float RotationPositionY { get; set; }
+        public float RotationPositionZ { get; set; }
+
         public bool IsSpawned { get; set; }
         public double EngineMultipler { get; set; }
         public double Health { get; set; }
