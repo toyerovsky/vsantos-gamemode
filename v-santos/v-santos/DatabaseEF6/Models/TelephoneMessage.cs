@@ -6,10 +6,12 @@ namespace Serverside.DatabaseEF6.Models
     {
         [Key]
         //ID wiadomości
-        public long MID { get; set; }
+        public long MessageId { get; set; }
         //Id telefonu zyli id przedmiotu telefonu
-        public long TID { get; set; }
-        public string Contenet { get; set; }
+        [StringLength(9)]
+        public long PhoneNumber { get; set; }
+        public string Content { get; set; }
+        [StringLength(9)]
         public int SenderNumber { get; set; }
     }
 }

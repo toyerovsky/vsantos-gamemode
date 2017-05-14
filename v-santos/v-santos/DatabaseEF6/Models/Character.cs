@@ -1,5 +1,6 @@
 ﻿using GTANetworkShared;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Serverside.DatabaseEF6.Models
@@ -7,14 +8,19 @@ namespace Serverside.DatabaseEF6.Models
     public class Character
     {
         [Key]
-        public long CID { get; set; }
-        public long AID { get; set; }
+        public long CharacterId { get; set; }
+        public Account Account { get; set; }
 
         public DateTime? LastLoginTime { get; set; }
         public DateTime? TodayPlayedTime { get; set; }
 
         public string Name { get; set; }
         public string Surname { get; set; }
+
+        public virtual ICollection<Vehicle> Vehicle { get; set; }
+        public virtual ICollection<Item> Item { get; set; }
+
+        public List<Group> Group { get; set; }
 
         public decimal Money { get; set; }
         public long BankAccountNumber { get; set; }
@@ -31,12 +37,17 @@ namespace Serverside.DatabaseEF6.Models
         public short RunningEfficiency { get; set; }
         public short DivingEfficiency { get; set; }
 
-        public long? FirstGID { get; set; }
-        public long? SecondGID { get; set; }
-        public long? ThirdGID { get; set; }
+        //public long? FirstGID { get; set; }
+        //public long? SecondGID { get; set; }
+        //public long? ThirdGID { get; set; }
 
         public bool HasIDCard { get; set; }
         public bool HasDrivingLicense { get; set; }
+
+        public int PhoneType { get; set; }
+        [Key]
+        [StringLength(9)]
+        public int PhoneNumber { get; set; }
 
         //Pomysł zezwolenie na bron jako enum, zeby byly różne typy licencji
 
@@ -47,8 +58,15 @@ namespace Serverside.DatabaseEF6.Models
 
         public int HitPoits { get; set; }
 
-        public Vector3 LastPosition { get; set; }
-        public Vector3 SpawnPosition { get; set; }
+        //public Vector3 LastPosition { get; set; }
+        public float LastPositionX { get; set; }
+        public float LastPositionY { get; set; }
+        public float LastPositionZ { get; set; }
+
+        // public Vector3 SpawnPosition { get; set; }
+        public float SpawnPositionX { get; set; }
+        public float SpawnPositionY { get; set; }
+        public float SpawnPositionZ { get; set; }
 
         public int CurrentDimension { get; set; }
 
@@ -61,7 +79,7 @@ namespace Serverside.DatabaseEF6.Models
         public int? Skin { get; set; }
 
         //TODO Dodać wszystkie pola na możliwości ubrania
-        public int? Job { get; set; }
+        public Worker Job { get; set; }
         public decimal? MoneyJob { get; set; }
         public decimal? JobLimit { get; set; }
     }

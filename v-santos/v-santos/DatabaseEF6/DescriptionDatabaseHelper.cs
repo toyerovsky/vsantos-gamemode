@@ -6,34 +6,34 @@ namespace Serverside.DatabaseEF6
 {
     public class DescriptionDatabaseHelper
     {
-        public List<Description> SelectDescriptionsList(long cid)
+        public static List<Description> SelectDescriptionsList(Character cid)
         {
-            return RoleplayConnection.Instance.Descriptions.Where(x => x.CID == cid).ToList();
+            return ContextFactory.Instance.Descriptions.Where(x => x.CharacterId == cid).ToList();
         }
 
-        public Description SelectDescription(long did)
+        public static Description SelectDescription(long did)
         {
-            return RoleplayConnection.Instance.Descriptions.Where(x => x.DID == did).FirstOrDefault();
+            return ContextFactory.Instance.Descriptions.Where(x => x.DID == did).FirstOrDefault();
         }
 
-        public void AddDescription(Description description)
+        public static void AddDescription(Description description)
         {
-            RoleplayConnection.Instance.Descriptions.Add(description);
-            RoleplayConnection.Instance.SaveChanges();
+            ContextFactory.Instance.Descriptions.Add(description);
+            ContextFactory.Instance.SaveChanges();
         }
 
-        public void UpdateDescription(Description description)
+        public static void UpdateDescription(Description description)
         {
-            RoleplayConnection.Instance.Descriptions.Attach(description);
-            RoleplayConnection.Instance.Entry(description).State = System.Data.Entity.EntityState.Modified;
-            RoleplayConnection.Instance.SaveChanges();
+            ContextFactory.Instance.Descriptions.Attach(description);
+            ContextFactory.Instance.Entry(description).State = System.Data.Entity.EntityState.Modified;
+            ContextFactory.Instance.SaveChanges();
         }
 
-        public void DeleteDescription(long UID)
+        public static void DeleteDescription(Character UID)
         {
-            Description delobj = RoleplayConnection.Instance.Descriptions.Where(x => x.CID == UID).FirstOrDefault();
-            RoleplayConnection.Instance.Descriptions.Remove(delobj);
-            RoleplayConnection.Instance.SaveChanges();
+            Description delobj = ContextFactory.Instance.Descriptions.Where(x => x.CharacterId == UID).FirstOrDefault();
+            ContextFactory.Instance.Descriptions.Remove(delobj);
+            ContextFactory.Instance.SaveChanges();
         }
     }
 }

@@ -6,10 +6,12 @@ namespace Serverside.DatabaseEF6.Models
     {
         [Key]
         //ID kontaktu
-        public long COID { get; set; }
+        public long ContactId { get; set; }
         //Id telefonu czyli id przedmiotu telefonu
-        public long TID { get; set; }
+        [StringLength(9)]
+        public long PhoneNumber { get; set; }
         public string Name { get; set; }
+        [StringLength(9)]
         public int Number { get; set; }
     }
 }

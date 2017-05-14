@@ -4,36 +4,41 @@ using System.Linq;
 
 namespace Serverside.DatabaseEF6
 {
-    public class VehicleDatabaseHelper
+    public static class VehicleDatabaseHelper
     {
-        public List<Vehicle> SelectCharactersList(long ownerUID, int ownerType)
+        public static List<Vehicle> SelectVehiclesList(Character character)
         {
-            return RoleplayConnection.Instance.Vehicles.Where(x => x.OwnerID == ownerUID && x.OwnerType == ownerType).ToList();
+            return ContextFactory.Instance.Vehicles.Where(x => x.CharacterId == character).ToList();
         }
 
-        public Vehicle SelectVehicle(long vid)
+        public static List<Vehicle> SelectVehiclesList(Group group)
         {
-            return RoleplayConnection.Instance.Vehicles.Where(x => x.VID == vid).FirstOrDefault();
+            return ContextFactory.Instance.Vehicles.Where(x => x.GroupId == group).ToList();
         }
 
-        public void AddVehicle(Vehicle vehicle)
+        public static Vehicle SelectVehicle(long vid)
         {
-            RoleplayConnection.Instance.Vehicles.Add(vehicle);
-            RoleplayConnection.Instance.SaveChanges();
+            return ContextFactory.Instance.Vehicles.Where(x => x.VehicleId == vid).FirstOrDefault();
         }
 
-        public void UpdateVehicle(Vehicle vehicle)
+        public static void AddVehicle(Vehicle vehicle)
         {
-            RoleplayConnection.Instance.Vehicles.Attach(vehicle);
-            RoleplayConnection.Instance.Entry(vehicle).State = System.Data.Entity.EntityState.Modified;
-            RoleplayConnection.Instance.SaveChanges();
+            ContextFactory.Instance.Vehicles.Add(vehicle);
+            ContextFactory.Instance.SaveChanges();
         }
 
-        public void DeleteVehicle(long vid)
+        public static void UpdateVehicle(Vehicle vehicle)
         {
-            Vehicle delobj = RoleplayConnection.Instance.Vehicles.Where(x => x.VID == vid).FirstOrDefault();
-            RoleplayConnection.Instance.Vehicles.Remove(delobj);
-            RoleplayConnection.Instance.SaveChanges();
+            ContextFactory.Instance.Vehicles.Attach(vehicle);
+            ContextFactory.Instance.Entry(vehicle).State = System.Data.Entity.EntityState.Modified;
+            ContextFactory.Instance.SaveChanges();
+        }
+
+        public static void DeleteVehicle(long vid)
+        {
+            Vehicle delobj = ContextFactory.Instance.Vehicles.Where(x => x.VehicleId == vid).FirstOrDefault();
+            ContextFactory.Instance.Vehicles.Remove(delobj);
+            ContextFactory.Instance.SaveChanges();
         }
     }
 }

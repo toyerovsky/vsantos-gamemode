@@ -6,16 +6,17 @@ namespace Serverside.DatabaseEF6.Models
     {
         [Key]
         //ID przedmiotu
-        public long IID { get; set; }
+        public long ItemId { get; set; }
         public string Name { get; set; }
 
         //Id właściciela
-        public long OID { get; set; }
+        public Character CharacterId { get; set; }
+        public Building BuildingId { get; set; }
         //Typ właściciela przedmiotu 0 leży na ziemi 1 gracz 2 grupa 3 budynek(sejf)
-        public int OwnerType { get; set; }
+        //public int OwnerType { get; set; } // lepiej sprawdzać czy characterid lub BuildingId == null
 
         //Zamysł: Przy tworzeniu przedmiotu będzie zapisywane kto go stworzył, a jak stworzy go serwer to 0
-        public long CRID { get; set; }
+        public long CreatorId { get; set; }
 
         //TODO Dodać do helpera
         //Kiedy właścicielem jest firma pole wykorzystujemy do trzymania ceny za ten przedmiot

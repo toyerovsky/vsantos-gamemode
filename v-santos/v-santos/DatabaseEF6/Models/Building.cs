@@ -1,4 +1,5 @@
 ﻿using GTANetworkShared;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Serverside.DatabaseEF6.Models
@@ -6,16 +7,26 @@ namespace Serverside.DatabaseEF6.Models
     public class Building
     {
         [Key]
-        public long BID { get; set; }
+        public long BuildingId { get; set; }
         public string Name { get; set; }
 
-        public int OwnerType { get; set; }
-        public long OwnerUID { get; set; }
+        //public int OwnerType { get; set; } // lepiej sprawdzać czy characterid lub groupid == null
+        public Character CharacterId { get; set; }
+        public Group GroupId { get; set; }
+
+        public ICollection<Item> Item { get; set; }
 
         public decimal EnterCharge { get; set; }
 
-        public Vector3 ExternalPickupPosition { get; set; }
-        public Vector3 InternalPickupPosition { get; set; }
+        //public Vector3 ExternalPickupPosition { get; set; }
+        public float ExternalPickupPositionX { get; set; }
+        public float ExternalPickupPositionY { get; set; }
+        public float ExternalPickupPositionZ { get; set; }
+
+        //public Vector3 InternalPickupPosition { get; set; }
+        public float InternalPickupPositionX { get; set; }
+        public float InternalPickupPositionY { get; set; }
+        public float InternalPickupPositionZ { get; set; }
 
         public short MaxObjectCount { get; set; }
         public short CurrentObjectCount { get; set; }
