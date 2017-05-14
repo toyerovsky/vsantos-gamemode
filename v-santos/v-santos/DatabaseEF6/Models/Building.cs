@@ -11,8 +11,8 @@ namespace Serverside.DatabaseEF6.Models
         public string Name { get; set; }
 
         //public int OwnerType { get; set; } // lepiej sprawdzać czy characterid lub groupid == null
-        public Character CharacterId { get; set; }
-        public Group GroupId { get; set; }
+        public Character Character { get; set; }
+        public Group Group { get; set; }
 
         public ICollection<Item> Item { get; set; }
 

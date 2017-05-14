@@ -8,7 +8,7 @@ namespace Serverside.DatabaseEF6
     {
         public static List<Worker> SelectWorkersList(Group group)
         {
-            return ContextFactory.Instance.Workers.Where(x => x.GroupId == group).ToList();
+            return ContextFactory.Instance.Workers.Where(x => x.Group.GroupId == group.GroupId).ToList();
         }
 
         public static Worker SelectWorker(long workerId)

@@ -8,7 +8,7 @@ namespace Serverside.DatabaseEF6
     {
         public static List<Character> SelectCharactersList(Account account)
         {
-            return ContextFactory.Instance.Characters.Where(x => x.Account == account).ToList();
+            return ContextFactory.Instance.Characters.Where(x => x.Account.Id == account.Id).ToList();
         }
 
         public static Character SelectCharacter(long characterid)
@@ -22,10 +22,10 @@ namespace Serverside.DatabaseEF6
             ContextFactory.Instance.SaveChanges();
         }
 
-        public static void UpdateCharacter(Character buliding)
+        public static void UpdateCharacter(Character character)
         {
-            ContextFactory.Instance.Characters.Attach(buliding);
-            ContextFactory.Instance.Entry(buliding).State = System.Data.Entity.EntityState.Modified;
+            ContextFactory.Instance.Characters.Attach(character);
+            ContextFactory.Instance.Entry(character).State = System.Data.Entity.EntityState.Modified;
             ContextFactory.Instance.SaveChanges();
         }
 

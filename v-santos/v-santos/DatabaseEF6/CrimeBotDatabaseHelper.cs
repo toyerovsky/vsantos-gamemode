@@ -8,7 +8,7 @@ namespace Serverside.DatabaseEF6
     {
         public static List<CrimeBot> SelectCrimeBots(Group gid)
         {
-            return ContextFactory.Instance.CrimeBots.Where(x => x.GroupId == gid).ToList();
+            return ContextFactory.Instance.CrimeBots.Where(x => x.Group.GroupId == gid.GroupId).ToList();
         }
 
         public static CrimeBot SelectCrimeBot(long bid)

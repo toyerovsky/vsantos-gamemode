@@ -8,9 +8,9 @@ namespace Serverside.DatabaseEF6.Models
         //ID pracownika
         public long WorkerId { get; set; }
         //ID grupy
-        public Group GroupId { get; set; }
+        public Group Group { get; set; }
         //Id postaci
-        public Character CharacterId { get; set; }
+        public Character Character { get; set; }
 
         public int Salary { get; set; }
         public int DutyMinutes { get; set; }
