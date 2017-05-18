@@ -54,12 +54,13 @@ namespace Serverside.Core
             new AccountController(AccountData, sender);
         }
 
-        public static bool RegisterAccount(Client sender, long userid)
+        public static bool RegisterAccount(Client sender, long userid, string email)
         {
             if (!DoesAccountExist(userid))
             {
                 Account account = new Account();
                 account.UserId = userid;
+                account.Email = email;
                 account.SocialClub = sender.name;
                 account.Ip = sender.address;
 
