@@ -7,7 +7,7 @@ namespace Serverside.DatabaseEF6.Models
     public class Building
     {
         [Key]
-        public long BuildingId { get; set; }
+        public long Id { get; set; }
         public string Name { get; set; }
 
         //public int OwnerType { get; set; } // lepiej sprawdzać czy characterid lub groupid == null

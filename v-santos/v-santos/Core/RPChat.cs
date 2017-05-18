@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using GTANetworkServer;
 using Serverside.Core;
-using Serverside.Core.Finders;
-using Serverside.Database;
+using Serverside.DatabaseEF6;
+using Serverside.DatabaseEF6.Models;
+using Serverside.Core.Extenstions;
 
 namespace Serverside
 {
-    public enum ChatMessageType 
+    public enum ChatMessageType
     {
         Normal = 15,
         Quiet = 5,
@@ -24,45 +25,42 @@ namespace Serverside
         GroupOOC
     }
 
-    public class SaidEventArgs : EventArgs
-    {
-        public SaidEventArgs(Client player, string message, ChatMessageType chatMessageType)
-        {
-            Player = player;
-            Message = message;
-            ChatMessageType = chatMessageType;
-        }
-
-        public Client Player { get; }
-        public string Message { get; }
-        public ChatMessageType ChatMessageType { get; }
-    }
-
     public sealed class RPChat : Script
     {
         public RPChat()
         {
             API.onResourceStart += API_onResourceStart;
-            API.onChatMessage += OnChatMessageHandler;
+            API.onChatMessage += API_onChatMessageHandler;
+            API.onChatCommand += API_onChatCommand;
         }
-        
+
         private void API_onResourceStart()
         {
-            API.consoleOutput("RPChat uruchomione pomyslnie!");
+            APIExtensions.ConsoleOutput("[RPChat] Uruchomione pomyslnie!", ConsoleColor.DarkMagenta);
         }
 
-        public delegate void SaidEventHandler(object sender, SaidEventArgs e);
         public static event SaidEventHandler OnPlayerSaid;
 
-        private void OnChatMessageHandler(Client player, string message, CancelEventArgs e)
+        private void API_onChatMessageHandler(Client sender, string message, CancelEventArgs e)
         {
             e.Cancel = true;
-            if (!player.getData("CanTalk")) return;
-            SendMessageToNearbyPlayers(player, message,
-                player.hasSyncedData("CellphoneTalking") ? ChatMessageType.PhoneOthers : ChatMessageType.Normal);
+            dynamic data;
+            if (sender.TryGetData("CanTalk", out data)) return;
+            if (!data) return;
+            SendMessageToNearbyPlayers(sender, message, sender.hasSyncedData("CellphoneTalking") ? ChatMessageType.PhoneOthers : ChatMessageType.Normal);
             SaidEventHandler handler = OnPlayerSaid;
-            SaidEventArgs eventArgs = new SaidEventArgs(player, message, ChatMessageType.Normal);
+            SaidEventArgs eventArgs = new SaidEventArgs(sender, message, ChatMessageType.Normal);
             if (handler != null) handler.Invoke(this, eventArgs);
+        }
+
+        private void API_onChatCommand(Client sender, string command, CancelEventArgs e)
+        {
+            dynamic data;
+            if (sender.TryGetData("CanCommand", out data)) return;
+            if (!data)
+            {
+                e.Cancel = true;
+            }
         }
 
         #region Komendy
@@ -98,7 +96,7 @@ namespace Serverside
         {
             SendMessageToNearbyPlayers(player, message, ChatMessageType.Do);
         }
-        
+
 
         [Command("w", "~y~UŻYJ: ~w~ /w [id] [treść]", GreedyArg = true)]
         public void SendPrivateMessageToPlayer(Client sender, int ID, string message)
@@ -108,60 +106,60 @@ namespace Serverside
                 API.sendNotificationToPlayer(sender, "Nie możesz teraz pisać wiadomości!");
                 return;
             }
-            
+
             if (sender.hasData("ServerId") && Convert.ToInt32(sender.getData("ServerId")).Equals(ID))
             {
                 API.shared.sendNotificationToPlayer(sender, "Nie możesz wysłać wiadomości samemu sobie.");
                 return;
             }
 
-            Client getter;
-            if (!PlayerFinder.TryFindClientByServerId(sender, ID, out getter)) return;
+            Client getter = RPCore.GetAccount(ID).Client;
+            //if (!PlayerFinder.TryFindClientByServerId(sender, ID, out getter)) return;
             SendMessageToPlayer(getter, message, ChatMessageType.PrivateMessage, sender);
             SendMessageToPlayer(sender, message, ChatMessageType.PrivateMessage, getter);
         }
 
-        [Command("go", "~y~UŻYJ: ~w~ /go [slot] [treść]", GreedyArg = true)]
-        public void SendMessageOnGroupChat(Client sender, string groupSlot, string message)
-        {
-            if (!Validator.IsGroupSlotValid(groupSlot))
-            {
-                SendMessageToPlayer(sender, "Podany slot grupy jest nieprawidłowy.", ChatMessageType.ServerInfo);
-            }
+        //[Command("go", "~y~UŻYJ: ~w~ /go [slot] [treść]", GreedyArg = true)]
+        //public void SendMessageOnGroupChat(Client sender, string groupSlot, string message)
+        //{
+        //    if (!Validator.IsGroupSlotValid(groupSlot))
+        //    {
+        //        SendMessageToPlayer(sender, "Podany slot grupy jest nieprawidłowy.", ChatMessageType.ServerInfo);
+        //    }
 
-            var player = RPCore.Players.First(p => p.Key == sender.getData("AccountID")).Value;
+        //    var player = RPCore.Players.First(p => p.Key == sender.getData("AccountID")).Value;
 
-            int slot = Convert.ToInt32(groupSlot);
+        //    int slot = Convert.ToInt32(groupSlot);
 
-            CharacterEditor editor = player.Editor;
+        //    //CharacterEditor editor = player.Editor;
 
-            long? gid;
-            
-            if (player.TryFindGroupBySlot(slot, out gid))
-            {
-                if (gid != null)
-                {
-                    var workers = player.Helper.SelectWorkersList((long)gid);
-                    var worker = workers.First(w => w.CID == sender.getData("CharacterID"));
+        //    Group gid;
 
-                    var workerEditor = player.Helper.SelectWorker(worker.WID);
+        //    if (player.TryFindGroupBySlot(slot, out gid))
+        //    {
+        //        if (gid != null)
+        //        {
+        //            var workers = WorkerDatabaseHelper.SelectWorkersList(gid);
+        //            var worker = workers.First(w => w.Character == sender.getData("CharacterID"));
 
-                    if (workerEditor.ChatRight)
-                    {
-                        List<Client> clients = API.getAllPlayers().Where(getter => getter.getData("CharacterID") != null).Where(getter => workers.Any(p => p.CID == getter.getData("CharacterID"))).ToList();
-                        SendMessageToSpecifiedPlayers(sender, clients, message, ChatMessageType.GroupOOC, player.Helper.SelectGroup((long)gid).Color);
-                    }
-                    else
-                    {
-                        API.sendNotificationToPlayer(sender, "Nie posiadasz uprawnień do czatu w tej grupie.");
-                    }
-                }
-            }
-            else
-            {
-                API.sendNotificationToPlayer(sender, "Nie posiadasz grupy w tym slocie.");
-            }
-        }
+        //            //var workerEditor = WorkerDatabaseHelper.SelectWorker(worker.WorkerId);
+
+        //            if (worker.ChatRight)
+        //            {
+        //                List<Client> clients = API.getAllPlayers().Where(getter => getter.getData("CharacterID") != null).Where(getter => workers.Any(p => p.Character == getter.getData("CharacterID"))).ToList();
+        //                SendMessageToSpecifiedPlayers(sender, clients, message, ChatMessageType.GroupOOC, gid.Color);
+        //            }
+        //            else
+        //            {
+        //                API.sendNotificationToPlayer(sender, "Nie posiadasz uprawnień do czatu w tej grupie.");
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        API.sendNotificationToPlayer(sender, "Nie posiadasz grupy w tym slocie.");
+        //    }
+        //}
 
         #endregion
 
@@ -173,7 +171,7 @@ namespace Serverside
             }
 
             if (char.IsLower(message.First()))
-            {   
+            {
                 message = char.ToUpper(message.First()) + message.Substring(1);
             }
 
@@ -199,7 +197,7 @@ namespace Serverside
             }
 
             if (char.IsLower(message.First()))
-            {                                
+            {
                 if (chatMessageType != ChatMessageType.Me && chatMessageType != ChatMessageType.ServerMe)
                 {
                     message = char.ToUpper(message.First()) + message.Substring(1);
@@ -244,13 +242,13 @@ namespace Serverside
                 color = "~#FFFFFF~";
             }
 
-            List<Client> clients = API.shared.getPlayersInRadiusOfPlayer((float) chatMessageType, player);
+            List<Client> clients = API.shared.getPlayersInRadiusOfPlayer((float)chatMessageType, player);
 
             //Dla każdego klienta w zasięgu wyświetl wiadomość, zasięg jest pobierany przez rzutowanie enuma do floata
 
             foreach (Client c in clients)
             {
-                API.shared.sendChatMessageToPlayer(c, color,  message);
+                API.shared.sendChatMessageToPlayer(c, color, message);
             }
         }
 

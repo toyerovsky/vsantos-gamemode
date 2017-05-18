@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Serverside</RootNamespace>
     <AssemblyName>v-santos</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -35,21 +35,37 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GTANetworkServer, Version=0.1.385.714, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\gtanetwork.api.0.1.385.714\lib\GTANetworkServer.exe</HintPath>
+    <Reference Include="BCrypt.Net, Version=0.1.4141.31969, Culture=neutral, PublicKeyToken=f3bc8f8c31beeb49, processorArchitecture=MSIL">
+      <HintPath>..\packages\BCrypt.Net.0.1.0\lib\net35\BCrypt.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="GTANetworkServer">
+      <HintPath>..\..\..\..\..\..\..\gtavrp\latest\GTANetworkServer.exe</HintPath>
     </Reference>
     <Reference Include="GTANetworkShared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60c67de1b3b675de, processorArchitecture=MSIL">
-      <HintPath>..\packages\gtanetwork.api.0.1.385.714\lib\GTANetworkShared.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\gtavrp\latest\GTANetworkShared.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="MySql.Data.Entity.EF6, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.Entity.6.9.9\lib\net45\MySql.Data.Entity.EF6.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\..\..\..\..\gtavrp\latest\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -58,8 +74,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\CharacterController.cs" />
+    <Compile Include="Core\Extenstions\APIExtensions.cs" />
+    <Compile Include="Core\Extenstions\ClientExtension.cs" />
+    <Compile Include="Core\Extenstions\CustomEvents.cs" />
     <Compile Include="Items\Item.cs" />
-    <Compile Include="Core\Finders\PlayerFinder.cs" />
+    <Compile Include="Core\AccountController.cs" />
+    <Compile Include="DatabaseEF6\Models\Ban.cs" />
+    <Compile Include="DatabaseEF6\Models\Account.cs" />
     <Compile Include="Items\RPItems.cs" />
     <Compile Include="Items\ServerItem.cs" />
     <Compile Include="Core\FullPosition.cs" />
@@ -69,6 +91,23 @@
     <Compile Include="Core\RPChat.cs" />
     <Compile Include="Core\RPCore.cs" />
     <Compile Include="Core\Validator.cs" />
+    <Compile Include="DatabaseEF6\TelephoneMessageDatabaseHelper.cs" />
+    <Compile Include="DatabaseEF6\TelephoneContactDatabaseHelper.cs" />
+    <Compile Include="DatabaseEF6\DescriptionDatabaseHelper.cs" />
+    <Compile Include="DatabaseEF6\CrimeBotDatabaseHelper.cs" />
+    <Compile Include="DatabaseEF6\WorkerDatabaseHelper.cs" />
+    <Compile Include="DatabaseEF6\GroupDatabaseHelper.cs" />
+    <Compile Include="DatabaseEF6\VehicleDatabaseHelper.cs" />
+    <Compile Include="DatabaseEF6\CharacterDatabaseHelper.cs" />
+    <Compile Include="DatabaseEF6\BuildingDatabaseHelper.cs" />
+    <Compile Include="DatabaseEF6\ItemDatabaseHelper.cs" />
+    <Compile Include="DatabaseEF6\ForumDatabaseHelper.cs" />
+    <Compile Include="DatabaseEF6\Models\CrimeBot.cs" />
+    <Compile Include="DatabaseEF6\Models\Description.cs" />
+    <Compile Include="DatabaseEF6\RoleplayConnection.cs" />
+    <Compile Include="DatabaseEF6\Models\TelephoneContact.cs" />
+    <Compile Include="DatabaseEF6\Models\TelephoneMessage.cs" />
+    <Compile Include="DatabaseEF6\Models\Worker.cs" />
     <Compile Include="Database\BuildingDO.cs" />
     <Compile Include="Database\CharacterDO.cs" />
     <Compile Include="Database\CrimeBotDO.cs" />
@@ -81,11 +120,27 @@
     <Compile Include="Database\VehicleDO.cs" />
     <Compile Include="Database\WorkerDO.cs" />
     <Compile Include="Core\Login\Login.cs" />
+    <Compile Include="DatabaseEF6\Models\Building.cs" />
+    <Compile Include="DatabaseEF6\Models\Group.cs" />
+    <Compile Include="DatabaseEF6\Models\Item.cs" />
+    <Compile Include="DatabaseEF6\Models\Character.cs" />
+    <Compile Include="DatabaseEF6\Models\Vehicle.cs" />
+    <Compile Include="Migrations\201705161207401_Init.cs" />
+    <Compile Include="Migrations\201705161207401_Init.Designer.cs">
+      <DependentUpon>201705161207401_Init.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705161314393_Mig2.cs" />
+    <Compile Include="Migrations\201705161314393_Mig2.Designer.cs">
+      <DependentUpon>201705161314393_Mig2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Login\RPLogin.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -116,6 +171,13 @@
     <Content Include="_Clientside\Resources\Login\index.html" />
     <Content Include="_Clientside\Resources\Login\style.css" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201705161207401_Init.resx">
+      <DependentUpon>201705161207401_Init.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705161314393_Mig2.resx">
+      <DependentUpon>201705161314393_Mig2.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
