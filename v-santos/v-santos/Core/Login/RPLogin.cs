@@ -156,21 +156,22 @@ namespace Serverside.Core.Login
             }
             else
             {
+                //Sprawdzenie czy ktoś już jest zalogowany z tego konta.
+                AccountController _ac = RPCore.GetAccount(UserId);
+                if (_ac != null)
+                {
+                    if (_ac.Account.Online)
+                    {
+                        API.shared.kickPlayer(_ac.Client);
+                        RPChat.SendMessageToPlayer(sender, String.Format("Osoba o IP: {0} znajduje się obecnie na twoim koncie. Została ona wyrzucona z serwera. Rozważ zmianę hasła.", _ac.Account.Ip), ChatMessageType.ServerInfo);
+                    }
+                }
                 //Sprawdzenie czy konto z danym userid istnieje jak nie dodanie konta do bazy danych i załadowanie go do core.
                 if (!AccountController.RegisterAccount(sender, UserId, email))
                 {
-                    //Sprawdzenie czy ktoś już jest zalogowany z tego konta.
-                    AccountController _ac = RPCore.GetAccount(UserId);
-                    if (_ac != null)
-                    {
-                        if (_ac.Account.Online)
-                        {
-                            API.shared.kickPlayer(_ac.Client);
-                            RPChat.SendMessageToPlayer(sender, String.Format("Osoba o IP: {0} znajduje się obecnie na twoim koncie. Została ona wyrzucona z serwera. Rozważ zmianę hasła.", _ac.Account.Ip), ChatMessageType.ServerInfo);
-                        }
-                    }
                     AccountController.LoadAccount(sender, UserId);
                 }
+
                 return true;
             }
         }
