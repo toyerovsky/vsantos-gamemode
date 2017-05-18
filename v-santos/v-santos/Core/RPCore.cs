@@ -7,102 +7,128 @@ using System;
 using GTANetworkShared;
 using Serverside.DatabaseEF6.Models;
 using System.Linq;
+using Serverside.Core.Login;
+using Serverside.Core.Extenstions;
 
 namespace Serverside.Core
 {
-    public sealed class RPCore : Script
+    public class RPCore : Script
     {
         //public static MySqlDatabaseHelper Db;
-        public static ForumDatabaseHelper FDb;
+
         //Robimy słownik wszystkich klientów żeby można było potem korzystać z helpera tego gracza
         //long to ID konta
-        public static Dictionary<long, Player> Players;
-        private static Dictionary<long, AccountController> Accounts = new Dictionary<long, AccountController>();
+        private static SortedList<long, AccountController> Accounts = new SortedList<long, AccountController>();
+        public event DimensionChangeEventHandler OnPlayerDimensionChanged;
 
 
         public RPCore()
         {
             API.onResourceStart += API_onResourceStart;
             API.onResourceStop += API_onResourceStop;
+            API.onPlayerBeginConnect += API_onPlayerBeginConnect;
             API.onPlayerConnected += API_onPlayerConnectedHandler;
+            API.onPlayerFinishedDownload += API_onPlayerFinishedDownload;
             API.onPlayerDisconnected += API_onPlayerDisconnectedHandler;
+            OnPlayerDimensionChanged += Client_OnPlayerDimensionChanged;
         }
 
-        private void API_onPlayerDisconnectedHandler(Client player, string reason)
+        private void API_onPlayerBeginConnect(Client player, CancelEventArgs cancelConnection)
         {
-            AccountController account = player.getData("RP_ACCOUNT");
-            if (account == null) return;
-            LogOut(account);
+            APIExtensions.ConsoleOutput("PlayerBeginConnect: " + player.socialClubName, ConsoleColor.Blue);
+            if (!player.isCEFenabled)
+            {
+                cancelConnection.Reason = "Aby połączyć się z serwerem musisz włączyć obsługe przeglądarki CEF.";
+                cancelConnection.Cancel = true;
+            }
         }
 
         private void API_onPlayerConnectedHandler(Client player)
         {
+            APIExtensions.ConsoleOutput("PlayerConnected: " + player.socialClubName, ConsoleColor.Blue);
             if (AccountController.IsAccountBanned(player))
             {
-                player.kick("~r~You are banned from this server.");
+                player.kick("~r~Jesteś zbanowany. Życzymy miłego dnia! :)");
             }
+        }
+
+        private void API_onPlayerFinishedDownload(Client player)
+        {
+            APIExtensions.ConsoleOutput("PlayerFinishedDownload: " + player.socialClubName, ConsoleColor.Blue);
+            RPLogin.LoginMenu(player);
+        }
+
+        private void API_onPlayerDisconnectedHandler(Client player, string reason)
+        {
+            APIExtensions.ConsoleOutput("PlayerDisconnected: " + player.socialClubName, ConsoleColor.Blue);
+            AccountController account = player.GetAccountController();
+            if (account == null) return;
+            RPLogin.LogOut(account);
+        }
+
+        private void Client_OnPlayerDimensionChanged(object player, DimensionChangeEventArgs e)
+        {
+            AccountController account = e.Player.GetAccountController();
+            account.CharacterController.Character.CurrentDimension = e.CurrentDimension;
+            account.CharacterController.Save();
         }
 
         private void API_onResourceStart()
         {
-            API.consoleOutput("RPCore uruchomione pomyslnie!");
+            APIExtensions.ConsoleOutput("[RPCore] Uruchomione pomyslnie!", ConsoleColor.DarkMagenta);
             ContextFactory.SetConnectionParameters(API.getSetting<string>("database_server"), API.getSetting<string>("database_user"), API.getSetting<string>("database_password"), API.getSetting<string>("database_database")); // NIE WYMAGANE
             ContextFactory.Instance.SaveChanges();
-            FDb = new ForumDatabaseHelper();
+            //FDb = new ForumDatabaseHelper();
 
-            Players = new Dictionary<long, Player>();
+            //Players = new Dictionary<long, Player>();
         }
 
         private void API_onResourceStop()
         {
-            FDb = null;
+            //FDb = null;
             Task DBStop = Task.Run(() =>
             {
-                ContextFactory.Instance.SaveChanges();
+                Save();
+                //ContextFactory.Instance.SaveChanges();
                 ContextFactory.Instance.Dispose();
             });
             DBStop.Wait();
         }
 
-        public static bool LoginToAccount(Client sender, string email, string password)
+        public void Save()
         {
-            long AccountId = FDb.CheckPasswordMatch(email, password);
-            if (AccountId == -1)
+            foreach (var account in Accounts)
             {
-                API.shared.sendChatMessageToPlayer(sender, "Podane login lub hasło są nieprawidłowe, bądź takie konto nie istnieje");
-                //Console.WriteLine("Podane login lub hasło są nieprawidłowe, bądź takie konto nie istnieje");
-                return false;
-            }
-            else
-            {
-                //Sprawdzenie czy ktoś już jest zalogowany z tego konta.
-                if (Accounts.ContainsKey(AccountId))
-                {
-                    AccountController onlineplayer = Accounts[AccountId];
-                    if (onlineplayer.Account.Online)
-                    {
-                        API.shared.kickPlayer(onlineplayer.Client);
-                        RPChat.SendMessageToPlayer(sender, String.Format("Osoba o IP: {0} znajduje się obecnie na twoim koncie. Została ona wyrzucona z serwera. Rozważ zmianę hasła.", onlineplayer.Account.Ip), ChatMessageType.ServerInfo);
-                        return true;
-                    }               
-                }
-                Account AccountData = ContextFactory.Instance.Accounts.Where(x => x.Id == AccountId).FirstOrDefault();
-                new AccountController(AccountData, sender);
-                return true;
-            }
-        }
-
-        public static void LogOut(AccountController account)
-        {
-            account.Save();
-            account.Account.Online = false;
+                account.Value.Save();
+            }    
             ContextFactory.Instance.SaveChanges();
-            account.Client.resetData("RP_ACCOUNT");
         }
 
-        public static void Add(long _AccountId, AccountController _AccountController)
+        public static void AddAccount(long _AccountId, AccountController _AccountController)
         {
             Accounts.Add(_AccountId, _AccountController);
+        }
+
+        public static void RemoveAccount(long accountId)
+        {
+            Accounts.Remove(accountId);
+        }
+
+        public static AccountController GetAccount(long id)
+        {
+            if (id > -1) return Accounts.Get(id);
+            return null;
+        }
+
+        public static AccountController GetAccount(int id)
+        {
+            if (id > -1) return Accounts.Values.ElementAtOrDefault(id);
+            return null;
+        }
+
+        public static int CalculateServerId(AccountController account)
+        {
+            return Accounts.IndexOfValue(account);
         }
 
         public static string GetColoredString(string color, string text)

@@ -6,7 +6,7 @@ namespace Serverside.DatabaseEF6.Models
     {
         [Key]
         //ID przedmiotu
-        public long ItemId { get; set; }
+        public long Id { get; set; }
         public string Name { get; set; }
 
         //Id właściciela

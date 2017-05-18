@@ -9,6 +9,7 @@ namespace Serverside.DatabaseEF6.Models
     {
         [Key]
         public int Id { get; set; }
+        public long UserId { get; set; }
         [EmailAddress]
         [StringLength(50)]
         public string Email { get; set; }
@@ -21,6 +22,6 @@ namespace Serverside.DatabaseEF6.Models
         [DataType(DataType.DateTime)]
         public DateTime LastLogin { get; set; }
         public virtual ICollection<Character> Character { get; set; }
-        //public virtual ICollection<Ban> Ban { get; set; }
+        public virtual ICollection<Ban> Ban { get; set; }
     }
 }

@@ -6,7 +6,7 @@ namespace Serverside.DatabaseEF6.Models
     {
         [Key]
         //ID pracownika
-        public long WorkerId { get; set; }
+        public long Id { get; set; }
         //ID grupy
         public Group Group { get; set; }
         //Id postaci

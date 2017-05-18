@@ -1,7 +1,9 @@
 ﻿using System;
 using GTANetworkServer;
-using Serverside.Core.Finders;
 using Serverside.Database;
+using Serverside.DatabaseEF6;
+using Serverside.DatabaseEF6.Models;
+using Serverside.Core.Extenstions;
 
 namespace Serverside.Core.Money
 {
@@ -17,7 +19,7 @@ namespace Serverside.Core.Money
     
     public class MoneyManager
     {
-        public delegate void MoneyChangedEventHandler(object sender, MoneyChangedEventArgs e);
+        public delegate void MoneyChangedEventHandler(Client sender, decimal newvalue, decimal oldvalue);
 
         public event MoneyChangedEventHandler MoneyChanged;
 
@@ -28,55 +30,65 @@ namespace Serverside.Core.Money
             MoneyChanged += RPMoney_MoneyChanged;
         }
 
-        private void RPMoney_MoneyChanged(object sender, MoneyChangedEventArgs e)
+        private void RPMoney_MoneyChanged(Client sender, decimal newvalue, decimal oldvalue)
         {
-            CharacterEditor givingCharacterEditor =
-                RPCore.Db.SelectCharacter(
-                    Convert.ToInt64(api.getEntityData(e.Player.handle, "CharacterID")));
+            //Character givingCharacterEditor = CharacterDatabaseHelper.SelectCharacter(Convert.ToInt64(api.getEntityData(sender.handle, "CharacterID")));
             //tu sie wysyla event, zeby narysopwalo graczowi stan jego gotowki
-            api.triggerClientEvent(e.Player, "Money_Changed", String.Format(@"${0}", givingCharacterEditor.Money));
+            api.triggerClientEvent(sender, "Money_Changed", String.Format(@"${0}", newvalue));
         }
 
-        public bool CanPay(long cid, decimal count, bool bank = false)
+        public bool CanPay(AccountController account, decimal count, bool bank = false)
         {
-            CharacterEditor editor = RPCore.Db.SelectCharacter(cid);
+            //Character editor = CharacterDatabaseHelper.SelectCharacter(cid);
             if (bank)
             {
-                return editor.BankMoney >= count;
+                return account.CharacterController.Character.BankMoney >= count;
             }
-            return editor.Money >= count;
+            return account.CharacterController.Character.Money >= count;
         }
 
-        public void AddMoney(long cid, decimal count, bool bank = false)
+        public void AddMoney(AccountController account, decimal count, bool bank = false)
         {
-            CharacterEditor character = RPCore.Db.SelectCharacter(cid);
+            //Character character = CharacterDatabaseHelper.SelectCharacter(cid);
+            decimal newvalue = 0;
+            decimal oldvalue = 0;
             if (bank)
             {
-                character.BankMoney += count;
+                account.CharacterController.Character.BankMoney += count;
+                newvalue = account.CharacterController.Character.BankMoney;
             }
             else
             {
-                character.Money += count;
+                account.CharacterController.Character.Money += count;
+                newvalue = account.CharacterController.Character.Money;
             }
-            RPCore.Db.UpdateCharacter(character);
-            MoneyChangedEventArgs e = new MoneyChangedEventArgs(PlayerFinder.FindClientByCid(cid));
-            if (MoneyChanged != null) MoneyChanged.Invoke(this, e);
+            oldvalue = newvalue - count;
+            account.CharacterController.Save();
+            //CharacterDatabaseHelper.UpdateCharacter(character);
+            //MoneyChangedEventArgs e = new MoneyChangedEventArgs(account.Client);
+            if (MoneyChanged != null) MoneyChanged.Invoke(account.Client, newvalue, oldvalue);
         }
 
-        public void RemoveMoney(long cid, decimal count, bool bank = false)
+        public void RemoveMoney(AccountController account, decimal count, bool bank = false)
         {
-            CharacterEditor character = RPCore.Db.SelectCharacter(cid);
+            //Character character = CharacterDatabaseHelper.SelectCharacter(account);
+            decimal newvalue = 0;
+            decimal oldvalue = 0;
             if (bank)
             {
-                character.BankMoney -= count;
+                account.CharacterController.Character.BankMoney -= count;
+                newvalue = account.CharacterController.Character.BankMoney;
             }
             else
             {
-                character.Money -= count;
+                account.CharacterController.Character.Money -= count;
+                newvalue = account.CharacterController.Character.Money;
             }
-            RPCore.Db.UpdateCharacter(character);
-            MoneyChangedEventArgs e = new MoneyChangedEventArgs(PlayerFinder.FindClientByCid(cid));
-            if (MoneyChanged != null) MoneyChanged.Invoke(this, e);
+            oldvalue = newvalue + count;
+            account.CharacterController.Save();
+            //CharacterDatabaseHelper.UpdateCharacter(character);
+            //MoneyChangedEventArgs e = new MoneyChangedEventArgs(account.Client);
+            if (MoneyChanged != null) MoneyChanged.Invoke(account.Client, newvalue, oldvalue);
         }
     }
 }

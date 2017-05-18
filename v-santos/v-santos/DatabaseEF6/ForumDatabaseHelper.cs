@@ -65,6 +65,7 @@ namespace Serverside.DatabaseEF6
                 }
             }
             return -1;
+            //return 1; DEBUG !
         }
 
         public static string GenerateIpbHash(string plaintext, string salt)

@@ -6,7 +6,7 @@ namespace Serverside.DatabaseEF6.Models
     public class CrimeBot
     {
         [Key]
-        public long BotId { get; set; }
+        public long Id { get; set; }
         public Group Group { get; set; }
         public string Name { get; set; }
 

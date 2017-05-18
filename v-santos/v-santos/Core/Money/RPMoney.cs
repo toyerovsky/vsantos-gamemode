@@ -1,6 +1,6 @@
 ﻿using System;
 using GTANetworkServer;
-using Serverside.Core.Finders;
+using Serverside.Core.Extenstions;
 
 namespace Serverside.Core.Money
 {
@@ -26,7 +26,7 @@ namespace Serverside.Core.Money
             }
 
             //Sprawdzamy czy gracz ma na pewno wszystkie potrzebne dane
-            if (!player.hasData("CharacterID"))
+            if (!player.HasData("RP_ACCOUNT"))
             {
                 RPChat.SendMessageToPlayer(player, "Twoja postać nie posiada identyfikatora postaci, zaloguj się ponownie.", ChatMessageType.ServerInfo);
                 return;
@@ -34,13 +34,13 @@ namespace Serverside.Core.Money
 
             MoneyManager manager = new MoneyManager();
 
-            if (!manager.CanPay(player.getData("CharacterID"), safeMoneyCount))
+            if (!manager.CanPay(player.GetAccountController(), safeMoneyCount))
             {
                 RPChat.SendMessageToPlayer(player, "Nie posiadasz wystarczającej ilości gotówki.", ChatMessageType.ServerInfo);
                 return;
             }
 
-            if (Convert.ToInt32(api.getEntityData(player.handle, "ID")).Equals(ID))
+            if (Convert.ToInt32(player.GetAccountController().ServerId).Equals(ID))
             {
                 api.sendChatMessageToPlayer(player, "Nie możesz podać gotówki samemu sobie.");
                 return;
@@ -48,19 +48,21 @@ namespace Serverside.Core.Money
             
             Client gettingPlayer;
 
-            if (PlayerFinder.TryFindClientInRadiusOfPlayerByServerId(player, ID, 6, out gettingPlayer))
+            //if (PlayerFinder.TryFindClientInRadiusOfPlayerByServerId(player, ID, 6, out gettingPlayer))
+            gettingPlayer = player.position.GetNearestPlayer();
+            if(gettingPlayer != null)
             {
-                if (!gettingPlayer.hasData("CharacterID"))
+                if (!gettingPlayer.HasData("RP_ACCOUNT"))
                 {
                     RPChat.SendMessageToPlayer(gettingPlayer, "Twoja postać nie posiada identyfikatora postaci, zaloguj się ponownie.", ChatMessageType.ServerInfo);
                     return;
                 }
 
                 //temu zabieramy
-                manager.RemoveMoney(player.getData("CharacterID"), safeMoneyCount);
+                manager.RemoveMoney(player.GetAccountController(), safeMoneyCount);
 
                 //temu dodajemy gotówke
-                manager.AddMoney(gettingPlayer.getData("CharacterID"), safeMoneyCount);
+                manager.AddMoney(gettingPlayer.GetAccountController(), safeMoneyCount);
 
                 api.sendChatMessageToPlayer(player, String.Format("~g~Osoba {0} otrzymała od ciebie ${1}.", gettingPlayer.name, safeMoneyCount));
                 api.sendChatMessageToPlayer(gettingPlayer, String.Format("~g~Osoba {0} przekazała ci ${1}.", player.name, safeMoneyCount));
