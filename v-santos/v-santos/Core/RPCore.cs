@@ -20,6 +20,8 @@ namespace Serverside.Core
         //long to ID konta
         private static SortedList<long, AccountController> Accounts = new SortedList<long, AccountController>();
         public event DimensionChangeEventHandler OnPlayerDimensionChanged;
+        public static event OnCharacterNotCreatedEventHandler OnCharacterNotCreated;
+        public static event OnPlayerLoginEventHandler OnPlayerLogin;
 
 
         public RPCore()

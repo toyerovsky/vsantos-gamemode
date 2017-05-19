@@ -14,6 +14,8 @@ namespace Serverside.Core.Login
     sealed class RPLogin : Script
     {
         public static ForumDatabaseHelper FDb;
+        public static event OnCharacterNotCreatedEventHandler OnCharacterNotCreated;
+        public static event OnPlayerLoginEventHandler OnPlayerLogin;
 
         public RPLogin()
         {
@@ -114,7 +116,7 @@ namespace Serverside.Core.Login
                 API.triggerClientEvent(player, "ToggleHud", true);
                 RPChat.SendMessageToPlayer(player, String.Format("Witaj, twoja postać {0} została pomyślnie załadowana, życzymy miłej gry!", DbCharacter.Name + " " + DbCharacter.Surname), ChatMessageType.ServerInfo);
 
-                //if (OnPlayerLogin != null) OnPlayerLogin.Invoke(loggedPlayer.Client);
+                if (OnPlayerLogin != null) OnPlayerLogin.Invoke(this, new OnPlayerLoginEventArgs(LoggedAccount.Client));
             }
         }
 
@@ -129,7 +131,7 @@ namespace Serverside.Core.Login
             else
             {
                 //Sprawdzenie czy konto z danym userid istnieje jak nie dodanie konta do bazy danych i załadowanie go do core.
-                if (!AccountController.RegisterAccount(sender, UserId))
+                if (!AccountController.RegisterAccount(sender, UserId, email))
                 {
                     //Sprawdzenie czy ktoś już jest zalogowany z tego konta.
                     AccountController _ac = RPCore.GetAccount(UserId);
@@ -171,7 +173,6 @@ namespace Serverside.Core.Login
                 {
                     AccountController.LoadAccount(sender, UserId);
                 }
-
                 return true;
             }
         }

@@ -36,4 +36,26 @@ namespace Serverside.Core.Extenstions
         public int ChatMessageType { get; }
     }
     public delegate void DimensionChangeEventHandler(object sender, DimensionChangeEventArgs e);
+
+    public class OnPlayerLoginEventArgs : EventArgs
+    {
+        public OnPlayerLoginEventArgs(Client player)
+        {
+            Player = player;
+        }
+
+        public Client Player { get; }
+    }
+    public delegate void OnPlayerLoginEventHandler(object sender, OnPlayerLoginEventArgs e);
+
+    public class OnCharacterNotCreatedEventArgs : EventArgs
+    {
+        public OnCharacterNotCreatedEventArgs(Client player)
+        {
+            Player = player;
+        }
+
+        public Client Player { get; }
+    }
+    public delegate void OnCharacterNotCreatedEventHandler(object sender, OnCharacterNotCreatedEventArgs e);
 }
