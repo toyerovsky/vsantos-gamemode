@@ -1,12 +1,10 @@
-﻿using GTANetworkServer;
-using GTANetworkShared;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using GTANetworkServer;
+using GTANetworkShared;
 
-namespace Serverside.Core.Extenstions
+namespace Serverside.Extensions
 {
     public static class APIExtensions
     {
@@ -14,11 +12,9 @@ namespace Serverside.Core.Extenstions
         {
             //Stopwatch _debug = new Stopwatch();
             //_debug.Start();
-            List<Client> _ret = new List<Client>();
-            _ret = API.shared.getAllPlayers().Select(n => n).OrderBy(n => new Vector3(n.position.X, n.position.Y, n.position.Z).DistanceTo(position)).ToList();
+            return API.shared.getAllPlayers().Select(n => n).OrderBy(n => new Vector3(n.position.X, n.position.Y, n.position.Z).DistanceTo(position)).ToList();
             //API.shared.sendNotificationToPlayer(player, _debug.ElapsedTicks.ToString(), true); // DEBUG
             //_debug.Reset();
-            return _ret;
         }
 
         public static Client GetNearestPlayer(this Vector3 position)

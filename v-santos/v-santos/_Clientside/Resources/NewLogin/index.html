@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head> 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body>
+<div class="container">
+	    
+    <div class="col-sm-8 col-sm-offset-2 main">
+        <div class="col-sm-6 left-side">
+            <h1>Witaj!</h1><br/>
+            <p>Dziękujemy Ci drogi użytkowniku za wybranie naszego projektu.</p>
+            <p>Życzymy mile spędzonych chwil przy wspólnej rozgrywce.</p>
+            <p>Ekipa V-Santos.pl</p>
+            <p></p>
+        </div>
+        <div class="col-sm-6 right-side">
+            
+            <img width="25%" height="25%" src="Images/logo2.png" class="center-block" alt="V-Santos.pl">
+            <p>Nie posiadasz konta? Zarejestruj się na naszym forum!</p>
+
+            <div class="form">
+                <div class="form-group">
+                    <label for="form2">Twój login</label>
+                    <input type="text" id="form2" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="form4">Twoje hasło</label>
+                    <input type="password" id="form4" class="form-control">
+                </div>
+                <a id="loginButton" class="btn btn-deep-purple">Login</a>
+            </div>
+        </div>
+    </div>  
+</div>
+<script>
+    document.getElementById("loginButton").onclick = function ()
+    {
+        resourceCall("Login", document.getElementById("form2").value, document.getElementById("form4").value);
+    };
+</script>
+</body>
+</html>

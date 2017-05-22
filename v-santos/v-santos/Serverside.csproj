@@ -74,74 +74,42 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\CharacterController.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CellphoneController.cs" />
+    <Compile Include="Controllers\CharacterController.cs" />
+    <Compile Include="Controllers\GroupController.cs" />
+    <Compile Include="Controllers\VehicleController.cs" />
     <Compile Include="Core\Extenstions\APIExtensions.cs" />
     <Compile Include="Core\Extenstions\ClientExtension.cs" />
     <Compile Include="Core\Extenstions\CustomEvents.cs" />
-    <Compile Include="Items\Item.cs" />
-    <Compile Include="Core\AccountController.cs" />
-    <Compile Include="DatabaseEF6\Models\Ban.cs" />
-    <Compile Include="DatabaseEF6\Models\Account.cs" />
-    <Compile Include="Items\RPItems.cs" />
-    <Compile Include="Items\ServerItem.cs" />
+    <Compile Include="Core\Extenstions\NetHandleExtensions.cs" />
     <Compile Include="Core\FullPosition.cs" />
+    <Compile Include="Core\Login\RPLogin.cs" />
     <Compile Include="Core\Money\MoneyManager.cs" />
     <Compile Include="Core\Money\RPMoney.cs" />
     <Compile Include="Core\Player.cs" />
     <Compile Include="Core\RPChat.cs" />
     <Compile Include="Core\RPCore.cs" />
+    <Compile Include="Core\Telephone\Booth\RPTelephoneBooth.cs" />
+    <Compile Include="Core\Telephone\Booth\TelephoneBooth.cs" />
+    <Compile Include="Core\Telephone\TelephoneCall.cs" />
+    <Compile Include="Core\Telephone\TelephoneHelper.cs" />
     <Compile Include="Core\Validator.cs" />
-    <Compile Include="DatabaseEF6\TelephoneMessageDatabaseHelper.cs" />
-    <Compile Include="DatabaseEF6\TelephoneContactDatabaseHelper.cs" />
-    <Compile Include="DatabaseEF6\DescriptionDatabaseHelper.cs" />
-    <Compile Include="DatabaseEF6\CrimeBotDatabaseHelper.cs" />
-    <Compile Include="DatabaseEF6\WorkerDatabaseHelper.cs" />
-    <Compile Include="DatabaseEF6\GroupDatabaseHelper.cs" />
-    <Compile Include="DatabaseEF6\VehicleDatabaseHelper.cs" />
-    <Compile Include="DatabaseEF6\CharacterDatabaseHelper.cs" />
-    <Compile Include="DatabaseEF6\BuildingDatabaseHelper.cs" />
-    <Compile Include="DatabaseEF6\ItemDatabaseHelper.cs" />
-    <Compile Include="DatabaseEF6\ForumDatabaseHelper.cs" />
-    <Compile Include="DatabaseEF6\Models\CrimeBot.cs" />
-    <Compile Include="DatabaseEF6\Models\Description.cs" />
-    <Compile Include="DatabaseEF6\RoleplayConnection.cs" />
-    <Compile Include="DatabaseEF6\Models\TelephoneContact.cs" />
-    <Compile Include="DatabaseEF6\Models\TelephoneMessage.cs" />
-    <Compile Include="DatabaseEF6\Models\Worker.cs" />
-    <Compile Include="Database\BuildingDO.cs" />
-    <Compile Include="Database\CharacterDO.cs" />
-    <Compile Include="Database\CrimeBotDO.cs" />
-    <Compile Include="Database\DescriptionDO.cs" />
-    <Compile Include="Database\GroupDO.cs" />
-    <Compile Include="Database\ItemDO.cs" />
-    <Compile Include="Database\MySqlDatabaseHelper.cs" />
-    <Compile Include="Database\TelephoneContactDO.cs" />
-    <Compile Include="Database\TelephoneMessageDO.cs" />
-    <Compile Include="Database\VehicleDO.cs" />
-    <Compile Include="Database\WorkerDO.cs" />
-    <Compile Include="Core\Login\Login.cs" />
-    <Compile Include="DatabaseEF6\Models\Building.cs" />
-    <Compile Include="DatabaseEF6\Models\Group.cs" />
-    <Compile Include="DatabaseEF6\Models\Item.cs" />
-    <Compile Include="DatabaseEF6\Models\Character.cs" />
-    <Compile Include="DatabaseEF6\Models\Vehicle.cs" />
-    <Compile Include="Migrations\201705161207401_Init.cs" />
-    <Compile Include="Migrations\201705161207401_Init.Designer.cs">
-      <DependentUpon>201705161207401_Init.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201705161314393_Mig2.cs" />
-    <Compile Include="Migrations\201705161314393_Mig2.Designer.cs">
-      <DependentUpon>201705161314393_Mig2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Groups\Base\CityHall.cs" />
+    <Compile Include="Groups\Base\Group.cs" />
+    <Compile Include="Groups\Enums.cs" />
+    <Compile Include="Groups\RPGroups.cs" />
+    <Compile Include="Items\Item.cs" />
+    <Compile Include="Items\RPItems.cs" />
+    <Compile Include="Items\ServerItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Core\Login\RPLogin.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+    <None Include="_Clientside\Resources\css\bootstrap.css.map" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="types-gtanetwork\Declarations.d.ts" />
@@ -154,10 +122,14 @@
     <TypeScriptCompile Include="types-gtanetwork\System.d.ts" />
     <TypeScriptCompile Include="types-gtanetwork\System.Drawing.dll.d.ts" />
     <TypeScriptCompile Include="types-gtanetwork\Xilium.CefGlue.dll.d.ts" />
+    <TypeScriptCompile Include="_Clientside\MenuBuilder.ts" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="_Clientside\BwGui.js" />
     <Content Include="_Clientside\Cef.js" />
+    <Content Include="_Clientside\CinematicCamera.js" />
     <Content Include="_Clientside\Core.js" />
+    <Content Include="_Clientside\CornerBotMenu.js" />
     <Content Include="_Clientside\Diagnostics.js" />
     <Content Include="_Clientside\ItemsMenu.js" />
     <Content Include="_Clientside\MoneyText.js" />
@@ -168,16 +140,15 @@
     <Content Include="_Clientside\Resources\Characters\Images\surname-card.png" />
     <Content Include="_Clientside\Resources\Characters\index.html" />
     <Content Include="_Clientside\Resources\Characters\style.css" />
-    <Content Include="_Clientside\Resources\Login\index.html" />
-    <Content Include="_Clientside\Resources\Login\style.css" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201705161207401_Init.resx">
-      <DependentUpon>201705161207401_Init.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201705161314393_Mig2.resx">
-      <DependentUpon>201705161314393_Mig2.cs</DependentUpon>
-    </EmbeddedResource>
+    <Content Include="_Clientside\Resources\css\bootstrap.css" />
+    <Content Include="_Clientside\Resources\css\font-awesome.css" />
+    <Content Include="_Clientside\Resources\js\bootstrap.js" />
+    <Content Include="_Clientside\Resources\js\jquery.js" />
+    <Content Include="_Clientside\Resources\NewLogin\Images\bg.jpg" />
+    <Content Include="_Clientside\Resources\NewLogin\Images\logo2.png" />
+    <Content Include="_Clientside\Resources\NewLogin\index.html" />
+    <Content Include="_Clientside\Resources\NewLogin\style.css" />
+    <Content Include="_Clientside\VehiclesMenu.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

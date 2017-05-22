@@ -13,7 +13,6 @@ class CefHelper {
             API.waitUntilCefBrowserInit(this.browser);
             API.setCefBrowserPosition(this.browser, 0, 0);
             //API.loadPageCefBrowser(this.browser, this.path);
-            API.showCursor(true);
             API.setCefBrowserHeadless(this.browser, true);
         }
     }
@@ -37,6 +36,7 @@ class CefHelper {
             API.setCanOpenChat(false);
             API.loadPageCefBrowser(this.browser, path);
             API.setCefBrowserHeadless(this.browser, false);
+            API.showCursor(true);
             this.inUse = true;
         }
     }
@@ -68,6 +68,8 @@ var ammoCount;
 var drugsCost;
 var drugsCount;
 
+var pieMenuDS;
+
 var cef = new CefHelper();
 
 API.onResourceStart.connect(function ()
@@ -81,7 +83,7 @@ API.onServerEventTrigger.connect(function (eventName, args)
     {
         if (args[0])
         {
-            cef.LoadPage("_Clientside/Resources/Login/index.html");
+            cef.LoadPage("_Clientside/Resources/NewLogin/index.html");
             var loginCamera = API.createCamera(args[1], args[2]);
             API.setActiveCamera(loginCamera);
         }
@@ -133,7 +135,16 @@ API.onServerEventTrigger.connect(function (eventName, args)
 
         cef.LoadPage("_Clientside/Resources/CrimeBot/index.html");    
     }
+    else if (eventName == "CreatePieMenu") {
+        pieMenuDS = args[0];
+        cef.LoadPage("_Clientside/Resources/PieMenu/index.html");
+    }
 });
+
+function GetPieMenuDS()
+{
+    return pieMenuDS;
+}
 
 function Login(login, password)
 {
@@ -217,12 +228,7 @@ function CrimeBotBuy(i) {
     API.triggerServerEvent("OnCrimeBotBought", i.toString());
 }
 
-function CloseDescriptions()
-{
-    cef.Hide();
-}
-
-function CloseBot()
+function CloseCef()
 {
     cef.Hide();
 }
