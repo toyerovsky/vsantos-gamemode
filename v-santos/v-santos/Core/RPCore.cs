@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
-using GTANetworkServer;
-using Serverside.Database;
-using Serverside.DatabaseEF6;
-using System.Threading.Tasks;
-using System;
-using GTANetworkShared;
-using Serverside.DatabaseEF6.Models;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using GTANetworkServer;
+using GTANetworkShared;
+using Serverside.Controllers;
 using Serverside.Core.Login;
-using Serverside.Core.Extenstions;
+using Serverside.Database;
+using Serverside.Extensions;
+using Serverside.Groups;
+using Serverside.Groups.Base;
 
 namespace Serverside.Core
 {
@@ -19,10 +20,8 @@ namespace Serverside.Core
         //Robimy słownik wszystkich klientów żeby można było potem korzystać z helpera tego gracza
         //long to ID konta
         private static SortedList<long, AccountController> Accounts = new SortedList<long, AccountController>();
-        public event DimensionChangeEventHandler OnPlayerDimensionChanged;
-        public static event OnCharacterNotCreatedEventHandler OnCharacterNotCreated;
-        public static event OnPlayerLoginEventHandler OnPlayerLogin;
 
+        public static List<Group> Groups = new List<Group>();
 
         public RPCore()
         {
@@ -32,7 +31,7 @@ namespace Serverside.Core
             API.onPlayerConnected += API_onPlayerConnectedHandler;
             API.onPlayerFinishedDownload += API_onPlayerFinishedDownload;
             API.onPlayerDisconnected += API_onPlayerDisconnectedHandler;
-            OnPlayerDimensionChanged += Client_OnPlayerDimensionChanged;
+            
         }
 
         private void API_onPlayerBeginConnect(Client player, CancelEventArgs cancelConnection)
@@ -78,11 +77,14 @@ namespace Serverside.Core
         private void API_onResourceStart()
         {
             APIExtensions.ConsoleOutput("[RPCore] Uruchomione pomyslnie!", ConsoleColor.DarkMagenta);
-            ContextFactory.SetConnectionParameters(API.getSetting<string>("database_server"), API.getSetting<string>("database_user"), API.getSetting<string>("database_password"), API.getSetting<string>("database_database")); // NIE WYMAGANE
+            //API.getSetting<string>("database_server"), API.getSetting<string>("database_user"), API.getSetting<string>("database_password"), API.getSetting<string>("database_database")
+            ContextFactory.SetConnectionParameters("v-santos.pl", "srv", "WL8oTnufAAEFgoIt", "rp"); // NIE WYMAGANE
             ContextFactory.Instance.SaveChanges();
-            //FDb = new ForumDatabaseHelper();
 
-            //Players = new Dictionary<long, Player>();
+            foreach (var group in ContextFactory.Instance.Groups)
+            {
+                Groups.Add(RPGroups.CreateGroup(group));
+            }
         }
 
         private void API_onResourceStop()
@@ -102,13 +104,13 @@ namespace Serverside.Core
             foreach (var account in Accounts)
             {
                 account.Value.Save();
-            }    
+            }
             ContextFactory.Instance.SaveChanges();
         }
 
-        public static void AddAccount(long _AccountId, AccountController _AccountController)
+        public static void AddAccount(long accountId, AccountController accountController)
         {
-            Accounts.Add(_AccountId, _AccountController);
+            Accounts.Add(accountId, accountController);
         }
 
         public static void RemoveAccount(long accountId)

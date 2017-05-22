@@ -1,6 +1,11 @@
-﻿using GTANetworkServer;
+﻿using System.Linq;
+using GTANetworkServer;
+using Serverside.Controllers;
+using Serverside.Core;
+using Serverside.Core.Money;
+using Serverside.Groups;
 
-namespace Serverside.Core.Extenstions
+namespace Serverside.Extensions
 {
     public static class ClientExtensions
     {
@@ -11,10 +16,41 @@ namespace Serverside.Core.Extenstions
             return client.GetData("RP_ACCOUNT") as AccountController;
         }
 
+        public static Groups.Base.Group GetOnDutyGroup(this Client client)
+        {
+            if (!client.GetAccountController().CharacterController.OnDutyGroupId.HasValue)
+                return null;
+            return RPCore.Groups.Single(x => x.Id == client.GetAccountController().CharacterController.OnDutyGroupId.Value);
+        }
+
         public static void Notify(this Client client, string message, bool flashing = false)
         {
             API.shared.sendNotificationToPlayer(client, message, flashing);
         }
+
+        public static bool TryGetGroupBySlot(this Client client, short slot, out Groups.Base.Group group)
+        {
+            if (slot >= 0 && slot <= 3) group = RPGroups.Groups.Single(g => g.Id == client.GetAccountController().CharacterController.Character.Worker.ElementAt(slot).Group.Id);
+            else group = null;
+            return group != null;
+        }
+
+        #region Pieniądze
+        public static bool HasMoney(this Client client, decimal count, bool bank = false)
+        {
+           return MoneyManager.CanPay(client, count, bank);
+        }
+
+        public static void AddMoney(this Client client, decimal count, bool bank = false)
+        {
+            MoneyManager.AddMoney(client, count, bank);
+        }
+
+        public static void RemoveMoney(this Client client, decimal count, bool bank = false)
+        {
+            MoneyManager.RemoveMoney(client, count, bank);
+        }
+        #endregion
 
         #region Metody danych
         public static dynamic GetData(this Client client, string key)
@@ -25,6 +61,7 @@ namespace Serverside.Core.Extenstions
         /// <summary>
         /// Należy pamiętać, że twórcy GTA Network nie dali typu long do SyncedData i nie działa
         /// </summary>
+        /// <param name="client"></param>
         /// <param name="key"></param>
         /// <returns></returns>
         public static dynamic GetSyncedData(this Client client, string key)
@@ -40,6 +77,7 @@ namespace Serverside.Core.Extenstions
         /// <summary>
         /// Należy pamiętać, że twórcy GTA Network nie dali typu long do SyncedData i nie działa
         /// </summary>
+        /// <param name="client"></param>
         /// <param name="key"></param>
         /// <param name="value"></param>
         public static void SetSyncedData(this Client client, string key, object value)

@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using GTANetworkServer;
 using GTANetworkShared;
+using Serverside.Controllers;
 using Serverside.Core;
+using Serverside.Core.Telephone;
 using Serverside.Database;
+using Serverside.Database.Models;
+using Serverside.Extensions;
 
 namespace Serverside.Items
 {
@@ -28,7 +33,7 @@ namespace Serverside.Items
     public enum TuningType
     {
         Speed,
-        Brakes,
+        Brakes
     }
 
     public enum DrugType
@@ -47,29 +52,42 @@ namespace Serverside.Items
 
     internal abstract class Item
     {
-        protected API API = API.shared;
+        protected API Api = API.shared;
 
-        protected long ItemId { get; set; }
-        protected string Name { get; set; }
+        protected Database.Models.Item Data { get; }
 
-        protected int? FirstParameter { get; set; }
-        protected int? SecondParameter { get; set; }
-        protected int? ThirdParameter { get; set; }
-
-        public virtual string ItemInfo { get; }
+        public string ItemInfo => $"Ten przedmiot to: {Data.Name} o Id: {Data.Id}";
 
         public virtual string UseInfo { get; }
 
-        public virtual void UseItem(Player player)
+        protected Item(Database.Models.Item item)
+        {
+            Data = item;
+        }
+
+        public virtual void UseItem(AccountController player)
         {
             //TODO Pomysł, można tutaj dopisywać wszystkie logi używania przedmiotów
         }
 
         protected void PrepareCurrentlyInUse()
         {
-            ItemEditor editor = RPCore.Db.SelectItem(ItemId);
-            editor.CurrentlyInUse = false;
-            RPCore.Db.UpdateItem(editor);
+            Data.CurrentlyInUse = false;
+            Save();
+        }
+
+        protected void Save()
+        {
+            ContextFactory.Instance.Items.Attach(Data);
+            ContextFactory.Instance.Entry(Data).State = EntityState.Modified;
+            ContextFactory.Instance.SaveChanges();
+        }
+
+        protected void Delete()
+        {
+            ContextFactory.Instance.Items.Remove(Data);
+            ContextFactory.Instance.Entry(Data).State = EntityState.Deleted;
+            ContextFactory.Instance.SaveChanges();
         }
     }
 
@@ -79,30 +97,18 @@ namespace Serverside.Items
         /// Pierwszy parametr to ilość HP do przyznania
         /// </summary>
         /// <param name="item"></param>
-        public Food(ItemEditor item)
+        public Food(Database.Models.Item item) : base(item)
         {
-            ItemId = item.IID;
-            Name = item.Name;
-            FirstParameter = item.FirstParameter;
         }
 
-        public override void UseItem(Player player)
+        public override void UseItem(AccountController player)
         {
-            RPChat.SendMessageToNearbyPlayers(player.Client, String.Format("zjada {0}", Name), ChatMessageType.ServerMe);
-            API.setPlayerHealth(player.Client, player.Client.health + Convert.ToInt32(FirstParameter));
-            RPCore.Db.DeleteItem(ItemId);
+            RPChat.SendMessageToNearbyPlayers(player.Client, $"zjada {Data.Name}", ChatMessageType.ServerMe);
+            Api.setPlayerHealth(player.Client, player.Client.health + Convert.ToInt32(Data.FirstParameter));
+            Delete();
         }
 
-        public override string ItemInfo
-        {
-            get { return "Ten przedmiot to " + Name + " o ItemId: " + ItemId; }
-        }
-
-        public override string UseInfo
-        {
-            get { return "Ten przedmiot odnawia: " + FirstParameter + " punktów życia."; }
-        }
-
+        public override string UseInfo => $"Ten przedmiot odnawia: {Data.FirstParameter} punktów życia.";
     }
 
     internal class Weapon : Item
@@ -111,70 +117,51 @@ namespace Serverside.Items
         /// Pierwszy parametr to Hash broni, a drugi to ilość amunicji
         /// </summary>
         /// <param name="item"></param>
-        public Weapon(ItemEditor item)
+        public Weapon(Database.Models.Item item) : base(item) { }
+
+        public override void UseItem(AccountController player)
         {
-            ItemId = item.IID;
-            Name = item.Name;
-            FirstParameter = item.FirstParameter;
-            SecondParameter = item.SecondParameter;
-        }
+            if (!Data.CurrentlyInUse.HasValue) PrepareCurrentlyInUse();
 
-        public override void UseItem(Player player)
-        {
-            
-            if(RPCore.Db.SelectItem(ItemId).CurrentlyInUse == null)
+            if (Data.SecondParameter <= 0)
             {
-                PrepareCurrentlyInUse();
+                player.Client.Notify("Twoja broń nie ma amunicji.");
+                return;
             }
 
-            if (RPCore.Db.SelectItem(ItemId).SecondParameter <= 0)
+            if (Data.CurrentlyInUse != null && (Data.CurrentlyInUse.Value && Data.FirstParameter.HasValue))
             {
-                player.Notify("Twoja broń nie ma amunicji.");
+                Data.CurrentlyInUse = false;
+                Data.SecondParameter = Api.getPlayerWeaponAmmo(player.Client, (WeaponHash)Data.FirstParameter);
+                Save();
+                Api.removePlayerWeapon(player.Client, (WeaponHash)Data.FirstParameter);
+                Api.onPlayerDisconnected -= API_onPlayerDisconnected;
             }
-
-            if (Convert.ToBoolean(RPCore.Db.SelectItem(ItemId).CurrentlyInUse))
-            {
-                var itemEditor = RPCore.Db.SelectItem(ItemId);
-                itemEditor.CurrentlyInUse = false;
-                itemEditor.SecondParameter = API.getPlayerWeaponAmmo(player.Client, (WeaponHash)FirstParameter);
-                RPCore.Db.UpdateItem(itemEditor);
-                if (FirstParameter != null) API.removePlayerWeapon(player.Client, (WeaponHash)FirstParameter);
-
-                API.onPlayerDisconnected -= API_onPlayerDisconnected;
-            }
-            else if (!Convert.ToBoolean(RPCore.Db.SelectItem(ItemId).CurrentlyInUse) && SecondParameter > 0)
+            else if (Data.CurrentlyInUse != null && (!Data.CurrentlyInUse.Value && Data.SecondParameter > 0))
             {
                 //API.givePlayerWeapon(Client player, WeaponHash weaponHash, int ammo, bool equipNow, bool ammoLoaded);
-                if (FirstParameter != null)
-                    API.givePlayerWeapon(player.Client, (WeaponHash)FirstParameter, Convert.ToInt32(SecondParameter), true, true);
+                if (Data.FirstParameter.HasValue)
+                    Api.givePlayerWeapon(player.Client, (WeaponHash)Data.FirstParameter, Data.SecondParameter.Value, true, true);
 
-                var itemEditor = RPCore.Db.SelectItem(ItemId);
-                itemEditor.CurrentlyInUse = true;
-                RPCore.Db.UpdateItem(itemEditor);
+                Data.CurrentlyInUse = true;
+                Save();
 
-                API.onPlayerDisconnected += API_onPlayerDisconnected;
+                Api.onPlayerDisconnected += API_onPlayerDisconnected;
             }
         }
 
         private void API_onPlayerDisconnected(Client sender, string reason)
         {
-            Player player = RPCore.Players.Single(p => sender.hasData("AccountID") && p.Key == sender.getData("AccountID")).Value;
-            foreach (var item in player.Items)
+            var player = sender.GetAccountController();
+
+            if (Data.ItemType == (int)ItemType.Weapon)
             {
-                if (item.ItemType == (int)ItemType.Weapon)
-                {
-                    var itemEditor = RPCore.Db.SelectItem(ItemId);
-                    itemEditor.SecondParameter = API.getPlayerWeaponAmmo(player.Client, (WeaponHash)FirstParameter);
-                    RPCore.Db.UpdateItem(itemEditor);
-                }
+                if (Data.FirstParameter.HasValue)
+                    Data.SecondParameter = Api.getPlayerWeaponAmmo(player.Client, (WeaponHash)Data.FirstParameter);
+                Save();
             }
+            Api.onPlayerDisconnected -= API_onPlayerDisconnected;
 
-            API.onPlayerDisconnected -= API_onPlayerDisconnected;
-        }
-
-        public override string ItemInfo
-        {
-            get { return "Ten przedmiot to " + Name + " o ItemId: " + ItemId; }
         }
     }
 
@@ -184,34 +171,13 @@ namespace Serverside.Items
         /// Pierwszy parametr to hash broni do której pasuje, a drugi to ilość amunicji
         /// </summary>
         /// <param name="item"></param>
-        public WeaponClip(ItemEditor item)
+        public WeaponClip(Database.Models.Item item) : base(item) { }
+
+        public override void UseItem(AccountController player)
         {
-            ItemId = item.IID;
-            Name = item.Name;
-            FirstParameter = item.FirstParameter;
-            SecondParameter = item.SecondParameter;
         }
 
-        public override void UseItem(Player player)
-        {
-            if (!player.HasData("CharacterID") || FirstParameter == null || SecondParameter == null) return;
-
-            List<ItemList> weapons = RPCore.Db.SelectItemsList(player.GetData("CharacterID"), 1);
-            weapons = (List<ItemList>)weapons.Where(v => v.ItemType == (int)ItemType.Weapon);
-
-            //TODO poprawić wybieranie w ogole dziwnie dziala
-
-            //API.triggerClientEvent(player.Client, "SelectWeaponToLoad", RPCore.Db.ConvertCollectionToClient(weapons), ItemId);
-        }
-
-        public override string ItemInfo
-        {
-            get { return "Ten przedmiot to " + Name + " o ItemId: " + ItemId; }
-        }
-        public override string UseInfo
-        {
-            get { return "Ten przedmiot dodaje " + SecondParameter + " naboi do broni " + (WeaponHash)FirstParameter; }
-        }
+        public override string UseInfo => $"Ten przedmiot dodaje {Data.SecondParameter} naboi do broni {Constant.ConstantItems.GunNames.Single(p => p.Key.Equals(Data.FirstParameter)).Value}";
     }
 
     internal class Mask : Item
@@ -220,29 +186,27 @@ namespace Serverside.Items
         /// Pierwszy parametr to liczba liczba użyć do zniszczenia
         /// </summary>
         /// <param name="item"></param>
-        public Mask(ItemEditor item)
-        {
-            ItemId = item.IID;
-            Name = item.Name;
-            FirstParameter = item.FirstParameter;
-        }
+        public Mask(Database.Models.Item item) : base(item) { }
 
-        public override void UseItem(Player player)
+        public override void UseItem(AccountController player)
         {
-            var encryptedName = "Nieznajomy " + player.Nickname.GetHashCode().ToString().Substring(1, 6);
+            if (!Data.CurrentlyInUse.HasValue) PrepareCurrentlyInUse();
+            var encryptedName = $"Nieznajomy {player.Client.name.GetHashCode().ToString().Substring(1, 6)}";
 
-            if (Convert.ToBoolean(RPCore.Db.SelectItem(ItemId).CurrentlyInUse) && player.HasData("CharacterID"))
+            if (Data.CurrentlyInUse != null && Data.CurrentlyInUse.Value)
             {
                 RPChat.SendMessageToNearbyPlayers(player.Client, "zdejmuje kominiarkę", ChatMessageType.Me);
 
-                CharacterEditor character = RPCore.Db.SelectCharacter(player.GetData("CharacterID"));
-                player.Client.name = character.Name + " " + character.Surname;
+                player.Client.name = player.CharacterController.FormatName;
                 player.Client.resetNametag();
 
-                var itemEditor = RPCore.Db.SelectItem(ItemId);
-                itemEditor.CurrentlyInUse = false;
-                RPCore.Db.UpdateItem(itemEditor);
-                if (FirstParameter == 0) RPCore.Db.DeleteItem(ItemId);
+                Data.CurrentlyInUse = false;
+                if (Data.FirstParameter.HasValue && Data.FirstParameter.Value == 0)
+                {
+                    Delete();
+                    return;
+                }
+                Save();
             }
             else
             {
@@ -250,38 +214,19 @@ namespace Serverside.Items
                 player.Client.name = encryptedName;
                 player.Client.resetNametag();
 
-                var maskEditor = RPCore.Db.SelectItem(ItemId);
-                maskEditor.FirstParameter -= 1;
-                maskEditor.CurrentlyInUse = true;
+                Data.FirstParameter -= 1;
+                Data.CurrentlyInUse = true;
 
-                RPCore.Db.UpdateItem(maskEditor);
+                Save();
             }
         }
 
-        public override string ItemInfo
-        {
-            get { return "Ten przedmiot to " + Name + " o ItemId: " + ItemId; }
-        }
-
-        public override string UseInfo
-        {
-            get { return "Ten przedmiot ukrywa twoją nazwę wyświetlaną."; }
-        }
+        public override string UseInfo => "Ten przedmiot ukrywa twoją nazwę wyświetlaną.";
     }
 
     internal class Drug : Item
     {
-        public Drug(ItemEditor item)
-        {
-            ItemId = item.IID;
-            Name = item.Name;
-            FirstParameter = item.FirstParameter;
-        }
-
-        public override string ItemInfo
-        {
-            get { return "Ten przedmiot to " + Name + " o ItemId: " + ItemId; }
-        }
+        public Drug(Database.Models.Item item) : base(item) { }
     }
 
     internal class Dice : Item
@@ -290,29 +235,18 @@ namespace Serverside.Items
         /// Pierwszy parametr to liczba oczek na kostce
         /// </summary>
         /// <param name="item"></param>
-        public Dice(ItemEditor item)
-        {
-            ItemId = item.IID;
-            Name = item.Name;
-            FirstParameter = item.FirstParameter;
-        }
+        public Dice(Database.Models.Item item) : base(item) { }
 
-        public override void UseItem(Player player)
+        public override void UseItem(AccountController player)
         {
             Random random = new Random();
-            RPChat.SendMessageToNearbyPlayers(player.Client, String.Format(
-                "wyrzucił {0} oczek z {1} możliwych", random.Next(1, Convert.ToInt32(FirstParameter)), FirstParameter), ChatMessageType.ServerMe);
+            if (Data.FirstParameter != null)
+                RPChat.SendMessageToNearbyPlayers(player.Client,
+                    $"wyrzucił {random.Next(1, Data.FirstParameter.Value)} oczek z {Data.FirstParameter} możliwych",
+            ChatMessageType.ServerMe);
         }
 
-        public override string ItemInfo
-        {
-            get { return "Ten przedmiot to " + Name + " o ItemId: " + ItemId; }
-        }
-
-        public override string UseInfo
-        {
-            get { return "Ten przedmiot zwraca losową liczbę od 1 do " + FirstParameter; }
-        }
+        public override string UseInfo => $"Ten przedmiot zwraca losową liczbę od 1 do {Data.FirstParameter}";
     }
 
     internal class Watch : Item
@@ -321,27 +255,15 @@ namespace Serverside.Items
         /// Brak parametrów
         /// </summary>
         /// <param name="item"></param>
-        public Watch(ItemEditor item)
+        public Watch(Database.Models.Item item) : base(item) { }
+
+        public override void UseItem(AccountController player)
         {
-            ItemId = item.IID;
-            Name = item.Name;
+            RPChat.SendMessageToNearbyPlayers(player.Client, $"spogląda na zegarek {Data.Name}", ChatMessageType.Me);
+            Api.sendNotificationToPlayer(player.Client, "Godzina: " + DateTime.Now.ToShortTimeString());
         }
 
-        public override void UseItem(Player player)
-        {
-            RPChat.SendMessageToNearbyPlayers(player.Client, String.Format("spogląda na zegarek {0}", Name), ChatMessageType.Me);
-            API.sendNotificationToPlayer(player.Client, "Godzina: " + DateTime.Now.ToShortTimeString());
-        }
-
-        public override string ItemInfo
-        {
-            get { return "Ten przedmiot to " + Name + " o ItemId: " + ItemId; }
-        }
-
-        public override string UseInfo
-        {
-            get { return "Ten przedmiot pokazuje bieżącą godzinę."; }
-        }
+        public override string UseInfo => "Ten przedmiot pokazuje bieżącą godzinę.";
     }
 
     internal class Cloth : Item
@@ -350,26 +272,15 @@ namespace Serverside.Items
         /// 
         /// </summary>
         /// <param name="item"></param>
-        public Cloth(ItemEditor item)
-        {
-            ItemId = item.IID;
-            Name = item.Name;
-        }
+        public Cloth(Database.Models.Item item) : base(item) { }
 
-        public override void UseItem(Player player)
+        public override void UseItem(AccountController player)
         {
+            if (!Data.CurrentlyInUse.HasValue) PrepareCurrentlyInUse();
 
         }
 
-        public override string ItemInfo
-        {
-            get { return "Ten przedmiot to " + Name + " o ItemId: " + ItemId; }
-        }
-
-        public override string UseInfo
-        {
-            get { return "Ten przedmiot zmienia ubranie twojej postaci."; }
-        }
+        public override string UseInfo => "Ten przedmiot zmienia ubranie twojej postaci.";
     }
 
     internal class Transmitter : Item
@@ -378,27 +289,14 @@ namespace Serverside.Items
         /// 
         /// </summary>
         /// <param name="item"></param>
-        public Transmitter(ItemEditor item)
-        {
-            ItemId = item.IID;
-            Name = item.Name;
-            FirstParameter = item.FirstParameter;
-        }
+        public Transmitter(Database.Models.Item item) : base(item) { }
 
-        public override void UseItem(Player player)
+        public override void UseItem(AccountController player)
         {
-
+            if (!Data.CurrentlyInUse.HasValue) PrepareCurrentlyInUse();
         }
-
-        public override string ItemInfo
-        {
-            get { return "Ten przedmiot to " + Name + " o ItemId: " + ItemId; }
-        }
-
-        public override string UseInfo
-        {
-            get { return "Przedmiot służy do komunikacji na podanej częstotliwości w zasięgu:" + SecondParameter; }
-        }
+        
+        public override string UseInfo => $"Przedmiot służy do komunikacji na podanej częstotliwości w zasięgu: {Data.SecondParameter}";
     }
 
     internal class Cellphone : Item
@@ -407,54 +305,38 @@ namespace Serverside.Items
         /// 1 parametr to liczba kontaktów do zapisania, 2 to liczba sms możliwych do zapisania, 3 to numer telefonu
         /// </summary>
         /// <param name="item"></param>
-        public Cellphone(ItemEditor item)
-        {
-            ItemId = item.IID;
-            Name = item.Name;
-            FirstParameter = item.FirstParameter;
-            SecondParameter = item.SecondParameter;
-            ThirdParameter = item.ThirdParameter;
-        }
+        public Cellphone(Database.Models.Item item) : base(item) { }
 
-        public override void UseItem(Player player)
+        public override void UseItem(AccountController player)
         {
-            var editor = player.Helper.SelectItem(ItemId);
-
-            if (editor.CurrentlyInUse != null && !(bool)editor.CurrentlyInUse)
+            if (!Data.CurrentlyInUse.HasValue) PrepareCurrentlyInUse();
+            if (Data.CurrentlyInUse != null && !Data.CurrentlyInUse.Value)
             {
-                RPChat.SendMessageToNearbyPlayers(player.Client, String.Format("włącza {0}", Name), ChatMessageType.ServerMe);
-                player.SetData("CellphoneNumber", (int)ThirdParameter);
-                player.SetSyncedData("CellphoneID", (int)ItemId);
+                if (!Data.ThirdParameter.HasValue) APIExtensions.ConsoleOutput("[Error] Do numeru został przypisany null.", ConsoleColor.Red);
+                else
+                {
+                    RPChat.SendMessageToNearbyPlayers(player.Client, $"włącza {Data.Name}", ChatMessageType.ServerMe);
+                    player.Client.SetSyncedData("CellphoneID", (int)Data.Id);
+                    player.Client.Notify($"Telefon {Data.Name} został włączony naciśnij klawisz END, aby go używać.");
+                    Data.CurrentlyInUse = true; 
+                    player.CharacterController.Save();
 
-                player.Notify(String.Format("Telefon {0} został włączony naciśnij klawisz END, aby go używać.", Name));
-                editor.CurrentlyInUse = true;
-                player.Helper.UpdateItem(editor);
+                    player.CharacterController.CellphoneController = new CellphoneController(Data);
+                }
             }
             else
             {
-                RPChat.SendMessageToNearbyPlayers(player.Client, String.Format("wyłącza {0}", Name), ChatMessageType.ServerMe);
-                player.ResetSyncedData("CellphoneID");
-                player.ResetData("CellphoneNumber");
+                RPChat.SendMessageToNearbyPlayers(player.Client, $"wyłącza {Data.Name}", ChatMessageType.ServerMe);
 
-                player.Notify(String.Format("Telefon {0} został wyłączony.", Name));
-                editor.CurrentlyInUse = false;
-                player.Helper.UpdateItem(editor);
+                player.CharacterController.Save();
+                player.CharacterController.CellphoneController = null;
+                Data.CurrentlyInUse = false;
+                player.Client.Notify($"Telefon {Data.Name} został wyłączony.");
+
             }
         }
 
-        public override string ItemInfo
-        {
-            get { return "Ten przedmiot to " + Name + " o ItemId: " + ItemId; }
-        }
-
-        public override string UseInfo
-        {
-            get
-            {
-                return "Telefon: " + Name + " może przechowywać: " + FirstParameter + " kontaktów, oraz " +
-                  SecondParameter + " wiadomości SMS.";
-            }
-        }
+        public override string UseInfo => $"Telefon: {Data.Name} może przechowywać: {Data.FirstParameter} kontaktów, oraz {Data.SecondParameter} wiadomości SMS.";
     }
 
     internal class Tuning : Item
@@ -465,31 +347,17 @@ namespace Serverside.Items
         /// dla 2 (brakes) 2 parametr to moc hamowania
         /// </summary>
         /// <param name="item"></param>
-        public Tuning(ItemEditor item)
-        {
-            ItemId = item.IID;
-            Name = item.Name;
-            FirstParameter = item.FirstParameter;
-            SecondParameter = item.SecondParameter;
-            ThirdParameter = item.ThirdParameter;
-        }
-
-        public override string ItemInfo
-        {
-            get { return "Ten przedmiot to " + Name + " o ItemId: " + ItemId; }
-        }
+        public Tuning(Database.Models.Item item) : base(item) { }
 
         public override string UseInfo
         {
             get
             {
-                if ((TuningType)FirstParameter == TuningType.Speed)
+                if (Data.FirstParameter.HasValue && (TuningType)Data.FirstParameter == TuningType.Speed)
                 {
-                    return "Tuning: " + Name + " zwiększa prędkość maksymalną o: " + SecondParameter +
-                           " procent, oraz zwiększa moment obrotowy o: " +
-                           ThirdParameter + " procent.";
+                    return $"Tuning: {Data.Name} zwiększa prędkość maksymalną o: {Data.SecondParameter} procent, oraz zwiększa moment obrotowy o: {Data.ThirdParameter} procent.";
                 }
-                return "Tuning: " + Name + " zwiększa moc hamulcy o: " + SecondParameter + " procent.";
+                return $"Tuning: {Data.Name} zwiększa moc hamulcy o: {Data.SecondParameter} procent.";
             }
         }
     }

@@ -1,15 +1,24 @@
 ﻿using System;
 using GTANetworkServer;
-using Serverside.Core.Extenstions;
+using Serverside.Core.Finders;
+using Serverside.Extensions;
 
 namespace Serverside.Core.Money
 {
     public class RPMoney : Script
     {
-        private API api = new API();       
-        
+        public RPMoney()
+        {
+            API.onResourceStart += OnResourceStartHandler;
+        }
+
+        private void OnResourceStartHandler()
+        {
+            APIExtensions.ConsoleOutput("[RPMoney] Uruchomione pomyslnie.", ConsoleColor.DarkMagenta);
+        }
+
         [Command("plac", "~y~UŻYJ: ~w~ /plac [id] [kwota]", Alias = "pay", GreedyArg = true)]
-        public void TransferWalletMoney(Client player, string id, string unsafeMoneyCount)
+        public void TransferWalletMoney(Client sender, string id, string unsafeMoneyCount)
         {
             decimal safeMoneyCount;
             int ID;
@@ -21,51 +30,36 @@ namespace Serverside.Core.Money
             }
             else
             {
-                RPChat.SendMessageToPlayer(player, "Podano dane w nieprawidłowym formacie.", ChatMessageType.ServerInfo);
+                sender.Notify("Podano dane w nieprawidłowym formacie.");
                 return;
             }
 
-            //Sprawdzamy czy gracz ma na pewno wszystkie potrzebne dane
-            if (!player.HasData("RP_ACCOUNT"))
+            if (!sender.HasMoney(safeMoneyCount))
             {
-                RPChat.SendMessageToPlayer(player, "Twoja postać nie posiada identyfikatora postaci, zaloguj się ponownie.", ChatMessageType.ServerInfo);
+                sender.Notify("Nie posiadasz wystarczającej ilości gotówki.");
                 return;
             }
 
-            MoneyManager manager = new MoneyManager();
-
-            if (!manager.CanPay(player.GetAccountController(), safeMoneyCount))
+            if (sender.GetAccountController().ServerId == ID)
             {
-                RPChat.SendMessageToPlayer(player, "Nie posiadasz wystarczającej ilości gotówki.", ChatMessageType.ServerInfo);
-                return;
-            }
-
-            if (Convert.ToInt32(player.GetAccountController().ServerId).Equals(ID))
-            {
-                api.sendChatMessageToPlayer(player, "Nie możesz podać gotówki samemu sobie.");
+                sender.Notify("Nie możesz podać gotówki samemu sobie.");
                 return;
             }
             
             Client gettingPlayer;
 
-            //if (PlayerFinder.TryFindClientInRadiusOfPlayerByServerId(player, ID, 6, out gettingPlayer))
-            gettingPlayer = player.position.GetNearestPlayer();
-            if(gettingPlayer != null)
+            if (PlayerFinder.TryFindClientInRadiusOfClientByServerId(sender, ID, 6, out gettingPlayer))
             {
-                if (!gettingPlayer.HasData("RP_ACCOUNT"))
-                {
-                    RPChat.SendMessageToPlayer(gettingPlayer, "Twoja postać nie posiada identyfikatora postaci, zaloguj się ponownie.", ChatMessageType.ServerInfo);
-                    return;
-                }
-
+                
                 //temu zabieramy
-                manager.RemoveMoney(player.GetAccountController(), safeMoneyCount);
+                sender.RemoveMoney(safeMoneyCount);
 
                 //temu dodajemy gotówke
-                manager.AddMoney(gettingPlayer.GetAccountController(), safeMoneyCount);
+                gettingPlayer.AddMoney(safeMoneyCount);
 
-                api.sendChatMessageToPlayer(player, String.Format("~g~Osoba {0} otrzymała od ciebie ${1}.", gettingPlayer.name, safeMoneyCount));
-                api.sendChatMessageToPlayer(gettingPlayer, String.Format("~g~Osoba {0} przekazała ci ${1}.", player.name, safeMoneyCount));
+                API.sendChatMessageToPlayer(sender,
+                    $"~g~Osoba {gettingPlayer.name} otrzymała od ciebie ${safeMoneyCount}.");
+                API.sendChatMessageToPlayer(gettingPlayer, $"~g~Osoba {sender.name} przekazała ci ${safeMoneyCount}.");
             }
         }
     }

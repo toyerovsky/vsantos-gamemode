@@ -1,44 +1,38 @@
-﻿using GTANetworkServer;
-using Serverside.Core;
-using Serverside.Core.Telephone;
-using Serverside.Database;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GTANetworkServer;
 using Newtonsoft.Json;
+using Serverside.Core;
+using Serverside.Core.Telephone;
+using Serverside.Database.Models;
+using Serverside.Extensions;
+using Serverside.Groups;
+using Serverside.Groups.Base;
+using Serverside.Groups.CrimeBots;
 
 namespace Serverside.Items
 {
     sealed class RPItems : Script
     {
-        public static List<TelephoneCall> CurrentCalls { get; private set; }
-
-        private Dictionary<long, Player> Players
-        {
-            get { return RPCore.Players; }
-        }
-
         public RPItems()
         {
             API.onResourceStart += API_onResourceStart;
             API.onResourceStop += API_onResourceStop;
             API.onClientEventTrigger += API_onClientEventTrigger;
-
-            CurrentCalls = new List<TelephoneCall>();
         }
 
         private void API_onResourceStop()
         {
-            foreach (var v in Players)
+            foreach (var player in API.getAllPlayers().Where(x => x.GetAccountController() != null))
             {
-                List<ItemEditor> items = v.Value.Items.Select(i => v.Value.Helper.SelectItem(i.IID)).Where(
-                    it => it.CurrentlyInUse != null && it.CurrentlyInUse == true).ToList();
-
-                foreach (var i in items)
+                var controller = player.GetAccountController();
+                foreach (var i in controller.CharacterController.Character.Item.Where(i => i.CurrentlyInUse == true)
+                    .ToList())
                 {
                     i.CurrentlyInUse = false;
-                    v.Value.Helper.UpdateItem(i);
                 }
+                controller.Save();
             }
         }
 
@@ -47,7 +41,7 @@ namespace Serverside.Items
             API.consoleOutput("RPItems uruchomione pomyslnie!");
         }
 
-        private Item CreateItem(ItemEditor item)
+        private Item CreateItem(Database.Models.Item item)
         {
             var itemType = (ItemType)item.ItemType;
             switch (itemType)
@@ -79,78 +73,92 @@ namespace Serverside.Items
             }
             else if (eventName == "UseItem")
             {
-                Player player = Players.Single(p => sender.hasData("AccountID") && p.Key == sender.getData("AccountID")).Value;
+                var player = sender.GetAccountController();
                 int index = Convert.ToInt32(API.getEntityData(sender, "SelectedItem"));
 
-                List<ItemList> userItems = player.Helper.SelectItemsList(Convert.ToInt64(sender.getData("CharacterID")), 1);
+                List<Database.Models.Item> userItems = player.CharacterController.Character.Item.ToList();
 
-                Item item = CreateItem(player.Helper.SelectItem(userItems[index].IID));
-                item.UseItem(player);             
+                Item item = CreateItem(userItems[index]);
+                item.UseItem(player);
             }
             else if (eventName == "InformationsItem")
             {
-                Player player = Players.Single(p => sender.hasData("AccountID") && p.Key == sender.getData("AccountID")).Value;
+                var player = sender.GetAccountController();
 
                 int index = Convert.ToInt32(API.getEntityData(sender, "SelectedItem"));
-                List<ItemList> userItems = player.Helper.SelectItemsList(Convert.ToInt64(sender.getData("CharacterID")), 1);
-                
-                Item item = CreateItem(player.Helper.SelectItem(userItems[index].IID));
+                List<Database.Models.Item> userItems = player.CharacterController.Character.Item.ToList();
+
+                Item item = CreateItem(userItems[index]);
                 RPChat.SendMessageToPlayer(sender, item.ItemInfo, ChatMessageType.ServerInfo);
-                
+
             }
             else if (eventName == "UsingInformationsItem")
             {
-                Player player = Players.Single(p => sender.hasData("AccountID") && p.Key == sender.getData("AccountID")).Value;
-                int index = Convert.ToInt32(API.getEntityData(sender, "SelectedItem"));
-                List<ItemList> userItems = player.Helper.SelectItemsList(Convert.ToInt64(sender.getData("CharacterID")), 1);
-                ItemEditor userItem = player.Helper.SelectItem(userItems[index].IID);
+                var player = sender.GetAccountController();
 
-                Item item = CreateItem(player.Helper.SelectItem(userItems[index].IID));
+                int index = Convert.ToInt32(API.getEntityData(sender, "SelectedItem"));
+                List<Database.Models.Item> userItems = player.CharacterController.Character.Item.ToList();
+
+                Item item = CreateItem(userItems[index]);
                 RPChat.SendMessageToPlayer(sender, item.UseInfo, ChatMessageType.ServerInfo);
-                
+
             }
             else if (eventName == "BackToItemList")
             {
-                Player player = Players.Single(p => sender.hasData("AccountID") && p.Key == sender.getData("AccountID")).Value;
-                string itemsJson = JsonConvert.SerializeObject(player.Helper.SelectItemsList(Convert.ToInt64(sender.getData("CharacterID")), 1));
+                var player = sender.GetAccountController();
+                string itemsJson = JsonConvert.SerializeObject(player.CharacterController.Character.Item.ToList());
                 API.triggerClientEvent(sender, "ShowItems", itemsJson);
             }
             //args[0] to numer na jaki dzwoni
             else if (eventName == "OnPlayerTelephoneCall")
             {
-                Player senderPlayer = Players.First(p => p.Key == sender.getData("AccountID")).Value;
+                var player = sender.GetAccountController();
 
-                if (senderPlayer.HasData("CellphoneTalking"))
+                if (Convert.ToInt32(args[0]) == 555 && player.CharacterController.OnDutyGroupId.HasValue &&
+                    player.CharacterController.Character.Worker.First(x => x.Group.Id == player.CharacterController.OnDutyGroupId).Group.GroupType == GroupType.CrimeGroup)
                 {
-                    RPChat.SendMessageToPlayer(sender, "Obecnie już z kimś rozmawiasz.", ChatMessageType.ServerInfo);
+                    CrimeGroup group =
+                        RPGroups.Groups.Single(g => g.Id == player.CharacterController.OnDutyGroupId.Value) as
+                            CrimeGroup;
+                    if (group != null && group.Data.GroupType == GroupType.CrimeGroup &&
+                        group.CanPlayerCallCrimeBot(sender.GetAccountController()))
+                    {
+                        List<string> names = CrimeBotHelper.GetPositions().Select(n => n.Name).ToList();
+                        API.shared.triggerClientEvent(sender, "OnPlayerCalledCrimeBot", names);
+                        return;
+                    }
+                }
+
+                if (sender.GetAccountController().CharacterController.CellphoneController.CurrentlyTalking)
+                {
+                    sender.Notify("Obecnie prowadzisz rozmowę telefoniczną. Zakończ ją klawiszem END.");
                     return;
                 }
                 ////animka dzwonienia przez telefon
                 //API.shared.playPlayerAnimation(senderPlayer.Client, (int)(AnimationFlags.AllowPlayerControl | AnimationFlags.Loop),
                 //    "cellphone@first_person", "cellphone_call_listen_base");
 
-                long? gid;
-                
-                if (Players.Any(p => p.Value.CellphoneNumber == Convert.ToInt32(args[0])))
-                {                   
-                    Player getterPlayer = Players.First(t => t.Value.CellphoneNumber == Convert.ToInt32(args[0])).Value;
+                if (API.getAllPlayers().Any(p => p.GetAccountController().CharacterController.CellphoneController.Number == (int)args[0]))
+                {
+                    var getter = API.getAllPlayers()
+                        .Single(x => x.GetAccountController().CharacterController.CellphoneController.Number ==
+                                     (int) args[0]);
 
-                    if (getterPlayer.HasSyncedData("CellphoneTalking"))
+                    if (getter.GetAccountController().CharacterController.CellphoneController.CurrentlyTalking)
                     {
                         API.shared.sendChatMessageToPlayer(sender, "~#ffdb00~",
-                                "Wybrany abonent prowadzi obecnie rozmowę, spróbuj później.");
+                            "Wybrany abonent prowadzi obecnie rozmowę, spróbuj później.");
                         return;
                     }
 
-                    TelephoneCall telephoneCall = new TelephoneCall(senderPlayer, getterPlayer);
-                    CurrentCalls.Add(telephoneCall);
-                    
-                    telephoneCall.Timer.Elapsed += (o, eventArgs) =>
+                    var call = new TelephoneCall(sender, getter);
+                    sender.GetAccountController().CharacterController.CellphoneController.CurrentCall = call;
+
+                    call.Timer.Elapsed += (o, eventArgs) =>
                     {
                         API.shared.sendChatMessageToPlayer(sender, "~#ffdb00~",
                             "Wybrany abonent ma wyłączony telefon, bądź znajduje się poza zasięgiem, spróbuj później.");
-                        telephoneCall.Dispose();
-                        CurrentCalls.Remove(telephoneCall);                    
+                        call.Dispose();
                     };
                 }
                 else
@@ -161,42 +169,29 @@ namespace Serverside.Items
             }
             else if (eventName == "OnPlayerTelephoneTurnoff")
             {
-                Player player = Players.Single(p => sender.hasData("AccountID") && p.Key == sender.getData("AccountID")).Value;
+                var call = sender.GetAccountController().CharacterController.CellphoneController.CurrentCall;
+                call?.Dispose();
 
-                ItemEditor telephoneEditor = player.Helper.SelectItem(player.CellphoneId);
-                if (telephoneEditor?.CurrentlyInUse != null && (bool)telephoneEditor.CurrentlyInUse)
-                {
-                    telephoneEditor.CurrentlyInUse = false;
-                    player.Helper.UpdateItem(telephoneEditor);
+                //TODO Wyłączanie telefonu
 
-                    TelephoneCall call = CurrentCalls.First(s => s.Sender.Client == sender || s.Getter.Client == sender);
-                    if (call != null)
-                    {
-                        call.Dispose();
-                        CurrentCalls.Remove(call);
-                    }
-
-                    player.ResetSyncedData("CellphoneID");
-
-                    RPChat.SendMessageToNearbyPlayers(sender, String.Format("wyłącza {0}", telephoneEditor.Name), ChatMessageType.ServerMe);
-
-                    API.sendNotificationToPlayer(sender, String.Format("Telefon {0} został wyłączony.", telephoneEditor.Name));
-                }
             }
+            //Rządanie otworzenia okienka telefonu
             else if (eventName == "OnPlayerPullCellphoneRequest")
             {
-                Player player = Players.Single(p => sender.hasData("AccountID") && p.Key == sender.getData("AccountID")).Value;
-
-                API.triggerClientEvent(sender, "OnPlayerPulledCellphone", player.Helper.SelectItem(player.CellphoneId).Name,
-                    JsonConvert.SerializeObject(player.CellphoneContacts), JsonConvert.SerializeObject(player.CellphoneMessages));
+                var cellphone = sender.GetAccountController().CharacterController.CellphoneController;
+                API.triggerClientEvent(sender, "OnPlayerPulledCellphone", cellphone.Data.Name,
+                    JsonConvert.SerializeObject(cellphone.Contacts),
+                    JsonConvert.SerializeObject(cellphone.Messages));
             }
+            //Odebranie rozmowy
             else if (eventName == "OnPlayerCellphonePickUp")
             {
-                TelephoneCall telephoneCall = CurrentCalls.First(s => s.Sender.Client == sender || s.Getter.Client == sender);
+                var cellphone = sender.GetAccountController().CharacterController.CellphoneController;
+                TelephoneCall telephoneCall = cellphone.CurrentCall;
 
-                if (telephoneCall.Getter.HasSyncedData("CellphoneTalking"))
+                if (telephoneCall.Getter.GetAccountController().CharacterController.CellphoneController.CurrentlyTalking)
                 {
-                    API.sendChatMessageToPlayer(telephoneCall.Getter.Client, "~#ffdb00~",
+                    API.sendChatMessageToPlayer(telephoneCall.Getter, "~#ffdb00~",
                         "Aby odebrać musisz zakończyć bieżące połączenie.");
                     return;
                 }
@@ -206,55 +201,59 @@ namespace Serverside.Items
 
                 telephoneCall.Open();
 
-                API.sendChatMessageToPlayer(telephoneCall.Getter.Client, "~#ffdb00~",
+                API.sendChatMessageToPlayer(telephoneCall.Getter, "~#ffdb00~",
                     "Odebrano telefon, aby zakończyć rozmowę naciśnij klawisz END.");
-                API.sendChatMessageToPlayer(telephoneCall.Sender.Client, "~#ffdb00~",
+                API.sendChatMessageToPlayer(telephoneCall.Sender, "~#ffdb00~",
                     "Rozmówca odebrał telefon, aby zakończyć rozmowę naciśnij klawisz END.");
             }
             else if (eventName == "OnPlayerCellphoneEnd")
             {
-                TelephoneCall telephoneCall = CurrentCalls.First(s => s.Sender.Client == sender || s.Getter.Client == sender);
+                var controller = sender.GetAccountController().CharacterController.CellphoneController;
 
-                if (telephoneCall != null && telephoneCall.CurrentlyTalking)
+                if (controller != null && controller.CurrentlyTalking)
                 {
-                    telephoneCall.Dispose();
-                    CurrentCalls.Remove(telephoneCall);
+                    sender.GetAccountController().CharacterController.CellphoneController.CurrentCall = null;
 
-                    API.shared.sendChatMessageToPlayer(telephoneCall.Sender.Client, "~#ffdb00~",
+                    API.shared.sendChatMessageToPlayer(controller.CurrentCall.Sender, "~#ffdb00~",
                         "Rozmowa zakończona.");
-                    API.shared.sendChatMessageToPlayer(telephoneCall.Getter.Client, "~#ffdb00~",
+                    API.shared.sendChatMessageToPlayer(controller.CurrentCall.Getter, "~#ffdb00~",
                         "Rozmowa zakończona.");
                 }
             }
             //args[0] to numer kontaktu args[1] to nazwa 
             else if (eventName == "OnPlayerTelephoneContactAdded")
             {
-                Player senderPlayer = Players.First(p => p.Key == sender.getData("AccountID")).Value;
-                if (!senderPlayer.HasSyncedData("CellphoneID"))
+                if (!sender.GetAccountController().CharacterController.Character.Item
+                    .Any(i => i.ItemType == (int)ItemType.Cellphone && i.CurrentlyInUse.HasValue &&
+                              i.CurrentlyInUse.Value))
                 {
-                    API.sendNotificationToPlayer(senderPlayer.Client, "Musisz mieć włączony telefon.");
+                    sender.Notify("Musisz mieć włączony telefon.");
                     return;
                 }
 
                 int number = Convert.ToInt32(args[0]);
                 string name = args[1].ToString();
 
-                TelephoneContactEditor c = new TelephoneContactEditor()
+                TelephoneContact c = new TelephoneContact
                 {
                     Name = name,
                     Number = number,
-                    TID = (long)senderPlayer.GetSyncedData("CellphoneID"), 
+                    Id = sender.GetAccountController().CharacterController.Character.Item
+                        .Single(i => i.ItemType == (int)ItemType.Cellphone && i.CurrentlyInUse.HasValue &&
+                                     i.CurrentlyInUse.Value).Id
                 };
-                senderPlayer.Helper.AddContact(c);
+                sender.GetAccountController().CharacterController.CellphoneController.Contacts.Add(c);
+                sender.GetAccountController().CharacterController.CellphoneController.Save();
             }
         }
+
+
 
         #region Komendy
         [Command("p")]
         public void ShowItemsList(Client sender)
         {
-            Player player = Players.Single(p => sender.hasData("AccountID") && p.Key == sender.getData("AccountID")).Value;
-            API.triggerClientEvent(sender, "ShowItems", JsonConvert.SerializeObject(player.Helper.SelectItemsList(player.Cid, 1)));
+            API.triggerClientEvent(sender, "ShowItems", JsonConvert.SerializeObject(sender.GetAccountController().CharacterController.Character.Item.ToList()));
         }
         #endregion
     }

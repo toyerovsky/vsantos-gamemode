@@ -1,94 +1,68 @@
 ﻿using System;
 using GTANetworkServer;
-using Serverside.Database;
-using Serverside.DatabaseEF6;
-using Serverside.DatabaseEF6.Models;
-using Serverside.Core.Extenstions;
+using Serverside.Core.Finders;
+using Serverside.Extensions;
 
 namespace Serverside.Core.Money
-{
-    public class MoneyChangedEventArgs : EventArgs
-    {
-        public Client Player { get; }
-
-        public MoneyChangedEventArgs(Client player)
-        {
-            Player = player;
-        }
-    }
-    
+{    
     public class MoneyManager
     {
-        public delegate void MoneyChangedEventHandler(Client sender, decimal newvalue, decimal oldvalue);
+        private delegate void MoneyChangedEventHandler(Client sender);
 
-        public event MoneyChangedEventHandler MoneyChanged;
+        private static event MoneyChangedEventHandler MoneyChanged;
 
-        API api = new API();
+        private static readonly API Api = new API();
 
         public MoneyManager()
         {
             MoneyChanged += RPMoney_MoneyChanged;
         }
 
-        private void RPMoney_MoneyChanged(Client sender, decimal newvalue, decimal oldvalue)
+        private static void RPMoney_MoneyChanged(Client sender)
         {
-            //Character givingCharacterEditor = CharacterDatabaseHelper.SelectCharacter(Convert.ToInt64(api.getEntityData(sender.handle, "CharacterID")));
             //tu sie wysyla event, zeby narysopwalo graczowi stan jego gotowki
-            api.triggerClientEvent(sender, "Money_Changed", String.Format(@"${0}", newvalue));
+            Api.triggerClientEvent(sender, "Money_Changed",
+                $@"${sender.GetAccountController().CharacterController.Character.Money}");
         }
 
-        public bool CanPay(AccountController account, decimal count, bool bank = false)
+        public static bool CanPay(Client sender, decimal count, bool bank = false)
         {
-            //Character editor = CharacterDatabaseHelper.SelectCharacter(cid);
+            var player = sender.GetAccountController();
             if (bank)
             {
-                return account.CharacterController.Character.BankMoney >= count;
+                return player.CharacterController.Character.BankMoney >= count;
             }
-            return account.CharacterController.Character.Money >= count;
+            return player.CharacterController.Character.Money >= count;
         }
 
-        public void AddMoney(AccountController account, decimal count, bool bank = false)
+        public static void AddMoney(Client sender, decimal count, bool bank = false)
         {
-            //Character character = CharacterDatabaseHelper.SelectCharacter(cid);
-            decimal newvalue = 0;
-            decimal oldvalue = 0;
+            var player = sender.GetAccountController();
             if (bank)
             {
-                account.CharacterController.Character.BankMoney += count;
-                newvalue = account.CharacterController.Character.BankMoney;
+                player.CharacterController.Character.BankMoney += count;
             }
             else
             {
-                account.CharacterController.Character.Money += count;
-                newvalue = account.CharacterController.Character.Money;
+                player.CharacterController.Character.Money += count;
             }
-            oldvalue = newvalue - count;
-            account.CharacterController.Save();
-            //CharacterDatabaseHelper.UpdateCharacter(character);
-            //MoneyChangedEventArgs e = new MoneyChangedEventArgs(account.Client);
-            if (MoneyChanged != null) MoneyChanged.Invoke(account.Client, newvalue, oldvalue);
+            player.CharacterController.Save();
+            if (MoneyChanged != null) MoneyChanged.Invoke(sender);
         }
 
-        public void RemoveMoney(AccountController account, decimal count, bool bank = false)
+        public static void RemoveMoney(Client sender, decimal count, bool bank = false)
         {
-            //Character character = CharacterDatabaseHelper.SelectCharacter(account);
-            decimal newvalue = 0;
-            decimal oldvalue = 0;
+            var player = sender.GetAccountController();
             if (bank)
             {
-                account.CharacterController.Character.BankMoney -= count;
-                newvalue = account.CharacterController.Character.BankMoney;
+                player.CharacterController.Character.BankMoney -= count;
             }
             else
             {
-                account.CharacterController.Character.Money -= count;
-                newvalue = account.CharacterController.Character.Money;
+                player.CharacterController.Character.Money -= count;
             }
-            oldvalue = newvalue + count;
-            account.CharacterController.Save();
-            //CharacterDatabaseHelper.UpdateCharacter(character);
-            //MoneyChangedEventArgs e = new MoneyChangedEventArgs(account.Client);
-            if (MoneyChanged != null) MoneyChanged.Invoke(account.Client, newvalue, oldvalue);
+            player.CharacterController.Save();
+            if (MoneyChanged != null) MoneyChanged.Invoke(sender);
         }
     }
 }
