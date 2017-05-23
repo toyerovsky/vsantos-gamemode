@@ -1,10 +1,8 @@
-﻿using System;
-using GTANetworkServer;
-using Serverside.Core.Finders;
-using Serverside.Extensions;
+﻿using GTANetworkServer;
+using Serverside.Core.Extensions;
 
 namespace Serverside.Core.Money
-{    
+{
     public class MoneyManager
     {
         private delegate void MoneyChangedEventHandler(Client sender);

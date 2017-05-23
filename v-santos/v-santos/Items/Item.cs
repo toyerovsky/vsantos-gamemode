@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using GTANetworkServer;
 using GTANetworkShared;
 using Serverside.Controllers;
-using Serverside.Core;
-using Serverside.Core.Telephone;
 using Serverside.Database;
-using Serverside.Database.Models;
-using Serverside.Extensions;
+using Serverside.Core.Extensions;
 
 namespace Serverside.Items
 {

@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
-using System.Windows.Media;
 using GTANetworkServer;
 using Serverside.Core;
-using Serverside.Extensions;
 using Serverside.Groups.Base;
 using Color = GTANetworkServer.Constant.Color;
+using Serverside.Core.Extensions;
 
 namespace Serverside.Groups
 {

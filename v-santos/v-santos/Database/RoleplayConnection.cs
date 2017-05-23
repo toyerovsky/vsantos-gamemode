@@ -1,7 +1,8 @@
 ﻿using GTANetworkServer;
 using MySql.Data.Entity;
 using MySql.Data.MySqlClient;
-using Serverside.Core.Extenstions;
+using Serverside.Core.Extensions;
+using Serverside.Database.Models;
 using Serverside.DatabaseEF6.Models;
 using System;
 using System.Data.Entity;
@@ -29,7 +30,7 @@ namespace Serverside.Database
         public virtual DbSet<Account> Accounts { get; set; }
         public virtual DbSet<Ban> Bans { get; set; }
         public virtual DbSet<Character> Characters { get; set; }
-        public virtual DbSet<DatabaseEF6.Models.Vehicle> Vehicles { get; set; }
+        public virtual DbSet<Database.Models.Vehicle> Vehicles { get; set; }
         public virtual DbSet<Group> Groups { get; set; }
         public virtual DbSet<Item> Items { get; set; }
         public virtual DbSet<Building> Buildings { get; set; }

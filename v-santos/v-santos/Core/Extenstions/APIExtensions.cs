@@ -4,7 +4,7 @@ using System.Linq;
 using GTANetworkServer;
 using GTANetworkShared;
 
-namespace Serverside.Extensions
+namespace Serverside.Core.Extensions
 {
     public static class APIExtensions
     {

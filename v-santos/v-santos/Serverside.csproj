@@ -45,10 +45,10 @@
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="GTANetworkServer">
-      <HintPath>..\..\..\..\..\..\..\gtavrp\latest\GTANetworkServer.exe</HintPath>
+      <HintPath>E:\gtavrp\latest\GTANetworkServer.exe</HintPath>
     </Reference>
     <Reference Include="GTANetworkShared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60c67de1b3b675de, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\..\..\gtavrp\latest\GTANetworkShared.dll</HintPath>
+      <HintPath>E:\gtavrp\latest\GTANetworkShared.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
@@ -59,7 +59,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\..\..\..\..\gtavrp\latest\Newtonsoft.Json.dll</HintPath>
+      <HintPath>E:\gtavrp\latest\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -95,6 +95,20 @@
     <Compile Include="Core\Telephone\TelephoneCall.cs" />
     <Compile Include="Core\Telephone\TelephoneHelper.cs" />
     <Compile Include="Core\Validator.cs" />
+    <Compile Include="Database\ForumDatabaseHelper.cs" />
+    <Compile Include="Database\Models\Account.cs" />
+    <Compile Include="Database\Models\Ban.cs" />
+    <Compile Include="Database\Models\Building.cs" />
+    <Compile Include="Database\Models\Character.cs" />
+    <Compile Include="Database\Models\CrimeBot.cs" />
+    <Compile Include="Database\Models\Description.cs" />
+    <Compile Include="Database\Models\Group.cs" />
+    <Compile Include="Database\Models\Item.cs" />
+    <Compile Include="Database\Models\TelephoneContact.cs" />
+    <Compile Include="Database\Models\TelephoneMessage.cs" />
+    <Compile Include="Database\Models\Vehicle.cs" />
+    <Compile Include="Database\Models\Worker.cs" />
+    <Compile Include="Database\RoleplayConnection.cs" />
     <Compile Include="Groups\Base\CityHall.cs" />
     <Compile Include="Groups\Base\Group.cs" />
     <Compile Include="Groups\Enums.cs" />

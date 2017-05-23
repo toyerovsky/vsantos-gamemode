@@ -7,9 +7,9 @@ using GTANetworkShared;
 using Serverside.Controllers;
 using Serverside.Core.Login;
 using Serverside.Database;
-using Serverside.Extensions;
 using Serverside.Groups;
 using Serverside.Groups.Base;
+using Serverside.Core.Extensions;
 
 namespace Serverside.Core
 {

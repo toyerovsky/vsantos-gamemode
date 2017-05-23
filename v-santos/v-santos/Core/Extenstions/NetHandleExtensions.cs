@@ -2,7 +2,7 @@
 using GTANetworkShared;
 using Serverside.Controllers;
 
-namespace Serverside.Extensions
+namespace Serverside.Core.Extensions
 {
     public static class NetHandleExtensions
     {

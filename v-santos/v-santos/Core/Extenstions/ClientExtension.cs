@@ -1,11 +1,10 @@
 ﻿using System.Linq;
 using GTANetworkServer;
 using Serverside.Controllers;
-using Serverside.Core;
 using Serverside.Core.Money;
 using Serverside.Groups;
 
-namespace Serverside.Extensions
+namespace Serverside.Core.Extensions
 {
     public static class ClientExtensions
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using GTANetworkServer;
 using Serverside.Database;
 using Serverside.Database.Models;
-using Serverside.Extensions;
+using Serverside.Core.Extensions;
 
 namespace Serverside.Controllers
 {
@@ -55,8 +55,6 @@ namespace Serverside.Controllers
             Character.LastPositionX = AccountController.Client.position.X;
             Character.LastPositionY = AccountController.Client.position.Y;
             Character.LastPositionZ = AccountController.Client.position.Z;
-            Character.LastPositionRotX = AccountController.Client.rotation.X;
-            Character.LastPositionRotY = AccountController.Client.rotation.Y;
             Character.LastPositionRotZ = AccountController.Client.rotation.Z;
             Character.Model = AccountController.Client.model.GetHashCode();
             ContextFactory.Instance.Characters.Attach(Character);

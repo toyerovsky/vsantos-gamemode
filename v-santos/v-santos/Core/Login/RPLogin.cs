@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using Serverside.Controllers;
 using Serverside.Database;
 using Serverside.Database.Models;
-using Serverside.Extensions;
+using Serverside.Core.Extensions;
 
 namespace Serverside.Core.Login
 {

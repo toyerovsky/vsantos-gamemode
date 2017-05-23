@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using GTANetworkServer;
 using Serverside.Core;
-using Serverside.DatabaseEF6;
-using Serverside.DatabaseEF6.Models;
-using Serverside.Core.Extenstions;
+using Serverside.Database;
+using Serverside.Database.Models;
+using Serverside.Core.Extensions;
 
 namespace Serverside
 {
