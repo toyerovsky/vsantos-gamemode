@@ -7,9 +7,8 @@ namespace Serverside.Database.Models
         [Key]
         //ID pracownika
         public long Id { get; set; }
-        //ID grupy
+
         public Group Group { get; set; }
-        //Id postaci
         public Character Character { get; set; }
 
         public int Salary { get; set; }

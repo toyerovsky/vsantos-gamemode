@@ -1,5 +1,4 @@
-﻿using GTANetworkShared;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -32,8 +31,8 @@ namespace Serverside.Database.Models
         public virtual ICollection<Vehicle> Vehicle { get; set; }
         public virtual ICollection<Item> Item { get; set; }
         public virtual ICollection<Building> Building { get; set; }
-
-        public List<Group> Group { get; set; }
+        public virtual ICollection<Description> Descriptions { get; set; }
+        public virtual ICollection<Worker> Worker { get; set; }
 
         public decimal Money { get; set; }
         public long BankAccountNumber { get; set; }
@@ -50,16 +49,8 @@ namespace Serverside.Database.Models
         public short RunningEfficiency { get; set; }
         public short DivingEfficiency { get; set; }
 
-        //public long? FirstGID { get; set; }
-        //public long? SecondGID { get; set; }
-        //public long? ThirdGID { get; set; }
-
         public bool HasIDCard { get; set; }
         public bool HasDrivingLicense { get; set; }
-
-        public int PhoneType { get; set; }
-        [Index("IX_PhoneNumber", IsUnique = true)]
-        public int PhoneNumber { get; set; }
 
         //Pomysł zezwolenie na bron jako enum, zeby byly różne typy licencji
 
@@ -74,10 +65,11 @@ namespace Serverside.Database.Models
         public float LastPositionX { get; set; }
         public float LastPositionY { get; set; }
         public float LastPositionZ { get; set; }
+        public float LastPositionRotX { get; set; }
+        public float LastPositionRotY { get; set; }
         public float LastPositionRotZ { get; set; }
 
         // public Vector3 SpawnPosition { get; set; }
-
         public int CurrentDimension { get; set; }
 
         public int BWState { get; set; }
@@ -89,7 +81,7 @@ namespace Serverside.Database.Models
         public int? Skin { get; set; }
 
         //TODO Dodać wszystkie pola na możliwości ubrania
-        public virtual ICollection<Worker> Job { get; set; }
+        public int Job { get; set; }
         public decimal? MoneyJob { get; set; }
         public decimal? JobLimit { get; set; }
     }

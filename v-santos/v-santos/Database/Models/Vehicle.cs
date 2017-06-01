@@ -1,5 +1,6 @@
-﻿using GTANetworkShared;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using GTANetworkShared;
 
 namespace Serverside.Database.Models
 {
@@ -16,7 +17,9 @@ namespace Serverside.Database.Models
         //public int OwnerType { get; set; } // lepiej sprawdzać czy characterid lub groupid == null
 
         public string Name { get; set; }
-        public string Registration { get; set; }
+        public string NumberPlate { get; set; }
+
+        public int NumberPlateStyle { get; set; }
 
         public virtual VehicleHash VehicleHash { get; set; }
 
@@ -26,12 +29,13 @@ namespace Serverside.Database.Models
         public float SpawnPositionZ { get; set; }
 
         //public Vector3 RotationPosition { get; set; }
-        public float RotationPositionX { get; set; }
-        public float RotationPositionY { get; set; }
-        public float RotationPositionZ { get; set; }
+        public float SpawnRotationX { get; set; }
+        public float SpawnRotationY { get; set; }
+        public float SpawnRotationZ { get; set; }
 
         public bool IsSpawned { get; set; }
-        public double EngineMultipler { get; set; }
+        public double EnginePowerMultipler { get; set; }
+        public double EngineTorqueMultipler { get; set; }
         public double Health { get; set; }
         public bool Door1Damage { get; set; }
         public bool Door2Damage { get; set; }
@@ -45,5 +49,7 @@ namespace Serverside.Database.Models
         public int SecondaryColor { get; set; }
         public int WheelType { get; set; }
         public int WheelColor { get; set; }
+
+        public virtual ICollection<Item> Tuning { get; set; }
     }
 }

@@ -1,8 +1,7 @@
-﻿using GTANetworkShared;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Serverside.DatabaseEF6.Models
+namespace Serverside.Database.Models
 {
     public class Building
     {
@@ -35,10 +34,10 @@ namespace Serverside.DatabaseEF6.Models
         public bool HasCCTV { get; set; }
         public bool HasSafe { get; set; }
 
-        public int InternalDismension { get; set; }
+        public int InternalDimension { get; set; }
 
         public string Description { get; set; }
         //Zamysł: Przy tworzeniu przedmiotu będzie zapisywane kto go stworzył, a jak stworzy go serwer to 0
-        public long CreatorsUID { get; set; }
+        public long CreatorsId { get; set; }
     }
 }

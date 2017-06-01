@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using Serverside.Groups;
+using Serverside.Groups.Base;
 
 namespace Serverside.Database.Models
 {
@@ -15,9 +18,11 @@ namespace Serverside.Database.Models
 
         public decimal Money { get; set; }
 
-        public int GroupType { get; set; }
+        public GroupType GroupType { get; set; }
 
         //TODO Dodać do helpera
         public string Color { get; set; }
+
+        public virtual ICollection<Worker> Workers { get; set; }
     }
 }

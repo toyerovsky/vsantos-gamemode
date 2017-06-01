@@ -12,17 +12,16 @@ namespace Serverside.Database.Models
         //Id właściciela
         public Character Character { get; set; }
         public Building Building { get; set; }
+        public Vehicle Vehicle { get; set; }
         //Typ właściciela przedmiotu 0 leży na ziemi 1 gracz 2 grupa 3 budynek(sejf)
         //public int OwnerType { get; set; } // lepiej sprawdzać czy characterid lub BuildingId == null
 
         //Zamysł: Przy tworzeniu przedmiotu będzie zapisywane kto go stworzył, a jak stworzy go serwer to 0
         public long CreatorId { get; set; }
 
-        //TODO Dodać do helpera
-        //Kiedy właścicielem jest firma pole wykorzystujemy do trzymania ceny za ten przedmiot
+        //Kiedy właścicielem jest budynek pole wykorzystujemy do trzymania ceny za ten przedmiot
         public decimal? Cost { get; set; }
 
-        //TODO Dodać do helpera
         //Pomysł może kiedyś będzie jakiś system wagi
         public int Weight { get; set; }
 

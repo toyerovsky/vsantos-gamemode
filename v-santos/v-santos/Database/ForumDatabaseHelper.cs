@@ -1,7 +1,7 @@
-﻿using GTANetworkServer;
-using MySql.Data.MySqlClient;
-using System;
+﻿using System;
 using System.Data;
+using MySql.Data.MySqlClient;
+using Serverside.Extensions;
 
 namespace Serverside.Database
 {
@@ -16,16 +16,14 @@ namespace Serverside.Database
         {
             if (UserExist(email))
             {
-                long id = 0;
-                string hash = string.Empty;
-                string salt = string.Empty;
                 using (MySqlConnection connection = new MySqlConnection(ForumConnectionString))
                 using (MySqlCommand command = new MySqlCommand())
                 {
                     connection.Open();
                     command.Connection = connection;
                     command.CommandType = CommandType.Text;
-                    command.CommandText = "SELECT member_id, members_pass_hash, members_pass_salt FROM core_members WHERE email = @P0";
+                    command.CommandText =
+                        "SELECT member_id, members_pass_hash, members_pass_salt FROM core_members WHERE email = @P0";
 
                     command.Parameters.Add(new MySqlParameter("@P0", email));
 
@@ -35,11 +33,12 @@ namespace Serverside.Database
                         {
                             if (reader.Read())
                             {
-                                id = reader.GetInt64(0);
-                                hash = reader.GetString(1);
-                                salt = reader.GetString(2);
+                                var id = reader.GetInt64(0);
+                                var hash = reader.GetString(1);
+                                var salt = reader.GetString(2);
                                 if (hash != "" && salt != "")
                                 {
+
                                     if (hash.Equals(GenerateIpbHash(password, salt)))
                                     {
                                         return id;
@@ -84,7 +83,7 @@ namespace Serverside.Database
                 connection.Open();
                 command.Connection = connection;
                 command.CommandType = CommandType.Text;
-                command.CommandText = "SELECT members_pass_hash FROM core_members WHERE name = @P0";
+                command.CommandText = "SELECT members_pass_hash FROM core_members WHERE email = @P0";
 
                 command.Parameters.Add(new MySqlParameter("@P0", login));
 
@@ -123,7 +122,7 @@ namespace Serverside.Database
                 command.CommandType = CommandType.Text;
 
                 command.CommandText =
-                    "SELECT members_pass_salt FROM core_members WHERE name = @P0";
+                    "SELECT members_pass_salt FROM core_members WHERE email = @P0";
                 command.Parameters.Add(new MySqlParameter("@P0", login));
 
                 using (MySqlDataReader reader = command.ExecuteReader())
@@ -160,7 +159,7 @@ namespace Serverside.Database
                 command.CommandType = CommandType.Text;
 
                 command.CommandText =
-                    "SELECT member_id FROM core_members WHERE name = @P0";
+                    "SELECT member_id FROM core_members WHERE email = @P0";
                 command.Parameters.Add(new MySqlParameter("@P0", login));
 
                 using (MySqlDataReader reader = command.ExecuteReader())

@@ -13,9 +13,9 @@ namespace Serverside.Database.Models
         [EmailAddress]
         [StringLength(50)]
         public string Email { get; set; }
-        [Index("IX_SocialClub", IsUnique = true)]
+        [Index("IX_SocialClub", IsUnique = false)]
         [StringLength(50)]
-        public string SocialClub { get; set; }
+        public string SocialClub { get; set; }  
         [StringLength(16)]
         public string Ip { get; set; }
         public bool Online { get; set; }

@@ -8,6 +8,6 @@ namespace Serverside.Database.Models
         public long Id { get; set; }
         public Character Character { get; set; }
         public string Title { get; set; }
-        public string Descriptionn { get; set; }
+        public string Content { get; set; }
     }
 }
