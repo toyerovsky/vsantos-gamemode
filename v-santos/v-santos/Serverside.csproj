@@ -74,6 +74,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CharacterCreator\CharacterCreator.cs" />
+    <Compile Include="CharacterCreator\RPCharacterCreator.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CellphoneController.cs" />
     <Compile Include="Controllers\CharacterController.cs" />
@@ -141,6 +143,7 @@
   <ItemGroup>
     <Content Include="_Clientside\BwGui.js" />
     <Content Include="_Clientside\Cef.js" />
+	<Content Include="_Clientside\CharacterCreator.js" />
     <Content Include="_Clientside\CinematicCamera.js" />
     <Content Include="_Clientside\Core.js" />
     <Content Include="_Clientside\CornerBotMenu.js" />
