@@ -3,28 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using GTANetworkServer;
 using GTANetworkShared;
-using Serverside.Core.Extensions;
+using Serverside.Core.Telephone.Booth.Models;
+using Serverside.Extensions;
 
 namespace Serverside.Core.Telephone.Booth
 {
     public class RPTelephoneBooth : Script
     {
-        public static List<TelephoneCall> CurrentBoothCalls = new List<TelephoneCall>();
-
-        private List<TelephoneBooth> booths;
-        public List<TelephoneBooth> Booths
-        {
-            get { return booths; }
-            set
-            {
-                booths = value;
-                foreach (TelephoneBooth booth in value)
-                {
-                    booth.Intialize(API);
-                }
-            }
-        }
-
         public RPTelephoneBooth()
         {
             API.onClientEventTrigger += API_onClientEventTrigger;
@@ -34,18 +19,22 @@ namespace Serverside.Core.Telephone.Booth
         private void OnResourceStartHandler()
         {
             APIExtensions.ConsoleOutput("[RPTelephoneBooth] uruchomione pomyślnie.", ConsoleColor.DarkMagenta);
-            Booths = TelephoneHelper.GetTelephoneBooths();
+            foreach (var booth in XmlHelper.GetXmlObjects<TelephoneBoothModel>(Constant.ConstantAssemblyInfo.XmlDirectory + @"Booths\"))
+            {
+                //W konstruktorze spawnujemy budkę telefoniczną do gry
+                new TelephoneBooth(API, booth);
+            }
         }
 
         private void API_onClientEventTrigger(Client sender, string eventName, params object[] args)
         {
             //args[0] to numer na jaki dzwoni
-            if (eventName == "OnPlayerTelephoneBoothCall")
+            if (eventName == "OnPlayerTelephoneBoothCall" && sender.HasData("Booth"))
             {
-                var booth = Booths.First(b => b.Number == sender.getData("BoothNumber"));
-                if (sender.HasMoney(booth.Cost))
+                TelephoneBooth booth = sender.GetData("Booth");
+                if (sender.HasMoney(booth.Data.Cost))
                 {
-                    sender.RemoveMoney(booth.Cost);
+                    sender.RemoveMoney(booth.Data.Cost);
                     RPChat.SendMessageToNearbyPlayers(sender, "wrzuca monetę do automatu i wybiera numer", ChatMessageType.ServerMe);
 
                     if (API.getAllPlayers().Any(t => t.GetAccountController().CharacterController.CellphoneController.Number == Convert.ToInt32(args[0])))
@@ -61,14 +50,14 @@ namespace Serverside.Core.Telephone.Booth
                             return;
                         }
 
-                        TelephoneCall telephoneCall = new TelephoneCall(sender, getterPlayer, booth.Number);
+                        booth.CurrentCall = new TelephoneCall(sender, getterPlayer, booth.Data.Number);
 
-                        telephoneCall.Timer.Elapsed += (o, eventArgs) =>
+                        booth.CurrentCall.Timer.Elapsed += (o, eventArgs) =>
                         {
                             API.shared.sendChatMessageToPlayer(sender, "~#ffdb00~",
                                 "Wybrany abonent ma wyłączony telefon, bądź znajduje się poza zasięgiem, spróbuj później.");
-                            telephoneCall.Dispose();
-                            CurrentBoothCalls.Remove(telephoneCall);
+                            booth.CurrentCall.Dispose();
+                            booth.CurrentCall = null;
                         };
                     }
                     else
@@ -82,18 +71,19 @@ namespace Serverside.Core.Telephone.Booth
                     sender.Notify("Nie posiadasz wystarczającej ilości gotówki.");
                 }
             }
-            else if (eventName == "OnPlayerTelephoneBoothEnd")
+            else if (eventName == "OnPlayerTelephoneBoothEnd" && sender.HasData("Booth"))
             {
-                TelephoneCall telephoneCall = CurrentBoothCalls.First(s => s.Sender == sender || s.Getter == sender);
+                TelephoneBooth booth = sender.GetData("Booth");
 
-                if (telephoneCall != null && telephoneCall.CurrentlyTalking)
+                if (booth.CurrentCall != null && booth.CurrentCall.CurrentlyTalking)
                 {
-                    telephoneCall.Dispose();
+                    API.shared.sendChatMessageToPlayer(booth.CurrentCall.Sender, "~#ffdb00~",
+                        "Rozmowa zakończona.");
+                    API.shared.sendChatMessageToPlayer(booth.CurrentCall.Getter, "~#ffdb00~",
+                        "Rozmowa zakończona.");
 
-                    API.shared.sendChatMessageToPlayer(telephoneCall.Sender, "~#ffdb00~",
-                        "Rozmowa zakończona.");
-                    API.shared.sendChatMessageToPlayer(telephoneCall.Getter, "~#ffdb00~",
-                        "Rozmowa zakończona.");
+                    booth.CurrentCall.Dispose();
+                    booth.CurrentCall = null;
                 }
             }
         }
@@ -110,11 +100,13 @@ namespace Serverside.Core.Telephone.Booth
                 sender.Notify("Wprowadzono dane w nieprawidłowym formacie.");
             }
 
-            API.onChatCommand += (o, command, cancel) =>
+            API.onChatCommand += Handler;
+
+            void Handler(Client o, string command, CancelEventArgs cancel)
             {
                 if (o == sender && command == "/tu")
                 {
-                    TelephoneBooth booth = new TelephoneBooth
+                    TelephoneBoothModel booth = new TelephoneBoothModel
                     {
                         Position = new FullPosition
                         {
@@ -134,13 +126,14 @@ namespace Serverside.Core.Telephone.Booth
                         },
                         Cost = int.Parse(cost),
                         Number = int.Parse(number)
-
                     };
-                    TelephoneHelper.AddTelephoneBooth(booth);
-                    booth.Intialize(API);
+
+                    XmlHelper.AddXmlObject(booth, Constant.ConstantAssemblyInfo.XmlDirectory + @"Booths\");
+                    new TelephoneBooth(API, booth);
                     sender.Notify("Dodawanie budki zakończyło się pomyślnie.");
+                    API.onChatCommand -= Handler;
                 }
-            };
+            }
         }
         #endregion
     }
