@@ -6,7 +6,7 @@ using GTANetworkServer;
 using Serverside.Core;
 using Serverside.Database;
 using Serverside.Database.Models;
-using Serverside.Core.Extensions;
+using Serverside.Extensions;
 
 namespace Serverside.Controllers
 {
@@ -51,7 +51,7 @@ namespace Serverside.Controllers
             new AccountController(accountData, sender);
         }
 
-        public static bool RegisterAccount(Client sender, long userid)
+        public static bool RegisterAccount(Client sender, long userid, string email)
         {
             if (!DoesAccountExist(userid))
             {
@@ -59,6 +59,7 @@ namespace Serverside.Controllers
                 {
                     UserId = userid,
                     SocialClub = sender.name,
+                    Email = email,
                     Ip = sender.address
                 };
 
