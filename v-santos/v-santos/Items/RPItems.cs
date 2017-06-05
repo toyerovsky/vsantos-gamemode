@@ -18,22 +18,7 @@ namespace Serverside.Items
         public RPItems()
         {
             API.onResourceStart += API_onResourceStart;
-            API.onResourceStop += API_onResourceStop;
             API.onClientEventTrigger += API_onClientEventTrigger;
-        }
-
-        private void API_onResourceStop()
-        {
-            foreach (var player in API.getAllPlayers().Where(x => x.GetAccountController() != null))
-            {
-                var controller = player.GetAccountController();
-                foreach (var i in controller.CharacterController.Character.Item.Where(i => i.CurrentlyInUse == true)
-                    .ToList())
-                {
-                    i.CurrentlyInUse = false;
-                }
-                controller.Save();
-            }
         }
 
         private void API_onResourceStart()
