@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Timers;
 using GTANetworkServer;
-using Serverside.Core.Extensions;
+using Serverside.Extensions;
 
 namespace Serverside.Core.Telephone
 {
@@ -15,12 +15,7 @@ namespace Serverside.Core.Telephone
 
         public int BoothNumber { get; }
 
-        private bool _accepted;
-        public bool Accepted
-        {
-            get => _accepted;
-            set => _accepted = value;
-        }
+        public bool Accepted { get; set; }
 
         public Timer Timer { get; }
 

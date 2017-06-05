@@ -6,7 +6,7 @@ using GTANetworkServer;
 using Serverside.Core;
 using Serverside.Database;
 using Serverside.Database.Models;
-using Serverside.Core.Extensions;
+using Serverside.Extensions;
 
 namespace Serverside.Controllers
 {
@@ -60,6 +60,7 @@ namespace Serverside.Controllers
                     UserId = userid,
                     Email = email,
                     SocialClub = sender.name,
+                    Email = email,
                     Ip = sender.address
                 };
 

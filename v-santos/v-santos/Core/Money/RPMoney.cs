@@ -1,7 +1,7 @@
 ﻿using System;
 using GTANetworkServer;
-//using Serverside.Core.Finders;
-using Serverside.Core.Extensions;
+using Serverside.Core.Finders;
+using Serverside.Extensions;
 
 namespace Serverside.Core.Money
 {
@@ -45,22 +45,22 @@ namespace Serverside.Core.Money
                 sender.Notify("Nie możesz podać gotówki samemu sobie.");
                 return;
             }
+            
+            Client gettingPlayer;
 
-            //Client gettingPlayer;
+            if (PlayerFinder.TryFindClientInRadiusOfClientByServerId(sender, ID, 6, out gettingPlayer))
+            {
+                
+                //temu zabieramy
+                sender.RemoveMoney(safeMoneyCount);
 
-            //if (PlayerFinder.TryFindClientInRadiusOfClientByServerId(sender, ID, 6, out gettingPlayer))
-            //{
-            Client gettingPlayer = API.getPlayersInRadiusOfPlayer(6f, sender).Find(x => x.GetAccountController().ServerId == ID);
-            //temu zabieramy
-            sender.RemoveMoney(safeMoneyCount);
+                //temu dodajemy gotówke
+                gettingPlayer.AddMoney(safeMoneyCount);
 
-            //temu dodajemy gotówke
-            gettingPlayer.AddMoney(safeMoneyCount);
-
-            API.sendChatMessageToPlayer(sender,
-                $"~g~Osoba {gettingPlayer.name} otrzymała od ciebie ${safeMoneyCount}.");
-            API.sendChatMessageToPlayer(gettingPlayer, $"~g~Osoba {sender.name} przekazała ci ${safeMoneyCount}.");
-            //}
+                API.sendChatMessageToPlayer(sender,
+                    $"~g~Osoba {gettingPlayer.name} otrzymała od ciebie ${safeMoneyCount}.");
+                API.sendChatMessageToPlayer(gettingPlayer, $"~g~Osoba {sender.name} przekazała ci ${safeMoneyCount}.");
+            }
         }
     }
 }

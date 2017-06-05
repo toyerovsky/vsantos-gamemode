@@ -1,69 +1,56 @@
-﻿using System;
-using System.Linq;
-using System.Xml.Serialization;
-using GTANetworkServer;
+﻿using GTANetworkServer;
 using GTANetworkShared;
+using Serverside.Core.Telephone.Booth.Models;
 
 namespace Serverside.Core.Telephone.Booth
 {
-    [Serializable]
     public class TelephoneBooth
     {
-        public FullPosition Position { get; set; }
-        [XmlIgnore]
+        public TelephoneCall CurrentCall { get; set; }
+        public Client CurrentClient { get; set; }
+
+        public TelephoneBoothModel Data { get; set; }
         public Marker Marker { get; set; }
-        [XmlIgnore]
         public CylinderColShape ColShape { get; set; }
-        public int Number { get; set; }
-        public int Cost { get; set; }
-
-        public TelephoneBooth()
-        { }
-
-        public TelephoneBooth(int number, FullPosition position, int cost)
+        
+        private API Api { get; }
+        
+        public TelephoneBooth(API api, TelephoneBoothModel data)
         {
-            Number = number;
-            Position = position;
-            Cost = cost;
-        }
+            Api = api;
+            Data = data;
 
-        public void Intialize(API api)
-        {
-            api.createTextLabel($"BUDKA\nNumer: {Number}", new Vector3(Position.Position.X, Position.Position.Y, Position.Position.Z + 1), 7f, 1f, true);
-            ColShape = api.createCylinderColShape(Position.Position, 1f, 2f);
-            Marker = api.createMarker(1, Position.Position, new Vector3(0, 0, 0), new Vector3(1f, 1f, 1f),
+            api.createTextLabel($"BUDKA\nNumer: {Data.Number}", new Vector3(Data.Position.Position.X, Data.Position.Position.Y, Data.Position.Position.Z + 1), 7f, 1f, true);
+            ColShape = api.createCylinderColShape(Data.Position.Position, 1f, 2f);
+            Marker = api.createMarker(1, Data.Position.Position, new Vector3(0, 0, 0), new Vector3(1f, 1f, 1f),
                 new Vector3(1, 1, 1), 100, 255, 0, 0);
-
-            Marker.setData("BoothNumber", Number);
 
             ColShape.onEntityEnterColShape += (shape, entity) =>
             {
-                if (api.getEntityType(entity) == EntityType.Player && api.hasEntityData(Marker, "BoothBusy"))
+                if (shape == ColShape && api.getEntityType(entity) == EntityType.Player && CurrentCall != null)
                 {
                     api.sendNotificationToPlayer(api.getPlayerFromHandle(entity), "Ta budka obecnie jest używana.");
                 }
-                else if (api.getEntityType(entity) == EntityType.Player && api.hasEntityData(Marker, "BoothRinging"))
+                else if (shape == ColShape && api.getEntityType(entity) == EntityType.Player && api.hasEntityData(Marker, "BoothRinging"))
                 {
-                    api.setEntityData(Marker, "BoothBusy", true);
-                    TelephoneCall call = RPTelephoneBooth.CurrentBoothCalls.First(g => g.BoothNumber == Number);
-                    call.Open();
+                    CurrentClient = Api.getPlayerFromHandle(entity);
+                    CurrentCall?.Open();
                 }
-                else if (api.getEntityType(entity) == EntityType.Player)
+                else if (shape == ColShape && api.getEntityType(entity) == EntityType.Player && CurrentClient == null)
                 {
-                    api.setEntityData(entity, "BoothNumber", Number);
+                    CurrentClient = Api.getPlayerFromHandle(entity);
+                    api.setEntityData(entity, "Booth", this);
                     api.triggerClientEvent(api.getPlayerFromHandle(entity), "OnPlayerEnteredTelephonebooth");
                 }
             };
 
             ColShape.onEntityExitColShape += (shape, entity) =>
             {
-                if (api.getEntityType(entity) == EntityType.Player && api.hasEntityData(Marker, "thisooththisusy"))
+                if (shape == ColShape && api.getEntityType(entity) == EntityType.Player && CurrentCall != null)
                 {
-                    api.resetEntityData(Marker, "BoothBusy");
-                    api.resetEntityData(entity, "BoothNumber");
-
-                    TelephoneCall call = RPTelephoneBooth.CurrentBoothCalls.First(g => g.BoothNumber == Number);
-                    call.Dispose();
+                    CurrentClient = null;
+                    api.resetEntityData(entity, "Booth");
+                    CurrentCall?.Dispose();
                 }
             };
         }
