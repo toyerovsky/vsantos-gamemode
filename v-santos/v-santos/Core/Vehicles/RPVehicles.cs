@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using GTANetworkServer;
-using GTANetworkServer.Constant;
 using GTANetworkShared;
 using Newtonsoft.Json;
 using Serverside.Controllers;
@@ -11,15 +9,7 @@ using Serverside.Items;
 
 namespace Serverside.Core.Vehicles
 {
-    enum Doors
-    {
-        Hood,
-        Trunk,
-        Back,
-        Back2
-    }
-
-    class RPVehicles : Script
+    public sealed class RPVehicles : Script
     {
         private API Api => API.shared;
 
@@ -27,7 +17,6 @@ namespace Serverside.Core.Vehicles
         {
             API.onResourceStart += API_onResourceStart;
             API.onClientEventTrigger += API_onClientEventTrigger;
-            API.onResourceStop += API_onResourceStop;
         }
 
         private void API_onResourceStart()
@@ -35,31 +24,7 @@ namespace Serverside.Core.Vehicles
             API.consoleOutput("RPVehicles zostało uruchomione pomyslnie!");
         }
 
-        private void API_onResourceStop()
-        {
-            foreach (var v in Api.getAllVehicles())
-            {
-                if (v.GetVehicleController() != null)
-                {
-                    var controller = v.GetVehicleController();
-                    controller.Dispose();
-                }
-            }
-        }
-
         #region Komendy
-        [Command("fastcar", "~y~UŻYJ: ~w~ /fastcar model moc moment_obr (podajac 0 ignorujesz parametr)")]
-        public void CreateFastCar(Client sender, VehicleHash model, float moc, float torque)
-        {
-            var rot = API.getEntityRotation(sender.handle);
-            var veh = Api.createVehicle(model, sender.position, new Vector3(0, 0, rot.Z), new Random().Next(50), new Random().Next(50));
-
-            Api.setVehicleEngineTorqueMultiplier(veh, torque);
-            Api.setVehicleEnginePowerMultiplier(veh, moc);
-
-            Api.setPlayerIntoVehicle(sender, veh, -1);
-        }
-
         [Command("v", "~y~UŻYJ: ~w~ /v (z)")]
         public void ShowVehiclesList(Client sender, string trigger = null)
         {
@@ -76,7 +41,12 @@ namespace Serverside.Core.Vehicles
                 }
                 else
                 {
-                    string vehiclesJson = JsonConvert.SerializeObject(player.CharacterController.Character.Vehicle);
+                    string vehiclesJson = JsonConvert.SerializeObject(player.CharacterController.Character.Vehicle.Select(v => new
+                    {
+                        Id = v.Id,
+                        Name = v.VehicleHash.ToString(),
+                    }));
+
                     API.triggerClientEvent(sender, "OnPlayerShowVehicles", vehiclesJson);
                 }
             }
@@ -99,8 +69,7 @@ namespace Serverside.Core.Vehicles
             {
                 var userVehicle = sender.GetAccountController().CharacterController.Character.Vehicle.Single(v => v.Id == sender.GetData("SelectedVehicleID"));
                 sender.ResetData("SelectedVehicleID");
-                VehicleHash userVehicleHash = (VehicleHash)userVehicle.VehicleHash;
-                if (Api.getAllVehicles().Any(v => v.GetVehicleController().VehicleData.Id == userVehicle.Id))
+                if (Api.getAllVehicles().Any(v => v.GetVehicleController() != null && v.GetVehicleController().VehicleData.Id == userVehicle.Id))
                 {
                     //unspawn
                     var vehicle = Api.getAllVehicles().Single(v => v.GetVehicleController().VehicleData.Id == userVehicle.Id).GetVehicleController();
@@ -149,8 +118,13 @@ namespace Serverside.Core.Vehicles
                     Api.breakVehicleWindow(controller.Vehicle, 2, userVehicle.Window2Damage);
                     Api.breakVehicleWindow(controller.Vehicle, 3, userVehicle.Window3Damage);
                     Api.breakVehicleWindow(controller.Vehicle, 4, userVehicle.Window4Damage);
-                    //Api.setVehiclePrimaryColor(controller.Vehicle, userVehicle.PrimaryColor);
-                    //Api.setVehicleSecondaryColor(controller.Vehicle, userVehicle.SecondaryColor);
+
+                    var primaryColor = userVehicle.PrimaryColor.ToColor();
+                    Api.setVehicleCustomPrimaryColor(controller.Vehicle, primaryColor.red, primaryColor.green, primaryColor.blue);
+
+                    var secondaryColor = userVehicle.SecondaryColor.ToColor();
+                    Api.setVehicleCustomSecondaryColor(controller.Vehicle, secondaryColor.red, secondaryColor.green, secondaryColor.blue);
+
                     Api.setVehicleHealth(controller.Vehicle, (float)userVehicle.Health);
                     Api.setVehicleWheelType(controller.Vehicle, userVehicle.WheelType);
                     Api.setVehicleWheelColor(controller.Vehicle, userVehicle.WheelColor);
@@ -184,10 +158,8 @@ namespace Serverside.Core.Vehicles
 
                 float enginePower = (float)((vehicle.VehicleData.EnginePowerMultipler - 1.0) * 20.0 + 80);
 
-
-                //TODO zmienić to
-                //sender.Notify("Nazwa pojazdu: " + vehicle.VehicleData.Name +
-                //              "\nRejestracja pojazdu: " + vehicle.VehicleData.NumberPlate+ "\nMoc silnika: " + enginePower + " KM");
+                sender.Notify("Nazwa pojazdu: " + vehicle.VehicleData.VehicleHash.ToString() +
+                              "\nRejestracja pojazdu: " + vehicle.VehicleData.NumberPlate + "\nMoc silnika: " + enginePower + " KM");
 
             }
             else if (eventName == "OnPlayerChangeLockVehicle")
@@ -220,10 +192,8 @@ namespace Serverside.Core.Vehicles
             if (!shortInfo && data.Character.Id == sender.GetAccountController().CharacterController.Character.Id)
             {
                 float enginePower = (float)((data.EnginePowerMultipler - 1.0) * 20.0 + 80);
-                
-                //Co jest z polem name?
-                //sender.Notify($"Nazwa pojazdu: {data.Name} \nRejestracja pojazdu: {data.NumberPlate} \nMoc silnika: {enginePower}KM");
 
+                sender.Notify($"Nazwa pojazdu: {data.VehicleHash.ToString()} \nRejestracja pojazdu: {data.NumberPlate} \nMoc silnika: {enginePower}KM");
             }
             else
             {
