@@ -16,7 +16,7 @@ namespace Serverside.Controllers
         public CellphoneController CellphoneController { get; set; }
         public string FormatName => Character.Name + " " + Character.Surname;
         public long? OnDutyGroupId { get; set; }
-        public Core.Description.Description Description { get; set; }
+        //public Core.Description.Description Description { get; set; }
 
         public event DimensionChangeEventHandler OnPlayerDimensionChanged;
 
@@ -26,27 +26,33 @@ namespace Serverside.Controllers
             Character = character;
             AccountController = accountController;
             AccountController.CharacterController = this;
+            Character.Account = accountController.Account;
             Character.LastLoginTime = DateTime.Now;
             Character.Online = true;
             ContextFactory.Instance.SaveChanges();
 
-            Description = new Core.Description.Description(AccountController);
+            //Description = new Core.Description.Description(AccountController);
         }
 
         //GENERUJE, ŁADUJE I ZAPISUJE DO DB NOWA POSTAC
-        public CharacterController(AccountController accountController, string name, string surname, int model, string modelname)
+        public CharacterController(AccountController accountController, string name, string surname, PedHash model)
         {
             accountController.CharacterController = this;
+            Character.Account = accountController.Account;
             Character.Name = name;
             Character.Surname = surname;
-            Character.CreateAccountTime = DateTime.Now;
-            Character.Model = model;//PedHash.DrFriedlander.GetHashCode(); //Global.GlobalVars._defaultPedModel.GetHashCode();
-            Character.ModelName = modelname; //"DrFriedlander";
+            Character.CreateTime = DateTime.Now;
+            Character.Model = (int)model;//PedHash.DrFriedlander.GetHashCode(); //Global.GlobalVars._defaultPedModel.GetHashCode();
+            Character.ModelName = model.ToString(); //"DrFriedlander";
+            Character.HitPoints = 100;
+            Character.IsAlive = true;
             ContextFactory.Instance.Characters.Add(Character);
             ContextFactory.Instance.SaveChanges();
 
-            Description = new Core.Description.Description(accountController);
+            //Description = new Core.Description.Description(accountController);
         }
+
+        
 
         public void Save()
         {
@@ -68,11 +74,11 @@ namespace Serverside.Controllers
         }
 
         //GENERUJE, ŁADUJE I ZAPISUJE DO DB NOWA POSTAC
-        public static bool RegisterCharacter(AccountController account, string name, string surname, int model, string modelname)
+        public static bool AddCharacter(AccountController account, string name, string surname, PedHash model)
         {
             if (!DoesCharacterExist(name, surname) && AccountController.HasCharacterSlot(account))
             {
-                new CharacterController(account, name, surname, model, modelname);
+                new CharacterController(account, name, surname, model);
                 return true;
             }
             return false;

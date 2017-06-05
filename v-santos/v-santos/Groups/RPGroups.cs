@@ -24,18 +24,18 @@ namespace Serverside.Groups
 
         public static List<Group> Groups => RPCore.Groups;
 
-        public static Group CreateGroup(Database.Models.Group editor)
-        {
-            var groupType = (GroupType)editor.GroupType;
-            switch (groupType)
-            {
-                case GroupType.CrimeGroup: return new CrimeGroup(editor);
-                case GroupType.Taxi: return new Taxi(editor);
-                case GroupType.Police: return new Base.Police(editor);
-                default:
-                    throw new NotSupportedException($"Nie rozpoznano typu grupy: {groupType}.");
-            }
-        }
+        //public static Group CreateGroup(Database.Models.Group editor)
+        //{
+        //    var groupType = (GroupType)editor.GroupType;
+        //    switch (groupType)
+        //    {
+        //        case GroupType.CrimeGroup: return new CrimeGroup(editor);
+        //        case GroupType.Taxi: return new Taxi(editor);
+        //        case GroupType.Police: return new Base.Police(editor);
+        //        default:
+        //            throw new NotSupportedException($"Nie rozpoznano typu grupy: {groupType}.");
+        //    }
+        //}
 
         #region Komendy
         [Command("gduty")]
@@ -76,14 +76,14 @@ namespace Serverside.Groups
                         group.Controller.Save();
                     };
 
-                    var color = ColorConverter.ConvertFromString(group.Data.Color);
+                    //var color = ColorConverter.ConvertFromString(group.Data.Color);
 
                     sender.nametag = "[" + sender.getData("ServerId").ToString() + "]" + "( " + group.Data.Name + " ) " + sender.name;
-                    if (color != null) sender.nametagColor = (Color) color;
+                    if (group.Data.Color.Equals(null)) sender.nametagColor = group.Data.Color;
 
                     player.CharacterController.OnDutyGroupId = group.Id;
                     sender.Notify(
-                        $"Wszedłeś na służbę grupy: {RPCore.GetColoredString(group.Data.Color, group.Data.Name)}");
+                        $"Wszedłeś na służbę grupy: {RPCore.GetColoredString(group.Data.Color.ToHex(), group.Data.Name)}");
 
                     API.onPlayerDisconnected += (client, reason) =>
                     {

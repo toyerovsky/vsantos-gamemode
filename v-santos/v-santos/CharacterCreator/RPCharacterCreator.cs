@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Globalization;
 using GTANetworkServer;
-using Serverside.Bank;
+//using Serverside.Bank;
 using Serverside.Core;
 using Serverside.Core.Login;
 using Serverside.Database;
-using Serverside.Extensions;
+using Serverside.Core.Extensions;
 
 namespace Serverside.CharacterCreator
 {

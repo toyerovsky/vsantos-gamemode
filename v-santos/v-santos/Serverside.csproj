@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Serverside</RootNamespace>
     <AssemblyName>v-santos</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -47,7 +47,7 @@
     <Reference Include="GTANetworkServer">
       <HintPath>E:\gtavrp\latest\GTANetworkServer.exe</HintPath>
     </Reference>
-    <Reference Include="GTANetworkShared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60c67de1b3b675de, processorArchitecture=MSIL">
+    <Reference Include="GTANetworkShared">
       <HintPath>E:\gtavrp\latest\GTANetworkShared.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
@@ -84,6 +84,7 @@
     <Compile Include="Core\Extenstions\APIExtensions.cs" />
     <Compile Include="Core\Extenstions\ClientExtension.cs" />
     <Compile Include="Core\Extenstions\CustomEvents.cs" />
+    <Compile Include="Core\Extenstions\EnumsExtensions.cs" />
     <Compile Include="Core\Extenstions\NetHandleExtensions.cs" />
     <Compile Include="Core\FullPosition.cs" />
     <Compile Include="Core\Login\RPLogin.cs" />
@@ -118,6 +119,19 @@
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\RPItems.cs" />
     <Compile Include="Items\ServerItem.cs" />
+    <Compile Include="Migrations\201706042235471_InitialCreate.cs" />
+    <Compile Include="Migrations\201706042235471_InitialCreate.Designer.cs">
+      <DependentUpon>201706042235471_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201706050545304_small_rename.cs" />
+    <Compile Include="Migrations\201706050545304_small_rename.Designer.cs">
+      <DependentUpon>201706050545304_small_rename.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201706050552328_nullexception_fix.cs" />
+    <Compile Include="Migrations\201706050552328_nullexception_fix.Designer.cs">
+      <DependentUpon>201706050552328_nullexception_fix.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -143,7 +157,7 @@
   <ItemGroup>
     <Content Include="_Clientside\BwGui.js" />
     <Content Include="_Clientside\Cef.js" />
-	<Content Include="_Clientside\CharacterCreator.js" />
+    <Content Include="_Clientside\CharacterCreator.js" />
     <Content Include="_Clientside\CinematicCamera.js" />
     <Content Include="_Clientside\Core.js" />
     <Content Include="_Clientside\CornerBotMenu.js" />
@@ -165,7 +179,19 @@
     <Content Include="_Clientside\Resources\NewLogin\Images\logo2.png" />
     <Content Include="_Clientside\Resources\NewLogin\index.html" />
     <Content Include="_Clientside\Resources\NewLogin\style.css" />
+    <Content Include="_Clientside\VehicleLogic.js" />
     <Content Include="_Clientside\VehiclesMenu.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201706042235471_InitialCreate.resx">
+      <DependentUpon>201706042235471_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706050545304_small_rename.resx">
+      <DependentUpon>201706050545304_small_rename.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706050552328_nullexception_fix.resx">
+      <DependentUpon>201706050552328_nullexception_fix.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

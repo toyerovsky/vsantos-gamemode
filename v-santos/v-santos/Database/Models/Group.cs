@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Serverside.Groups;
 using Serverside.Groups.Base;
+using GTANetworkServer.Constant;
 
 namespace Serverside.Database.Models
 {
@@ -21,7 +22,7 @@ namespace Serverside.Database.Models
         public GroupType GroupType { get; set; }
 
         //TODO Dodać do helpera
-        public string Color { get; set; }
+        public Color Color { get; set; }
 
         public virtual ICollection<Worker> Workers { get; set; }
     }

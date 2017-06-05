@@ -1,9 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Media;
+﻿using System.Linq;
 using Serverside.Controllers;
-using Serverside.Core;
-using Serverside.Database;
 using Serverside.Database.Models;
 
 namespace Serverside.Groups.Base

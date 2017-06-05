@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data;
 using MySql.Data.MySqlClient;
-using Serverside.Extensions;
 
 namespace Serverside.Database
 {

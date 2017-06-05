@@ -49,21 +49,22 @@ namespace Serverside.Core.Login
                         $"Witaj, {accountcontroller.Account.SocialClub} zostałeś pomyślnie zalogowany. Wybierz postać którą chcesz grać.", ChatMessageType.ServerInfo);
                     API.triggerClientEvent(player, "ShowLoginCef", false);
 
+                    var Characters = accountcontroller.Account.Character.ToList();
                     //DEBUG
-                    if (accountcontroller.Account.Character.Count == 0)
+                    if (Characters == null || Characters.Count == 0)
                     {
-                        ContextFactory.Instance.Characters.Add(new Character()
-                        {
-                            Account = accountcontroller.Account,
-                            Name = accountcontroller.Account.Email,
-                            Surname = "test",
-                            IsAlive = true,
-                            Model = (int)PedHash.Michael
-                        });
-                        ContextFactory.Instance.SaveChanges();
+                        CharacterController.AddCharacter(accountcontroller, accountcontroller.Account.Email, "test", PedHash.Michael);
+                        //ContextFactory.Instance.Characters.Add(new Character()
+                        //{
+                        //    Account = accountcontroller.Account,
+                        //    Name = accountcontroller.Account.Email,
+                        //    Surname = "test",
+                        //    IsAlive = true,
+                        //    Model = (int)PedHash.Michael
+                        //});
+                        //ContextFactory.Instance.SaveChanges();
                     }
-
-                    API.triggerClientEvent(player, "ShowCharacterSelectCef", true, JsonConvert.SerializeObject(accountcontroller.Account.Character.Where(c => c.IsAlive).Select(
+                    string json = JsonConvert.SerializeObject(ContextFactory.Instance.Characters.Where(c => c.IsAlive == true).Select(
                         ch => new
                         {
                             ch.Id,
@@ -71,7 +72,8 @@ namespace Serverside.Core.Login
                             ch.Surname,
                             ch.Money,
                             ch.BankMoney
-                        }).ToList()));
+                        }).ToList());
+                    API.triggerClientEvent(player, "ShowCharacterSelectCef", true, json);
                     RPChat.SendMessageToPlayer(player, "Używaj strzałek, aby przewijać swoje postacie.", ChatMessageType.ServerInfo);
                 }
             }
@@ -90,6 +92,8 @@ namespace Serverside.Core.Login
                     player.nametag = "(" + RPCore.CalculateServerId(loggedAccount) + ") " + dbCharacter.Name + " " + dbCharacter.Surname;
 
                     API.shared.setPlayerName(player, dbCharacter.Name + " " + dbCharacter.Surname);
+                    player.setSkin((PedHash)dbCharacter.Model);
+
                     API.shared.setEntityPosition(player, new Vector3(dbCharacter.LastPositionX, dbCharacter.LastPositionY, dbCharacter.LastPositionZ));
 
                     player.dimension = 0;
@@ -131,7 +135,7 @@ namespace Serverside.Core.Login
             else
             {
                 //Sprawdzenie czy konto z danym userid istnieje jak nie dodanie konta do bazy danych i załadowanie go do core.
-                if (!AccountController.RegisterAccount(sender, userId))
+                if (!AccountController.RegisterAccount(sender, userId, email))
                 {
                     //Sprawdzenie czy ktoś już jest zalogowany z tego konta.
                     AccountController _ac = RPCore.GetAccount(userId);
@@ -154,11 +158,11 @@ namespace Serverside.Core.Login
             long userId = FDb.CheckPasswordMatch(email, password);
             if (userId == -1)
             {
-                API.shared.sendChatMessageToPlayer(sender, "Podane login lub hasło są nieprawidłowe, bądź takie konto nie istnieje");
+                API.shared.sendNotificationToPlayer(sender, "Podane login lub hasło są nieprawidłowe, bądź takie konto nie istnieje");
                 return false;
             }
             //Sprawdzenie czy konto z danym userid istnieje jak nie dodanie konta do bazy danych i załadowanie go do core.
-            if (!AccountController.RegisterAccount(sender, userId))
+            if (!AccountController.RegisterAccount(sender, userId, email))
             {
                 //Sprawdzenie czy ktoś już jest zalogowany z tego konta.
                 AccountController _ac = RPCore.GetAccount(userId);
@@ -192,9 +196,10 @@ namespace Serverside.Core.Login
 
         public static void LogOut(AccountController account)
         {
-            account.Save();
             account.Account.Online = false;
-            ContextFactory.Instance.SaveChanges();
+            if (account.CharacterController != null)
+                account.CharacterController.Character.Online = false;
+            account.Save();
             account.Client.resetData("RP_ACCOUNT");
             RPCore.RemoveAccount(account.AccountId);
         }
@@ -202,9 +207,10 @@ namespace Serverside.Core.Login
         public static void LogOut(Client player)
         {
             AccountController account = player.GetAccountController();
-            account.Save();
             account.Account.Online = false;
-            ContextFactory.Instance.SaveChanges();
+            if (account.CharacterController != null)
+                account.CharacterController.Character.Online = false;
+            account.Save();
             player.ResetData("RP_ACCOUNT");
             RPCore.RemoveAccount(account.AccountId);
         }

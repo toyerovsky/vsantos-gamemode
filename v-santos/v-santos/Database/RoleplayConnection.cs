@@ -6,8 +6,8 @@ using GTANetworkServer;
 using MySql.Data.Entity;
 using MySql.Data.MySqlClient;
 using Serverside.Database.Models;
-using Serverside.Extensions;
 using Vehicle = Serverside.Database.Models.Vehicle;
+using Serverside.Core.Extensions;
 
 namespace Serverside.Database
 {
@@ -94,8 +94,9 @@ namespace Serverside.Database
                 //throw new Exception();
             }
             APIExtensions.ConsoleOutput("[RPCore] Połączono z bazą danych!", ConsoleColor.DarkGreen);
-            //return new RoleplayConnection("server=v-santos.pl;uid=srv;pwd=WL8oTnufAAEFgoIt;database=rp"); // TYLKO DO GENEROWANIA BAZY DANYCH
             return new RoleplayConnection(_connectionString);
+            //return new RoleplayConnection("server=v-santos.pl;uid=srv;pwd=WL8oTnufAAEFgoIt;database=rp"); // TYLKO DO GENEROWANIA BAZY DANYCH ZOSTAWIC TYLKO TĄ LINIE 
+
         }
     }
 }

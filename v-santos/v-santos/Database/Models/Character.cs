@@ -19,7 +19,7 @@ namespace Serverside.Database.Models
         public Account Account { get; set; }
 
         public bool Online { get; set; }
-        public DateTime? CreateAccountTime { get; set; }
+        public DateTime? CreateTime { get; set; }
         public DateTime? LastLoginTime { get; set; }
         public DateTime? TodayPlayedTime { get; set; }
 

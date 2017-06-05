@@ -6,10 +6,10 @@ using Newtonsoft.Json;
 using Serverside.Core;
 using Serverside.Core.Telephone;
 using Serverside.Database.Models;
-using Serverside.Extensions;
 using Serverside.Groups;
 using Serverside.Groups.Base;
-using Serverside.Groups.CrimeBots;
+//using Serverside.Groups.CrimeBots;
+using Serverside.Core.Extensions;
 
 namespace Serverside.Items
 {
@@ -117,16 +117,16 @@ namespace Serverside.Items
                 if (Convert.ToInt32(args[0]) == 555 && player.CharacterController.OnDutyGroupId.HasValue &&
                     player.CharacterController.Character.Worker.First(x => x.Group.Id == player.CharacterController.OnDutyGroupId).Group.GroupType == GroupType.CrimeGroup)
                 {
-                    CrimeGroup group =
-                        RPGroups.Groups.Single(g => g.Id == player.CharacterController.OnDutyGroupId.Value) as
-                            CrimeGroup;
-                    if (group != null && group.Data.GroupType == GroupType.CrimeGroup &&
-                        group.CanPlayerCallCrimeBot(sender.GetAccountController()))
-                    {
-                        List<string> names = CrimeBotHelper.GetPositions().Select(n => n.Name).ToList();
-                        API.shared.triggerClientEvent(sender, "OnPlayerCalledCrimeBot", names);
-                        return;
-                    }
+                    //CrimeGroup group =
+                    //    RPGroups.Groups.Single(g => g.Id == player.CharacterController.OnDutyGroupId.Value) as
+                    //        CrimeGroup;
+                    //if (group != null && group.Data.GroupType == GroupType.CrimeGroup &&
+                    //    group.CanPlayerCallCrimeBot(sender.GetAccountController()))
+                    //{
+                    //    List<string> names = CrimeBotHelper.GetPositions().Select(n => n.Name).ToList();
+                    //    API.shared.triggerClientEvent(sender, "OnPlayerCalledCrimeBot", names);
+                    //    return;
+                    //}
                 }
 
                 if (sender.GetAccountController().CharacterController.CellphoneController.CurrentlyTalking)

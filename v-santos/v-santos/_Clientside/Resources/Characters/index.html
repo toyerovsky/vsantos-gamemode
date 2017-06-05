@@ -14,7 +14,7 @@
         <div id="panel">
             <div class="input-group">
                 <span class="input-group-addon" style="background: url(Images/id-card.png); background-repeat: no-repeat; background-color: #eee; background-position: center;"></span>
-                <input type="text" class="input" id="uid" name="uid" disabled="disabled">
+                <input type="text" class="input" id="uid" disabled="disabled">
             </div>
             <div id="box3d"></div>
             <div class="input-group">
@@ -45,16 +45,20 @@
         </div>
         <script>
             var index = 0;
-
+            var collection;
             document.addEventListener("DOMContentLoaded", function (event) {
-                var collection = JSON.parse(resourceCall("GetPlayerCharacters"));
-
-                document.getElementById("uid").value = collection[index].CID.toString();
-                document.getElementById("name").value = collection[index].Name.toString();
-                document.getElementById("surname").value = collection[index].Surname.toString();
-                document.getElementById("money").value = "$" + collection[index].Money.toString();
-                document.getElementById("moneyBank").value = "$" + collection[index].MoneyBank.toString();
+                resourceCall("GetPlayerCharacters");
             });
+            function LoadCharacters(charactersList) {
+                collection = JSON.parse(charactersList);
+                //collection = JSON.parse('[{"Id":1,"Name":"pyra868@gmail.com","Surname":"test1","Money":0,"BankMoney":0},{"Id":2,"Name":"pyra868@gmail.com","Surname":"test2","Money":0,"BankMoney":0},{"Id":3,"Name":"pyra868@gmail.com","Surname":"test3","Money":0,"BankMoney":0},{"Id":4,"Name":"pyra868@gmail.com","Surname":"test4","Money":0,"BankMoney":0}]');
+
+                document.getElementById("uid").value = collection[index].Id;
+                document.getElementById("name").value = collection[index].Name;
+                document.getElementById("surname").value = collection[index].Surname;
+                document.getElementById("money").value = "$" + collection[index].Money;
+                document.getElementById("moneyBank").value = "$" + collection[index].BankMoney;
+            }
 
             document.getElementById("loginbutton").onclick = function () {
                 resourceCall("SelectCharacter", document.getElementById("uid").value);
@@ -62,17 +66,30 @@
 
             function NextCharacter(event) {
                 var x = event.keyCode;
-                var collection = resourceCall("GetPlayerCharacters");
-
-                if (x != 65 && x != 68) return;
-                if (x == 65 && index > 0) index--;
-                if (x == 68 && index < collection.length) index++;
-
-                document.getElementById("uid").value = collection[index].CID.toString();
-                document.getElementById("name").value = collection[index].Name.toString();
-                document.getElementById("surname").value = collection[index].Surname.toString();
-                document.getElementById("money").value = "$" + collection[index].Money.toString();
-                document.getElementById("moneyBank").value = "$" + collection[index].MoneyBank.toString();
+                switch (x) {
+                    case 13:
+                        resourceCall("SelectCharacter", document.getElementById("uid").value);
+                        return;
+                    case 37:
+                    case 65:
+                        if(index > 0){
+                            index--;
+                        }
+                        break;
+                    case 39:
+                    case 68:
+                        if(index < collection.length - 1) {
+                            index++;
+                        }
+                        break;
+                    default:
+                        return;
+                }
+                document.getElementById("uid").value = collection[index].Id;
+                document.getElementById("name").value = collection[index].Name;
+                document.getElementById("surname").value = collection[index].Surname;
+                document.getElementById("money").value = "$" + collection[index].Money;
+                document.getElementById("moneyBank").value = "$" + collection[index].BankMoney;
 
             }
         </script>

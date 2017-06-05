@@ -51,13 +51,14 @@ namespace Serverside.Controllers
             new AccountController(accountData, sender);
         }
 
-        public static bool RegisterAccount(Client sender, long userid)
+        public static bool RegisterAccount(Client sender, long userid, string email)
         {
             if (!DoesAccountExist(userid))
             {
                 Account account = new Account
                 {
                     UserId = userid,
+                    Email = email,
                     SocialClub = sender.name,
                     Ip = sender.address
                 };
@@ -94,7 +95,9 @@ namespace Serverside.Controllers
         public void Save()
         {
             //tutaj wywołać metody synchronizacji danych z innych controllerów np character.
-            CharacterController.Save();
+            if(CharacterController != null)
+                CharacterController.Save();
+
             ContextFactory.Instance.Accounts.Attach(Account);
             ContextFactory.Instance.Entry(Account).State = EntityState.Modified;
             ContextFactory.Instance.SaveChanges();

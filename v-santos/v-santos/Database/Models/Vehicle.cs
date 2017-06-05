@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using GTANetworkShared;
+using GTANetworkServer.Constant;
 
 namespace Serverside.Database.Models
 {
@@ -16,7 +17,7 @@ namespace Serverside.Database.Models
         /// Typy właścicieli: 1 gracz, 2 grupa
         //public int OwnerType { get; set; } // lepiej sprawdzać czy characterid lub groupid == null
 
-        public string Name { get; set; }
+        //public string Name { get; set; }
         public string NumberPlate { get; set; }
 
         public int NumberPlateStyle { get; set; }
@@ -34,9 +35,13 @@ namespace Serverside.Database.Models
         public float SpawnRotationZ { get; set; }
 
         public bool IsSpawned { get; set; }
-        public double EnginePowerMultipler { get; set; }
-        public double EngineTorqueMultipler { get; set; }
-        public double Health { get; set; }
+        public float EnginePowerMultipler { get; set; }
+        public float EngineTorqueMultipler { get; set; }
+        public float Health { get; set; }
+        public float Milage { get; set; }
+        public float Fuel { get; set; }
+        public float FuelTank { get; set; }
+        public float FuelConsumption { get; set; }
         public bool Door1Damage { get; set; }
         public bool Door2Damage { get; set; }
         public bool Door3Damage { get; set; }
@@ -45,8 +50,8 @@ namespace Serverside.Database.Models
         public bool Window2Damage { get; set; }
         public bool Window3Damage { get; set; }
         public bool Window4Damage { get; set; }
-        public int PrimaryColor { get; set; }
-        public int SecondaryColor { get; set; }
+        public string PrimaryColor { get; set; }
+        public string SecondaryColor { get; set; }
         public int WheelType { get; set; }
         public int WheelColor { get; set; }
 

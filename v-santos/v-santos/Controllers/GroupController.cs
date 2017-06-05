@@ -3,6 +3,7 @@ using Serverside.Database;
 using Serverside.Groups;
 using Serverside.Groups.Base;
 using Group = Serverside.Database.Models.Group;
+using GTANetworkServer.Constant;
 
 namespace Serverside.Controllers
 {
@@ -24,7 +25,7 @@ namespace Serverside.Controllers
         /// <param name="tag"></param>
         /// <param name="type"></param>
         /// <param name="color"></param>
-        public GroupController(string name, string tag, GroupType type, string color)
+        public GroupController(string name, string tag, GroupType type, Color color)
         {
             this.Data.Name = name;
             this.Data.Tag = tag;

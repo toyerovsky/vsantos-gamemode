@@ -20,6 +20,7 @@ namespace Serverside.Core
         //Robimy słownik wszystkich klientów żeby można było potem korzystać z helpera tego gracza
         //long to ID konta
         private static SortedList<long, AccountController> Accounts = new SortedList<long, AccountController>();
+        private static List<VehicleController> VehicleControllers = new List<VehicleController>();
 
         public static List<Group> Groups = new List<Group>();
 
@@ -31,7 +32,61 @@ namespace Serverside.Core
             API.onPlayerConnected += API_onPlayerConnectedHandler;
             API.onPlayerFinishedDownload += API_onPlayerFinishedDownload;
             API.onPlayerDisconnected += API_onPlayerDisconnectedHandler;
-            
+            API.onVehicleHealthChange += OnVehicleHealthChange;
+
+        }
+
+        private void OnVehicleHealthChange(NetHandle entity, float oldValue)
+        {
+            if (API.getEntityType(entity) == EntityType.Player)
+            {
+                Client client = API.getPlayerFromHandle(entity);
+                if (API.isPlayerInAnyVehicle(client))
+                {
+
+                    double t = Math.Floor(Math.Max(49, oldValue - client.vehicle.health) / 50);
+                    //API.sendNotificationToPlayer(client, t.ToString());
+                    if (t > 0)
+                        APIExtensions.PopRandomsTyres(client.vehicle, int.Parse(t.ToString()));
+
+                    float veh_health = API.getVehicleHealth(client.vehicle);
+                    float damage_taken = Math.Max(0, oldValue - veh_health);
+                    float health_to_set = veh_health - damage_taken;
+                    //API.sendChatMessageToAll(client.socialClubName + " OLD: " + oldValue.ToString() + " | NEW:" + veh_health + " | TAKEN: " + damage_taken + " | SET: " + health_to_set);
+                    API.setVehicleHealth(client.vehicle, health_to_set);
+                }
+                else
+                {
+                    //var test = API.fetchNativeFromPlayer<bool>(client, Hash.GET_PLAYER_TARGET_ENTITY); // CHUJ NIE DZIAŁA BO DEVY Z GTA:N TO DEBILE :D
+                    //Vehicle nearest = APIExtensions.GetNearestVehicle(client.position); // nie działa tak jak powinno... <0ms, ~50ticks
+                    //Vehicle nearest = APIExtensions.GetVehicleHasBeenDamagedByPlayer(client); // działa ale jest pewnie wolniejsze..... ~100ms
+                    //if (nearest != null)
+                    //{
+                    //    if (nearest.health > 50)
+                    //    {
+                    //        double t = Math.Floor((oldValue - nearest.health) / 50);
+                    //        API.sendNotificationToPlayer(client, t.ToString());
+                    //        if (t > 0)
+                    //            APIExtensions.PopRandomsTyres(nearest, int.Parse(t.ToString()));
+                    //    }
+
+                    //    float veh_health = API.getVehicleHealth(nearest);
+                    //    float damage_taken = oldValue - veh_health;
+                    //    float health_to_set = veh_health - damage_taken;
+                    //    API.sendChatMessageToAll(client.socialClubName + " OLD: " + oldValue.ToString() + " | NEW:" + veh_health + " | TAKEN: " + damage_taken + " | SET: " + health_to_set);
+                    //    if (veh_health > 0 && health_to_set > 0)
+                    //    {
+                    //        API.setVehicleHealth(nearest, health_to_set);
+                    //    }
+                    //}
+
+                }
+                //Ten event zwraca w parametrze entity osobe która zadaje damage(?). 
+                //Co z tego, że mogę sprawdzić kto jest atakującym i jaka była poprzedna wartość health w parametrze oldValue, jak nie moge określić któremu pojazdowi ten damage został zadany.
+                //Określanie pojazdu na podstawie dystansu względem atakującego nie sprawdza się w przypadku bronii palnej gdzie ktoś stojąc przy pojeździe strzela do innego pojazdu który stoi dalej.
+                //Paranoja :C
+                //działa na natywach ale za wolno....
+            }
         }
 
         private void API_onPlayerBeginConnect(Client player, CancelEventArgs cancelConnection)
@@ -83,7 +138,7 @@ namespace Serverside.Core
 
             foreach (var group in ContextFactory.Instance.Groups)
             {
-                Groups.Add(RPGroups.CreateGroup(group));
+                //Groups.Add(RPGroups.CreateGroup(group));
             }
         }
 
@@ -130,6 +185,31 @@ namespace Serverside.Core
             return null;
         }
 
+        public static void Add(VehicleController vc)
+        {
+            VehicleControllers.Add(vc);
+        }
+
+        public static void Remove(VehicleController vc)
+        {
+            VehicleControllers.Remove(vc);
+        }
+
+        public static VehicleController GetVehicle(Vehicle vehicle)
+        {
+            return VehicleControllers.Find(x => x.Vehicle == vehicle); ;
+        }
+
+        public static VehicleController GetVehicle(NetHandle vehicle)
+        {
+            return VehicleControllers.Find(x => x.Vehicle.handle == vehicle); ;
+        }
+
+        public static VehicleController GetVehicle(int id)
+        {
+            return VehicleControllers.Find(x => x.VehicleData.Id == id); ;
+        }
+
         public static int CalculateServerId(AccountController account)
         {
             return Accounts.IndexOfValue(account);
@@ -141,9 +221,54 @@ namespace Serverside.Core
         }
 
         [Command("q")]
-        public void Quit(Client player)
+        public static void Quit(Client player)
         {
             API.shared.kickPlayer(player);
+        }
+
+        [Command("addvc", GreedyArg = true, SensitiveInfo = true, Alias = "avc")]
+        public static void AddVehicle(Client sender, string model, string plate)
+        {
+            AccountController ac = sender.GetAccountController();
+            new VehicleController(new FullPosition(sender.position, sender.rotation), API.shared.vehicleNameToModel(model), plate, 0, int.Parse(ac.AccountId.ToString()), "#FF0000FF".ToColor(), "#00FF00FF".ToColor(), 1, 1, ac.CharacterController.Character);
+        }
+
+        [Command("listvc", GreedyArg = true, SensitiveInfo = true, Alias = "lvc")]
+        public static void ListVehicles(Client sender)
+        {
+            AccountController ac = sender.GetAccountController();
+            foreach (var vehicle in ac.CharacterController.Character.Vehicle.ToList())
+            {
+                API.shared.sendChatMessageToPlayer(sender, "ID: " + vehicle.Id + " | " + vehicle.VehicleHash.ToString() + " | Rejestracja: " + vehicle.NumberPlate + " | Przebieg: " + (Math.Floor(vehicle.Milage) / 1000).ToString() + "km");
+            }
+
+        }
+
+        [Command("loadvc", GreedyArg = true, SensitiveInfo = true)]
+        public static void LoadVehicle(Client sender, string id)
+        {
+            AccountController ac = sender.GetAccountController();
+            new VehicleController(ac.CharacterController.Character.Vehicle.Where(x => x.Id == int.Parse(id)).First());
+        }
+
+        [Command("savevc", GreedyArg = true, SensitiveInfo = true)]
+        public static void SaveVehicles(Client sender, string id)
+        {
+            AccountController ac = sender.GetAccountController();
+            foreach (var vc in VehicleControllers.Where(x => x.VehicleData.Character == ac.CharacterController.Character && x.VehicleData.IsSpawned == true).ToList())
+            {
+                vc.Save();
+            }
+        }
+
+        [Command("delvc", GreedyArg = true, SensitiveInfo = true)]
+        public static void DelVehicle(Client sender)
+        {
+            AccountController ac = sender.GetAccountController();
+            Vehicle veh = API.shared.getEntityFromHandle<Vehicle>(API.shared.getPlayerVehicle(sender));
+            VehicleController vc = veh.getData("VehicleController");
+            if (vc != null && vc.VehicleData == ac.CharacterController.Character.Vehicle)
+                vc.Dispose();
         }
     }
 }
