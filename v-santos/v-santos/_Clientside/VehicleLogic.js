@@ -1,5 +1,6 @@
 ﻿var drawVehicleHUD = true;
 var drawAnimationHUD = false;
+var drawStreetHUD = true;
 var currentMoney = null;
 var currentSpeed = null;
 var currentMilage = null;
@@ -16,15 +17,20 @@ var currentRpm = 0;
 API.onUpdate.connect(function (sender, args) {
     var player = API.getLocalPlayer();
     var inVeh = API.isPlayerInAnyVehicle(player);
-
-    var pos = API.getEntityPosition(player);
+    //Rysowanie nazwy ulicy
+    if (drawStreetHUD) 
+    {
+        var pos = API.getEntityPosition(player);
         var streetname = API.getStreetName(pos);
         var zoneNameLabel = API.getZoneNameLabel(pos);
         var zoneName = API.getZoneName(pos);
         API.drawText(`~y~${streetname}`, (99 * res.Width) / 100, (99 * res.Height) / 100 - 80, 0.5, 255, 255, 255, 255, 1, 2, false, true, 0);
-        API.drawText(`${zoneName} (${zoneNameLabel})`, (99 * res.Width) / 100, (99 * res.Height) / 100 - 40, 0.4, 255, 255, 255, 255, 1, 2, false, true, 0);
+        API.drawText(`${zoneName} (${zoneNameLabel})`, (99 * res.Width) / 100, (99 * res.Height) / 100 - 40, 0.4, 255, 255, 255, 255, 1, 2, false, true, 0);    
+    }
 
-    if (inVeh) {
+    //Rysowanie rzeczy w pojeździe
+    if (inVeh)
+    {
         var gameTime = API.getGameTime(); // m/s
         var updateDelta = gameTime - lastUpdate;
         lastUpdate = gameTime;
@@ -78,7 +84,7 @@ API.onUpdate.connect(function (sender, args) {
         if (drawVehicleHUD) {
             //PRZEBIEG
             var cMR = Math.trunc(currentMilage)+"";
-            currentMilageR = "~c~" + pad(Math.trunc(cMR / 1000), 6) + "~m~." + pad(cMR.substring(cMR.length - 3, cMR.length - 2), 1) + "~w~";
+            var currentMilageR = "~c~" + pad(Math.trunc(cMR / 1000), 6) + "~m~." + pad(cMR.substring(cMR.length - 3, cMR.length - 2), 1) + "~w~";
             API.drawText(`${currentMilageR}km`, (16 * res.Width) / 100, res.Height - 45, 0.5, 255, 255, 255, 255, 7, 0, false, true, 0);
             //PRĘDKOŚC
             API.drawText(`${Math.trunc(currentSpeed)}`, (16 * res.Width) / 100 + 95, res.Height - 110, 1, 255, 255, 255, 255, 4, 2, false, true, 0);
@@ -151,6 +157,10 @@ API.onServerEventTrigger.connect(function (eventName, args) {
     }
     else if (eventName == "show_vehicle_hud") {
         drawVehicleHUD = true;
+    }
+    else if (eventName == "ToggleHud")
+    {
+        drawStreetHUD = !drawStreetHUD;
     }
 });
 
