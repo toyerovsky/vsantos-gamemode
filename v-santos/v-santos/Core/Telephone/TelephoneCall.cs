@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Timers;
 using GTANetworkServer;
-using Serverside.Extensions;
+using Serverside.Core.Extensions;
 
 namespace Serverside.Core.Telephone
 {

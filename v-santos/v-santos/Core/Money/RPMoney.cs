@@ -1,7 +1,7 @@
 ﻿using System;
 using GTANetworkServer;
 using Serverside.Core.Finders;
-using Serverside.Extensions;
+using Serverside.Core.Extensions;
 
 namespace Serverside.Core.Money
 {
@@ -46,10 +46,11 @@ namespace Serverside.Core.Money
                 return;
             }
             
-            Client gettingPlayer;
+            //Client gettingPlayer;
 
-            if (PlayerFinder.TryFindClientInRadiusOfClientByServerId(sender, ID, 6, out gettingPlayer))
-            {
+            Client gettingPlayer = API.getPlayersInRadiusOfPlayer(6f, sender).Find(x => x.GetAccountController().ServerId == ID); // łatwe i proste :D
+            //if (PlayerFinder.TryFindClientInRadiusOfClientByServerId(sender, ID, 6, out gettingPlayer)) // po chuj te kombinacje XD
+            //{
                 
                 //temu zabieramy
                 sender.RemoveMoney(safeMoneyCount);
@@ -60,7 +61,7 @@ namespace Serverside.Core.Money
                 API.sendChatMessageToPlayer(sender,
                     $"~g~Osoba {gettingPlayer.name} otrzymała od ciebie ${safeMoneyCount}.");
                 API.sendChatMessageToPlayer(gettingPlayer, $"~g~Osoba {sender.name} przekazała ci ${safeMoneyCount}.");
-            }
+            //}
         }
     }
 }

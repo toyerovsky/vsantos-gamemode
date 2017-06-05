@@ -90,7 +90,6 @@
     <Compile Include="Core\Login\RPLogin.cs" />
     <Compile Include="Core\Money\MoneyManager.cs" />
     <Compile Include="Core\Money\RPMoney.cs" />
-    <Compile Include="Core\Player.cs" />
     <Compile Include="Core\RPChat.cs" />
     <Compile Include="Core\RPCore.cs" />
     <Compile Include="Core\Telephone\Booth\RPTelephoneBooth.cs" />

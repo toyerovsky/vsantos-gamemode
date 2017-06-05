@@ -1,7 +1,7 @@
 ﻿using System;
 using GTANetworkServer;
 using Serverside.Core.Finders;
-using Serverside.Extensions;
+using Serverside.Core.Extensions;
 
 namespace Serverside.Core.Money
 {    
