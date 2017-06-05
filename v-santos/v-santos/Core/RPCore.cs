@@ -19,10 +19,10 @@ namespace Serverside.Core
 
         //Robimy słownik wszystkich klientów żeby można było potem korzystać z helpera tego gracza
         //long to ID konta
-        private static SortedList<long, AccountController> Accounts = new SortedList<long, AccountController>();
-        private static List<VehicleController> VehicleControllers = new List<VehicleController>();
+        private static readonly SortedList<long, AccountController> Accounts = new SortedList<long, AccountController>();
+        private static readonly List<VehicleController> VehicleControllers = new List<VehicleController>();
 
-        public static List<Group> Groups = new List<Group>();
+        public static readonly List<Group> Groups = new List<Group>();
 
         public RPCore()
         {
@@ -49,11 +49,11 @@ namespace Serverside.Core
                     if (t > 0)
                         APIExtensions.PopRandomsTyres(client.vehicle, int.Parse(t.ToString()));
 
-                    float veh_health = API.getVehicleHealth(client.vehicle);
-                    float damage_taken = Math.Max(0, oldValue - veh_health);
-                    float health_to_set = veh_health - damage_taken;
+                    float vehHealth = API.getVehicleHealth(client.vehicle);
+                    float damageTaken = Math.Max(0, oldValue - vehHealth);
+                    float healthToSet = vehHealth - damageTaken;
                     //API.sendChatMessageToAll(client.socialClubName + " OLD: " + oldValue.ToString() + " | NEW:" + veh_health + " | TAKEN: " + damage_taken + " | SET: " + health_to_set);
-                    API.setVehicleHealth(client.vehicle, health_to_set);
+                    API.setVehicleHealth(client.vehicle, healthToSet);
                 }
                 else
                 {
@@ -79,7 +79,6 @@ namespace Serverside.Core
                     //        API.setVehicleHealth(nearest, health_to_set);
                     //    }
                     //}
-
                 }
                 //Ten event zwraca w parametrze entity osobe która zadaje damage(?). 
                 //Co z tego, że mogę sprawdzić kto jest atakującym i jaka była poprzedna wartość health w parametrze oldValue, jak nie moge określić któremu pojazdowi ten damage został zadany.
@@ -138,20 +137,40 @@ namespace Serverside.Core
 
             foreach (var group in ContextFactory.Instance.Groups)
             {
-                //Groups.Add(RPGroups.CreateGroup(group));
+                Groups.Add(RPGroups.CreateGroup(group));
             }
         }
 
         private void API_onResourceStop()
         {
             //FDb = null;
-            Task DBStop = Task.Run(() =>
+            Task dbStop = Task.Run(() =>
             {
+                foreach (var p in API.getAllPlayers().Where(x => x.GetAccountController().CharacterController != null))
+                {
+                    //Zmiana postaci pola Online w postaci po wyłączeniu serwera dla graczy którzy byli online
+                    p.GetAccountController().CharacterController.Character.Online = false;
+
+                    //Zmiana w przedmiocie pola CurrentlyInUse na false
+                    foreach (var i in p.GetAccountController().CharacterController.Character.Item.Where(i => i.CurrentlyInUse == true).ToList())
+                    {
+                        i.CurrentlyInUse = false;
+                    }
+
+                    foreach (var v in API.getAllVehicles())
+                    {
+                        if (v.GetVehicleController() != null)
+                        {
+                            var controller = v.GetVehicleController();
+                            controller.Dispose();
+                        }
+                    }
+                }
+
                 Save();
-                //ContextFactory.Instance.SaveChanges();
                 ContextFactory.Instance.Dispose();
             });
-            DBStop.Wait();
+            dbStop.Wait();
         }
 
         public void Save()
@@ -197,17 +216,17 @@ namespace Serverside.Core
 
         public static VehicleController GetVehicle(Vehicle vehicle)
         {
-            return VehicleControllers.Find(x => x.Vehicle == vehicle); ;
+            return VehicleControllers.Find(x => x.Vehicle == vehicle);
         }
 
         public static VehicleController GetVehicle(NetHandle vehicle)
         {
-            return VehicleControllers.Find(x => x.Vehicle.handle == vehicle); ;
+            return VehicleControllers.Find(x => x.Vehicle.handle == vehicle);
         }
 
         public static VehicleController GetVehicle(int id)
         {
-            return VehicleControllers.Find(x => x.VehicleData.Id == id); ;
+            return VehicleControllers.Find(x => x.VehicleData.Id == id);
         }
 
         public static int CalculateServerId(AccountController account)
@@ -231,17 +250,6 @@ namespace Serverside.Core
         {
             AccountController ac = sender.GetAccountController();
             new VehicleController(new FullPosition(sender.position, sender.rotation), API.shared.vehicleNameToModel(model), plate, 0, int.Parse(ac.AccountId.ToString()), "#FF0000FF".ToColor(), "#00FF00FF".ToColor(), 1, 1, ac.CharacterController.Character);
-        }
-
-        [Command("listvc", GreedyArg = true, SensitiveInfo = true, Alias = "lvc")]
-        public static void ListVehicles(Client sender)
-        {
-            AccountController ac = sender.GetAccountController();
-            foreach (var vehicle in ac.CharacterController.Character.Vehicle.ToList())
-            {
-                API.shared.sendChatMessageToPlayer(sender, "ID: " + vehicle.Id + " | " + vehicle.VehicleHash.ToString() + " | Rejestracja: " + vehicle.NumberPlate + " | Przebieg: " + (Math.Floor(vehicle.Milage) / 1000).ToString() + "km");
-            }
-
         }
 
         [Command("loadvc", GreedyArg = true, SensitiveInfo = true)]
