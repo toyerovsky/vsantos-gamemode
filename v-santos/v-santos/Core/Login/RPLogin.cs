@@ -46,25 +46,17 @@ namespace Serverside.Core.Login
                 {
                     AccountController accountcontroller = player.GetAccountController();
                     RPChat.SendMessageToPlayer(player,
-                        $"Witaj, {accountcontroller.Account.SocialClub} zostałeś pomyślnie zalogowany. Wybierz postać którą chcesz grać.", ChatMessageType.ServerInfo);
+                        $"Witaj, {accountcontroller.Account.SocialClub} zostałeś pomyślnie zalogowany. Wybierz postać.", ChatMessageType.ServerInfo);
                     API.triggerClientEvent(player, "ShowLoginCef", false);
 
-                    var Characters = accountcontroller.Account.Character.ToList();
-                    //DEBUG
-                    if (Characters == null || Characters.Count == 0)
+                    var characters = accountcontroller.Account.Character.ToList();
+
+                    if (characters == null || characters.Count == 0)
                     {
                         CharacterController.AddCharacter(accountcontroller, accountcontroller.Account.Email, "test", PedHash.Michael);
-                        //ContextFactory.Instance.Characters.Add(new Character()
-                        //{
-                        //    Account = accountcontroller.Account,
-                        //    Name = accountcontroller.Account.Email,
-                        //    Surname = "test",
-                        //    IsAlive = true,
-                        //    Model = (int)PedHash.Michael
-                        //});
-                        //ContextFactory.Instance.SaveChanges();
                     }
-                    string json = JsonConvert.SerializeObject(ContextFactory.Instance.Characters.Where(c => c.IsAlive == true).Select(
+
+                    string json = JsonConvert.SerializeObject(characters.Where(c => c.IsAlive == true && c.Account == accountcontroller.Account).Select(
                         ch => new
                         {
                             ch.Id,
@@ -73,6 +65,7 @@ namespace Serverside.Core.Login
                             ch.Money,
                             ch.BankMoney
                         }).ToList());
+
                     API.triggerClientEvent(player, "ShowCharacterSelectCef", true, json);
                     RPChat.SendMessageToPlayer(player, "Używaj strzałek, aby przewijać swoje postacie.", ChatMessageType.ServerInfo);
                 }
