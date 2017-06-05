@@ -46,13 +46,14 @@
         <script>
             var index = 0;
             var collection;
+
             document.addEventListener("DOMContentLoaded", function (event) {
                 resourceCall("GetPlayerCharacters");
             });
+
             function LoadCharacters(charactersList) {
                 collection = JSON.parse(charactersList);
-                //collection = JSON.parse('[{"Id":1,"Name":"pyra868@gmail.com","Surname":"test1","Money":0,"BankMoney":0},{"Id":2,"Name":"pyra868@gmail.com","Surname":"test2","Money":0,"BankMoney":0},{"Id":3,"Name":"pyra868@gmail.com","Surname":"test3","Money":0,"BankMoney":0},{"Id":4,"Name":"pyra868@gmail.com","Surname":"test4","Money":0,"BankMoney":0}]');
-
+                
                 document.getElementById("uid").value = collection[index].Id;
                 document.getElementById("name").value = collection[index].Name;
                 document.getElementById("surname").value = collection[index].Surname;
@@ -64,27 +65,35 @@
                 resourceCall("SelectCharacter", document.getElementById("uid").value);
             };
 
-            function NextCharacter(event) {
+            function NextCharacter(event)
+            {
                 var x = event.keyCode;
-                switch (x) {
+                switch (x)
+                {
+                    //Enter
                     case 13:
                         resourceCall("SelectCharacter", document.getElementById("uid").value);
                         return;
+                    //Strzałka w lewo lub A
                     case 37:
                     case 65:
-                        if(index > 0){
+                        if (index > 0)
+                        {
                             index--;
                         }
                         break;
+                    //Strzałka w prawo lub D
                     case 39:
                     case 68:
-                        if(index < collection.length - 1) {
+                        if (index < collection.length - 1)
+                        {
                             index++;
                         }
                         break;
                     default:
                         return;
                 }
+
                 document.getElementById("uid").value = collection[index].Id;
                 document.getElementById("name").value = collection[index].Name;
                 document.getElementById("surname").value = collection[index].Surname;

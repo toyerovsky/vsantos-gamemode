@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="bootstrap.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="bus.css" type="text/css" />
+</head>
+<body>
+    <div class="container">
+        <div class="col-sm-12 col-sm-offset-2 main">
+            <div class="col-sm-6">
+                <table id="dataTable" class="Table">
+                    <tr>
+                        <th>Nazwa</th>
+                        <th>Czas</th>
+                        <th>Koszt</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+<script>
+
+    document.addEventListener("DOMContentLoaded", function (event)
+    {
+        PrepareData();
+    });
+
+    function Click(value)
+    {
+        var currentSelection = parseInt(value.getAttribute("dsIndex"));
+
+        var item = JSON.parse(resourceCall("GetBusStops"))[currentSelection];
+        resourceCall("RequestBus", item.Time.toString(), item.Cost.toString(), currentSelection);   
+    }
+
+    //Dostajemy dane w sekundach wyrzucamy w zależności od potrzeb
+    function PrepareTime(seconds)
+    {
+        if (seconds < 60) return seconds.toString() + "s";
+        else {
+            return (parseInt(seconds / 60)).toString() + "m " + (seconds % 60).toString() + "s";
+        }
+    }
+
+    function PrepareData()
+    {
+        var ds = JSON.parse(resourceCall("GetBusStops"));
+        var table = document.getElementById("dataTable");
+        for (var i = 0; i < ds.length; i++)
+        {
+            var row = table.insertRow();
+            var name = row.insertCell();
+            var time = row.insertCell();
+            var cost = row.insertCell();
+
+            row.setAttribute("dsIndex", i.toString());
+            row.onclick = function() {Click(this)};
+
+            name.innerHTML = ds[i].Name.toString();
+            time.innerHTML = PrepareTime(ds[i].Time);
+            cost.innerHTML = "$" + ds[i].Cost.toString();    
+        }
+    }
+</script>
+</body>
+</html>
