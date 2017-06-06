@@ -178,10 +178,8 @@
     <Content Include="_Clientside\Resources\WheelMenu\index.html" />
     <Content Include="_Clientside\ItemsMenu.js" />
     <Content Include="_Clientside\MoneyText.js" />
-<<<<<<< HEAD
     <Content Include="_Clientside\Resources\WheelMenu\raphael.icons.min.js" />
     <Content Include="_Clientside\Resources\WheelMenu\raphael.min.js" />
-=======
     <Content Include="_Clientside\Resources\Bootstrap\bootstrap.css" />
     <Content Include="_Clientside\Resources\Bootstrap\bootstrap.js" />
     <Content Include="_Clientside\Resources\Bootstrap\bus.css" />
@@ -191,7 +189,6 @@
     <Content Include="_Clientside\Resources\Bootstrap\login.html" />
     <Content Include="_Clientside\Resources\Bootstrap\login.css" />
     <Content Include="_Clientside\Resources\Bootstrap\Images\bg.jpg" />
->>>>>>> 05d78984c3c4eddd1622ef741c6ee050354f1eb5
     <Content Include="_Clientside\Resources\Characters\Images\credit-card.png" />
     <Content Include="_Clientside\Resources\Characters\Images\id-card.png" />
     <Content Include="_Clientside\Resources\Characters\Images\money-card.png" />
@@ -199,7 +196,6 @@
     <Content Include="_Clientside\Resources\Characters\Images\surname-card.png" />
     <Content Include="_Clientside\Resources\Characters\index.html" />
     <Content Include="_Clientside\Resources\Characters\style.css" />
-<<<<<<< HEAD
     <Content Include="_Clientside\Resources\css\bootstrap.css" />
     <Content Include="_Clientside\Resources\css\font-awesome.css" />
     <Content Include="_Clientside\Resources\js\bootstrap.js" />
@@ -209,8 +205,6 @@
     <Content Include="_Clientside\Resources\NewLogin\index.html" />
     <Content Include="_Clientside\Resources\NewLogin\style.css" />
     <Content Include="_Clientside\Resources\WheelMenu\style.css" />
-=======
->>>>>>> 05d78984c3c4eddd1622ef741c6ee050354f1eb5
     <Content Include="_Clientside\VehicleLogic.js" />
     <Content Include="_Clientside\VehiclesMenu.js" />
     <Content Include="_Clientside\Resources\WheelMenu\wheelnav.js" />

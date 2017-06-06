@@ -2,10 +2,11 @@
 # Ten plik .gitignore został utworzony automatycznie przez Microsoft(R) Visual Studio.
 ################################################################################
 
-/v-santos/packages
 /v-santos/v-santos/obj
 /v-santos/v-santos/_Clientside/Resources/Login
 /v-santos/v-santos/_Clientside/Resources/Login
 /v-santos/v-santos/_Clientside/Resources/Login/index.html
 /v-santos/v-santos/_Clientside/Resources/Login/style.css
 /v-santos/v-santos/bin/Debug
+/v-santos/v-santos/bin/Release
+/v-santos/.vs
