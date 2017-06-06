@@ -24,18 +24,19 @@ namespace Serverside.Groups
 
         public static List<Group> Groups => RPCore.Groups;
 
-        //public static Group CreateGroup(Database.Models.Group editor)
-        //{
-        //    var groupType = (GroupType)editor.GroupType;
-        //    switch (groupType)
-        //    {
-        //        case GroupType.CrimeGroup: return new CrimeGroup(editor);
-        //        case GroupType.Taxi: return new Taxi(editor);
-        //        case GroupType.Police: return new Base.Police(editor);
-        //        default:
-        //            throw new NotSupportedException($"Nie rozpoznano typu grupy: {groupType}.");
-        //    }
-        //}
+        public static Group CreateGroup(Database.Models.Group editor)
+        {
+            //var groupType = (GroupType)editor.GroupType;
+            //switch (groupType)
+            //{
+            //    case GroupType.CrimeGroup: return new CrimeGroup(editor);
+            //    case GroupType.Taxi: return new Taxi(editor);
+            //    case GroupType.Police: return new Base.Police(editor);
+            //    default:
+            //        throw new NotSupportedException($"Nie rozpoznano typu grupy: {groupType}.");
+            //}
+            return null;
+        }
 
         #region Komendy
         [Command("gduty")]

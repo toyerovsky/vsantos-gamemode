@@ -204,6 +204,12 @@ namespace Serverside.Core
             return null;
         }
 
+        public static AccountController GetAccountByServerId(int id)
+        {
+            if (id > -1) return Accounts.Values.Where(x => x.ServerId == id).First();
+            return null;
+        }
+
         public static void Add(VehicleController vc)
         {
             VehicleControllers.Add(vc);

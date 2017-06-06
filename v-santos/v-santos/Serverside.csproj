@@ -74,8 +74,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bank\Atm.cs" />
+    <Compile Include="Bank\BankHelper.cs" />
+    <Compile Include="Bank\Models\AtmModel.cs" />
+    <Compile Include="Bank\RPBank.cs" />
     <Compile Include="CharacterCreator\CharacterCreator.cs" />
     <Compile Include="CharacterCreator\RPCharacterCreator.cs" />
+    <Compile Include="Constant\ConstantAssemblyInfo.cs" />
+    <Compile Include="Constant\ConstantItems.cs" />
+    <Compile Include="Constant\ConstantMessages.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CellphoneController.cs" />
     <Compile Include="Controllers\CharacterController.cs" />
@@ -90,13 +97,18 @@
     <Compile Include="Core\Login\RPLogin.cs" />
     <Compile Include="Core\Money\MoneyManager.cs" />
     <Compile Include="Core\Money\RPMoney.cs" />
+    <Compile Include="Core\RPBw.cs" />
     <Compile Include="Core\RPChat.cs" />
     <Compile Include="Core\RPCore.cs" />
     <Compile Include="Core\Telephone\Booth\RPTelephoneBooth.cs" />
     <Compile Include="Core\Telephone\Booth\TelephoneBooth.cs" />
+    <Compile Include="Core\Telephone\Booth\Models\TelephoneBoothModel.cs" />
     <Compile Include="Core\Telephone\TelephoneCall.cs" />
     <Compile Include="Core\Telephone\TelephoneHelper.cs" />
     <Compile Include="Core\Validator.cs" />
+    <Compile Include="Core\Vehicles\RPIndicators.cs" />
+    <Compile Include="Core\Vehicles\RPVehicles.cs" />
+    <Compile Include="Core\XmlHelper.cs" />
     <Compile Include="Database\ForumDatabaseHelper.cs" />
     <Compile Include="Database\Models\Account.cs" />
     <Compile Include="Database\Models\Ban.cs" />
@@ -141,7 +153,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
-    <None Include="_Clientside\Resources\css\bootstrap.css.map" />
+    <None Include="_Clientside\Resources\Bootstrap\bootstrap.css.map" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="types-gtanetwork\Declarations.d.ts" />
@@ -166,8 +178,20 @@
     <Content Include="_Clientside\Resources\WheelMenu\index.html" />
     <Content Include="_Clientside\ItemsMenu.js" />
     <Content Include="_Clientside\MoneyText.js" />
+<<<<<<< HEAD
     <Content Include="_Clientside\Resources\WheelMenu\raphael.icons.min.js" />
     <Content Include="_Clientside\Resources\WheelMenu\raphael.min.js" />
+=======
+    <Content Include="_Clientside\Resources\Bootstrap\bootstrap.css" />
+    <Content Include="_Clientside\Resources\Bootstrap\bootstrap.js" />
+    <Content Include="_Clientside\Resources\Bootstrap\bus.css" />
+    <Content Include="_Clientside\Resources\Bootstrap\bus.html" />
+    <Content Include="_Clientside\Resources\Bootstrap\font-awesome.css" />
+    <Content Include="_Clientside\Resources\Bootstrap\jquery.js" />
+    <Content Include="_Clientside\Resources\Bootstrap\login.html" />
+    <Content Include="_Clientside\Resources\Bootstrap\login.css" />
+    <Content Include="_Clientside\Resources\Bootstrap\Images\bg.jpg" />
+>>>>>>> 05d78984c3c4eddd1622ef741c6ee050354f1eb5
     <Content Include="_Clientside\Resources\Characters\Images\credit-card.png" />
     <Content Include="_Clientside\Resources\Characters\Images\id-card.png" />
     <Content Include="_Clientside\Resources\Characters\Images\money-card.png" />
@@ -175,6 +199,7 @@
     <Content Include="_Clientside\Resources\Characters\Images\surname-card.png" />
     <Content Include="_Clientside\Resources\Characters\index.html" />
     <Content Include="_Clientside\Resources\Characters\style.css" />
+<<<<<<< HEAD
     <Content Include="_Clientside\Resources\css\bootstrap.css" />
     <Content Include="_Clientside\Resources\css\font-awesome.css" />
     <Content Include="_Clientside\Resources\js\bootstrap.js" />
@@ -184,6 +209,8 @@
     <Content Include="_Clientside\Resources\NewLogin\index.html" />
     <Content Include="_Clientside\Resources\NewLogin\style.css" />
     <Content Include="_Clientside\Resources\WheelMenu\style.css" />
+=======
+>>>>>>> 05d78984c3c4eddd1622ef741c6ee050354f1eb5
     <Content Include="_Clientside\VehicleLogic.js" />
     <Content Include="_Clientside\VehiclesMenu.js" />
     <Content Include="_Clientside\Resources\WheelMenu\wheelnav.js" />

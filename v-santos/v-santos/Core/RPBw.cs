@@ -3,7 +3,7 @@ using System.Timers;
 using GTANetworkServer;
 using GTANetworkShared;
 using Serverside.Core.Extensions;
-using Serverside.Core.Finders;
+//using Serverside.Core.Finders;
 using Serverside.Database;
 
 
@@ -51,13 +51,13 @@ namespace Serverside.Core
 
             int getterId = Convert.ToInt32(id);
 
-            Client getter;
-
-            if (PlayerFinder.TryFindClientByServerId(getterId, out getter))
-            {
+            Client getter = RPCore.GetAccountByServerId(getterId).Client;
+            
+            //if (PlayerFinder.TryFindClientByServerId(getterId, out getter))
+            //{
                 API.shared.triggerClientEvent(getter, "ToggleHud", true);
                 getter.ResetData("CharacterBW");               
-            }
+            //}
         }
         #endregion
 
