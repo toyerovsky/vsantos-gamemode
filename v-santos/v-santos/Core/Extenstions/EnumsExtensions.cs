@@ -10,6 +10,16 @@ namespace Serverside.Core.Extenstions
 {
     class EnumsExtensions
     {
+        [Flags]
+        public enum AnimationFlags
+        {
+            Loop = 1 << 0,
+            StopOnLastFrame = 1 << 1,
+            OnlyAnimateUpperBody = 1 << 4,
+            AllowPlayerControl = 1 << 5,
+            Cancellable = 1 << 7
+        }
+
         public enum VehicleClass
         {
             Compact = 0,
@@ -36,6 +46,7 @@ namespace Serverside.Core.Extenstions
             Train = 21,
             Trailer = 22
         }
+
         public enum Wheel
         {
             FrontLeft,
@@ -47,5 +58,19 @@ namespace Serverside.Core.Extenstions
             BikeFront,
             BikeRear
         }
+
+        public enum Doors
+        {
+            FrontLeftDoor,
+            FrontRightDoor,
+            BackLeftDoor,
+            BackRightDoor,
+            Hood,
+            Trunk,
+            Back,
+            Back2,
+        }
+
+
     }
 }

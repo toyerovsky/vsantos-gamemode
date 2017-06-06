@@ -1,55 +1,55 @@
 class WebBrowser {
-  constructor(local) {
-    var resolution = API.getScreenResolution();
+    constructor(local) {
+        var resolution = API.getScreenResolution();
 
-    this.browser = API.createCefBrowser(resolution.Width, resolution.Height, local)
-    API.waitUntilCefBrowserInit(this.browser)
-    API.setCefBrowserPosition(this.browser, 0, 0)
+        this.browser = API.createCefBrowser(resolution.Width, resolution.Height, local)
+        API.waitUntilCefBrowserInit(this.browser)
+        API.setCefBrowserPosition(this.browser, 0, 0)
 
-    API.setCefDrawState(false);
-  }
-
-  load(path, local = true, chatstate = false, cursorstate = true) {
-    if (!API.isCefDrawEnabled()) {
-      API.setCefDrawState(true);
+        API.setCefDrawState(false);
     }
-    this.path = path
-    API.loadPageCefBrowser(this.browser, this.path)
-    API.setCanOpenChat(chatstate)
-    API.showCursor(cursorstate)
 
-  }
+    load(path, local = true, chatstate = false, cursorstate = true) {
+        if (!API.isCefDrawEnabled()) {
+            API.setCefDrawState(true);
+        }
+        this.path = path
+        API.loadPageCefBrowser(this.browser, this.path)
+        API.setCanOpenChat(chatstate)
+        API.showCursor(cursorstate)
 
-  show(chatstate = false) {
-    if (API.isCefDrawEnabled()) {
-      API.setCefDrawState(false)
-      API.setCanOpenChat(chatstate)
-      API.showCursor(true)
     }
-  }
 
-  hide() {
-    if (API.isCefDrawEnabled()) {
-      API.setCefDrawState(false)
-      API.setCanOpenChat(true)
-      API.showCursor(false)
+    show(chatstate = false) {
+        if (API.isCefDrawEnabled()) {
+            API.setCefDrawState(false)
+            API.setCanOpenChat(chatstate)
+            API.showCursor(true)
+        }
     }
-  }
 
-  destroy() {
-    API.setCefDrawState(false)
-    API.destroyCefBrowser(this.browser)
-    API.setCanOpenChat(true)
-    API.showCursor(false)
-  }
+    hide() {
+        if (API.isCefDrawEnabled()) {
+            API.setCefDrawState(false)
+            API.setCanOpenChat(true)
+            API.showCursor(false)
+        }
+    }
 
-  call(func, args) {
-    this.browser.call(func, args)
-  }
+    destroy() {
+        API.setCefDrawState(false)
+        API.destroyCefBrowser(this.browser)
+        API.setCanOpenChat(true)
+        API.showCursor(false)
+    }
 
-  eval(string) {
-    this.browser.eval(string)
-  }
+    call(func, args) {
+        this.browser.call(func, args)
+    }
+
+    eval(string) {
+        this.browser.eval(string)
+    }
 }
 
 let CEF = new WebBrowser(true);
@@ -66,165 +66,160 @@ var ammoCount;
 var drugsCost;
 var drugsCount;
 
-var pieMenuDS;
 
-API.onResourceStart.connect(function ()
-{
-  CEF.show();
+let wheelMenuDataSource = null;
+let busMenuDataSource = null;
+
+API.onResourceStart.connect(function () {
+    CEF.show();
 });
 
-API.onServerEventTrigger.connect(function (eventName, args)
-{
-  if (eventName == "ShowLoginCef")
-  {
-    if (args[0])
-    {
-      CEF.load("_Clientside/Resources/Bootstrap/login.html");
-      var loginCamera = API.createCamera(args[1], args[2]);
-      API.setActiveCamera(loginCamera);
+API.onServerEventTrigger.connect(function (eventName, args) {
+    if (eventName == "ShowLoginCef") {
+        if (args[0]) {
+            CEF.load("_Clientside/Resources/Bootstrap/login.html");
+            var loginCamera = API.createCamera(args[1], args[2]);
+            API.setActiveCamera(loginCamera);
+        }
+        else {
+            CEF.hide();
+        }
     }
-    else
-    {
-      CEF.hide();
+    else if (eventName == "ShowCharacterSelectCef") {
+        if (args[0]) {
+            charactersList = args[1];
+            CEF.load("_Clientside/Resources/Characters/index.html");
+        }
+        else {
+            CEF.hide();
+            API.setActiveCamera(null);
+        }
     }
-  }
-  else if (eventName == "ShowCharacterSelectCef")
-  {
-    if (args[0])
-    {
-      charactersList = args[1];
-      CEF.load("_Clientside/Resources/Characters/index.html");
+    else if (eventName == "ShowOfferCef") {
+        if (args[0]) {
+            offer = args[1];
+            CEF.load("_Clientside/Resources/Offer/index.html");
+        }
+        else {
+            CEF.hide();
+        }
     }
-    else
-    {
-      CEF.hide();
-      API.setActiveCamera(null);
+    else if (eventName == "ShowDescriptionsCef") {
+        descriptions = args[0];
+        CEF.load("_Clientside/Resources/Descriptions/index.html");
     }
-  }
-  else if (eventName == "ShowOfferCef")
-  {
-    if (args[0])
-    {
-      offer = args[1];
-      CEF.load("_Clientside/Resources/Offer/index.html");
-    }
-    else
-    {
-      CEF.hide();
-    }
-  }
-  else if (eventName == "ShowDescriptionsCef")
-  {
-    descriptions = args[0];
-    CEF.load("_Clientside/Resources/Descriptions/index.html");
-  }
-  else if (eventName == "ShowCrimeBotCef")
-  {
-    gunsCost = args[0];
-    gunsCount = args[1];
+    else if (eventName == "ShowCrimeBotCef") {
+        gunsCost = args[0];
+        gunsCount = args[1];
 
-    ammoCost = args[2];
-    ammoCount = args[3];
+        ammoCost = args[2];
+        ammoCount = args[3];
 
-    drugsCost = args[4];
-    drugsCount = args[5];
+        drugsCost = args[4];
+        drugsCount = args[5];
 
-    CEF.load("_Clientside/Resources/CrimeBot/index.html");
-  }
-  else if (eventName == "CreatePieMenu") {
-    pieMenuDS = args[0];
-    CEF.load("_Clientside/Resources/PieMenu/index.html");
-  }
+        CEF.load("_Clientside/Resources/CrimeBot/index.html");
+    }
+    else if (eventName == "ShowWheelMenu") {
+        wheelMenuDataSource = args[0];
+        CEF.load("_Clientside/Resources/WheelMenu/index.html");
+    }
+    else if (eventName == "ShowBusMenu") {
+        CEF.load("_Clientside/Resources/Bootstrap/bus.html");
+        busMenuDataSource = args[0];
+    }
 });
 
-function GetPieMenuDS()
-{
-  return pieMenuDS;
+function Login(login, password) {
+    API.triggerServerEvent("OnPlayerEnteredLoginData", login, password);
 }
 
-function Login(login, password)
-{
-  API.triggerServerEvent("OnPlayerEnteredLoginData", login, password);
+function GetPlayerCharacters() {
+    CEF.call("LoadCharacters", charactersList);
 }
 
-function GetPlayerCharacters()
-{
-  CEF.call("LoadCharacters", charactersList);
+function SelectCharacter(uid) {
+    API.triggerServerEvent("OnPlayerSelectedCharacter", uid);
 }
 
-function SelectCharacter(uid)
-{
-  API.triggerServerEvent("OnPlayerSelectedCharacter", uid);
+function GetOffer() {
+    return offer;
 }
 
-function GetOffer()
-{
-  return offer;
+function PayOffer(bank) {
+    API.triggerServerEvent("OnPlayerOfferPay", bank);
 }
 
-function PayOffer(bank)
-{
-  API.triggerServerEvent("OnPlayerOfferPay", bank);
+function CancelOffer() {
+    API.triggerServerEvent("OnPlayerCancelOffer");
 }
 
-function CancelOffer()
-{
-  API.triggerServerEvent("OnPlayerCancelOffer");
+function GetDescriptions() {
+    return descriptions;
 }
 
-function GetDescriptions()
-{
-  return descriptions;
+function AddDescription(title, description) {
+    API.triggerServerEvent("OnPlayerAddDescription", title, description);
 }
 
-function AddDescription(title, description)
-{
-  API.triggerServerEvent("OnPlayerAddDescription", title, description);
+function EditDescription(index, title, description) {
+    API.triggerServerEvent("OnPlayerEditDescription", index, title, description);
 }
 
-function EditDescription(index, title, description)
-{
-  API.triggerServerEvent("OnPlayerEditDescription", index, title, description);
-}
-
-function DeleteDescription(index)
-{
-  API.triggerServerEvent("OnPlayerDeleteDescription", index);
+function DeleteDescription(index) {
+    API.triggerServerEvent("OnPlayerDeleteDescription", index);
 }
 
 function SetDescription(description) {
-  API.triggerServerEvent("OnPlayerSetDescription", description);
+    API.triggerServerEvent("OnPlayerSetDescription", description);
 }
 
 function GetGunsCost() {
-  return gunsCost;
+    return gunsCost;
 }
 
 function GetGunsCount() {
-  return gunsCount;
+    return gunsCount;
 }
 
 function GetAmmoCost() {
-  return ammoCost;
+    return ammoCost;
 }
 
 function GetAmmoCount() {
-  return ammoCount;
+    return ammoCount;
 }
 
 function GetDrugsCost() {
-  return drugsCost;
+    return drugsCost;
 }
 
 function GetDrugsCount() {
-  return drugsCount;
+    return drugsCount;
 }
 
 function CrimeBotBuy(i) {
-  API.triggerServerEvent("OnCrimeBotBought", i.toString());
+    API.triggerServerEvent("OnCrimeBotBought", i.toString());
 }
 
-function CloseCef()
-{
-  CEF.hide();
+function GetBusStops() {
+    return busMenuDataSource;
+}
+
+function RequestBus(time, cost, index) {
+    API.triggerServerEvent("RequestBus", time, cost, index);
+    CloseCef();
+}
+
+function GetWheelMenuDataSource() {
+    return wheelMenuDataSource;
+}
+
+function WheelMenuUseItem(name) {
+    API.triggerServerEvent("UseWheelMenuItem", name);
+    CloseCef();
+}
+
+function CloseCef() {
+    CEF.hide();
 }

@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using GTANetworkServer;
-using Serverside.Core;
-using Serverside.Database;
-using Serverside.Database.Models;
 using Serverside.Core.Extensions;
 
-namespace Serverside
+namespace Serverside.Core
 {
     public enum ChatMessageType
     {
@@ -44,8 +41,7 @@ namespace Serverside
         private void API_onChatMessageHandler(Client sender, string message, CancelEventArgs e)
         {
             e.Cancel = true;
-            dynamic data;
-            if (sender.TryGetData("CanTalk", out data)) return;
+            if (!sender.TryGetData("CanTalk", out dynamic data)) return;
             if (!data) return;
             SendMessageToNearbyPlayers(sender, message, sender.hasSyncedData("CellphoneTalking") ? ChatMessageType.PhoneOthers : ChatMessageType.Normal);
             SaidEventHandler handler = OnPlayerSaid;
@@ -55,9 +51,8 @@ namespace Serverside
 
         private void API_onChatCommand(Client sender, string command, CancelEventArgs e)
         {
-            dynamic data;
-            if (sender.TryGetData("CanCommand", out data)) return;
-            if (!data)
+            if (!sender.TryGetData("CanCommand", out dynamic data)) return;
+            if (!(bool)data)
             {
                 e.Cancel = true;
             }
@@ -282,7 +277,7 @@ namespace Serverside
             {
                 color = "~#ffdb00~";
                 API.shared.sendChatMessageToPlayer(player, color, Convert.ToBoolean(player.getData("CharacterGender")) ? "Głos z telefonu (Mężczyzna): "
-                    + message : "Głos z telefonu (Kobieta): " + message);
+                                                                                                                         + message : "Głos z telefonu (Kobieta): " + message);
             }
         }
     }

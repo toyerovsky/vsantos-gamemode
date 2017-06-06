@@ -132,6 +132,9 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WheelMenu\RPWheelMenu.cs" />
+    <Compile Include="WheelMenu\WheelMenu.cs" />
+    <Compile Include="WheelMenu\WheelMenuItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
@@ -151,7 +154,6 @@
     <TypeScriptCompile Include="types-gtanetwork\System.d.ts" />
     <TypeScriptCompile Include="types-gtanetwork\System.Drawing.dll.d.ts" />
     <TypeScriptCompile Include="types-gtanetwork\Xilium.CefGlue.dll.d.ts" />
-    <TypeScriptCompile Include="_Clientside\MenuBuilder.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="_Clientside\BwGui.js" />
@@ -161,8 +163,11 @@
     <Content Include="_Clientside\Core.js" />
     <Content Include="_Clientside\CornerBotMenu.js" />
     <Content Include="_Clientside\Diagnostics.js" />
+    <Content Include="_Clientside\Resources\WheelMenu\index.html" />
     <Content Include="_Clientside\ItemsMenu.js" />
     <Content Include="_Clientside\MoneyText.js" />
+    <Content Include="_Clientside\Resources\WheelMenu\raphael.icons.min.js" />
+    <Content Include="_Clientside\Resources\WheelMenu\raphael.min.js" />
     <Content Include="_Clientside\Resources\Characters\Images\credit-card.png" />
     <Content Include="_Clientside\Resources\Characters\Images\id-card.png" />
     <Content Include="_Clientside\Resources\Characters\Images\money-card.png" />
@@ -178,8 +183,11 @@
     <Content Include="_Clientside\Resources\NewLogin\Images\logo2.png" />
     <Content Include="_Clientside\Resources\NewLogin\index.html" />
     <Content Include="_Clientside\Resources\NewLogin\style.css" />
+    <Content Include="_Clientside\Resources\WheelMenu\style.css" />
     <Content Include="_Clientside\VehicleLogic.js" />
     <Content Include="_Clientside\VehiclesMenu.js" />
+    <Content Include="_Clientside\Resources\WheelMenu\wheelnav.js" />
+    <Content Include="_Clientside\Resources\WheelMenu\wheelnav.min.js" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201706042235471_InitialCreate.resx">

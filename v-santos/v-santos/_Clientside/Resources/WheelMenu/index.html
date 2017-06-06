@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" type="text/css" href="style.css" />
+
+    <script type="text/javascript" src="raphael.min.js"></script>
+    <script type="text/javascript" src="raphael.icons.min.js"></script>
+    <script type="text/javascript" src="wheelnav.min.js"></script>
+
+    <script type="text/javascript">
+        window.onload = function () {
+
+            var wheel = new wheelnav('piemenu');
+            wheel.clockwise = false;
+            wheel.wheelRadius = wheel.wheelRadius;
+            wheel.cssMode = true;
+
+            var wheelMenuDataSourceJson = JSON.parse(resourceCall("GetWheelMenuDataSource"));
+            var wheelMenuDataSource = [];
+            for (var i = 0; i < wheelMenuDataSourceJson.length; i++) {
+                wheelMenuDataSource.push(wheelMenuDataSourceJson[i].Name);
+            }
+            wheel.createWheel(wheelMenuDataSource);
+
+            for (var k = 0; k < wheel.navItems.length; k++) {
+
+                wheel.navItems[k].Name = wheelMenuDataSourceJson[k].Name;
+                wheel.navItems[k].navigateFunction = function ()
+                {
+                    resourceCall("WheelMenuUseItem", this.Name);
+                }
+            }
+        };
+    </script>
+</head>
+<body>
+    <div id='piemenu' data-wheelnav
+         data-wheelnav-slicepath='DonutSlice'
+         data-wheelnav-rotateoff
+         data-wheelnav-navangle='270'
+         data-wheelnav-cssmode
+         data-wheelnav-init>
+    </div>
+</body>
+</html>
