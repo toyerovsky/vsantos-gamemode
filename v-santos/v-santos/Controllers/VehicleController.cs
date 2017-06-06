@@ -18,7 +18,7 @@ namespace Serverside.Controllers
         public GTANetworkServer.Vehicle Vehicle { get; set; }
 
         public Vehicle VehicleData = new Vehicle();
-        //public Core.Description.Description Description;
+        public Core.Description.Description Description;
 
         //Wczytywanie pojazdu
         public VehicleController(Vehicle data)
@@ -47,7 +47,7 @@ namespace Serverside.Controllers
         //Dodawanie pojazdu
         public VehicleController(FullPosition spawnPosition, VehicleHash hash, string numberplate, int numberplatestyle, int creatorId, Color primaryColor,
             Color secondaryColor, float enginePowerMultiplier = 1.0f, float engineTorqueMultiplier = 1.0f, Character character = null, Group group = null)
-        {    
+        {
             this.VehicleData.VehicleHash = hash;
             this.VehicleData.NumberPlate = numberplate;
             this.VehicleData.NumberPlateStyle = numberplatestyle;
@@ -192,12 +192,32 @@ namespace Serverside.Controllers
         //    }
         //}
 
-        public void Dispose()
+        private void ReleaseUnmanagedResources()
         {
             VehicleData.IsSpawned = false;
             Save();
             API.shared.deleteEntity(this.Vehicle);
             RPCore.Remove(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            ReleaseUnmanagedResources();
+            if (disposing)
+            {
+                Description?.Dispose();
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~VehicleController()
+        {
+            Dispose(false);
         }
     }
 }
