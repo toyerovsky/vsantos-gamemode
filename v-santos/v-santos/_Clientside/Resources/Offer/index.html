@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body onselectstart="return false;">
+    <div class="center">
+        <div id="panel">
+            <div id="upper">
+                <p id="senderName"></p>
+            </div>
+            <label for="name">Nazwa Oferty:</label>
+            <div class="input-group">
+                <span class="input-group-addon" style="background: url(Images/name-card.png);background-repeat: no-repeat;background-color: #eee;background-position: center;"></span>
+                <input type="text" class="input" id="name" name="name" value="" disabled="disabled">
+            </div><div id="box3d"></div>
+            <label for="name">Typ Oferty:</label>
+            <div class="input-group">
+              <span class="input-group-addon" style="background: url(Images/type-card.png); background-repeat: no-repeat;background-color: #eee;background-position: center;"></span>
+                <input type="text" class="input" id="type" name="name" value="" disabled="disabled">
+            </div><div id="box3d"></div>
+            <label for="name">Cena:</label>
+            <div class="input-group">
+              <span class="input-group-addon" style="background: url(Images/money-card.png);background-repeat: no-repeat;background-color: #eee;background-position: center;"></span>
+                <input type="text" class="input" id="money" name="surname" value="" disabled="disabled">
+            </div><div id="box3d"></div>
+            <div id="lower">
+                <div class="buttons">
+                    <button id="cancel">Odrzuć</button>
+                    <button id="payMoney">Zapłać gotówką</button>
+                    <button id="payBankMoney">Zapłać kartą</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>           
+            document.addEventListener("DOMContentLoaded", function (event)
+            { 
+                var collection = resourceCall("GetOffer");
+
+                document.getElementById("senderName").innerHTML = "Oferta od: " + collection[0].toString();
+                document.getElementById("name").value = collection[1].toString();
+                document.getElementById("type").value = collection[2].toString();
+                document.getElementById("money").value = "$" + collection[3].toString();
+            });
+
+            document.getElementById("cancel").onclick = function()
+            {
+                resourceCall("CancelOffer");
+            };         
+
+            document.getElementById("payMoney").onclick = function ()
+            {
+                
+                resourceCall("PayOffer", false);
+            };
+
+            document.getElementById("payBankMoney").onclick = function ()
+            {
+                
+                resourceCall("PayOffer", true);
+            };
+    </script>
+</body>
+</html>

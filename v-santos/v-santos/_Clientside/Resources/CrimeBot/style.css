@@ -1,0 +1,323 @@
+﻿.center
+{
+    width: 900px;
+    margin: 0 auto;
+    margin-top: 150px;
+}
+
+.TopButtonContainer
+{
+    position: relative;
+    width: 100%;
+    min-height: 100px;
+    display: inline-flex;
+}
+
+.TopButtonContainer > button
+{
+    transition-timing-function: ease;
+    transition: opacity 0.7s, width 0.5s;
+    opacity: 0.4;
+    display: inline;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    width: 30%;
+    height: 100%;
+    border: none;
+    background: #ecf2f5;
+    color: #696969;
+    font-family: "Titillium Web", sans-serif;
+    font-size: 16px;
+    text-shadow: 0 1px silver;
+}
+
+.TopButtonContainer > button:focus
+{
+    opacity: 1;
+    padding: 0;
+    border: 0;
+}
+
+.TopButtonContainer > button:hover
+{
+    width: 45%;
+}
+
+.VerticalLine
+{
+    width: 1px;
+    color: #696969;
+    opacity: 0.3;
+}
+
+#panel
+{
+    width: 600px;
+    margin: 0 auto;
+    padding: 0;
+    background: #fff;
+    border: 1px solid silver;
+    font: 16px calibri;
+    letter-spacing: -1px;
+    -webkit-box-shadow: 0 0 2px silver;
+    -moz-box-shadow: 0 0 2px silver;
+    box-shadow: 0 0 2px silver;
+}
+
+label
+{
+    display: block;
+    width: 460px;
+    padding: 10px 20px;
+    color: #696969;
+    font-size: 16px;
+    text-shadow: 0 0 1px silver;
+}
+
+.input
+{
+    font-size: 22px;
+    display: block;
+    min-width: 560px;
+    padding: 10px 5px;
+    border: 1px solid silver;
+    outline: 5px solid #ebebeb;
+    transition: all 0.4s ease;
+}
+
+.input:hover, .input:focus
+{
+    outline: 4px solid #cfe4ed;
+}
+
+input[type="text"]:disabled
+{
+    background: #fff;
+}
+
+.buttons
+{
+    margin-left: 10%;
+    display: inline-flex;
+}
+
+#accept, #cancel, #add
+{
+    border-radius: 5px;
+    width: 150px;
+    padding: 8px 20px;
+    color: white;
+    text-shadow: 0 0 1px black;
+    opacity: 0.8;
+    margin-left: 1%;
+}
+
+#accept
+{
+    border: 1px solid #005f85;
+    background: #00BA8C;
+}
+
+#cancel
+{
+    border: 1px solid #AA7F39;
+    background: #A8383B;
+}
+
+#add
+{
+    background-color: #AA5239;
+    border: 1px solid #AA4839;
+}
+
+#accept:hover, #cancel:hover, #add:hover
+{
+    opacity: 1;
+    -webkit-transition: opacity 0.3s;
+}
+
+#lower
+{
+    background: #ecf2f5;
+    width: 560px;
+    padding: 25px 20px;
+    margin-top: 20px;
+    margin: 0 auto;
+}
+
+#upper
+{
+    background: #ecf2f5;
+    width: 560px;
+    padding: 15px 20px;
+    font-family: "Titillium Web", sans-serif;
+    font-size: 20px;
+    text-align: center;
+}
+
+.check
+{
+    display: inline;
+    float: none;
+    font-size: 11px;
+    padding: 5px;
+}
+
+#panel
+{
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.input-group-addon:first-child
+{
+    border-right: 0;
+}
+
+.input-group .form-control:first-child, .input-group-addon:first-child, .input-group-btn:first-child > .btn, .input-group-btn:first-child > .btn-group > .btn, .input-group-btn:first-child > .dropdown-toggle, .input-group-btn:last-child > .btn:not(:last-child):not(.dropdown-toggle), .input-group-btn:last-child > .btn-group:not(:last-child) > .btn
+{
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.input-group-addon
+{
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+    color: #555;
+    text-align: center;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-repeat: no-repeat;
+    width: 30px;
+}
+
+.input-group-addon, .input-group-btn
+{
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.input-group-addon, .input-group-btn, .input-group .form-control
+{
+    display: table-cell;
+}
+
+.input-group
+{
+    position: relative;
+    display: table;
+    border-collapse: separate;
+    margin-left: -30px;
+}
+
+#box3d
+{
+    content: " ";
+    display: block;
+    -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+    border-top: 1px solid #d8dee5;
+    border-left: 1px solid #d8dee5;
+    position: absolute;
+    -ms-transform: skewX(45deg);
+    -webkit-transform: skewX(45deg);
+    transform: skewX(45deg);
+    z-index: -1;
+    margin-left: -15px;
+}
+
+td > input[type="number"]
+{
+    width: 60px;
+}
+
+td
+{
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px dotted #ddd;
+    border-right: 1px dotted #ddd;
+}
+
+img
+{
+    opacity: 0.8;
+}
+
+#RightTableArrow 
+{
+    border-right: none;
+}
+
+.TableArrow
+{
+    padding: 0;
+    margin: 0;
+    font-size: 150%;
+    width: 15%;
+    font-family: "Titillium Web", sans-serif;
+    text-shadow: 0 1px gray;
+    color: gray;
+}
+
+.TableArrow:hover
+{
+    font-size: 165%;
+    cursor: default;
+}
+
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown
+{
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content
+{
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content p
+{
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content p:hover
+{
+    background-color: #f1f1f1
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content
+{
+    display: block;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn
+{
+    background-color: #3e8e41;
+}

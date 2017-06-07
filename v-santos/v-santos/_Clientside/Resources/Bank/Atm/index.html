@@ -1,0 +1,184 @@
+﻿<!DOCTYPE html>
+<html lang="pl-PL" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8"/>
+        <link href="style.css" rel="stylesheet" type="text/css">
+    </head>
+    <body onselectstart="return false;">
+    <div class="center">
+        <div id="panel">
+            <div id="upper">
+                <div class="TopButtonContainer">
+                    <button id="infoAtm" autofocus><img src="Images/economy.png"/><br/>Informacje</button>
+                    <hr class="VerticalLine">
+                    <button id="takeAtm"><img src="Images/safebox(1).png"/><br/>Wpłata</button>
+                    <hr class="VerticalLine">
+                    <button id="giveAtm"><img src="Images/safebox.png"/><br/>Wypłata</button>
+                    <hr class="VerticalLine">
+                    <button id="historyAtm"><img src="Images/piggy-bank.png"/><br/>Historia konta</button>
+                </div>
+            </div>
+                <label>Imię i nazwisko:</label>
+                <div class="input-group">
+                    <span class="input-group-addon" style="background: url(Images/pen-card.png); background-repeat: no-repeat; background-color: #eee; background-position: center;"></span>
+                    <input type="text" class="input" id="name" name="name" disabled="disabled">
+                </div>
+                <div id="box3d"></div>
+                <label>Numer konta:</label>
+                <div class="input-group">
+                    <span class="input-group-addon" style="background: url(Images/pen-card.png); background-repeat: no-repeat; background-color: #eee; background-position: center;"></span>
+                    <input type="text" class="input" id="accountNumber" name="accountNumber" disabled="disabled">
+                </div>
+                <div id="box3d"></div>
+                <label>Stan konta:</label>
+                <div class="input-group">
+                    <span class="input-group-addon" style="background: url(Images/pen-card.png); background-repeat: no-repeat; background-color: #eee; background-position: center;"></span>
+                    <input type="text" class="input" id="moneyCount" name="moneyCount" disabled="disabled"/>
+                </div>
+                <div id="box3d"></div>
+            <div id="contentGive">
+                <label>Kwota:</label>
+                <div class="input-group">
+                    <span class="input-group-addon" style="background: url(Images/pen-card.png); background-repeat: no-repeat; background-color: #eee; background-position: center;"></span>
+                    <input type="number" class="input" id="giveMoneyCount" name="title" maxlength="25" value=""/>
+                </div>
+                <div id="box3d"></div>
+            </div>
+
+            <div id="contentTake">
+                <label>Kwota:</label>
+                <div class="input-group">
+                    <span class="input-group-addon" style="background: url(Images/pen-card.png); background-repeat: no-repeat; background-color: #eee; background-position: center;"></span>
+                    <input type="number" class="input" id="takeMoneyCount" name="title" maxlength="25" value=""/>
+                </div>
+                <div id="box3d"></div>
+            </div>
+
+            <div id="contentHistory">
+                <label>Historia konta:</label>
+                <div class="input-group">
+                    <span class="input-group-addon" style="background: url(Images/pen-card.png); background-repeat: no-repeat; background-color: #eee; background-position: center;"></span>
+                    <iframe src="iframe/iframe.html">
+                    </iframe>
+                </div>
+                <div id="box3d"></div>
+            </div>
+            <br/>
+            <div id="lower">
+                <div class="buttons">
+                    <button id="cancelAtm">Anuluj</button>
+                    <button id="acceptAtm">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var focused;
+
+        document.addEventListener("DOMContentLoaded", function (event)
+        {
+            
+            document.getElementById("infoAtm").click();
+            document.getElementById("name").value = "$" + resourceCall("GetName");
+            document.getElementById("moneyCount").value = "$" + resourceCall("GetCount");
+            document.getElementById("accountNumber").value = "$" + resourceCall("GetNumber");
+        });
+
+        document.getElementById("infoAtm").onclick = function ()
+        {
+            
+            document.getElementById("contentInfo").style.display = "block";
+            
+            document.getElementById("contentGive").style.display = "none";
+            document.getElementById("contentHistory").style.display = "none";
+            document.getElementById("contentTake").style.display = "none";
+        }
+
+        document.getElementById("acceptAtm").onclick = function ()
+        {
+            
+            if (focused == document.getElementById("takeAtm"))
+            {
+                if (document.getElementById("takeMoneyCount").value.toString().trim() != "" &&
+                    !isNaN(document.getElementById("takeMoneyCount").value))
+                {
+                    resourceCall("TakeAtm", document.getElementById("takeMoneyCount").value);
+                    resourceCall("Close");
+                }
+                else
+                {
+                    API.sendNotification("Wprowadzono dane w niepoprawnym formacie.");
+                }
+            }
+            else if (focused == document.getElementById("giveAtm"))
+            {
+                if (document.getElementById("giveMoneyCount").value.toString().trim() != "" &&
+                    !isNaN(document.getElementById("giveMoneyCount").value))
+                {
+                    resourceCall("GiveAtm", document.getElementById("giveMoneyCount").value);
+                    resourceCall("Close");
+                }
+                else
+                {
+                    API.sendNotification("Wprowadzono dane w niepoprawnym formacie.");
+                }
+            }
+        }
+
+        document.getElementById("cancelAtm").onclick = function ()
+        {
+            
+            resourceCall("Close");
+        }
+
+        document.getElementById("takeAtm").onclick = function ()
+        {
+            
+            focused = this;
+            document.getElementById("contentTake").style.display = "block";
+
+            document.getElementById("contentGive").style.display = "none";
+            document.getElementById("contentHistory").style.display = "none";
+            document.getElementById("contentInfo").style.display = "none";
+        }
+
+        document.getElementById("giveAtm").onclick = function ()
+        {
+            
+            focused = this;
+            document.getElementById("contentGive").style.display = "block";
+
+            document.getElementById("contentTake").style.display = "none";
+            document.getElementById("contentHistory").style.display = "none";
+            document.getElementById("contentInfo").style.display = "none";
+        }
+
+        document.getElementById("historyAtm").onclick = function ()
+        {
+            
+            focused = this;
+            document.getElementById("contentHistory").style.display = "block";
+
+            document.getElementById("contentTake").style.display = "none";
+            document.getElementById("contentGive").style.display = "none";
+            document.getElementById("contentInfo").style.display = "none";
+        }
+
+        //function UpdateName(value)
+        //{
+            
+        //}
+
+        //function UpdateCount(value)
+        //{
+            
+        //}
+
+        //function UpdateNumber(value)
+        //{
+            
+        //}
+    </script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body onselectstart="return false;">
+        <div class="center">
+            <div id="panel">
+                <div id="upper">
+                    <div class="TopButtonContainer">
+                        <button id="infoAtm" autofocus><img src="Images/economy.png"/><br/>Informacje</button>
+                        <hr class="VerticalLine">
+                        <button id="takeAtm"><img src="Images/safebox(1).png"/><br/>Wpłata</button>
+                        <hr class="VerticalLine">
+                        <button id="giveAtm"><img src="Images/safebox.png"/><br/>Wypłata</button>
+                        <hr class="VerticalLine">
+                        <button id="historyAtm"><img src="Images/piggy-bank.png"/><br/>Historia konta</button>
+                    </div>
+                </div>
+                <label>Zapis:</label>
+                <div class="input-group">
+                    <span class="input-group-addon" style="background: url(Images/type-card.png); background-repeat: no-repeat; background-color: #eee; background-position: center;"></span>
+                    <div class="SavedContainer">
+                        <p tabindex="0" id="saved1">t</p>
+                        <p tabindex="1" id="saved2">t</p>
+                        <p tabindex="2" id="saved3">t</p>
+                    </div>
+                </div>
+
+                <label for="title">Tytuł:</label>
+                <div class="input-group">
+                    <span class="input-group-addon" style="background: url(Images/pen-card.png); background-repeat: no-repeat; background-color: #eee; background-position: center;"></span>
+                    <input type="text" class="input" id="title" name="title" maxlength="25" value="" />
+                </div>
+                <div id="box3d"></div>
+                <label for="name">Opis:</label>
+                <div class="input-group">
+                    <span class="input-group-addon" style="background: url(Images/notepad.png); background-repeat: no-repeat; background-color: #eee; background-position: center;"></span>
+                    <textarea type="text" class="textarea" id="name" name="name" maxlength="150" placeholder=""></textarea>
+                </div>
+                <div id="box3d"></div>
+                <div id="lower">
+                    <div class="buttons">
+                        <button id="cancelDescription">Zamknij</button>
+                        <div class="dropdown">
+                            <button id="deleteDescription">Usuń opis</button>
+                            <div class="dropdown-content">
+                                <p onclick="ChangeButton(this)">Edytuj opis</p>
+                                <p onclick="ChangeButton(this)">Zapisz opis</p>
+                            </div>
+                        </div>
+                        <button id="setDescription">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <script>
+        var selectedButton;
+
+        function ChangeButton(button)
+        {
+            selectedButton = button.innerHTML;
+            button.innerHTML = document.getElementById("deleteDescription").textContent;
+            document.getElementById("deleteDescription").textContent = selectedButton;
+        }
+
+        var selectedIndex;
+
+
+        document.addEventListener("DOMContentLoaded", function (event)
+        {
+            var collection = JSON.parse(resourceCall("GetDescriptions"));
+        });
+
+        document.getElementById("saveDescription").onclick = function ()
+        {
+            resourceCall("AddDescription", document.getElementById("title").value, document.getElementById("name").value);
+        };
+
+        document.getElementById("cancelDescription").onclick = function ()
+        {
+            resourceCall("CloseCef");
+        }
+
+        document.getElementById("deleteDescription").onclick = function ()
+        {
+            if (selectedIndex != null && selectedIndex >= 0 && selectedIndex <= 3)
+            {
+                resourceCall("DeleteDescriptions", selectedIndex);
+            }
+        };
+
+        document.getElementById("setDescription").onclick = function ()
+        {
+            if (selectedIndex != null && selectedIndex >= 0 && selectedIndex <= 3)
+            {
+                resourceCall("SetDescription", document.getElementById("name").value);
+            }
+        };
+
+        function SelectDescription(index)
+        {
+            selectedIndex = index;
+            var collection = DecryptObjectsCollection(resourceCall("GetDescriptions"));
+            document.getElementById("title").value = collection[index]["Title"].toString();
+            document.getElementById("name").value = collection[index]["Description"].toString();
+        }
+    </script>
+</body>
+</html>

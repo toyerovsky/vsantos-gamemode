@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MySql.Data.MySqlClient.Memcached;
 using Serverside.Controllers;
 using Serverside.Core.Extensions;
 using Serverside.Core.Extenstions;
@@ -52,10 +51,10 @@ namespace Serverside.WheelMenu
             }
         }
 
-        private List<WheelMenuItem> PrepareDataSource(GTANetworkServer.Client sender, object target, params object[] args)
+        private List<WheelMenuItem> PrepareDataSource(Client sender, object target, params object[] args)
         {
             List<WheelMenuItem> menuItems = new List<WheelMenuItem>();
-            if (target is GTANetworkServer.Client)
+            if (target is Client)
             {
                 
             }

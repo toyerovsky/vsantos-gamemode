@@ -74,6 +74,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Admin\AdminCore.cs" />
+    <Compile Include="Admin\AdminGroups.cs" />
+    <Compile Include="Admin\AdminTeleport.cs" />
     <Compile Include="Bank\Atm.cs" />
     <Compile Include="Bank\BankHelper.cs" />
     <Compile Include="Bank\Models\AtmModel.cs" />
@@ -112,6 +115,14 @@
     <Compile Include="Core\Vehicles\RPIndicators.cs" />
     <Compile Include="Core\Vehicles\RPVehicles.cs" />
     <Compile Include="Core\XmlHelper.cs" />
+    <Compile Include="Corners\Corner.cs" />
+    <Compile Include="Corners\CornerBot.cs" />
+    <Compile Include="Corners\EventArgs\EndTransactionEventArgs.cs" />
+    <Compile Include="Corners\Helpers\CornerBotHelper.cs" />
+    <Compile Include="Corners\Models\CornerBotModel.cs" />
+    <Compile Include="Corners\Models\CornerModel.cs" />
+    <Compile Include="Corners\RPCornerBots.cs" />
+    <Compile Include="Corners\RPCorners.cs" />
     <Compile Include="Database\ForumDatabaseHelper.cs" />
     <Compile Include="Database\Models\Account.cs" />
     <Compile Include="Database\Models\Ban.cs" />
@@ -126,6 +137,8 @@
     <Compile Include="Database\Models\Vehicle.cs" />
     <Compile Include="Database\Models\Worker.cs" />
     <Compile Include="Database\RoleplayConnection.cs" />
+    <Compile Include="Employer\EmployerBot.cs" />
+    <Compile Include="Employer\RPEmployer.cs" />
     <Compile Include="Groups\Base\CityHall.cs" />
     <Compile Include="Groups\Base\Group.cs" />
     <Compile Include="Groups\Enums.cs" />
@@ -133,6 +146,10 @@
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\RPItems.cs" />
     <Compile Include="Items\ServerItem.cs" />
+    <Compile Include="Jobs\GarbageCollector.cs" />
+    <Compile Include="Jobs\Greenkeeper.cs" />
+    <Compile Include="Jobs\JobVehicle.cs" />
+    <Compile Include="Jobs\RPJobs.cs" />
     <Compile Include="Migrations\201706042235471_InitialCreate.cs" />
     <Compile Include="Migrations\201706042235471_InitialCreate.Designer.cs">
       <DependentUpon>201706042235471_InitialCreate.cs</DependentUpon>
@@ -146,6 +163,10 @@
       <DependentUpon>201706050552328_nullexception_fix.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Offers\Enums.cs" />
+    <Compile Include="Offers\Offer.cs" />
+    <Compile Include="Offers\OfferActions.cs" />
+    <Compile Include="Offers\RPOffers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WheelMenu\RPWheelMenu.cs" />
     <Compile Include="WheelMenu\WheelMenu.cs" />
@@ -157,15 +178,80 @@
     </None>
     <None Include="packages.config" />
     <None Include="_Clientside\Resources\Bootstrap\bootstrap.css.map" />
+    <None Include="_Clientside\Resources\css\bootstrap.css.map" />
+    <None Include="_Clientside\Resources\fonts\fontawesome-webfont.eot" />
+    <None Include="_Clientside\Resources\fonts\fontawesome-webfont.ttf" />
+    <None Include="_Clientside\Resources\fonts\fontawesome-webfont.woff" />
+    <None Include="_Clientside\Resources\fonts\fontawesome-webfont.woff2" />
+    <None Include="_Clientside\Resources\fonts\FontAwesome.otf" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="_Clientside\Animations.js" />
+    <Content Include="_Clientside\Atm.js" />
     <Content Include="_Clientside\BwGui.js" />
+    <Content Include="_Clientside\Carshop.js" />
     <Content Include="_Clientside\Cef.js" />
     <Content Include="_Clientside\CharacterCreator.js" />
     <Content Include="_Clientside\CinematicCamera.js" />
     <Content Include="_Clientside\Core.js" />
     <Content Include="_Clientside\CornerBotMenu.js" />
+    <Content Include="_Clientside\CrimeBot.js" />
     <Content Include="_Clientside\Diagnostics.js" />
+    <Content Include="_Clientside\Employer.js" />
+    <Content Include="_Clientside\Indicators.js" />
+    <Content Include="_Clientside\Jobs.js" />
+    <Content Include="_Clientside\Resources\Bank\Atm\Iframe\iframe.html" />
+    <Content Include="_Clientside\Resources\Bank\Atm\Images\economy.png" />
+    <Content Include="_Clientside\Resources\Bank\Atm\Images\piggy-bank.png" />
+    <Content Include="_Clientside\Resources\Bank\Atm\Images\safebox%281%29.png" />
+    <Content Include="_Clientside\Resources\Bank\Atm\Images\safebox.png" />
+    <Content Include="_Clientside\Resources\Bank\Atm\index.html" />
+    <Content Include="_Clientside\Resources\Bank\Atm\style.css" />
+    <Content Include="_Clientside\Resources\Bus\bus.css" />
+    <Content Include="_Clientside\Resources\Bus\bus.html" />
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-1045183535.png" />
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-1074790547.png" />
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-1076751822.png" />
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-1716589765.png" />
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-2084633992.png" />
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-275439685.png" />
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-619010992.png" />
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-771403250.png" />
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\100416529.png" />
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\137902532.png" />
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\1593441988.png" />
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\1649403952.png" />
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\2017895192.png" />
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\324215364.png" />
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\453432689.png" />
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\487013001.png" />
+    <Content Include="_Clientside\Resources\CrimeBot\index.html" />
+    <Content Include="_Clientside\Resources\CrimeBot\style.css" />
+    <Content Include="_Clientside\Resources\css\bootstrap.css" />
+    <Content Include="_Clientside\Resources\Descriptions\Images\arrow.gif" />
+    <Content Include="_Clientside\Resources\Descriptions\Images\notepad.png" />
+    <Content Include="_Clientside\Resources\Descriptions\Images\pen-card.png" />
+    <Content Include="_Clientside\Resources\Descriptions\Images\save-card.png" />
+    <Content Include="_Clientside\Resources\Descriptions\Images\type-card.png" />
+    <Content Include="_Clientside\Resources\Descriptions\index.html" />
+    <Content Include="_Clientside\Resources\Descriptions\style.css" />
+    <Content Include="_Clientside\Resources\Employer\Images\boxes.png" />
+    <Content Include="_Clientside\Resources\Employer\Images\mower.png" />
+    <Content Include="_Clientside\Resources\Employer\Images\thief.png" />
+    <Content Include="_Clientside\Resources\Employer\Images\trash.png" />
+    <Content Include="_Clientside\Resources\Employer\index.html" />
+    <Content Include="_Clientside\Resources\Employer\style.css" />
+    <Content Include="_Clientside\Resources\fonts\font-awesome.css" />
+    <Content Include="_Clientside\Resources\fonts\fontawesome-webfont.svg" />
+    <Content Include="_Clientside\Resources\js\bootstrap.js" />
+    <Content Include="_Clientside\Resources\js\jquery.js" />
+    <Content Include="_Clientside\Resources\Login\login.css" />
+    <Content Include="_Clientside\Resources\Login\login.html" />
+    <Content Include="_Clientside\Resources\Offer\Images\money-card.png" />
+    <Content Include="_Clientside\Resources\Offer\Images\name-card.png" />
+    <Content Include="_Clientside\Resources\Offer\Images\type-card.png" />
+    <Content Include="_Clientside\Resources\Offer\index.html" />
+    <Content Include="_Clientside\Resources\Offer\style.css" />
     <Content Include="_Clientside\Resources\WheelMenu\index.html" />
     <Content Include="_Clientside\ItemsMenu.js" />
     <Content Include="_Clientside\MoneyText.js" />
@@ -187,19 +273,14 @@
     <Content Include="_Clientside\Resources\Characters\Images\surname-card.png" />
     <Content Include="_Clientside\Resources\Characters\index.html" />
     <Content Include="_Clientside\Resources\Characters\style.css" />
-    <Content Include="_Clientside\Resources\css\bootstrap.css" />
-    <Content Include="_Clientside\Resources\css\font-awesome.css" />
-    <Content Include="_Clientside\Resources\js\bootstrap.js" />
-    <Content Include="_Clientside\Resources\js\jquery.js" />
-    <Content Include="_Clientside\Resources\NewLogin\Images\bg.jpg" />
-    <Content Include="_Clientside\Resources\NewLogin\Images\logo2.png" />
-    <Content Include="_Clientside\Resources\NewLogin\index.html" />
-    <Content Include="_Clientside\Resources\NewLogin\style.css" />
     <Content Include="_Clientside\Resources\WheelMenu\style.css" />
+    <Content Include="_Clientside\Telephone.js" />
+    <Content Include="_Clientside\TelephoneBooth.js" />
     <Content Include="_Clientside\VehicleLogic.js" />
     <Content Include="_Clientside\VehiclesMenu.js" />
     <Content Include="_Clientside\Resources\WheelMenu\wheelnav.js" />
     <Content Include="_Clientside\Resources\WheelMenu\wheelnav.min.js" />
+    <Content Include="_Clientside\WheelMenu.js" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201706042235471_InitialCreate.resx">

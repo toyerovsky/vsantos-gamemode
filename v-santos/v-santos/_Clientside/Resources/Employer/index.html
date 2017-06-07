@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html lang="pl-PL" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body onselectstart="return false;">
+    <div class="center">
+        <div id="panel">
+            <div id="upper">
+                <div class="TopButtonContainer">
+                    <button onclick="UpdateJob(0)" id="garbagecollectorJob" autofocus><img src="Images/trash.png" /><br />Operator śmieciarki</button>
+                    <hr class="VerticalLine">
+                    <button onclick="UpdateJob(1)" id="greenkeperJob"><img src="Images/mower.png" /><br />Ogrodnik</button>
+                    <hr class="VerticalLine">
+                    <button onclick="UpdateJob(2)" id="thiefJob"><img src="Images/thief.png" /><br />Złodziej</button>
+                    <hr class="VerticalLine">
+                    <button onclick="UpdateJob(3)" id="warehouseJob"><img src="Images/boxes.png" /><br />Magazynier</button>
+                </div>
+            </div>
+            <div id="contentInfo">
+                <label>Twoje saldo:</label>
+                <div class="input-group">
+                    <span class="input-group-addon" style="background-color: #eee; background-position: center;"></span>
+                    <input type="text" class="input" id="moneyJob" name="name" disabled="disabled">
+                </div>
+                <div id="box3d"></div>
+                <div id="lower">
+                    <div class="buttons">
+                        <button id="cancelJob">Anuluj</button>
+                        <button id="getMoneyJob">Odbierz wypłatę</button>
+                        <button id="acceptJob">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+    var job;
+
+    function UpdateJob(value)
+    {
+        job = value;
+    }
+
+    function UpdateInfo(moneyCount)
+    {
+        if (moneyCount != null && moneyCount.toString().trim() != "") 
+        {
+            document.getElementById("moneyJob").value = moneyCount.toString();
+        }
+        else 
+        {
+            document.getElementById("moneyJob").value = "$0";
+        }
+    }
+
+    document.getElementById("getMoneyJob").onclick = function ()
+    {
+        
+        resourceCall("TakeMoneyJob");
+    }
+
+    document.getElementById("acceptJob").onclick = function ()
+    {
+        
+        if (job != null)
+        {
+            resourceCall("SelectJob", job);
+            resourceCall("CloseCef");
+        }
+    }
+    document.getElementById("cancelJob").onclick = function ()
+    {
+        
+        resourceCall("CloseCef");
+    }
+</script>
+</body>
+</html>
