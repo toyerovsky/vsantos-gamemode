@@ -1,0 +1,107 @@
+﻿#playground-container 
+{
+    height: 500px;
+    overflow: hidden !important;
+    
+}
+
+.main
+{
+    margin-top:70px;
+    -webkit-box-shadow: 0px 0px 14px 0px rgba(0,0,0,0.24);
+    -moz-box-shadow: 0px 0px 14px 0px rgba(0,0,0,0.24);
+    box-shadow: 0px 0px 14px 0px rgba(0,0,0,0.24);
+    padding:0px;
+}
+
+body
+{
+    background: transparent;
+    font-family: 'Raleway', sans-serif;
+}
+
+.left-side
+{
+    opacity: 0.85;
+    padding: 0px 0px 100px;
+    background-image: url("Images/bg.jpg");
+    background-size: cover;
+    min-height: 514px;
+    max-height: 600px;
+}
+
+.left-side h1
+{
+    font-size: 70px;
+    font-weight: 900;
+    color:#FFF;
+    padding: 50px 10px 00px 26px;
+}
+	
+.left-side p
+{
+    font-weight:600;
+    color:#FFF;
+    padding:10px 10px 10px 26px;
+}
+
+.right-side
+{
+    opacity: 0.90;
+    padding: 30px 0px 100px;
+    background: #36393E;
+    background-size: cover;
+    min-height: 514px;
+    max-height: 600px;
+}
+
+.right-side h1
+{
+    font-size: 30px;
+    font-weight: 700;
+    color:#fff;
+    padding: 50px 10px 00px 50px;
+}
+
+.right-side p
+{
+    font-weight:600;
+    color:#fff;
+    padding:10px 50px 10px 50px;
+}
+
+.form 
+{
+    padding:10px 50px 10px 50px;
+}
+
+.form-control
+{
+    box-shadow: none !important;
+    background: #36393E;
+    color: #FFF;
+    border-radius: 0px !important;
+    border-bottom: 1px solid #669028 !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+}
+
+.btn-deep-purple
+{
+    background: #669028;
+    border-radius: 18px;
+    padding: 5px 19px;
+    color: #FFF;
+    font-weight: 600;
+    float: right;
+    -webkit-box-shadow: 0px 0px 14px 0px rgba(0,0,0,0.24);
+    -moz-box-shadow: 0px 0px 14px 0px rgba(0,0,0,0.24);
+    box-shadow: 0px 0px 14px 0px rgba(0,0,0,0.24);
+}
+
+label
+{
+    color: #FFF;
+}
+
