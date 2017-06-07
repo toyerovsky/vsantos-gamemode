@@ -272,6 +272,7 @@
     <Content Include="_Clientside\Resources\fonts\fontawesome-webfont.svg" />
     <Content Include="_Clientside\Resources\js\bootstrap.js" />
     <Content Include="_Clientside\Resources\js\jquery.js" />
+    <Content Include="_Clientside\Resources\Login\Images\bg.jpg" />
     <Content Include="_Clientside\Resources\Login\login.css" />
     <Content Include="_Clientside\Resources\Login\login.html" />
     <Content Include="_Clientside\Resources\Offer\Images\money-card.png" />

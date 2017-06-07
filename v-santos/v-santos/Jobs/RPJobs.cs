@@ -10,11 +10,11 @@
 //        //Śmieciarki
 //        private List<VehicleController> GcVehicles { get; set; }
 //        //Kosiarki
-//        private List<VehicleController> GkVehicles { get; set; }  
+//        private List<VehicleController> GkVehicles { get; set; }
 
 //        public RPJobs()
 //        {
-//            API.onResourceStart += API_onResourceStart;  
+//            API.onResourceStart += API_onResourceStart;
 //        }
 
 //        private void API_onResourceStart()
