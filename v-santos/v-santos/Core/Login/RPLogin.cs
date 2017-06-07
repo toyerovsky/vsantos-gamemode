@@ -49,11 +49,12 @@ namespace Serverside.Core.Login
                 AccountController loggedAccount = player.GetAccountController();
 
                 var id = Convert.ToInt64(args[0]);
-                AccountController.LoadCharacter(loggedAccount, ContextFactory.Instance.Characters.FirstOrDefault(x => x.Id == id));
-                Character character = loggedAccount.CharacterController.Character;
+                Character character = ContextFactory.Instance.Characters.FirstOrDefault(x => x.Id == id);              
 
                 if (character != null)
                 {
+                    AccountController.LoadCharacter(loggedAccount, character);
+
                     player.nametag = "(" + RPEntityManager.CalculateServerId(loggedAccount) + ") " + character.Name + " " + character.Surname;
 
                     API.shared.setPlayerName(player, character.Name + " " + character.Surname);
