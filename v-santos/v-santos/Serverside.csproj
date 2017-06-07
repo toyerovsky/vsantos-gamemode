@@ -199,7 +199,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
-    <None Include="_Clientside\Resources\Bootstrap\bootstrap.css.map" />
     <None Include="_Clientside\Resources\css\bootstrap.css.map" />
     <None Include="_Clientside\Resources\fonts\fontawesome-webfont.eot" />
     <None Include="_Clientside\Resources\fonts\fontawesome-webfont.ttf" />
@@ -280,15 +279,6 @@
     <Content Include="_Clientside\MoneyText.js" />
     <Content Include="_Clientside\Resources\WheelMenu\raphael.icons.min.js" />
     <Content Include="_Clientside\Resources\WheelMenu\raphael.min.js" />
-    <Content Include="_Clientside\Resources\Bootstrap\bootstrap.css" />
-    <Content Include="_Clientside\Resources\Bootstrap\bootstrap.js" />
-    <Content Include="_Clientside\Resources\Bootstrap\bus.css" />
-    <Content Include="_Clientside\Resources\Bootstrap\bus.html" />
-    <Content Include="_Clientside\Resources\Bootstrap\font-awesome.css" />
-    <Content Include="_Clientside\Resources\Bootstrap\jquery.js" />
-    <Content Include="_Clientside\Resources\Bootstrap\login.html" />
-    <Content Include="_Clientside\Resources\Bootstrap\login.css" />
-    <Content Include="_Clientside\Resources\Bootstrap\Images\bg.jpg" />
     <Content Include="_Clientside\Resources\Characters\Images\credit-card.png" />
     <Content Include="_Clientside\Resources\Characters\Images\id-card.png" />
     <Content Include="_Clientside\Resources\Characters\Images\money-card.png" />
