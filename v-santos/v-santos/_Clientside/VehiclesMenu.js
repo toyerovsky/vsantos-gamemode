@@ -17,7 +17,7 @@ API.onServerEventTrigger.connect(function (eventName, args)
         
         for (var i = 0; i < vehicles.length; i++)
         {
-            var vehicleMenuItem = API.createMenuItem(vehicles[i]["Name"], "");
+            var vehicleMenuItem = API.createMenuItem(vehicles[i]["Name"] + " | " + vehicles[i]["Plate"], "");
             vehiclesMenu.AddItem(vehicleMenuItem);
             vehiclesMenu.BindMenuToItem(vehicleInfoMenu, vehicleMenuItem);
         }
@@ -36,7 +36,7 @@ API.onServerEventTrigger.connect(function (eventName, args)
 
         vehiclesMenu.OnItemSelect.connect(function (sender, item, index)
         {
-            API.triggerServerEvent("OnPlayerSelectedVehicle", vehicles[index]["VID"]);
+            API.triggerServerEvent("OnPlayerSelectedVehicle", vehicles[index]["Id"]);
         });
 
         vehicleInfoMenu.OnItemSelect.connect(function (sender, item, index)

@@ -7,6 +7,7 @@ using Serverside.Core;
 using Serverside.Database;
 using Serverside.Database.Models;
 using Serverside.Core.Extensions;
+using Newtonsoft.Json;
 
 namespace Serverside.Controllers
 {
@@ -16,7 +17,7 @@ namespace Serverside.Controllers
         public Account Account;
         public Client Client { get; private set; }
         public CharacterController CharacterController;
-        public int ServerId => RPCore.CalculateServerId(this);
+        public int ServerId => RPEntityManager.CalculateServerId(this);
 
         public AccountController(Account accountdata, Client client)
         {
@@ -31,8 +32,31 @@ namespace Serverside.Controllers
             Account.LastLogin = DateTime.Now;
             Account.Online = true;
 
-            RPCore.AddAccount(AccountId, this);
+            RPEntityManager.AddAccount(AccountId, this);
             //tutaj dajemy inne rzeczy które mają być inicjowane po zalogowaniu się na konto, np: wybór postaci.
+
+            RPChat.SendMessageToPlayer(client, $"Witaj, {accountdata.SocialClub} zostałeś pomyślnie zalogowany. Wybierz postać.", ChatMessageType.ServerInfo);
+            API.shared.triggerClientEvent(client, "ShowLoginCef", false);
+
+            var characters = Account.Character.ToList();
+
+            if (characters == null || characters.Count == 0)
+            {
+                CharacterController.AddCharacter(this, Account.Email, "test", PedHash.Michael);
+            }
+
+            string json = JsonConvert.SerializeObject(characters.Where(c => c.IsAlive == true && c.Account == Account).Select(
+                ch => new
+                {
+                    ch.Id,
+                    ch.Name,
+                    ch.Surname,
+                    ch.Money,
+                    ch.BankMoney
+                }).ToList());
+
+            API.shared.triggerClientEvent(client, "ShowCharacterSelectCef", true, json);
+            RPChat.SendMessageToPlayer(client, "Używaj strzałek, aby przewijać swoje postacie.", ChatMessageType.ServerInfo);
 
 
             ContextFactory.Instance.SaveChanges();
@@ -92,11 +116,11 @@ namespace Serverside.Controllers
             return true;
         }
 
-        public void Save()
+        public void Save(bool resourceStop = false)
         {
             //tutaj wywołać metody synchronizacji danych z innych controllerów np character.
             if(CharacterController != null)
-                CharacterController.Save();
+                CharacterController.Save(resourceStop);
 
             ContextFactory.Instance.Accounts.Attach(Account);
             ContextFactory.Instance.Entry(Account).State = EntityState.Modified;

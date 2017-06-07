@@ -42,33 +42,7 @@ namespace Serverside.Core.Login
         {
             if (eventName == "OnPlayerEnteredLoginData")
             {
-                if (LoginToAccount(player, args[0].ToString(), args[1].ToString()))
-                {
-                    AccountController accountcontroller = player.GetAccountController();
-                    RPChat.SendMessageToPlayer(player,
-                        $"Witaj, {accountcontroller.Account.SocialClub} zostałeś pomyślnie zalogowany. Wybierz postać.", ChatMessageType.ServerInfo);
-                    API.triggerClientEvent(player, "ShowLoginCef", false);
-
-                    var characters = accountcontroller.Account.Character.ToList();
-
-                    if (characters == null || characters.Count == 0)
-                    {
-                        CharacterController.AddCharacter(accountcontroller, accountcontroller.Account.Email, "test", PedHash.Michael);
-                    }
-
-                    string json = JsonConvert.SerializeObject(characters.Where(c => c.IsAlive == true && c.Account == accountcontroller.Account).Select(
-                        ch => new
-                        {
-                            ch.Id,
-                            ch.Name,
-                            ch.Surname,
-                            ch.Money,
-                            ch.BankMoney
-                        }).ToList());
-
-                    API.triggerClientEvent(player, "ShowCharacterSelectCef", true, json);
-                    RPChat.SendMessageToPlayer(player, "Używaj strzałek, aby przewijać swoje postacie.", ChatMessageType.ServerInfo);
-                }
+                LoginToAccount(player, args[0].ToString(), args[1].ToString());
             }
             //Przy używaniu tego musimy jako args[0] wysłać UID postaci
             else if (eventName == "OnPlayerSelectedCharacter")
@@ -76,28 +50,27 @@ namespace Serverside.Core.Login
                 AccountController loggedAccount = player.GetAccountController();
 
                 var id = Convert.ToInt64(args[0]);
-                Character dbCharacter = ContextFactory.Instance.Characters.FirstOrDefault(x => x.Id == id);
+                AccountController.LoadCharacter(loggedAccount, ContextFactory.Instance.Characters.FirstOrDefault(x => x.Id == id));
+                Character character = loggedAccount.CharacterController.Character;
 
-                AccountController.LoadCharacter(loggedAccount, dbCharacter);
-
-                if (dbCharacter != null)
+                if (character != null)
                 {
-                    player.nametag = "(" + RPCore.CalculateServerId(loggedAccount) + ") " + dbCharacter.Name + " " + dbCharacter.Surname;
+                    player.nametag = "(" + RPEntityManager.CalculateServerId(loggedAccount) + ") " + character.Name + " " + character.Surname;
 
-                    API.shared.setPlayerName(player, dbCharacter.Name + " " + dbCharacter.Surname);
-                    player.setSkin((PedHash)dbCharacter.Model);
+                    API.shared.setPlayerName(player, character.Name + " " + character.Surname);
+                    player.setSkin((PedHash)character.Model);
 
-                    API.shared.setEntityPosition(player, new Vector3(dbCharacter.LastPositionX, dbCharacter.LastPositionY, dbCharacter.LastPositionZ));
+                    API.shared.setEntityPosition(player, new Vector3(character.LastPositionX, character.LastPositionY, character.LastPositionZ));
 
                     player.dimension = 0;
 
-                    if (dbCharacter.BWState > 0)
+                    if (character.BWState > 0)
                     {
                         API.shared.setPlayerHealth(player, -1);
                     }
                     else
                     {
-                        API.shared.setPlayerHealth(player, dbCharacter.HitPoints);
+                        API.shared.setPlayerHealth(player, character.HitPoints);
                     }
 
                     API.triggerClientEvent(player, "ShowCharacterSelectCef", false);
@@ -108,10 +81,10 @@ namespace Serverside.Core.Login
                     player.SetData("CanCommand", true);
                     player.SetData("CanPay", true);
 
-                    API.triggerClientEvent(player, "Money_Changed", $"${dbCharacter.Money}");
+                    API.triggerClientEvent(player, "Money_Changed", $"${character.Money}");
                     API.triggerClientEvent(player, "ToggleHud", true);
                     RPChat.SendMessageToPlayer(player,
-                        $"Witaj, twoja postać {dbCharacter.Name + " " + dbCharacter.Surname} została pomyślnie załadowana, życzymy miłej gry!", ChatMessageType.ServerInfo);
+                        $"Witaj, twoja postać {character.Name + " " + character.Surname} została pomyślnie załadowana, życzymy miłej gry!", ChatMessageType.ServerInfo);
                 }
                 if (OnPlayerLogin != null) OnPlayerLogin.Invoke(loggedAccount);
             }
@@ -131,7 +104,7 @@ namespace Serverside.Core.Login
                 if (!AccountController.RegisterAccount(sender, userId, email))
                 {
                     //Sprawdzenie czy ktoś już jest zalogowany z tego konta.
-                    AccountController _ac = RPCore.GetAccount(userId);
+                    AccountController _ac = RPEntityManager.GetAccount(userId);
                     if (_ac != null)
                     {
                         if (_ac.Account.Online)
@@ -158,7 +131,7 @@ namespace Serverside.Core.Login
             if (!AccountController.RegisterAccount(sender, userId, email))
             {
                 //Sprawdzenie czy ktoś już jest zalogowany z tego konta.
-                AccountController _ac = RPCore.GetAccount(userId);
+                AccountController _ac = RPEntityManager.GetAccount(userId);
                 if (_ac != null)
                 {
                     if (_ac.Account.Online)
@@ -194,7 +167,7 @@ namespace Serverside.Core.Login
                 account.CharacterController.Character.Online = false;
             account.Save();
             account.Client.resetData("RP_ACCOUNT");
-            RPCore.RemoveAccount(account.AccountId);
+            RPEntityManager.RemoveAccount(account.AccountId);
         }
 
         public static void LogOut(Client player)
@@ -205,7 +178,7 @@ namespace Serverside.Core.Login
                 account.CharacterController.Character.Online = false;
             account.Save();
             player.ResetData("RP_ACCOUNT");
-            RPCore.RemoveAccount(account.AccountId);
+            RPEntityManager.RemoveAccount(account.AccountId);
         }
     }
 }

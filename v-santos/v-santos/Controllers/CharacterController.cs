@@ -5,6 +5,8 @@ using GTANetworkServer;
 using Serverside.Database;
 using Serverside.Database.Models;
 using Serverside.Core.Extensions;
+using Serverside.Core.Vehicles;
+using Serverside.Core;
 
 namespace Serverside.Controllers
 {
@@ -16,7 +18,7 @@ namespace Serverside.Controllers
         public CellphoneController CellphoneController { get; set; }
         public string FormatName => Character.Name + " " + Character.Surname;
         public long? OnDutyGroupId { get; set; }
-        //public Core.Description.Description Description { get; set; }
+        public Core.Description.Description Description { get; set; }
 
         public event DimensionChangeEventHandler OnPlayerDimensionChanged;
 
@@ -31,7 +33,7 @@ namespace Serverside.Controllers
             Character.Online = true;
             ContextFactory.Instance.SaveChanges();
 
-            //Description = new Core.Description.Description(AccountController);
+            Description = new Core.Description.Description(AccountController);
         }
 
         //GENERUJE, ŁADUJE I ZAPISUJE DO DB NOWA POSTAC
@@ -49,13 +51,24 @@ namespace Serverside.Controllers
             ContextFactory.Instance.Characters.Add(Character);
             ContextFactory.Instance.SaveChanges();
 
-            //Description = new Core.Description.Description(accountController);
+            Description = new Core.Description.Description(accountController);
         }
 
         
 
-        public void Save()
+        public void Save(bool resourceStop = false)
         {
+            foreach (VehicleController v in RPEntityManager.GetCharacterVehicles(this))
+            {
+                if (v != null)
+                {
+                    if (resourceStop)
+                        v.Dispose();
+                    else
+                        v.Save();
+                }
+            }
+
             CellphoneController?.Save();
             Character.CurrentDimension = AccountController.Client.dimension;
             Character.LastPositionX = AccountController.Client.position.X;

@@ -108,7 +108,7 @@ namespace Serverside.Core
                 return;
             }
 
-            Client getter = RPCore.GetAccount(ID).Client;
+            Client getter = RPEntityManager.GetAccount(ID).Client;
             //if (!PlayerFinder.TryFindClientByServerId(sender, ID, out getter)) return;
             SendMessageToPlayer(getter, message, ChatMessageType.PrivateMessage, sender);
             SendMessageToPlayer(sender, message, ChatMessageType.PrivateMessage, getter);

@@ -7,6 +7,7 @@ using Serverside.Core;
 using Serverside.Groups.Base;
 using Color = GTANetworkServer.Constant.Color;
 using Serverside.Core.Extensions;
+using Serverside.Controllers;
 
 namespace Serverside.Groups
 {
@@ -22,9 +23,7 @@ namespace Serverside.Groups
             APIExtensions.ConsoleOutput("[RPGroups] Uruchomione pomyślnie.", ConsoleColor.DarkMagenta);
         }
 
-        public static List<Group> Groups => RPCore.Groups;
-
-        public static Group CreateGroup(Database.Models.Group editor)
+        public static GroupController CreateGroup(Database.Models.Group editor)
         {
             //var groupType = (GroupType)editor.GroupType;
             //switch (groupType)
@@ -64,7 +63,7 @@ namespace Serverside.Groups
                     return;
                 }
 
-                if (sender.TryGetGroupBySlot(Convert.ToInt16(slot), out Group group))
+                if (sender.TryGetGroupBySlot(Convert.ToInt16(slot), out GroupController group))
                 {
                     var worker =
                         group.Data.Workers.Single(x => x.Character.Id == player.CharacterController.Character.Id);
@@ -74,7 +73,7 @@ namespace Serverside.Groups
                     dutyTimer.Elapsed += (o, args) =>
                     {
                         worker.DutyMinutes += 1;
-                        group.Controller.Save();
+                        group.Save();
                     };
 
                     //var color = ColorConverter.ConvertFromString(group.Data.Color);
@@ -82,9 +81,9 @@ namespace Serverside.Groups
                     sender.nametag = "[" + sender.getData("ServerId").ToString() + "]" + "( " + group.Data.Name + " ) " + sender.name;
                     if (group.Data.Color.Equals(null)) sender.nametagColor = group.Data.Color;
 
-                    player.CharacterController.OnDutyGroupId = group.Id;
+                    player.CharacterController.OnDutyGroupId = group.GroupId;
                     sender.Notify(
-                        $"Wszedłeś na służbę grupy: {RPCore.GetColoredString(group.Data.Color.ToHex(), group.Data.Name)}");
+                        $"Wszedłeś na służbę grupy: {APIExtensions.GetColoredString(group.Data.Color.ToHex(), group.Data.Name)}");
 
                     API.onPlayerDisconnected += (client, reason) =>
                     {
@@ -107,7 +106,7 @@ namespace Serverside.Groups
                 return;
             }
 
-            if (sender.TryGetGroupBySlot(Convert.ToInt16(slot), out Group group))
+            if (sender.TryGetGroupBySlot(Convert.ToInt16(slot), out GroupController group))
             {
                 decimal safeMoneyCount = Convert.ToDecimal(moneyCount);
 
@@ -147,7 +146,7 @@ namespace Serverside.Groups
 
             var player = sender.GetAccountController();
             
-            if (sender.TryGetGroupBySlot(Convert.ToInt16(groupSlot), out Group group))
+            if (sender.TryGetGroupBySlot(Convert.ToInt16(groupSlot), out GroupController group))
             {
                 decimal safeMoneyCount = Convert.ToDecimal(moneyCount);
 

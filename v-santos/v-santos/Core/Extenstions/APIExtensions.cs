@@ -60,6 +60,11 @@ namespace Serverside.Core.Extensions
             Console.ResetColor();
         }
 
+        public static string GetColoredString(string color, string text)
+        {
+            return "~" + color + "~" + text;
+        }
+
         private static readonly Random getrandom = new Random();
         private static readonly object syncLock = new object();
         public static int GetRandomNumber(int min, int max)

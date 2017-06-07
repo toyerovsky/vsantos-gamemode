@@ -4,7 +4,7 @@ using Serverside.Database.Models;
 
 namespace Serverside.Groups.Base
 {
-    public class CityHall : Group
+    public class CityHall : GroupController
     {
         //Opcjonalne prawo 1 wydawanie dowodu osobistego
         //Opcjonalne prawo 2 wydawanie prawa jazdy

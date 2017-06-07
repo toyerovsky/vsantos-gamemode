@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using Serverside.Controllers;
 using Serverside.Core.Extensions;
 using Serverside.Items;
+using System.Collections.Generic;
+using Serverside.Database.Models;
 
 namespace Serverside.Core.Vehicles
 {
@@ -17,46 +19,19 @@ namespace Serverside.Core.Vehicles
         {
             API.onResourceStart += API_onResourceStart;
             API.onClientEventTrigger += API_onClientEventTrigger;
+            API.onVehicleDeath += API_onVehicleExplode;
+            API.onPlayerEnterVehicle += API_onPlayerEnterVehicle;
+            API.onPlayerExitVehicle += API_onPlayerExitVehicle;
+            API.onVehicleDoorBreak += API_onVehicleDoorBreak;
+            API.onVehicleTyreBurst += API_onVehicleTyreBurst;
+            API.onVehicleWindowSmash += API_onVehicleWindowSmash;
+            API.onVehicleHealthChange += API_onVehicleHealthChange;
         }
 
         private void API_onResourceStart()
         {
             API.consoleOutput("RPVehicles zostało uruchomione pomyslnie!");
         }
-
-        #region Komendy
-        [Command("v", "~y~UŻYJ: ~w~ /v (z)")]
-        public void ShowVehiclesList(Client sender, string trigger = null)
-        {
-            var player = sender.GetAccountController();
-            if (trigger == null)
-            {
-                if (API.isPlayerInAnyVehicle(sender))
-                {
-                    var controller = Api.getPlayerVehicle(player.Client).GetVehicleController();
-                    if (controller == null) return;
-
-                    string tuningJson = JsonConvert.SerializeObject(controller.VehicleData.Tuning);
-                    API.triggerClientEvent(sender, "OnPlayerManageVehicle", tuningJson);
-                }
-                else
-                {
-                    string vehiclesJson = JsonConvert.SerializeObject(player.CharacterController.Character.Vehicle.Select(v => new
-                    {
-                        Id = v.Id,
-                        Name = v.VehicleHash.ToString(),
-                    }));
-
-                    API.triggerClientEvent(sender, "OnPlayerShowVehicles", vehiclesJson);
-                }
-            }
-            //v zamknij
-            else if (trigger == "z")
-            {
-                ChangePlayerVehicleLockState(sender);
-            }
-        }
-        #endregion
 
         private void API_onClientEventTrigger(Client sender, string eventName, params object[] args)
         {
@@ -67,76 +42,60 @@ namespace Serverside.Core.Vehicles
 
             else if (eventName == "OnPlayerSpawnVehicle")
             {
-                var userVehicle = sender.GetAccountController().CharacterController.Character.Vehicle.Single(v => v.Id == sender.GetData("SelectedVehicleID"));
-                sender.ResetData("SelectedVehicleID");
-                if (Api.getAllVehicles().Any(v => v.GetVehicleController() != null && v.GetVehicleController().VehicleData.Id == userVehicle.Id))
+                AccountController ac = sender.GetAccountController();
+                API.sendChatMessageToPlayer(sender, (long)sender.GetData("SelectedVehicleID")+"");
+                VehicleController userVehicleController = RPEntityManager.GetVehicle((long)sender.GetData("SelectedVehicleID"));
+                if (userVehicleController != null)
                 {
                     //unspawn
-                    var vehicle = Api.getAllVehicles().Single(v => v.GetVehicleController().VehicleData.Id == userVehicle.Id).GetVehicleController();
-                    userVehicle.Health = Convert.ToInt32(Api.getVehicleHealth(vehicle.Vehicle));
-                    userVehicle.Door1Damage = Api.isVehicleDoorBroken(vehicle.Vehicle, 1);
-                    userVehicle.Door2Damage = Api.isVehicleDoorBroken(vehicle.Vehicle, 2);
-                    userVehicle.Door3Damage = Api.isVehicleDoorBroken(vehicle.Vehicle, 3);
-                    userVehicle.Door4Damage = Api.isVehicleDoorBroken(vehicle.Vehicle, 4);
-                    userVehicle.Window1Damage = Api.isVehicleWindowBroken(vehicle.Vehicle, 1);
-                    userVehicle.Window2Damage = Api.isVehicleWindowBroken(vehicle.Vehicle, 2);
-                    userVehicle.Window3Damage = Api.isVehicleWindowBroken(vehicle.Vehicle, 3);
-                    userVehicle.Window4Damage = Api.isVehicleWindowBroken(vehicle.Vehicle, 4);
-
-                    vehicle.Dispose();
-
-                    Api.sendNotificationToPlayer(sender, "Pojazd został usnpawnowany!");
+                    //userVehicleController.Save(); // w Dispose jest Save ......
+                    userVehicleController.Dispose();
+                    Api.sendNotificationToPlayer(sender, "Pojazd został schowany w garażu!");
                 }
                 else
                 {
+                    var userVehicle = VehicleController.GetVehicleData(ac.CharacterController, (long)sender.GetData("SelectedVehicleID"));
                     VehicleController controller = new VehicleController(userVehicle);
 
-                    float engineMultipier = 0f;
-                    float torqueMultipier = 0f;
+                    //float engineMultipier = 0f;
+                    //float torqueMultipier = 0f;
 
-                    foreach (var tuning in controller.VehicleData.Tuning)
-                    {
-                        if ((ItemType)tuning.ItemType == ItemType.Tuning)
-                        {
-                            if (tuning.FirstParameter != null && (TuningType)tuning.FirstParameter == TuningType.Speed)
-                            {
-                                if (tuning.SecondParameter != null) engineMultipier += (float)tuning.SecondParameter;
-                                if (tuning.ThirdParameter != null) torqueMultipier += (float)tuning.ThirdParameter;
-                            }
-                        }
-                    }
+                    //foreach (var tuning in controller.VehicleData.Tuning)
+                    //{
+                    //    if ((ItemType)tuning.ItemType == ItemType.Tuning)
+                    //    {
+                    //        if (tuning.FirstParameter != null && (TuningType)tuning.FirstParameter == TuningType.Speed)
+                    //        {
+                    //            if (tuning.SecondParameter != null) engineMultipier += (float)tuning.SecondParameter;
+                    //            if (tuning.ThirdParameter != null) torqueMultipier += (float)tuning.ThirdParameter;
+                    //        }
+                    //    }
+                    //}
 
-                    Api.setVehicleEnginePowerMultiplier(controller.Vehicle, engineMultipier);
-                    Api.setVehicleEngineTorqueMultiplier(controller.Vehicle, torqueMultipier);
-                    Api.setVehicleEngineStatus(controller.Vehicle, false);
-                    Api.setVehicleLocked(controller.Vehicle, true);
-                    Api.breakVehicleDoor(controller.Vehicle, 1, userVehicle.Door1Damage);
-                    Api.breakVehicleDoor(controller.Vehicle, 2, userVehicle.Door2Damage);
-                    Api.breakVehicleDoor(controller.Vehicle, 3, userVehicle.Door3Damage);
-                    Api.breakVehicleDoor(controller.Vehicle, 4, userVehicle.Door4Damage);
-                    Api.breakVehicleWindow(controller.Vehicle, 1, userVehicle.Window1Damage);
-                    Api.breakVehicleWindow(controller.Vehicle, 2, userVehicle.Window2Damage);
-                    Api.breakVehicleWindow(controller.Vehicle, 3, userVehicle.Window3Damage);
-                    Api.breakVehicleWindow(controller.Vehicle, 4, userVehicle.Window4Damage);
+                    //Api.setVehicleEnginePowerMultiplier(controller.Vehicle, engineMultipier);
+                    //Api.setVehicleEngineTorqueMultiplier(controller.Vehicle, torqueMultipier);
 
-                    var primaryColor = userVehicle.PrimaryColor.ToColor();
-                    Api.setVehicleCustomPrimaryColor(controller.Vehicle, primaryColor.red, primaryColor.green, primaryColor.blue);
+                    //var primaryColor = userVehicle.PrimaryColor.ToColor();
+                    //Api.setVehicleCustomPrimaryColor(controller.Vehicle, primaryColor.red, primaryColor.green, primaryColor.blue);
 
-                    var secondaryColor = userVehicle.SecondaryColor.ToColor();
-                    Api.setVehicleCustomSecondaryColor(controller.Vehicle, secondaryColor.red, secondaryColor.green, secondaryColor.blue);
+                    //var secondaryColor = userVehicle.SecondaryColor.ToColor();
+                    //Api.setVehicleCustomSecondaryColor(controller.Vehicle, secondaryColor.red, secondaryColor.green, secondaryColor.blue);
 
-                    Api.setVehicleHealth(controller.Vehicle, (float)userVehicle.Health);
-                    Api.setVehicleWheelType(controller.Vehicle, userVehicle.WheelType);
-                    Api.setVehicleWheelColor(controller.Vehicle, userVehicle.WheelColor);
-                 
-                    Api.sendNotificationToPlayer(sender, "Pojazd został zespawnowany!");
+                    //Api.setVehicleHealth(controller.Vehicle, (float)userVehicle.Health);
+                    //Api.setVehicleWheelType(controller.Vehicle, userVehicle.WheelType);
+                    //Api.setVehicleWheelColor(controller.Vehicle, userVehicle.WheelColor);
+
+                    //new VehicleController(ac.CharacterController.Character.Vehicle.Where(x => x.Id == userVehicle.Id).First());
+
+                    Api.sendNotificationToPlayer(sender, "Pojazd został wyprowadzony z garażu!");
                 }
+                sender.ResetData("SelectedVehicleID");
             }
             else if (eventName == "OnPlayerParkVehicle")
             {
-                if (API.getPlayerVehicle(sender).GetVehicleController() == null) return;
+                if (RPEntityManager.GetVehicle(API.getPlayerVehicle(sender)) == null) return;
 
-                var controller = API.getPlayerVehicle(sender).GetVehicleController();
+                var controller = RPEntityManager.GetVehicle(API.getPlayerVehicle(sender));
                 controller.ChangeSpawnPosition();
                 sender.Notify("Pojazd został zaparkowany.");
 
@@ -153,7 +112,7 @@ namespace Serverside.Core.Vehicles
             }
             else if (eventName == "OnPlayerInformationsInVehicle")
             {
-                var vehicle = API.shared.getPlayerVehicle(sender).GetVehicleController();
+                var vehicle = RPEntityManager.GetVehicle(API.shared.getPlayerVehicle(sender));
                 if (vehicle == null) return;
 
                 float enginePower = (float)((vehicle.VehicleData.EnginePowerMultipler - 1.0) * 20.0 + 80);
@@ -175,6 +134,132 @@ namespace Serverside.Core.Vehicles
                 Api.setVehicleEngineStatus(vehicle, !Api.getVehicleEngineStatus(vehicle));
             }
         }
+
+        public void API_onVehicleExplode(NetHandle vehicle)
+        {
+            //throw new NotImplementedException("API_onVehicleExplode do zrobienia");
+        }
+
+        private void API_onPlayerEnterVehicle(Client player, NetHandle vehicle)
+        {
+            AccountController account = player.GetAccountController();
+            if (account == null) return;
+
+            VehicleController vc = RPEntityManager.GetVehicle(vehicle);
+            if (vc != null)
+            {
+                if (vc.VehicleData.Character == account.CharacterController.Character)
+                {
+                    API.sendNotificationToPlayer(player, "Wsiadłeś do swojego pojazdu.");
+                }
+            }
+            //API.triggerClientEvent(player, "show_vehicle_hud"); // sprawdzanie po stronie klienta
+        }
+
+        private void API_onPlayerExitVehicle(Client player, NetHandle vehicle)
+        {
+            //API.triggerClientEvent(player, "hide_vehicle_hud"); // sprawdzanie po stronie klienta
+        }
+
+        private void API_onVehicleDoorBreak(NetHandle vehicle, int index)
+        {
+            //throw new NotImplementedException("OnVehicleTyreBurst do zrobienia");
+        }
+
+        private void API_onVehicleTyreBurst(NetHandle vehicle, int index)
+        {
+            //throw new NotImplementedException("OnVehicleTyreBurst do zrobienia");
+        }
+
+        private void API_onVehicleWindowSmash(NetHandle vehicle, int index)
+        {
+            //throw new NotImplementedException("OnVehicleWindowSmash do zrobienia");
+        }
+
+        private void API_onVehicleHealthChange(NetHandle entity, float oldValue)
+        {
+            if (API.getEntityType(entity) == EntityType.Player)
+            {
+                Client client = API.getPlayerFromHandle(entity);
+                if (API.isPlayerInAnyVehicle(client))
+                {
+
+                    double t = Math.Floor(Math.Max(49, oldValue - client.vehicle.health) / 50);
+                    if (t > 0)
+                        APIExtensions.PopRandomsTyres(client.vehicle, int.Parse(t.ToString()));
+
+                    float vehHealth = API.getVehicleHealth(client.vehicle);
+                    float damageTaken = Math.Max(0, oldValue - vehHealth);
+                    float healthToSet = vehHealth - damageTaken;
+                    API.setVehicleHealth(client.vehicle, healthToSet);
+                }
+                else
+                {
+                    //var test = API.fetchNativeFromPlayer<bool>(client, Hash.GET_PLAYER_TARGET_ENTITY); // CHUJ NIE DZIAŁA BO DEVY Z GTA:N TO DEBILE :D
+                    //Vehicle nearest = APIExtensions.GetNearestVehicle(client.position); // nie działa tak jak powinno... <0ms, ~50ticks
+                    //Vehicle nearest = APIExtensions.GetVehicleHasBeenDamagedByPlayer(client); // działa ale jest pewnie wolniejsze..... ~100ms
+                    //if (nearest != null)
+                    //{
+                    //    if (nearest.health > 50)
+                    //    {
+                    //        double t = Math.Floor((oldValue - nearest.health) / 50);
+                    //        API.sendNotificationToPlayer(client, t.ToString());
+                    //        if (t > 0)
+                    //            APIExtensions.PopRandomsTyres(nearest, int.Parse(t.ToString()));
+                    //    }
+
+                    //    float veh_health = API.getVehicleHealth(nearest);
+                    //    float damage_taken = oldValue - veh_health;
+                    //    float health_to_set = veh_health - damage_taken;
+                    //    API.sendChatMessageToAll(client.socialClubName + " OLD: " + oldValue.ToString() + " | NEW:" + veh_health + " | TAKEN: " + damage_taken + " | SET: " + health_to_set);
+                    //    if (veh_health > 0 && health_to_set > 0)
+                    //    {
+                    //        API.setVehicleHealth(nearest, health_to_set);
+                    //    }
+                    //}
+                }
+                //Ten event zwraca w parametrze entity osobe która zadaje damage(?). 
+                //Co z tego, że mogę sprawdzić kto jest atakującym i jaka była poprzedna wartość health w parametrze oldValue, jak nie moge określić któremu pojazdowi ten damage został zadany.
+                //Określanie pojazdu na podstawie dystansu względem atakującego nie sprawdza się w przypadku bronii palnej gdzie ktoś stojąc przy pojeździe strzela do innego pojazdu który stoi dalej.
+                //Paranoja :C
+                //działa na natywach ale za wolno....
+            }
+        }
+
+        #region Komendy
+        [Command("v", "~y~UŻYJ: ~w~ /v (z)")]
+        public void ShowVehiclesList(Client sender, string trigger = null)
+        {
+            AccountController player = sender.GetAccountController();
+            if (trigger == null)
+            {
+                if (API.isPlayerInAnyVehicle(sender))
+                {
+                    VehicleController controller = RPEntityManager.GetVehicle(Api.getPlayerVehicle(player.Client));
+                    if (controller == null) return;
+
+                    string tuningJson = JsonConvert.SerializeObject(controller.VehicleData.Tuning);
+                    API.triggerClientEvent(sender, "OnPlayerManageVehicle", tuningJson);
+                }
+                else
+                {
+                    string vehiclesJson = JsonConvert.SerializeObject(VehicleController.GetVehiclesData(player.CharacterController).Select(v => new
+                    {
+                        Id = v.Id,
+                        Name = v.VehicleHash.ToString(),
+                        Plate = v.NumberPlate
+                    }));
+
+                    API.triggerClientEvent(sender, "OnPlayerShowVehicles", vehiclesJson);
+                }
+            }
+            //v zamknij
+            else if (trigger == "z")
+            {
+                ChangePlayerVehicleLockState(sender);
+            }
+        }
+        #endregion
 
         public static void ChangeDoorState(Client sender, NetHandle vehicle, int doorId)
         {
@@ -207,20 +292,21 @@ namespace Serverside.Core.Vehicles
         /// <param name="player"></param>
         public static void ChangePlayerVehicleLockState(Client player)
         {
-            var controller = player.GetAccountController();
+            AccountController controller = player.GetAccountController();
 
             //Wybieramy wszystkie pojazdy które należą do gracza i są oddalone o 10F
-            var vehicles = API.shared.getAllVehicles()
-                .Where(v => v.GetVehicleController().VehicleData.Character.Id == controller.CharacterController.Character.Id &&
-                v.GetVehicleController().Vehicle.position.DistanceTo(player.position) < 10);
+            //var vehicles = API.shared.getAllVehicles()
+            //    .Where(v => v.GetVehicleController().VehicleData.Character.Id == controller.CharacterController.Character.Id &&
+            //    v.GetVehicleController().Vehicle.position.DistanceTo(player.position) < 10);
+            List<VehicleController> vehicles = RPEntityManager.GetCharacterVehicles(controller.CharacterController).Where(x => x.Vehicle.position.DistanceTo(player.position) < 10).ToList();
 
             //Jeśli jakiś pomysłowy gracz zapragnie postawić 2 pojazdy obok siebie, żeby sprawdzić działanie to zamknie mu obydwa
-            foreach (var vehicle in vehicles)
+            foreach (VehicleController vehicle in vehicles)
             {
-                if (API.shared.getEntityPosition(vehicle).DistanceTo(player.position) <= 7)
+                if (API.shared.getEntityPosition(vehicle.Vehicle).DistanceTo(player.position) <= 7)
                 {
-                    player.Notify(!API.shared.getVehicleLocked(vehicle) ? "Twój pojazd został zamknięty." : "Twój pojazd został otwarty.");
-                    API.shared.setVehicleLocked(vehicle, !API.shared.getVehicleLocked(vehicle));
+                    player.Notify(!API.shared.getVehicleLocked(vehicle.Vehicle) ? "Twój pojazd został zamknięty." : "Twój pojazd został otwarty.");
+                    API.shared.setVehicleLocked(vehicle.Vehicle, !API.shared.getVehicleLocked(vehicle.Vehicle));
                 }
             }
         }

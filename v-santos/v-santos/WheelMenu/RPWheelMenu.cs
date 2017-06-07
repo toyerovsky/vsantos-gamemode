@@ -6,6 +6,10 @@ using Serverside.Controllers;
 using Serverside.Core.Extensions;
 using Serverside.Core.Extenstions;
 using Serverside.Core.WheelMenu;
+using GTANetworkServer;
+using GTANetworkShared;
+using Serverside.Core.Vehicles;
+using Serverside.Core;
 
 namespace Serverside.WheelMenu
 {
@@ -22,7 +26,7 @@ namespace Serverside.WheelMenu
             APIExtensions.ConsoleOutput("[RPWheelMenu] Uruchomione pomyslnie.", ConsoleColor.DarkMagenta);
         }
 
-        private void API_onClientEventTrigger(Client sender, string eventName, params object[] arguments)
+        private void API_onClientEventTrigger(GTANetworkServer.Client sender, string eventName, params object[] arguments)
         {
             if (eventName == "RequestWheelMenu")
             {
@@ -33,9 +37,9 @@ namespace Serverside.WheelMenu
                 {
 
                 }
-                else if (((NetHandle)arguments[0]).GetVehicleController() != null)
+                else if (RPEntityManager.GetVehicle((NetHandle)arguments[0]) != null)
                 {
-                    Core.WheelMenu.WheelMenu wheel = new Core.WheelMenu.WheelMenu(PrepareDataSource(sender, ((NetHandle)arguments[0]).GetVehicleController()), sender);
+                    Core.WheelMenu.WheelMenu wheel = new Core.WheelMenu.WheelMenu(PrepareDataSource(sender, RPEntityManager.GetVehicle((NetHandle)arguments[0])), sender);
                     sender.SetData("WheelMenu", wheel);
                 }   
             }
@@ -48,10 +52,10 @@ namespace Serverside.WheelMenu
             }
         }
 
-        private List<WheelMenuItem> PrepareDataSource(Client sender, object target, params object[] args)
+        private List<WheelMenuItem> PrepareDataSource(GTANetworkServer.Client sender, object target, params object[] args)
         {
             List<WheelMenuItem> menuItems = new List<WheelMenuItem>();
-            if (target is Client)
+            if (target is GTANetworkServer.Client)
             {
                 
             }

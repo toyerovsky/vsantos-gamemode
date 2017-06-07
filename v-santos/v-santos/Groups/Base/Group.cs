@@ -18,7 +18,7 @@ namespace Serverside.Groups.Base
 
         protected Group(Database.Models.Group group)
         {
-            Controller = new GroupController(group);
+            //Controller = new GroupController(group);
         }
 
         public bool HasMoney(decimal money)

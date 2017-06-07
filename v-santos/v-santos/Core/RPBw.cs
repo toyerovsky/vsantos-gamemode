@@ -51,7 +51,7 @@ namespace Serverside.Core
 
             int getterId = Convert.ToInt32(id);
 
-            Client getter = RPCore.GetAccountByServerId(getterId).Client;
+            Client getter = RPEntityManager.GetAccountByServerId(getterId).Client;
             
             //if (PlayerFinder.TryFindClientByServerId(getterId, out getter))
             //{

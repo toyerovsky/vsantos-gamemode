@@ -88,6 +88,8 @@
     <Compile Include="Controllers\CharacterController.cs" />
     <Compile Include="Controllers\GroupController.cs" />
     <Compile Include="Controllers\VehicleController.cs" />
+    <Compile Include="Core\Description\Description.cs" />
+    <Compile Include="Core\Description\RPDescriptions.cs" />
     <Compile Include="Core\Extenstions\APIExtensions.cs" />
     <Compile Include="Core\Extenstions\ClientExtension.cs" />
     <Compile Include="Core\Extenstions\CustomEvents.cs" />
@@ -100,6 +102,7 @@
     <Compile Include="Core\RPBw.cs" />
     <Compile Include="Core\RPChat.cs" />
     <Compile Include="Core\RPCore.cs" />
+    <Compile Include="Core\RPEntityManager.cs" />
     <Compile Include="Core\Telephone\Booth\RPTelephoneBooth.cs" />
     <Compile Include="Core\Telephone\Booth\TelephoneBooth.cs" />
     <Compile Include="Core\Telephone\Booth\Models\TelephoneBoothModel.cs" />

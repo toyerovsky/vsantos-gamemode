@@ -15,11 +15,11 @@ namespace Serverside.Core.Extensions
             return client.GetData("RP_ACCOUNT") as AccountController;
         }
 
-        public static Groups.Base.Group GetOnDutyGroup(this Client client)
+        public static GroupController GetOnDutyGroup(this Client client)
         {
             if (!client.GetAccountController().CharacterController.OnDutyGroupId.HasValue)
                 return null;
-            return RPCore.Groups.Single(x => x.Id == client.GetAccountController().CharacterController.OnDutyGroupId.Value);
+            return RPEntityManager.Groups.Single(x => x.GroupId == client.GetAccountController().CharacterController.OnDutyGroupId.Value);
         }
 
         public static void Notify(this Client client, string message, bool flashing = false)
@@ -27,9 +27,9 @@ namespace Serverside.Core.Extensions
             API.shared.sendNotificationToPlayer(client, message, flashing);
         }
 
-        public static bool TryGetGroupBySlot(this Client client, short slot, out Groups.Base.Group group)
+        public static bool TryGetGroupBySlot(this Client client, short slot, out GroupController group)
         {
-            if (slot >= 0 && slot <= 3) group = RPGroups.Groups.Single(g => g.Id == client.GetAccountController().CharacterController.Character.Worker.ElementAt(slot).Group.Id);
+            if (slot >= 0 && slot <= 3) group = RPEntityManager.Groups.Single(g => g.GroupId == client.GetAccountController().CharacterController.Character.Worker.ElementAt(slot).Group.Id);
             else group = null;
             return group != null;
         }

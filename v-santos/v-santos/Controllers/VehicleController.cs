@@ -9,6 +9,10 @@ using Serverside.Database.Models;
 using Vehicle = Serverside.Database.Models.Vehicle;
 using Serverside.Core.Extensions;
 using GTANetworkServer.Constant;
+using Serverside.Core.Vehicles;
+using Serverside.Items;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Serverside.Controllers
 {
@@ -34,19 +38,50 @@ namespace Serverside.Controllers
             Color secondary = VehicleData.SecondaryColor.ToColor();
             API.shared.setVehicleCustomPrimaryColor(Vehicle, primary.red, primary.green, primary.blue);
             API.shared.setVehicleCustomSecondaryColor(Vehicle, primary.red, primary.green, primary.blue);
-            API.shared.setVehicleEnginePowerMultiplier(Vehicle, VehicleData.EnginePowerMultipler);
-            API.shared.setVehicleEngineTorqueMultiplier(Vehicle, VehicleData.EngineTorqueMultipler);
+
+            API.shared.setVehicleWheelType(Vehicle, VehicleData.WheelType);
+            API.shared.setVehicleWheelColor(Vehicle, VehicleData.WheelColor);
+
+            API.shared.setVehicleEngineStatus(Vehicle, false);
+            API.shared.setVehicleLocked(Vehicle, true);
+            API.shared.breakVehicleDoor(Vehicle, 1, VehicleData.Door1Damage);
+            API.shared.breakVehicleDoor(Vehicle, 2, VehicleData.Door2Damage);
+            API.shared.breakVehicleDoor(Vehicle, 3, VehicleData.Door3Damage);
+            API.shared.breakVehicleDoor(Vehicle, 4, VehicleData.Door4Damage);
+            API.shared.breakVehicleWindow(Vehicle, 1, VehicleData.Window1Damage);
+            API.shared.breakVehicleWindow(Vehicle, 2, VehicleData.Window2Damage);
+            API.shared.breakVehicleWindow(Vehicle, 3, VehicleData.Window3Damage);
+            API.shared.breakVehicleWindow(Vehicle, 4, VehicleData.Window4Damage);
+
+            float engineMultipier = 0f;
+            float torqueMultipier = 0f;
+
+            foreach (var tuning in VehicleData.Tuning)
+            {
+                if ((ItemType)tuning.ItemType == ItemType.Tuning)
+                {
+                    if (tuning.FirstParameter != null && (TuningType)tuning.FirstParameter == TuningType.Speed)
+                    {
+                        if (tuning.SecondParameter != null) engineMultipier += (float)tuning.SecondParameter;
+                        if (tuning.ThirdParameter != null) torqueMultipier += (float)tuning.ThirdParameter;
+                    }
+                }
+            }
+
+            API.shared.setVehicleEnginePowerMultiplier(Vehicle, engineMultipier);
+            API.shared.setVehicleEngineTorqueMultiplier(Vehicle, torqueMultipier);
+
             API.shared.setEntitySyncedData(Vehicle.handle, "_maxfuel", VehicleData.Fuel);
             API.shared.setEntitySyncedData(Vehicle.handle, "_fuel", VehicleData.Fuel);
             API.shared.setEntitySyncedData(Vehicle.handle, "_fuelConsumption", VehicleData.FuelConsumption);
             API.shared.setEntitySyncedData(Vehicle.handle, "_milage", VehicleData.Milage);
             Vehicle.setData("VehicleController", this);
-            RPCore.Add(this);
+            RPEntityManager.Add(this);
         }
 
         //Dodawanie pojazdu
         public VehicleController(FullPosition spawnPosition, VehicleHash hash, string numberplate, int numberplatestyle, int creatorId, Color primaryColor,
-            Color secondaryColor, float enginePowerMultiplier = 1.0f, float engineTorqueMultiplier = 1.0f, Character character = null, Group group = null)
+            Color secondaryColor, float enginePowerMultiplier = 1.0f, float engineTorqueMultiplier = 1.0f, Character character = null, Database.Models.Group group = null)
         {
             this.VehicleData.VehicleHash = hash;
             this.VehicleData.NumberPlate = numberplate;
@@ -77,6 +112,8 @@ namespace Serverside.Controllers
             API.shared.setVehicleEnginePowerMultiplier(Vehicle.handle, VehicleData.EnginePowerMultipler);
             API.shared.setVehicleEngineTorqueMultiplier(Vehicle.handle, VehicleData.EngineTorqueMultipler);
 
+            this.VehicleData.Tuning = new List<Database.Models.Item>();
+
             this.VehicleData.FuelTank = GetFuelTankSize((VehicleClass)Vehicle.Class);
             API.shared.setEntitySyncedData(Vehicle.handle, "_maxfuel", VehicleData.Fuel);
             this.VehicleData.Fuel = VehicleData.FuelTank * 0.2f;
@@ -91,20 +128,44 @@ namespace Serverside.Controllers
             ContextFactory.Instance.SaveChanges();
 
             Vehicle.setData("VehicleController", this);
-            RPCore.Add(this);
+            RPEntityManager.Add(this);
+        }
+
+        public static Vehicle GetVehicleData(long id)
+        {
+            return ContextFactory.Instance.Vehicles.Single(x => x.Id == id);
+        }
+
+        public static Vehicle GetVehicleData(CharacterController cc, long id)
+        {
+            if (cc == null) return null;
+            return cc.Character.Vehicle.Single(x => x.Id == id);
+        }
+
+        public static List<Vehicle> GetVehiclesData(CharacterController cc)
+        {
+            return cc.Character.Vehicle.ToList();
         }
 
         public void Save()
         {
-            this.VehicleData.Health = this.Vehicle.health;
-            this.VehicleData.PrimaryColor = this.Vehicle.customPrimaryColor.ToHex();
-            this.VehicleData.SecondaryColor = this.Vehicle.customSecondaryColor.ToHex();
-            this.VehicleData.EnginePowerMultipler = this.Vehicle.enginePowerMultiplier;
-            this.VehicleData.NumberPlateStyle = this.Vehicle.numberPlateStyle;
-            this.VehicleData.NumberPlate = this.Vehicle.numberPlate;
-            this.VehicleData.Fuel = API.shared.getEntitySyncedData(Vehicle.handle, "_fuel");
-            this.VehicleData.FuelConsumption = API.shared.getEntitySyncedData(Vehicle.handle, "_fuelConsumption");
-            this.VehicleData.Milage = API.shared.getEntitySyncedData(Vehicle.handle, "_milage");
+            VehicleData.Health = Vehicle.health;
+            VehicleData.Door1Damage = API.shared.isVehicleDoorBroken(Vehicle, 1);
+            VehicleData.Door2Damage = API.shared.isVehicleDoorBroken(Vehicle, 2);
+            VehicleData.Door3Damage = API.shared.isVehicleDoorBroken(Vehicle, 3);
+            VehicleData.Door4Damage = API.shared.isVehicleDoorBroken(Vehicle, 4);
+            VehicleData.Window1Damage = API.shared.isVehicleWindowBroken(Vehicle, 1);
+            VehicleData.Window2Damage = API.shared.isVehicleWindowBroken(Vehicle, 2);
+            VehicleData.Window3Damage = API.shared.isVehicleWindowBroken(Vehicle, 3);
+            VehicleData.Window4Damage = API.shared.isVehicleWindowBroken(Vehicle, 4);
+            VehicleData.PrimaryColor = Vehicle.customPrimaryColor.ToHex();
+            VehicleData.SecondaryColor = Vehicle.customSecondaryColor.ToHex();
+            VehicleData.EnginePowerMultipler = Vehicle.enginePowerMultiplier;
+            VehicleData.NumberPlateStyle = Vehicle.numberPlateStyle;
+            VehicleData.NumberPlate = Vehicle.numberPlate;
+            VehicleData.Fuel = API.shared.getEntitySyncedData(Vehicle.handle, "_fuel");
+            VehicleData.FuelConsumption = API.shared.getEntitySyncedData(Vehicle.handle, "_fuelConsumption");
+            VehicleData.Milage = API.shared.getEntitySyncedData(Vehicle.handle, "_milage");
 
             ContextFactory.Instance.Vehicles.Attach(VehicleData);
             ContextFactory.Instance.Entry(VehicleData).State = EntityState.Modified;
@@ -197,7 +258,7 @@ namespace Serverside.Controllers
             VehicleData.IsSpawned = false;
             Save();
             API.shared.deleteEntity(this.Vehicle);
-            RPCore.Remove(this);
+            RPEntityManager.Remove(this);
         }
 
         private void Dispose(bool disposing)
