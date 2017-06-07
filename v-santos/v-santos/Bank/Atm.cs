@@ -1,10 +1,7 @@
-﻿using System;
-using System.Globalization;
-using System.Xml.Serialization;
+﻿using System.Globalization;
 using GTANetworkServer;
 using GTANetworkShared;
 using Serverside.Bank.Models;
-using Serverside.Core;
 using Serverside.Core.Extensions;
 
 namespace Serverside.Bank

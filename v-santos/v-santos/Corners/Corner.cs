@@ -7,6 +7,7 @@ using GTANetworkShared;
 using Serverside.Controllers;
 using Serverside.Core;
 using Serverside.Core.Extensions;
+using Serverside.Core.Extenstions;
 using Serverside.Core.Finders;
 using Serverside.Corners.Models;
 
@@ -57,7 +58,7 @@ namespace Serverside.Corners
                 Player.Client.Notify("Rozpocząłeś proces sprzedaży, pozostań w znaczniku.", true);
 
                 StartProcess();
-                Player.Client.playAnimation("amb@world_human_drug_dealer_hard@male@idle_a", "idle_a", (int)EnumsExtensions.AnimationFlags.Loop | (int)EnumsExtensions.AnimationFlags.AllowPlayerControl | (int) EnumsExtensions.AnimationFlags.Cancellable);
+                Player.Client.playAnimation("amb@world_human_drug_dealer_hard@male@idle_a", "idle_a", (int)AnimationFlags.Loop | (int)AnimationFlags.AllowPlayerControl | (int) AnimationFlags.Cancellable);
             }
         }
 

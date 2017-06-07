@@ -1,8 +1,4 @@
-﻿using GTANetworkServer;
-using GTANetworkShared;
-using Serverside.Controllers;
-
-namespace Serverside.Core.Extensions
+﻿namespace Serverside.Core.Extensions
 {
     public static class NetHandleExtensions
     {

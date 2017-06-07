@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Serverside.Groups;
-using Serverside.Groups.Base;
 using GTANetworkServer.Constant;
 
 namespace Serverside.Database.Models

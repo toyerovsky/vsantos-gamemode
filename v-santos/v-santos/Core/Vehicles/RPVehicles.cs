@@ -5,9 +5,7 @@ using GTANetworkShared;
 using Newtonsoft.Json;
 using Serverside.Controllers;
 using Serverside.Core.Extensions;
-using Serverside.Items;
 using System.Collections.Generic;
-using Serverside.Database.Models;
 
 namespace Serverside.Core.Vehicles
 {

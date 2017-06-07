@@ -5,7 +5,6 @@ using GTANetworkServer;
 using Serverside.Database;
 using Serverside.Database.Models;
 using Serverside.Core.Extensions;
-using Serverside.Core.Vehicles;
 using Serverside.Core;
 
 namespace Serverside.Controllers

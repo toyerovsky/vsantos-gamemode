@@ -3,7 +3,6 @@ using GTANetworkServer;
 using GTANetworkShared;
 using Serverside.Core;
 using Serverside.Core.Extensions;
-using Serverside.Database;
 
 
 namespace Serverside.Employer

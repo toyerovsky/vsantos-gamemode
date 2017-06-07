@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using GTANetworkServer;
 using Serverside.Core.Telephone;
 using Serverside.Database;
 using Serverside.Database.Models;
-using Serverside.Items;
 using Item = Serverside.Database.Models.Item;
 
 namespace Serverside.Controllers
@@ -46,11 +44,12 @@ namespace Serverside.Controllers
             ContextFactory.Instance.Items.Attach(Data);
             ContextFactory.Instance.Entry(Data).State = EntityState.Modified;
             
-            ContextFactory.Instance.TelephoneContacts.AddRange(Contacts);
-            ContextFactory.Instance.Entry(Contacts).State = EntityState.Modified;
+            //bezsens
+            //ContextFactory.Instance.TelephoneContacts.AddRange(Contacts);
+            //ContextFactory.Instance.Entry(Contacts).State = EntityState.Modified;
 
-            ContextFactory.Instance.TelephoneMessages.AddRange(Messages);
-            ContextFactory.Instance.Entry(Messages).State = EntityState.Modified;
+            //ContextFactory.Instance.TelephoneMessages.AddRange(Messages);
+            //ContextFactory.Instance.Entry(Messages).State = EntityState.Modified;
 
             ContextFactory.Instance.SaveChanges();
 

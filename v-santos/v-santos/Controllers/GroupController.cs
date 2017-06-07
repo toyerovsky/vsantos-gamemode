@@ -4,7 +4,6 @@ using Serverside.Groups;
 using GTANetworkServer.Constant;
 using Serverside.Core;
 using Serverside.Database.Models;
-using System;
 using System.Linq;
 
 namespace Serverside.Controllers

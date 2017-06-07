@@ -1,18 +1,18 @@
-﻿using System;
-using System.Data.Entity;
-using GTANetworkServer;
+﻿using GTANetworkServer;
+using GTANetworkServer.Constant;
 using GTANetworkShared;
 using Serverside.Core;
+using Serverside.Core.Extensions;
+using Serverside.Core.Extenstions;
 //using Serverside.Core.Description;
 using Serverside.Database;
 using Serverside.Database.Models;
-using Vehicle = Serverside.Database.Models.Vehicle;
-using Serverside.Core.Extensions;
-using GTANetworkServer.Constant;
-using Serverside.Core.Vehicles;
 using Serverside.Items;
+using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using Vehicle = Serverside.Database.Models.Vehicle;
 
 namespace Serverside.Controllers
 {
@@ -20,8 +20,7 @@ namespace Serverside.Controllers
     {
         public long VehicleId { get; set; }
         public GTANetworkServer.Vehicle Vehicle { get; set; }
-
-        public Vehicle VehicleData = new Vehicle();
+        public Vehicle VehicleData { get; set; }
         public Core.Description.Description Description;
 
         //Wczytywanie pojazdu
@@ -29,21 +28,10 @@ namespace Serverside.Controllers
         {
             VehicleData = data;
             VehicleData.IsSpawned = true;
-            Vehicle = API.shared.createVehicle(data.VehicleHash,
-                new Vector3(data.SpawnPositionX, data.SpawnPositionY, data.SpawnPositionZ),
-                new Vector3(data.SpawnRotationX, data.SpawnRotationY, data.SpawnPositionZ), 0, 0);
-            API.shared.setVehicleNumberPlate(Vehicle.handle, data.NumberPlate);
-            API.shared.setVehicleNumberPlateStyle(Vehicle.handle, data.NumberPlateStyle);
-            Color primary = VehicleData.PrimaryColor.ToColor();
-            Color secondary = VehicleData.SecondaryColor.ToColor();
-            API.shared.setVehicleCustomPrimaryColor(Vehicle, primary.red, primary.green, primary.blue);
-            API.shared.setVehicleCustomSecondaryColor(Vehicle, primary.red, primary.green, primary.blue);
+            
+            Initialize();
 
-            API.shared.setVehicleWheelType(Vehicle, VehicleData.WheelType);
-            API.shared.setVehicleWheelColor(Vehicle, VehicleData.WheelColor);
-
-            API.shared.setVehicleEngineStatus(Vehicle, false);
-            API.shared.setVehicleLocked(Vehicle, true);
+            //Tylko tak da się nadawać zniszczenia?
             API.shared.breakVehicleDoor(Vehicle, 1, VehicleData.Door1Damage);
             API.shared.breakVehicleDoor(Vehicle, 2, VehicleData.Door2Damage);
             API.shared.breakVehicleDoor(Vehicle, 3, VehicleData.Door3Damage);
@@ -53,6 +41,7 @@ namespace Serverside.Controllers
             API.shared.breakVehicleWindow(Vehicle, 3, VehicleData.Window3Damage);
             API.shared.breakVehicleWindow(Vehicle, 4, VehicleData.Window4Damage);
 
+            //Dodajemy tuning do pojazdu
             float engineMultipier = 0f;
             float torqueMultipier = 0f;
 
@@ -68,6 +57,11 @@ namespace Serverside.Controllers
                 }
             }
 
+            //Te metody działają tak, że ujemny mnożnik zmniejsza 0 to normalnie a dodatni poprawia
+            //Pola są potrzebne, ponieważ w salonie będą dostępne 3 wersje pojazdu
+            //TODO: tańsza o 10% zmniejszone osiągi o -5f
+            //TODO: normalna
+            //TODO: droższa o 25% zwiększone osiągi o 5f
             API.shared.setVehicleEnginePowerMultiplier(Vehicle, engineMultipier);
             API.shared.setVehicleEngineTorqueMultiplier(Vehicle, torqueMultipier);
 
@@ -81,38 +75,30 @@ namespace Serverside.Controllers
 
         //Dodawanie pojazdu
         public VehicleController(FullPosition spawnPosition, VehicleHash hash, string numberplate, int numberplatestyle, int creatorId, Color primaryColor,
-            Color secondaryColor, float enginePowerMultiplier = 1.0f, float engineTorqueMultiplier = 1.0f, Character character = null, Database.Models.Group group = null)
+            Color secondaryColor, float enginePowerMultiplier = 0f, float engineTorqueMultiplier = 0f, Character character = null, Database.Models.Group group = null)
         {
-            this.VehicleData.VehicleHash = hash;
-            this.VehicleData.NumberPlate = numberplate;
-            this.VehicleData.NumberPlateStyle = numberplatestyle;
-            this.VehicleData.Character = character;
-            this.VehicleData.Group = group;
-            this.VehicleData.CreatorId = creatorId;
-            this.VehicleData.SpawnPositionX = spawnPosition.Position.X;
-            this.VehicleData.SpawnPositionY = spawnPosition.Position.Y;
-            this.VehicleData.SpawnPositionZ = spawnPosition.Position.Z;
-            this.VehicleData.SpawnRotationX = spawnPosition.Rotation.X;
-            this.VehicleData.SpawnRotationY = spawnPosition.Rotation.Y;
-            this.VehicleData.SpawnRotationZ = spawnPosition.Rotation.Z;
-            this.VehicleData.PrimaryColor = primaryColor.ToHex();
-            this.VehicleData.SecondaryColor = secondaryColor.ToHex();
-            this.VehicleData.EnginePowerMultipler = enginePowerMultiplier;
-            this.VehicleData.EngineTorqueMultipler = engineTorqueMultiplier;
-
-            Vehicle = API.shared.createVehicle(VehicleData.VehicleHash,
-                new Vector3(VehicleData.SpawnPositionX, VehicleData.SpawnPositionY, VehicleData.SpawnPositionZ),
-                new Vector3(VehicleData.SpawnRotationX, VehicleData.SpawnRotationY, VehicleData.SpawnPositionZ), 0, 0);
-            API.shared.setVehicleNumberPlate(Vehicle.handle, VehicleData.NumberPlate);
-            API.shared.setVehicleNumberPlateStyle(Vehicle.handle, VehicleData.NumberPlateStyle);
-            Color primary = VehicleData.PrimaryColor.ToColor();
-            Color secondary = VehicleData.SecondaryColor.ToColor();
-            API.shared.setVehicleCustomPrimaryColor(Vehicle.handle, primary.red, primary.green, primary.blue);
-            API.shared.setVehicleCustomSecondaryColor(Vehicle.handle, secondary.red, secondary.green, secondary.blue);
-            API.shared.setVehicleEnginePowerMultiplier(Vehicle.handle, VehicleData.EnginePowerMultipler);
-            API.shared.setVehicleEngineTorqueMultiplier(Vehicle.handle, VehicleData.EngineTorqueMultipler);
-
-            this.VehicleData.Tuning = new List<Database.Models.Item>();
+            VehicleData = new Vehicle
+            {
+                VehicleHash = hash,
+                NumberPlate = numberplate,
+                NumberPlateStyle = numberplatestyle,
+                Character = character,
+                Group = group,
+                CreatorId = creatorId,
+                SpawnPositionX = spawnPosition.Position.X,
+                SpawnPositionY = spawnPosition.Position.Y,
+                SpawnPositionZ = spawnPosition.Position.Z,
+                SpawnRotationX = spawnPosition.Rotation.X,
+                SpawnRotationY = spawnPosition.Rotation.Y,
+                SpawnRotationZ = spawnPosition.Rotation.Z,
+                PrimaryColor = primaryColor.ToHex(),
+                SecondaryColor = secondaryColor.ToHex(),
+                EnginePowerMultipler = enginePowerMultiplier,
+                EngineTorqueMultipler = engineTorqueMultiplier,
+                Tuning = new List<Database.Models.Item>(),
+            };
+               
+            Initialize();
 
             this.VehicleData.FuelTank = GetFuelTankSize((VehicleClass)Vehicle.Class);
             API.shared.setEntitySyncedData(Vehicle.handle, "_maxfuel", VehicleData.Fuel);
@@ -131,6 +117,75 @@ namespace Serverside.Controllers
             RPEntityManager.Add(this);
         }
 
+        /// <summary>
+        /// Konstruktor do dodawania pojazdów bez obsługi bazy danych
+        /// </summary>
+        /// <param name="spawnPosition"></param>
+        /// <param name="hash"></param>
+        /// <param name="numberplate"></param>
+        /// <param name="numberplatestyle"></param>
+        /// <param name="creatorId"></param>
+        /// <param name="primaryColor"></param>
+        /// <param name="secondaryColor"></param>
+        /// <param name="enginePowerMultiplier"></param>
+        /// <param name="engineTorqueMultiplier"></param>
+        protected VehicleController(FullPosition spawnPosition, VehicleHash hash, string numberplate, int numberplatestyle, int creatorId, Color primaryColor,
+            Color secondaryColor, float enginePowerMultiplier = 0f, float engineTorqueMultiplier = 0f)
+        {
+            this._nonDbVehicle = true;
+
+            VehicleData = new Vehicle
+            {
+                VehicleHash = hash,
+                NumberPlate = numberplate,
+                NumberPlateStyle = numberplatestyle,
+                CreatorId = creatorId,
+                SpawnPositionX = spawnPosition.Position.X,
+                SpawnPositionY = spawnPosition.Position.Y,
+                SpawnPositionZ = spawnPosition.Position.Z,
+                SpawnRotationX = spawnPosition.Rotation.X,
+                SpawnRotationY = spawnPosition.Rotation.Y,
+                SpawnRotationZ = spawnPosition.Rotation.Z,
+                PrimaryColor = primaryColor.ToHex(),
+                SecondaryColor = secondaryColor.ToHex(),
+                EnginePowerMultipler = enginePowerMultiplier,
+                EngineTorqueMultipler = engineTorqueMultiplier,
+                Tuning = new List<Database.Models.Item>(),
+            };
+
+            Initialize();
+
+            this.VehicleData.FuelTank = GetFuelTankSize((VehicleClass)Vehicle.Class);
+            API.shared.setEntitySyncedData(Vehicle.handle, "_maxfuel", VehicleData.Fuel);
+            this.VehicleData.Fuel = VehicleData.FuelTank * 0.2f;
+            API.shared.setEntitySyncedData(Vehicle.handle, "_fuel", VehicleData.Fuel);
+            this.VehicleData.FuelConsumption = Vehicle.maxAcceleration / 0.2f;
+            API.shared.setEntitySyncedData(Vehicle.handle, "_fuelConsumption", VehicleData.FuelConsumption);
+            this.VehicleData.Milage = 0.0f;
+            API.shared.setEntitySyncedData(Vehicle.handle, "_milage", VehicleData.Milage);
+            this.VehicleData.IsSpawned = true;
+        }
+
+        private void Initialize()
+        {
+            Vehicle = API.shared.createVehicle(VehicleData.VehicleHash,
+                new Vector3(VehicleData.SpawnPositionX, VehicleData.SpawnPositionY, VehicleData.SpawnPositionZ),
+                new Vector3(VehicleData.SpawnRotationX, VehicleData.SpawnRotationY, VehicleData.SpawnPositionZ), 0, 0);
+            API.shared.setVehicleNumberPlate(Vehicle.handle, VehicleData.NumberPlate);
+            API.shared.setVehicleNumberPlateStyle(Vehicle.handle, VehicleData.NumberPlateStyle);
+            Color primary = VehicleData.PrimaryColor.ToColor();
+            Color secondary = VehicleData.SecondaryColor.ToColor();
+            API.shared.setVehicleCustomPrimaryColor(Vehicle.handle, primary.red, primary.green, primary.blue);
+            API.shared.setVehicleCustomSecondaryColor(Vehicle.handle, secondary.red, secondary.green, secondary.blue);
+            API.shared.setVehicleEnginePowerMultiplier(Vehicle.handle, VehicleData.EnginePowerMultipler);
+            API.shared.setVehicleEngineTorqueMultiplier(Vehicle.handle, VehicleData.EngineTorqueMultipler);
+            API.shared.setVehicleWheelType(Vehicle, VehicleData.WheelType);
+            API.shared.setVehicleWheelColor(Vehicle, VehicleData.WheelColor);
+
+            API.shared.setVehicleEngineStatus(Vehicle, false);
+            API.shared.setVehicleLocked(Vehicle, true);
+        }
+
         public static Vehicle GetVehicleData(long id)
         {
             return ContextFactory.Instance.Vehicles.Single(x => x.Id == id);
@@ -138,8 +193,7 @@ namespace Serverside.Controllers
 
         public static Vehicle GetVehicleData(CharacterController cc, long id)
         {
-            if (cc == null) return null;
-            return cc.Character.Vehicle.Single(x => x.Id == id);
+            return cc?.Character.Vehicle.Single(x => x.Id == id);
         }
 
         public static List<Vehicle> GetVehiclesData(CharacterController cc)
@@ -147,6 +201,8 @@ namespace Serverside.Controllers
             return cc.Character.Vehicle.ToList();
         }
 
+        //Pojazdy z prac nie są trzymane w bazie danych
+        private bool _nonDbVehicle;
         public void Save()
         {
             VehicleData.Health = Vehicle.health;
@@ -167,6 +223,7 @@ namespace Serverside.Controllers
             VehicleData.FuelConsumption = API.shared.getEntitySyncedData(Vehicle.handle, "_fuelConsumption");
             VehicleData.Milage = API.shared.getEntitySyncedData(Vehicle.handle, "_milage");
 
+            if (_nonDbVehicle) return;
             ContextFactory.Instance.Vehicles.Attach(VehicleData);
             ContextFactory.Instance.Entry(VehicleData).State = EntityState.Modified;
             ContextFactory.Instance.SaveChanges();
@@ -186,6 +243,7 @@ namespace Serverside.Controllers
             this.VehicleData.SpawnRotationX = this.Vehicle.rotation.X;
             this.VehicleData.SpawnRotationY = this.Vehicle.rotation.Y;
             this.VehicleData.SpawnRotationZ = this.Vehicle.rotation.Z;
+            if (_nonDbVehicle) return;
             Save();
         }
 
@@ -193,17 +251,17 @@ namespace Serverside.Controllers
         {
             switch (vc)
             {
-                case VehicleClass.Compacts:
+                case VehicleClass.Compact:
                     return 70.0f;
                 case VehicleClass.Sedans:
                     return 80.0f;
                 case VehicleClass.SUVs:
                     return 85.0f;
-                case VehicleClass.Coupes:
+                case VehicleClass.Coupe:
                     return 60.0f;
                 case VehicleClass.Muscle:
                     return 70.0f;
-                case VehicleClass.SportsClassics:
+                case VehicleClass.SportClassics:
                     return 70.0f;
                 case VehicleClass.Sports:
                     return 60.0f;
@@ -219,11 +277,11 @@ namespace Serverside.Controllers
                     return 100.0f;
                 case VehicleClass.Vans:
                     return 80.0f;
-                case VehicleClass.Cycles:
+                case VehicleClass.Cycle:
                     return 0.0f;
-                case VehicleClass.Boats:
+                case VehicleClass.Boat:
                     return 200.0f;
-                case VehicleClass.Helicopters:
+                case VehicleClass.Heli:
                     return 400.0f;
                 case VehicleClass.Planes:
                     return 0.0f;
@@ -235,7 +293,7 @@ namespace Serverside.Controllers
                     return 250.0f;
                 case VehicleClass.Commercial:
                     return 250.0f;
-                case VehicleClass.Trains:
+                case VehicleClass.Train:
                     return 0.0f;
                 default:
                     return 70.0f;
@@ -256,7 +314,7 @@ namespace Serverside.Controllers
         private void ReleaseUnmanagedResources()
         {
             VehicleData.IsSpawned = false;
-            Save();
+            if(!_nonDbVehicle) Save();
             API.shared.deleteEntity(this.Vehicle);
             RPEntityManager.Remove(this);
         }

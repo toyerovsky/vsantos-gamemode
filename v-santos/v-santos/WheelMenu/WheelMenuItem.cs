@@ -1,7 +1,7 @@
 ﻿using System;
 using GTANetworkServer;
 
-namespace Serverside.Core.WheelMenu
+namespace Serverside.WheelMenu
 {
     public class WheelMenuItem
     {

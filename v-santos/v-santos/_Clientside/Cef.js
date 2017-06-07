@@ -77,7 +77,7 @@ API.onResourceStart.connect(function () {
 API.onServerEventTrigger.connect(function (eventName, args) {
     if (eventName == "ShowLoginCef") {
         if (args[0]) {
-            CEF.load("_Clientside/Resources/Bootstrap/login.html");
+            CEF.load("_Clientside/Resources/Login/login.html");
             var loginCamera = API.createCamera(args[1], args[2]);
             API.setActiveCamera(loginCamera);
         }
@@ -125,7 +125,7 @@ API.onServerEventTrigger.connect(function (eventName, args) {
         CEF.load("_Clientside/Resources/WheelMenu/index.html");
     }
     else if (eventName == "ShowBusMenu") {
-        CEF.load("_Clientside/Resources/Bootstrap/bus.html");
+        CEF.load("_Clientside/Resources/Bus/bus.html");
         busMenuDataSource = args[0];
     }
 });

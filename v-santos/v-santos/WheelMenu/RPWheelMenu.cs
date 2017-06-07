@@ -4,7 +4,6 @@ using System.Linq;
 using Serverside.Controllers;
 using Serverside.Core.Extensions;
 using Serverside.Core.Extenstions;
-using Serverside.Core.WheelMenu;
 using GTANetworkServer;
 using GTANetworkShared;
 using Serverside.Core.Vehicles;
@@ -38,14 +37,14 @@ namespace Serverside.WheelMenu
                 }
                 else if (RPEntityManager.GetVehicle((NetHandle)arguments[0]) != null)
                 {
-                    Core.WheelMenu.WheelMenu wheel = new Core.WheelMenu.WheelMenu(PrepareDataSource(sender, RPEntityManager.GetVehicle((NetHandle)arguments[0])), sender);
+                    WheelMenu wheel = new WheelMenu(PrepareDataSource(sender, RPEntityManager.GetVehicle((NetHandle)arguments[0])), sender);
                     sender.SetData("WheelMenu", wheel);
                 }   
             }
             else if (eventName == "UseWheelMenuItem")
             {
                 //args[0] to nazwa opcji
-                Core.WheelMenu.WheelMenu wheel = (Core.WheelMenu.WheelMenu)sender.GetData("WheelMenu");
+                WheelMenu wheel = (WheelMenu)sender.GetData("WheelMenu");
                 wheel.WheelMenuItems.First(x => x.Name == (string)arguments[0]).Use();
                 wheel.Dispose();
             }
@@ -63,8 +62,8 @@ namespace Serverside.WheelMenu
                 VehicleController vehicle = (VehicleController) target;
                 if (RPVehicles.GetVehicleDoorCount((VehicleHash)vehicle.Vehicle.model) >= 4)
                 {
-                    menuItems.Add(new WheelMenuItem("Maska", sender, target, (s, e) => RPVehicles.ChangeDoorState(s, ((VehicleController)e).Vehicle.handle, (int)EnumsExtensions.Doors.Hood)));
-                    menuItems.Add(new WheelMenuItem("Bagaznik", sender, target, (s, e) => RPVehicles.ChangeDoorState(s, ((VehicleController)e).Vehicle.handle, (int)EnumsExtensions.Doors.Trunk)));
+                    menuItems.Add(new WheelMenuItem("Maska", sender, target, (s, e) => RPVehicles.ChangeDoorState(s, ((VehicleController)e).Vehicle.handle, (int)Doors.Hood)));
+                    menuItems.Add(new WheelMenuItem("Bagaznik", sender, target, (s, e) => RPVehicles.ChangeDoorState(s, ((VehicleController)e).Vehicle.handle, (int)Doors.Trunk)));
                 }
                 if (vehicle.VehicleData.Character == sender.GetAccountController().CharacterController.Character)
                 {

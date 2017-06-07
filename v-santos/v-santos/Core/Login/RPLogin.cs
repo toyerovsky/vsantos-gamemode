@@ -2,7 +2,6 @@
 using System.Linq;
 using GTANetworkServer;
 using GTANetworkShared;
-using Newtonsoft.Json;
 using Serverside.Controllers;
 using Serverside.Database;
 using Serverside.Database.Models;

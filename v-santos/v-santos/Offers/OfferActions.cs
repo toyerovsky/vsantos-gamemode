@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using GTANetworkServer;
+﻿using GTANetworkServer;
+using Serverside.Core;
 using Serverside.Core.Extensions;
 
 namespace Serverside.Offers
@@ -24,7 +22,7 @@ namespace Serverside.Offers
 
         public static void RepairVehicle(Client getter)
         {
-            var vehicle = API.shared.getPlayerVehicle(getter).GetVehicleController();
+            var vehicle = RPEntityManager.GetVehicle(API.shared.getPlayerVehicle(getter));
             if (vehicle == null) return;
             vehicle.Vehicle.repair();
             vehicle.Save();

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data.Entity;
-using System.Linq;
 using GTANetworkServer;
 using GTANetworkShared;
 using Serverside.Controllers;

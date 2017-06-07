@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using GTANetworkShared;
-using GTANetworkServer.Constant;
 
 namespace Serverside.Database.Models
 {
@@ -13,9 +12,6 @@ namespace Serverside.Database.Models
         public Group Group { get; set; }
         //Zamysł: Przy tworzeniu przedmiotu będzie zapisywane kto go stworzył, a jak stworzy go serwer to 0
         public long CreatorId { get; set; }
-
-        /// Typy właścicieli: 1 gracz, 2 grupa
-        //public int OwnerType { get; set; } // lepiej sprawdzać czy characterid lub groupid == null
 
         //public string Name { get; set; }
         public string NumberPlate { get; set; }

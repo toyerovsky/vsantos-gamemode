@@ -7,7 +7,6 @@ using Serverside.Core;
 using Serverside.Core.Telephone;
 using Serverside.Database.Models;
 using Serverside.Groups;
-using Serverside.Groups.Base;
 //using Serverside.Groups.CrimeBots;
 using Serverside.Core.Extensions;
 

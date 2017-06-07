@@ -5,7 +5,7 @@ using GTANetworkServer;
 using Newtonsoft.Json;
 using Serverside.Core.Extensions;
 
-namespace Serverside.Core.WheelMenu
+namespace Serverside.WheelMenu
 {
     public class WheelMenu : IDisposable
     {

@@ -5,9 +5,8 @@ using GTANetworkServer;
 using GTANetworkShared;
 using Newtonsoft.Json;
 using Serverside.Autonomic.Carshop.Models;
-using Serverside.Controllers;
-using Serverside.Core;
 using Serverside.Core.Extensions;
+using Serverside.Core.Extenstions;
 
 namespace Serverside.Autonomic.Carshop
 {
@@ -33,13 +32,13 @@ namespace Serverside.Autonomic.Carshop
 
                 var player = API.getPlayerFromHandle(entity);
                 string compactsJson =
-                    JsonConvert.SerializeObject(Vehicles.Where(v => v.Category == VehicleCategory.Kompaktowe));
+                    JsonConvert.SerializeObject(Vehicles.Where(v => v.Category == VehicleClass.Compact));
 
                 string coupesJson =
-                    JsonConvert.SerializeObject(Vehicles.Where(v => v.Category == VehicleCategory.Coupe));
+                    JsonConvert.SerializeObject(Vehicles.Where(v => v.Category == VehicleClass.Coupe));
 
                 string suvsJson =
-                    JsonConvert.SerializeObject(Vehicles.Where(v => v.Category == VehicleCategory.SUV));
+                    JsonConvert.SerializeObject(Vehicles.Where(v => v.Category == VehicleClass.SUVs));
 
                 API.triggerClientEvent(player, "OnPlayerEnteredCarshop", compactsJson, coupesJson, suvsJson);
             };
@@ -64,42 +63,42 @@ namespace Serverside.Autonomic.Carshop
 
 
                     //Kompaktowe
-                    new CarshopVehicle("Blista", VehicleHash.Blista, VehicleCategory.Kompaktowe, new decimal(17999)),
-                    new CarshopVehicle("Brioso", VehicleHash.Brioso, VehicleCategory.Kompaktowe, new decimal(21999)),
-                    new CarshopVehicle("Dilettante", VehicleHash.Dilettante, VehicleCategory.Kompaktowe, new decimal(12000)),
-                    new CarshopVehicle("Issi", VehicleHash.Issi2, VehicleCategory.Kompaktowe, new decimal(25000)),
-                    new CarshopVehicle("Panto", VehicleHash.Panto, VehicleCategory.Kompaktowe, new decimal(10000)),
-                    new CarshopVehicle("Prairie", VehicleHash.Prairie, VehicleCategory.Kompaktowe, new decimal(22000)),
+                    new CarshopVehicle("Blista", VehicleHash.Blista, VehicleClass.Compact, new decimal(17999)),
+                    new CarshopVehicle("Brioso", VehicleHash.Brioso, VehicleClass.Compact, new decimal(21999)),
+                    new CarshopVehicle("Dilettante", VehicleHash.Dilettante, VehicleClass.Compact, new decimal(12000)),
+                    new CarshopVehicle("Issi", VehicleHash.Issi2, VehicleClass.Compact, new decimal(25000)),
+                    new CarshopVehicle("Panto", VehicleHash.Panto, VehicleClass.Compact, new decimal(10000)),
+                    new CarshopVehicle("Prairie", VehicleHash.Prairie, VehicleClass.Compact, new decimal(22000)),
 
                     //Coupe
-                    new CarshopVehicle("Exemplar", VehicleHash.Exemplar, VehicleCategory.Coupe, new decimal(190000)),
-                    new CarshopVehicle("F620", VehicleHash.F620, VehicleCategory.Coupe, new decimal(151999)),
-                    new CarshopVehicle("Felon", VehicleHash.Felon2, VehicleCategory.Coupe, new decimal(158999)),
-                    new CarshopVehicle("Jackal", VehicleHash.Jackal, VehicleCategory.Coupe, new decimal(31000)),
-                    new CarshopVehicle("Oracle", VehicleHash.Oracle, VehicleCategory.Coupe, new decimal(21000)),
-                    new CarshopVehicle("Sentinel", VehicleHash.Sentinel, VehicleCategory.Coupe, new decimal(40000)),
-                    new CarshopVehicle("Windsor", VehicleHash.Windsor, VehicleCategory.Coupe, new decimal(220000)),
-                    new CarshopVehicle("Zion", VehicleHash.Zion, VehicleCategory.Coupe, new decimal(32000)),
+                    new CarshopVehicle("Exemplar", VehicleHash.Exemplar, VehicleClass.Coupe, new decimal(190000)),
+                    new CarshopVehicle("F620", VehicleHash.F620, VehicleClass.Coupe, new decimal(151999)),
+                    new CarshopVehicle("Felon", VehicleHash.Felon2, VehicleClass.Coupe, new decimal(158999)),
+                    new CarshopVehicle("Jackal", VehicleHash.Jackal, VehicleClass.Coupe, new decimal(31000)),
+                    new CarshopVehicle("Oracle", VehicleHash.Oracle, VehicleClass.Coupe, new decimal(21000)),
+                    new CarshopVehicle("Sentinel", VehicleHash.Sentinel, VehicleClass.Coupe, new decimal(40000)),
+                    new CarshopVehicle("Windsor", VehicleHash.Windsor, VehicleClass.Coupe, new decimal(220000)),
+                    new CarshopVehicle("Zion", VehicleHash.Zion, VehicleClass.Coupe, new decimal(32000)),
 
                     //SUV
-                    new CarshopVehicle("BeeJay XL", VehicleHash.BJXL, VehicleCategory.SUV, new decimal(16999)),
-                    new CarshopVehicle("Baller I", VehicleHash.Baller, VehicleCategory.SUV, new decimal(14999)),
-                    new CarshopVehicle("Baller II", VehicleHash.Baller2, VehicleCategory.SUV, new decimal(51000)),
-                    new CarshopVehicle("Cavalcade I", VehicleHash.Cavalcade, VehicleCategory.SUV, new decimal(26000)),
-                    new CarshopVehicle("Cavalcade II", VehicleHash.Cavalcade2, VehicleCategory.SUV, new decimal(71000)),
-                    new CarshopVehicle("Dubsta", VehicleHash.Dubsta2, VehicleCategory.SUV, new decimal(56999)),
-                    new CarshopVehicle("FQ2", VehicleHash.Fq2, VehicleCategory.SUV, new decimal(52000)),
-                    new CarshopVehicle("Granger", VehicleHash.Granger, VehicleCategory.SUV, new decimal(61799)),
-                    new CarshopVehicle("Gresley", VehicleHash.Gresley, VehicleCategory.SUV, new decimal(56999)),
-                    new CarshopVehicle("Habanero", VehicleHash.Gresley, VehicleCategory.SUV, new decimal(68799)),
-                    new CarshopVehicle("Huntley S", VehicleHash.Huntley, VehicleCategory.SUV, new decimal(72699)),
-                    new CarshopVehicle("Landstalker", VehicleHash.Landstalker, VehicleCategory.SUV, new decimal(41899)),
-                    new CarshopVehicle("Patriot", VehicleHash.Patriot, VehicleCategory.SUV, new decimal(78999)),
-                    new CarshopVehicle("Radius", VehicleHash.Radi, VehicleCategory.SUV, new decimal(36999)),
-                    new CarshopVehicle("Rocoto", VehicleHash.Rocoto, VehicleCategory.SUV, new decimal(98000)),
-                    new CarshopVehicle("Seminole", VehicleHash.Seminole, VehicleCategory.SUV, new decimal(64999)),
-                    new CarshopVehicle("Serrano", VehicleHash.Serrano, VehicleCategory.SUV, new decimal(28999)),
-                    new CarshopVehicle("XLS", VehicleHash.Xls, VehicleCategory.SUV, new decimal(54999))
+                    new CarshopVehicle("BeeJay XL", VehicleHash.BJXL, VehicleClass.SUVs, new decimal(16999)),
+                    new CarshopVehicle("Baller I", VehicleHash.Baller, VehicleClass.SUVs, new decimal(14999)),
+                    new CarshopVehicle("Baller II", VehicleHash.Baller2, VehicleClass.SUVs, new decimal(51000)),
+                    new CarshopVehicle("Cavalcade I", VehicleHash.Cavalcade, VehicleClass.SUVs, new decimal(26000)),
+                    new CarshopVehicle("Cavalcade II", VehicleHash.Cavalcade2, VehicleClass.SUVs, new decimal(71000)),
+                    new CarshopVehicle("Dubsta", VehicleHash.Dubsta2, VehicleClass.SUVs, new decimal(56999)),
+                    new CarshopVehicle("FQ2", VehicleHash.Fq2, VehicleClass.SUVs, new decimal(52000)),
+                    new CarshopVehicle("Granger", VehicleHash.Granger, VehicleClass.SUVs, new decimal(61799)),
+                    new CarshopVehicle("Gresley", VehicleHash.Gresley, VehicleClass.SUVs, new decimal(56999)),
+                    new CarshopVehicle("Habanero", VehicleHash.Gresley, VehicleClass.SUVs, new decimal(68799)),
+                    new CarshopVehicle("Huntley S", VehicleHash.Huntley, VehicleClass.SUVs, new decimal(72699)),
+                    new CarshopVehicle("Landstalker", VehicleHash.Landstalker, VehicleClass.SUVs, new decimal(41899)),
+                    new CarshopVehicle("Patriot", VehicleHash.Patriot, VehicleClass.SUVs, new decimal(78999)),
+                    new CarshopVehicle("Radius", VehicleHash.Radi, VehicleClass.SUVs, new decimal(36999)),
+                    new CarshopVehicle("Rocoto", VehicleHash.Rocoto, VehicleClass.SUVs, new decimal(98000)),
+                    new CarshopVehicle("Seminole", VehicleHash.Seminole, VehicleClass.SUVs, new decimal(64999)),
+                    new CarshopVehicle("Serrano", VehicleHash.Serrano, VehicleClass.SUVs, new decimal(28999)),
+                    new CarshopVehicle("XLS", VehicleHash.Xls, VehicleClass.SUVs, new decimal(54999))
                     
                     //Sedany
                 };

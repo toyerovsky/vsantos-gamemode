@@ -129,7 +129,7 @@ namespace Serverside.Offers
                 }
                 else if (type == OfferType.Pojazd)
                 {
-                    VehicleController vehicle = _api.getPlayerVehicle(sender).GetVehicleController();
+                    VehicleController vehicle = RPEntityManager.GetVehicle(_api.getPlayerVehicle(sender));
                     if (vehicle == null) return;
 
                     offer = new Offer(sender, getter, vehicle.VehicleData, safeMoneyCount);

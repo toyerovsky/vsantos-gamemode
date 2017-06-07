@@ -1,10 +1,23 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Serverside.Items;
 
 namespace Serverside.Constant
 {
     public static class ConstantItems
     {
+
+        /// <summary>
+        /// Klucz to słownik, wartosc to animacja
+        /// </summary>
+        public static Dictionary<string, string> Animations
+        {
+            get
+            {
+                return File.ReadLines(ConstantAssemblyInfo.WorkingDirectory + @"\Files\dict.txt").Select(x => x.Split(',')).ToDictionary(s => s[0], s => s[1]);
+            }
+        }
 
         public static Dictionary<int, int> GunDefaultAmmo = new Dictionary<int, int>
         {

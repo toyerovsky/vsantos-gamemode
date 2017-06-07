@@ -2,16 +2,12 @@
 using System.Drawing;
 using System.Linq;
 using GTANetworkServer;
-using GTANetworkServer.Constant;
 using Serverside.Controllers;
 using Serverside.Core;
 using Serverside.Core.Extensions;
 using Serverside.Core.Finders;
-using Serverside.Database;
 using Serverside.Database.Models;
 using Serverside.Groups;
-using Serverside.Groups.Base;
-using Group = Serverside.Groups.Base.Group;
 
 namespace Serverside.Admin
 {
@@ -19,7 +15,7 @@ namespace Serverside.Admin
     {
         public AdminGroups()
         {
-            API.consoleOutput("AdminGroups zostało uruchomione pomyślnie.");
+            APIExtensions.ConsoleOutput("[AdminGroups] Uruchomione pomyślnie.", ConsoleColor.DarkMagenta);
         }
 
         [Command("stworzgrupa", GreedyArg = true)]
@@ -57,11 +53,10 @@ namespace Serverside.Admin
 
                     if (boss.GetAccountController().CharacterController.Character.Worker.Count > 3)
                     {
-                        Group group = RPGroups.CreateGroup(g);
-                        group.Controller = new GroupController(g);
+                        GroupController group = RPGroups.CreateGroup(g);
                         group.Data.Workers.Add(new Worker()
                         {
-                            Group = group.Controller.Data,
+                            Group = group.Data,
                             Character = boss.GetAccountController().CharacterController.Character,
                             ChatRight = true,
                             DoorsRight = true,
@@ -71,7 +66,7 @@ namespace Serverside.Admin
                             DutyMinutes = 0,
                             Salary = 0
                         });
-                        group.Controller.Save();
+                        group.Save();
                     }
                     else
                     {
@@ -104,9 +99,9 @@ namespace Serverside.Admin
 
             long gid = long.Parse(groupId);
 
-            if (RPGroups.Groups.Any(g => g.Id == gid))
+            if (RPEntityManager.GetGroup(gid) != null)
             {
-                Group group = RPGroups.Groups.First(g => g.Id == gid);
+                GroupController group = RPEntityManager.GetGroup(gid);
 
                 if (group.Data.Workers.Any(p => p.Character == player.CharacterController.Character))
                 {
@@ -118,7 +113,7 @@ namespace Serverside.Admin
                 {
                     group.Data.Workers.Add(new Worker()
                     {
-                        Group = group.Controller.Data,
+                        Group = group.Data,
                         Character = sender.GetAccountController().CharacterController.Character,
                         ChatRight = true,
                         DoorsRight = true,
@@ -128,7 +123,7 @@ namespace Serverside.Admin
                         DutyMinutes = 0,
                         Salary = 0
                     });
-                    group.Controller.Save();
+                    group.Save();
                 }
                 else
                 {

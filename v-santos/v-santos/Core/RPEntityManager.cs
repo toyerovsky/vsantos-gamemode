@@ -1,16 +1,13 @@
 ﻿using GTANetworkShared;
 using Serverside.Controllers;
 using Serverside.Database;
-using Serverside.Database.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using GTANetworkServer;
 
 namespace Serverside.Core
 {
-    class RPEntityManager
+    public static class RPEntityManager
     {
         private static readonly SortedList<long, AccountController> Accounts = new SortedList<long, AccountController>();
         private static readonly List<VehicleController> Vehicles = new List<VehicleController>();
@@ -47,7 +44,7 @@ namespace Serverside.Core
 
         public static AccountController GetAccountByServerId(int id)
         {
-            if (id > -1) return Accounts.Values.Where(x => x.ServerId == id).First();
+            if (id > -1) return Accounts.Values.First(x => x.ServerId == id);
             return null;
         }
 
@@ -83,7 +80,7 @@ namespace Serverside.Core
             Vehicles.Remove(vc);
         }
 
-        public static VehicleController GetVehicle(GTANetworkServer.Vehicle vehicle)
+        public static VehicleController GetVehicle(Vehicle vehicle)
         {
             return Vehicles.Find(x => x.Vehicle == vehicle);
         }

@@ -90,8 +90,8 @@ namespace Serverside.Core.Extensions
 
             if (vehhastyres)
             {
-                EnumsExtensions.VehicleClass veh_class = (EnumsExtensions.VehicleClass)vehicle.Class;
-                if (veh_class == EnumsExtensions.VehicleClass.Motorcycles && veh_class == EnumsExtensions.VehicleClass.Cycle)
+                VehicleClass vehClass = (VehicleClass)vehicle.Class;
+                if (vehClass == VehicleClass.Motorcycles && vehClass == VehicleClass.Cycle)
                 {
                     if (howmany > 2)
                         howmany = 2;
@@ -102,9 +102,9 @@ namespace Serverside.Core.Extensions
                         //    int tyre = 6;
                         //    do
                         //    {
-                        List<EnumsExtensions.Wheel> wheels = new List<EnumsExtensions.Wheel>();
-                        wheels.Add(EnumsExtensions.Wheel.BikeFront);
-                        wheels.Add(EnumsExtensions.Wheel.BikeRear);
+                        List<Wheel> wheels = new List<Wheel>();
+                        wheels.Add(Wheel.BikeFront);
+                        wheels.Add(Wheel.BikeRear);
                         int r = GetRandomNumber(0, 1);
                         if (API.shared.isVehicleTyrePopped(vehicle, (int)wheels[r]))
                         {
@@ -129,11 +129,11 @@ namespace Serverside.Core.Extensions
                         //    int tyre = 0;
                         //    do
                         //    {
-                        List<EnumsExtensions.Wheel> wheels = new List<EnumsExtensions.Wheel>();
-                        wheels.Add(EnumsExtensions.Wheel.FrontLeft);
-                        wheels.Add(EnumsExtensions.Wheel.FrontRight);
-                        wheels.Add(EnumsExtensions.Wheel.RearLeft);
-                        wheels.Add(EnumsExtensions.Wheel.RearRight);
+                        List<Wheel> wheels = new List<Wheel>();
+                        wheels.Add(Wheel.FrontLeft);
+                        wheels.Add(Wheel.FrontRight);
+                        wheels.Add(Wheel.RearLeft);
+                        wheels.Add(Wheel.RearRight);
                         int r = GetRandomNumber(0, 3);
                         //API.shared.sendChatMessageToPlayer(player, "Random Tyre: " + wheels[r].ToString());
                         bool popped = API.fetchNativeFromPlayer<bool>(player, Hash.IS_VEHICLE_TYRE_BURST, vehicle.handle, (int)wheels[r], true);
@@ -151,30 +151,5 @@ namespace Serverside.Core.Extensions
                 }
             }
         }
-    }
-    enum VehicleClass : int
-    {
-        Compacts,
-        Sedans,
-        SUVs,
-        Coupes,
-        Muscle,
-        SportsClassics,
-        Sports,
-        Super,
-        Motorcycles,
-        Offroad,
-        Industrial,
-        Utility,
-        Vans,
-        Cycles,
-        Boats,
-        Helicopters,
-        Planes,
-        Service,
-        Emergency,
-        Military,
-        Commercial,
-        Trains
     }
 }

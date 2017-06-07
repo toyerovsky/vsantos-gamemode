@@ -1,5 +1,6 @@
 ﻿using System;
 using GTANetworkShared;
+using Serverside.Core.Extenstions;
 
 namespace Serverside.Autonomic.Carshop.Models
 {
@@ -8,10 +9,10 @@ namespace Serverside.Autonomic.Carshop.Models
     {
         public string Name { get; set; }
         public VehicleHash Hash { get; set; }
-        public VehicleCategory Category { get; set; }
+        public VehicleClass Category { get; set; }
         public decimal Cost { get; set; }
 
-        public CarshopVehicle(string name, VehicleHash hash, VehicleCategory category, decimal cost)
+        public CarshopVehicle(string name, VehicleHash hash, VehicleClass category, decimal cost)
         {
             Name = name;
             Hash = hash;

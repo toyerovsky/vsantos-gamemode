@@ -64,6 +64,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
@@ -74,9 +75,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Admin\AdminCore.cs" />
     <Compile Include="Admin\AdminGroups.cs" />
     <Compile Include="Admin\AdminTeleport.cs" />
+    <Compile Include="Autonomic\Carshop\Models\CarshopVehicle.cs" />
+    <Compile Include="Autonomic\Carshop\RPCarshop.cs" />
     <Compile Include="Bank\Atm.cs" />
     <Compile Include="Bank\BankHelper.cs" />
     <Compile Include="Bank\Models\AtmModel.cs" />
@@ -91,6 +93,12 @@
     <Compile Include="Controllers\CharacterController.cs" />
     <Compile Include="Controllers\GroupController.cs" />
     <Compile Include="Controllers\VehicleController.cs" />
+    <Compile Include="Core\Animations\Models\Animation.cs" />
+    <Compile Include="Core\Animations\RPAnimations.cs" />
+    <Compile Include="Core\Bot.cs" />
+    <Compile Include="Core\Bus\BusStop.cs" />
+    <Compile Include="Core\Bus\Models\BusStopModel.cs" />
+    <Compile Include="Core\Bus\RPBus.cs" />
     <Compile Include="Core\Description\Description.cs" />
     <Compile Include="Core\Description\RPDescriptions.cs" />
     <Compile Include="Core\Extenstions\APIExtensions.cs" />
@@ -98,6 +106,8 @@
     <Compile Include="Core\Extenstions\CustomEvents.cs" />
     <Compile Include="Core\Extenstions\EnumsExtensions.cs" />
     <Compile Include="Core\Extenstions\NetHandleExtensions.cs" />
+    <Compile Include="Core\Finders\GroupFinder.cs" />
+    <Compile Include="Core\Finders\PlayerFinder.cs" />
     <Compile Include="Core\FullPosition.cs" />
     <Compile Include="Core\Login\RPLogin.cs" />
     <Compile Include="Core\Money\MoneyManager.cs" />
@@ -123,7 +133,13 @@
     <Compile Include="Corners\Models\CornerModel.cs" />
     <Compile Include="Corners\RPCornerBots.cs" />
     <Compile Include="Corners\RPCorners.cs" />
+    <Compile Include="Database\BuildingDatabaseHelper.cs" />
+    <Compile Include="Database\CharacterDatabaseHelper.cs" />
+    <Compile Include="Database\CrimeBotDatabaseHelper.cs" />
+    <Compile Include="Database\DescriptionDatabaseHelper.cs" />
     <Compile Include="Database\ForumDatabaseHelper.cs" />
+    <Compile Include="Database\GroupDatabaseHelper.cs" />
+    <Compile Include="Database\ItemDatabaseHelper.cs" />
     <Compile Include="Database\Models\Account.cs" />
     <Compile Include="Database\Models\Ban.cs" />
     <Compile Include="Database\Models\Building.cs" />
@@ -137,6 +153,10 @@
     <Compile Include="Database\Models\Vehicle.cs" />
     <Compile Include="Database\Models\Worker.cs" />
     <Compile Include="Database\RoleplayConnection.cs" />
+    <Compile Include="Database\TelephoneContactDatabaseHelper.cs" />
+    <Compile Include="Database\TelephoneMessageDatabaseHelper.cs" />
+    <Compile Include="Database\VehicleDatabaseHelper.cs" />
+    <Compile Include="Database\WorkerDatabaseHelper.cs" />
     <Compile Include="Employer\EmployerBot.cs" />
     <Compile Include="Employer\RPEmployer.cs" />
     <Compile Include="Groups\Base\CityHall.cs" />
@@ -146,7 +166,9 @@
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\RPItems.cs" />
     <Compile Include="Items\ServerItem.cs" />
-    <Compile Include="Jobs\GarbageCollector.cs" />
+    <Compile Include="Jobs\DustMan\Dustman.cs" />
+    <Compile Include="Jobs\DustMan\DustmanVehicle.cs" />
+    <Compile Include="Jobs\DustMan\DustmanWorker.cs" />
     <Compile Include="Jobs\Greenkeeper.cs" />
     <Compile Include="Jobs\JobVehicle.cs" />
     <Compile Include="Jobs\RPJobs.cs" />
@@ -186,6 +208,7 @@
     <None Include="_Clientside\Resources\fonts\FontAwesome.otf" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Constant\Files\dict.txt" />
     <Content Include="_Clientside\Animations.js" />
     <Content Include="_Clientside\Atm.js" />
     <Content Include="_Clientside\BwGui.js" />
