@@ -14,7 +14,7 @@ namespace Serverside.Core
     {
         private static readonly SortedList<long, AccountController> Accounts = new SortedList<long, AccountController>();
         private static readonly List<VehicleController> Vehicles = new List<VehicleController>();
-        public static readonly List<GroupController> Groups = new List<GroupController>();
+        private static readonly List<GroupController> Groups = new List<GroupController>();
 
         public static void Init()
         {
@@ -49,6 +49,11 @@ namespace Serverside.Core
         {
             if (id > -1) return Accounts.Values.Where(x => x.ServerId == id).First();
             return null;
+        }
+
+        public static SortedList<long, AccountController> GetAccounts()
+        {
+            return Accounts;
         }
 
         public static int CalculateServerId(AccountController account)

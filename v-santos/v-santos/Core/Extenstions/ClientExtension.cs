@@ -2,7 +2,6 @@
 using GTANetworkServer;
 using Serverside.Controllers;
 using Serverside.Core.Money;
-using Serverside.Groups;
 
 namespace Serverside.Core.Extensions
 {
@@ -19,7 +18,7 @@ namespace Serverside.Core.Extensions
         {
             if (!client.GetAccountController().CharacterController.OnDutyGroupId.HasValue)
                 return null;
-            return RPEntityManager.Groups.Single(x => x.GroupId == client.GetAccountController().CharacterController.OnDutyGroupId.Value);
+            return RPEntityManager.GetGroups().Single(x => x.GroupId == client.GetAccountController().CharacterController.OnDutyGroupId.Value);
         }
 
         public static void Notify(this Client client, string message, bool flashing = false)
@@ -29,7 +28,7 @@ namespace Serverside.Core.Extensions
 
         public static bool TryGetGroupBySlot(this Client client, short slot, out GroupController group)
         {
-            if (slot >= 0 && slot <= 3) group = RPEntityManager.Groups.Single(g => g.GroupId == client.GetAccountController().CharacterController.Character.Worker.ElementAt(slot).Group.Id);
+            if (slot >= 0 && slot <= 3) group = RPEntityManager.GetGroups().Single(g => g.GroupId == client.GetAccountController().CharacterController.Character.Worker.ElementAt(slot).Group.Id);
             else group = null;
             return group != null;
         }

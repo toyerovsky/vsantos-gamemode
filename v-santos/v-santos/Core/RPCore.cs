@@ -3,14 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GTANetworkServer;
-using GTANetworkShared;
 using Serverside.Controllers;
 using Serverside.Core.Login;
 using Serverside.Database;
-using Serverside.Groups;
-using Serverside.Groups.Base;
 using Serverside.Core.Extensions;
-using Serverside.Core.Vehicles;
 
 namespace Serverside.Core
 {
@@ -36,21 +32,24 @@ namespace Serverside.Core
         }
         private void API_onResourceStop()
         {
-            //FDb = null;
             Task dbStop = Task.Run(() =>
             {
-                foreach (var p in API.getAllPlayers().Where(x => x.GetAccountController().CharacterController != null))
+                foreach (KeyValuePair<long, AccountController> p in RPEntityManager.GetAccounts().Where(x => x.Value != null))
                 {
+                    AccountController ac = p.Value;
                     //Zmiana postaci pola Online w postaci po wyłączeniu serwera dla graczy którzy byli online
-                    p.GetAccountController().CharacterController.Character.Online = false;
+                    ac.CharacterController.Character.Online = false;
 
                     //Zmiana w przedmiocie pola CurrentlyInUse na false
-                    foreach (var i in p.GetAccountController().CharacterController.Character.Item.Where(i => i.CurrentlyInUse == true).ToList())
+                    foreach (var i in ac.CharacterController.Character.Item.Where(i => i.CurrentlyInUse == true).ToList())
                     {
                         i.CurrentlyInUse = false;
                     }
+                    ac.Client.resetData("RP_ACCOUNT");
+                    ac.Account.Online = false;
+                    ac.Save(true);
                 }
-                RPEntityManager.Save(true);
+                ContextFactory.Instance.SaveChanges();
                 ContextFactory.Instance.Dispose();
             });
             dbStop.Wait();
