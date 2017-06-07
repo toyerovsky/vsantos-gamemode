@@ -209,6 +209,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Constant\Files\dict.txt" />
+    <Content Include="meta.xml" />
     <Content Include="_Clientside\Animations.js" />
     <Content Include="_Clientside\Atm.js" />
     <Content Include="_Clientside\BwGui.js" />
