@@ -28,7 +28,7 @@ namespace Serverside.Core
             //API.getSetting<string>("database_server"), API.getSetting<string>("database_user"), API.getSetting<string>("database_password"), API.getSetting<string>("database_database")
             ContextFactory.SetConnectionParameters("v-santos.pl", "srv", "WL8oTnufAAEFgoIt", "rp"); // NIE WYMAGANE
             RPEntityManager.Init();
-            ContextFactory.Instance.SaveChanges();
+            //ContextFactory.Instance.SaveChanges();
         }
         private void API_onResourceStop()
         {
@@ -50,7 +50,7 @@ namespace Serverside.Core
                     ac.Save(true);
                 }
                 ContextFactory.Instance.SaveChanges();
-                ContextFactory.Instance.Dispose();
+                ContextFactory.Destroy();
             });
             dbStop.Wait();
         }

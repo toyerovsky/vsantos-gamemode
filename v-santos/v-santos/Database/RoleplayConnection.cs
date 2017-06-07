@@ -98,6 +98,11 @@ namespace Serverside.Database
             //return new RoleplayConnection("server=v-santos.pl;uid=srv;pwd=WL8oTnufAAEFgoIt;database=rp"); // TYLKO DO GENEROWANIA BAZY DANYCH ZOSTAWIC TYLKO TĄ LINIE 
 
         }
+
+        public static void Destroy()
+        {
+            _instance = null;
+        }
     }
 }
 

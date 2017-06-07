@@ -13,6 +13,8 @@ namespace Serverside.Database.Models
         [EmailAddress]
         [StringLength(50)]
         public string Email { get; set; }
+        public long MainGroup { get; set; }
+        public string OtherGroups { get; set; }
         [Index("IX_SocialClub", IsUnique = false)]
         [StringLength(50)]
         public string SocialClub { get; set; }  

@@ -47,6 +47,10 @@ namespace Serverside.Controllers
             Character.ModelName = model.ToString(); //"DrFriedlander";
             Character.HitPoints = 100;
             Character.IsAlive = true;
+            Character.LastPositionX = 18.7854f;
+            Character.LastPositionY = -736.714f;
+            Character.LastPositionZ = 44.2173f;
+            Character.LastPositionRotZ = -155.618f;
             ContextFactory.Instance.Characters.Add(Character);
             ContextFactory.Instance.SaveChanges();
 
@@ -69,12 +73,15 @@ namespace Serverside.Controllers
             }
 
             CellphoneController?.Save();
-            Character.CurrentDimension = AccountController.Client.dimension;
-            Character.LastPositionX = AccountController.Client.position.X;
-            Character.LastPositionY = AccountController.Client.position.Y;
-            Character.LastPositionZ = AccountController.Client.position.Z;
-            Character.LastPositionRotZ = AccountController.Client.rotation.Z;
-            Character.Model = AccountController.Client.model.GetHashCode();
+            if (AccountController != null)
+            {
+                Character.CurrentDimension = AccountController.Client.dimension;
+                Character.LastPositionX = AccountController.Client.position.X;
+                Character.LastPositionY = AccountController.Client.position.Y;
+                Character.LastPositionZ = AccountController.Client.position.Z;
+                Character.LastPositionRotZ = AccountController.Client.rotation.Z;
+                Character.Model = AccountController.Client.model.GetHashCode();
+            }
             ContextFactory.Instance.Characters.Attach(Character);
             ContextFactory.Instance.Entry(Character).State = EntityState.Modified;
             ContextFactory.Instance.SaveChanges();

@@ -38,12 +38,17 @@ namespace Serverside.Controllers
             RPChat.SendMessageToPlayer(client, $"Witaj, {accountdata.SocialClub} zostałeś pomyślnie zalogowany. Wybierz postać.", ChatMessageType.ServerInfo);
             API.shared.triggerClientEvent(client, "ShowLoginCef", false);
 
-            var characters = Account.Character.ToList();
-
-            if (characters == null || characters.Count == 0)
+            if (Account.Character == null || Account.Character.Count == 0)
             {
-                CharacterController.AddCharacter(this, Account.Email, "test", PedHash.Michael);
+                if(!CharacterController.AddCharacter(this, Account.Email, "Testowy", PedHash.Michael))
+                {
+                    RPChat.SendMessageToPlayer(client, "Postać o wybranym imieniu i nazwisku już istnieje.", ChatMessageType.ServerInfo);
+                    client.kick("Postać o wybranym imieniu i nazwisku już istnieje.");
+                    return;
+                }
             }
+
+            var characters = Account.Character.ToList();
 
             string json = JsonConvert.SerializeObject(characters.Where(c => c.IsAlive == true && c.Account == Account).Select(
                 ch => new
@@ -57,7 +62,6 @@ namespace Serverside.Controllers
 
             API.shared.triggerClientEvent(client, "ShowCharacterSelectCef", true, json);
             RPChat.SendMessageToPlayer(client, "Używaj strzałek, aby przewijać swoje postacie.", ChatMessageType.ServerInfo);
-
 
             ContextFactory.Instance.SaveChanges();
         }
@@ -75,18 +79,10 @@ namespace Serverside.Controllers
             new AccountController(accountData, sender);
         }
 
-        public static bool RegisterAccount(Client sender, long userid, string email)
+        public static bool RegisterAccount(Client sender, Account account)
         {
-            if (!DoesAccountExist(userid))
+            if (!DoesAccountExist(account.Id))
             {
-                Account account = new Account
-                {
-                    UserId = userid,
-                    Email = email,
-                    SocialClub = sender.name,
-                    Ip = sender.address
-                };
-
                 ContextFactory.Instance.Accounts.Add(account);
                 ContextFactory.Instance.SaveChanges();
 
@@ -119,7 +115,7 @@ namespace Serverside.Controllers
         public void Save(bool resourceStop = false)
         {
             //tutaj wywołać metody synchronizacji danych z innych controllerów np character.
-            if(CharacterController != null)
+            if (CharacterController != null)
                 CharacterController.Save(resourceStop);
 
             ContextFactory.Instance.Accounts.Attach(Account);

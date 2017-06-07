@@ -11,7 +11,7 @@ namespace Serverside.Database
         private readonly string ForumConnectionString = "server=v-santos.pl;uid=srv;pwd=WL8oTnufAAEFgoIt;database=vsantos;";
         #endregion
 
-        public long CheckPasswordMatch(string email, string password)
+        public Tuple<long, short, string> CheckPasswordMatch(string email, string password)
         {
             if (UserExist(email))
             {
@@ -21,8 +21,7 @@ namespace Serverside.Database
                     connection.Open();
                     command.Connection = connection;
                     command.CommandType = CommandType.Text;
-                    command.CommandText =
-                        "SELECT member_id, members_pass_hash, members_pass_salt FROM core_members WHERE email = @P0";
+                    command.CommandText = "SELECT member_id, members_pass_hash, members_pass_salt, member_group_id, mgroup_others FROM core_members WHERE email = @P0";
 
                     command.Parameters.Add(new MySqlParameter("@P0", email));
 
@@ -35,21 +34,23 @@ namespace Serverside.Database
                                 var id = reader.GetInt64(0);
                                 var hash = reader.GetString(1);
                                 var salt = reader.GetString(2);
+                                var groupid = reader.GetInt16(3);
+                                var othergroups = reader.GetString(4);
                                 if (hash != "" && salt != "")
                                 {
 
                                     if (hash.Equals(GenerateIpbHash(password, salt)))
                                     {
-                                        return id;
+                                        return Tuple.Create(id, groupid, othergroups);
                                     }
                                     else
                                     {
-                                        return -1;
+                                        return Tuple.Create(long.Parse("-1"), short.Parse("-1"), "");
                                     }
 
                                 }
                             }
-                            return -1;
+                            return Tuple.Create(long.Parse("-1"), short.Parse("-1"), "");
                         }
                         catch (Exception ex)
                         {
@@ -63,7 +64,7 @@ namespace Serverside.Database
                     }
                 }
             }
-            return -1;
+            return Tuple.Create(long.Parse("-1"), short.Parse("-1"), "");
             //return 1; DEBUG !
         }
 
@@ -120,8 +121,7 @@ namespace Serverside.Database
                 command.Connection = connection;
                 command.CommandType = CommandType.Text;
 
-                command.CommandText =
-                    "SELECT members_pass_salt FROM core_members WHERE email = @P0";
+                command.CommandText = "SELECT members_pass_salt FROM core_members WHERE email = @P0";
                 command.Parameters.Add(new MySqlParameter("@P0", login));
 
                 using (MySqlDataReader reader = command.ExecuteReader())
@@ -148,7 +148,7 @@ namespace Serverside.Database
 
         }
 
-        public long GetAid(string login)
+        public string GetCustomField(long id)
         {
             using (MySqlConnection connection = new MySqlConnection(ForumConnectionString))
             using (MySqlCommand command = new MySqlCommand())
@@ -157,9 +157,8 @@ namespace Serverside.Database
                 command.Connection = connection;
                 command.CommandType = CommandType.Text;
 
-                command.CommandText =
-                    "SELECT member_id FROM core_members WHERE email = @P0";
-                command.Parameters.Add(new MySqlParameter("@P0", login));
+                command.CommandText = "SELECT field_2 FROM core_pfields_content WHERE member_id = @P0";
+                command.Parameters.Add(new MySqlParameter("@P0", id));
 
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
@@ -168,9 +167,9 @@ namespace Serverside.Database
                     {
                         if (reader.Read())
                         {
-                            return reader.GetInt64(0);
+                            return reader.GetString(0);
                         }
-                        return long.MinValue;
+                        return "";
                     }
                     catch (Exception ex)
                     {

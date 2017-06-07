@@ -93,18 +93,28 @@ namespace Serverside.Core.Login
         [Command("/dlogin", GreedyArg = true, SensitiveInfo = true, Alias = "l")]
         public void DebugLoginToAccount(Client sender, string email, string password)
         {
-            long userId = FDb.CheckPasswordMatch(email, password);
-            if (userId == -1)
+            Tuple<long, short, string> userData = FDb.CheckPasswordMatch(email, password);
+            if (userData.Item1 == -1)
             {
                 API.shared.sendChatMessageToPlayer(sender, "Podane login lub hasło są nieprawidłowe, bądź takie konto nie istnieje");
             }
             else
             {
+                Account account = new Account
+                {
+                    UserId = userData.Item1,
+                    MainGroup = userData.Item2,
+                    OtherGroups = userData.Item3,
+                    Email = email,
+                    SocialClub = sender.name,
+                    Ip = sender.address
+                };
+
                 //Sprawdzenie czy konto z danym userid istnieje jak nie dodanie konta do bazy danych i załadowanie go do core.
-                if (!AccountController.RegisterAccount(sender, userId, email))
+                if (!AccountController.RegisterAccount(sender, account))
                 {
                     //Sprawdzenie czy ktoś już jest zalogowany z tego konta.
-                    AccountController _ac = RPEntityManager.GetAccount(userId);
+                    AccountController _ac = RPEntityManager.GetAccount(userData.Item1);
                     if (_ac != null)
                     {
                         if (_ac.Account.Online)
@@ -114,35 +124,48 @@ namespace Serverside.Core.Login
                                 $"Osoba o IP: {_ac.Account.Ip} znajduje się obecnie na twoim koncie. Została ona wyrzucona z serwera. Rozważ zmianę hasła.", ChatMessageType.ServerInfo);
                         }
                     }
-                    AccountController.LoadAccount(sender, userId);
+                    AccountController.LoadAccount(sender, userData.Item1);
                 }
             }
         }
 
         public static bool LoginToAccount(Client sender, string email, string password)
         {
-            long userId = FDb.CheckPasswordMatch(email, password);
-            if (userId == -1)
+            Tuple<long, short, string> userData = FDb.CheckPasswordMatch(email, password);
+            if (userData.Item1 == -1)
             {
-                API.shared.sendNotificationToPlayer(sender, "Podane login lub hasło są nieprawidłowe, bądź takie konto nie istnieje");
+                API.shared.sendChatMessageToPlayer(sender, "Podane login lub hasło są nieprawidłowe, bądź takie konto nie istnieje");
                 return false;
             }
-            //Sprawdzenie czy konto z danym userid istnieje jak nie dodanie konta do bazy danych i załadowanie go do core.
-            if (!AccountController.RegisterAccount(sender, userId, email))
+            else
             {
-                //Sprawdzenie czy ktoś już jest zalogowany z tego konta.
-                AccountController _ac = RPEntityManager.GetAccount(userId);
-                if (_ac != null)
+                Account account = new Account
                 {
-                    if (_ac.Account.Online)
+                    UserId = userData.Item1,
+                    MainGroup = userData.Item2,
+                    OtherGroups = userData.Item3,
+                    Email = email,
+                    SocialClub = sender.name,
+                    Ip = sender.address
+                };
+
+                //Sprawdzenie czy konto z danym userid istnieje jak nie dodanie konta do bazy danych i załadowanie go do core.
+                if (!AccountController.RegisterAccount(sender, account))
+                {
+                    //Sprawdzenie czy ktoś już jest zalogowany z tego konta.
+                    AccountController _ac = RPEntityManager.GetAccount(userData.Item1);
+                    if (_ac != null)
                     {
-                        API.shared.kickPlayer(_ac.Client);
-                        RPChat.SendMessageToPlayer(sender, $"Osoba o IP: {_ac.Account.Ip} znajduje się obecnie na twoim koncie. Została ona wyrzucona z serwera. Rozważ zmianę hasła.", ChatMessageType.ServerInfo);
+                        if (_ac.Account.Online)
+                        {
+                            API.shared.kickPlayer(_ac.Client);
+                            RPChat.SendMessageToPlayer(sender, $"Osoba o IP: {_ac.Account.Ip} znajduje się obecnie na twoim koncie. Została ona wyrzucona z serwera. Rozważ zmianę hasła.", ChatMessageType.ServerInfo);
+                        }
                     }
+                    AccountController.LoadAccount(sender, userData.Item1);
                 }
-                AccountController.LoadAccount(sender, userId);
+                return true;
             }
-            return true;
         }
 
         public static void LoginMenu(Client player)

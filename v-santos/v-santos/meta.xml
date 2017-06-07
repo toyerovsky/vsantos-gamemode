@@ -87,6 +87,7 @@
   <file src="_Clientside/Resources/WheelMenu/wheelnav.min.js" />
   <file src="_Clientside/Resources/Login/login.html" />
   <file src="_Clientside/Resources/Login/login.css" />
+  <file src="_Clientside/Resources/Login/Images/bg.jpg" />
   <file src="_Clientside/Resources/Bus/bus.html" />
   <file src="_Clientside/Resources/Bus/bus.css" />
   <file src="_Clientside/Resources/css/bootstrap.css" />

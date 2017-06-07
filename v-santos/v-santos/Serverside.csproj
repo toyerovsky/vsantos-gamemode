@@ -184,6 +184,10 @@
     <Compile Include="Migrations\201706050552328_nullexception_fix.Designer.cs">
       <DependentUpon>201706050552328_nullexception_fix.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201706072218574_accountgroups.cs" />
+    <Compile Include="Migrations\201706072218574_accountgroups.Designer.cs">
+      <DependentUpon>201706072218574_accountgroups.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Offers\Enums.cs" />
     <Compile Include="Offers\Offer.cs" />
@@ -305,6 +309,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201706050552328_nullexception_fix.resx">
       <DependentUpon>201706050552328_nullexception_fix.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706072218574_accountgroups.resx">
+      <DependentUpon>201706072218574_accountgroups.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
