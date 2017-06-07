@@ -3,8 +3,6 @@
 //using GTANetworkShared;
 //using Serverside.Controllers;
 //using Serverside.Core.Extensions;
-//using Serverside.Jobs.DustMan;
-//using Vehicle = Serverside.Database.Models.Vehicle;
 
 //namespace Serverside.Jobs
 //{
