@@ -166,9 +166,9 @@
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\RPItems.cs" />
     <Compile Include="Items\ServerItem.cs" />
-    <Compile Include="Jobs\DustMan\Dustman.cs" />
-    <Compile Include="Jobs\DustMan\DustmanVehicle.cs" />
-    <Compile Include="Jobs\DustMan\DustmanWorker.cs" />
+    <Compile Include="Jobs\Dustman\Dustman.cs" />
+    <Compile Include="Jobs\Dustman\DustmanVehicle.cs" />
+    <Compile Include="Jobs\Dustman\DustmanWorker.cs" />
     <Compile Include="Jobs\Greenkeeper.cs" />
     <Compile Include="Jobs\JobVehicle.cs" />
     <Compile Include="Jobs\RPJobs.cs" />

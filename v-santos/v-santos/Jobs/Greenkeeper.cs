@@ -55,9 +55,6 @@ namespace Serverside.Jobs
         {
             Workers = new List<GKWorker>();
             Vehicle = vehicle;
-
-            //Rozwiązanie pomocnicze
-            //API.shared.setVehicleEnginePowerMultiplier(Vehicle.Vehicle, -10f);
         }
 
         public void AddPlayer(AccountController player)
@@ -75,6 +72,7 @@ namespace Serverside.Jobs
         {
             player.Client.Notify("Rozpocząłeś pracę ogrodnika, jeździj po polu golfowym, aby kosić trawnik.");
             player.Client.Notify("Jeżeli wyjedziesz z obszaru pola golfowego zostanie wysłane zgłoszenie na numer alarmowy.");
+            //TODO: wysyłanie zgłoszenia na 911
         }
     }
 }
