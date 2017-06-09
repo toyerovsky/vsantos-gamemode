@@ -1,6 +1,6 @@
 ﻿<meta>
   <info name="V-Santos.pl" description="V-Santos.pl Odkryj Role Play na nowo!" author="Toyer, Camer, DeMoN" version="1.0" />
-
+  
   <assembly ref="MySql.Data.dll" />
   <assembly ref="BCrypt.Net.dll" />
   <assembly ref="Newtonsoft.Json.dll" />
@@ -26,7 +26,9 @@
   <script src="_Clientside/Indicators.js" type="client" lang="javascript" />
   <script src="_Clientside/VehicleLogic.js" type="client" lang="javascript" />
   <script src="_Clientside/WheelMenu.js" type="client" lang="javascript" />
-
+  <script src="_Clientside/Compiled.js" type="client" lang="javascript" />
+  
+  <file src="_Clientside/Compiled.js.map" />
   <file src="_Clientside/Resources/Bank/Atm/index.html" />
   <file src="_Clientside/Resources/Bank/Atm/style.css" />
   <file src="_Clientside/Resources/Bank/Atm/Iframe/iframe.html" />
@@ -34,8 +36,6 @@
   <file src="_Clientside/Resources/Bank/Atm/Images/piggy-bank.png" />
   <file src="_Clientside/Resources/Bank/Atm/Images/safebox(1).png" />
   <file src="_Clientside/Resources/Bank/Atm/Images/safebox.png" />
-  <file src="_Clientside/Resources/Bus/bus.html" />
-  <file src="_Clientside/Resources/Bus/bus.css" />
   <file src="_Clientside/Resources/Characters/index.html" />
   <file src="_Clientside/Resources/Characters/style.css" />
   <file src="_Clientside/Resources/Characters/Images/credit-card.png" />
@@ -74,6 +74,8 @@
   <file src="_Clientside/Resources/Employer/Images/mower.png" />
   <file src="_Clientside/Resources/Employer/Images/thief.png" />
   <file src="_Clientside/Resources/Employer/Images/trash.png" />
+  <file src="_Clientside/Resources/Login/index.html" />
+  <file src="_Clientside/Resources/Login/style.css" />
   <file src="_Clientside/Resources/Offer/index.html" />
   <file src="_Clientside/Resources/Offer/style.css" />
   <file src="_Clientside/Resources/Offer/Images/money-card.png" />
@@ -93,5 +95,4 @@
   <file src="_Clientside/Resources/css/bootstrap.css" />
   <file src="_Clientside/Resources/css/bootstrap.css.map" />
   <file src="_Clientside/Resources/js/bootstrap.js" />
-
 </meta>
