@@ -180,7 +180,8 @@ namespace Serverside.Core.Login
             player.position = new Vector3(-1666f, -1020f, 12f);
 
             API.shared.triggerClientEvent(player, "ShowLoginCef", true, new Vector3(-1650f, -1030f, 50f), new Vector3(0f, 0f, 180f));
-            API.shared.triggerClientEvent(player, "ToggleHud", false);
+            //DEBUG
+            //API.shared.triggerClientEvent(player, "ToggleHud", false);
         }
 
         public static void LogOut(AccountController account)

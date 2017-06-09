@@ -23,7 +23,7 @@ namespace Serverside.Jobs.DustMan
         {
             Player = player;
             InProgress = true;
-            NonVisitedPoints = GarbageCollectorHelper.GarbagePositions;
+            //NonVisitedPoints = GarbageCollectorHelper.GarbagePositions;
             Random = new Random();
             Vehicle = vehicle;
         }
@@ -89,10 +89,10 @@ namespace Serverside.Jobs.DustMan
             API.shared.triggerClientEvent(Player.Client, "DisposeJobComponents");
             if (end)
             {
-                API.shared.triggerClientEvent(Player.Client, "DrawJobComponents", GarbageCollectorHelper.DestinationPosition, 318);
-                CurrentShape = API.shared.createCylinderColShape(GarbageCollectorHelper.DestinationPosition, 2f, 3f);
-                CurrentShape.setData("Position", GarbageCollectorHelper.DestinationPosition);
-                CurrentShape.onEntityEnterColShape += CurrentShapeOnEntityEnterColShape;
+                //API.shared.triggerClientEvent(Player.Client, "DrawJobComponents", GarbageCollectorHelper.DestinationPosition, 318);
+                //CurrentShape = API.shared.createCylinderColShape(GarbageCollectorHelper.DestinationPosition, 2f, 3f);
+                //CurrentShape.setData("Position", GarbageCollectorHelper.DestinationPosition);
+                //CurrentShape.onEntityEnterColShape += CurrentShapeOnEntityEnterColShape;
                 return;
             }
 

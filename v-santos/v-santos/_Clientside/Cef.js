@@ -75,27 +75,8 @@ API.onResourceStart.connect(function () {
 });
 
 API.onServerEventTrigger.connect(function (eventName, args) {
-    if (eventName == "ShowLoginCef") {
-        if (args[0]) {
-            CEF.load("_Clientside/Resources/Bootstrap/login.html");
-            var loginCamera = API.createCamera(args[1], args[2]);
-            API.setActiveCamera(loginCamera);
-        }
-        else {
-            CEF.hide();
-        }
-    }
-    else if (eventName == "ShowCharacterSelectCef") {
-        if (args[0]) {
-            charactersList = args[1];
-            CEF.load("_Clientside/Resources/Characters/index.html");
-        }
-        else {
-            CEF.hide();
-            API.setActiveCamera(null);
-        }
-    }
-    else if (eventName == "ShowOfferCef") {
+    if (eventName == "ShowOfferCef")
+    {
         if (args[0]) {
             offer = args[1];
             CEF.load("_Clientside/Resources/Offer/index.html");

@@ -69,7 +69,7 @@ namespace Serverside.Jobs.Dustman
 
         public void AddPlayer(AccountController player)
         {
-            Workers.Add(new DustmanWorker(player, DustmanWorker));
+            //Workers.Add(new DustmanWorker(player, DustmanWorker));
         }
 
         public void RemovePlayer(AccountController player)

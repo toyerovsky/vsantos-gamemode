@@ -21,7 +21,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\..\..\..\Desktop\GTAN Server\resources\v-santos\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -203,103 +203,290 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
-    <None Include="_Clientside\Resources\css\bootstrap.css.map" />
-    <None Include="_Clientside\Resources\fonts\fontawesome-webfont.eot" />
-    <None Include="_Clientside\Resources\fonts\fontawesome-webfont.ttf" />
-    <None Include="_Clientside\Resources\fonts\fontawesome-webfont.woff" />
-    <None Include="_Clientside\Resources\fonts\fontawesome-webfont.woff2" />
-    <None Include="_Clientside\Resources\fonts\FontAwesome.otf" />
+    <None Include="_Clientside\Resources\css\bootstrap.css.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="_Clientside\Resources\fonts\fontawesome-webfont.eot">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="_Clientside\Resources\fonts\fontawesome-webfont.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="_Clientside\Resources\fonts\fontawesome-webfont.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="_Clientside\Resources\fonts\fontawesome-webfont.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="_Clientside\Resources\fonts\FontAwesome.otf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="_Clientside\TypeScript\tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Constant\Files\dict.txt" />
     <Content Include="meta.xml" />
-    <Content Include="_Clientside\Animations.js" />
-    <Content Include="_Clientside\Atm.js" />
-    <Content Include="_Clientside\BwGui.js" />
-    <Content Include="_Clientside\Carshop.js" />
-    <Content Include="_Clientside\Cef.js" />
-    <Content Include="_Clientside\CharacterCreator.js" />
-    <Content Include="_Clientside\CinematicCamera.js" />
-    <Content Include="_Clientside\Core.js" />
-    <Content Include="_Clientside\CornerBotMenu.js" />
-    <Content Include="_Clientside\CrimeBot.js" />
-    <Content Include="_Clientside\Diagnostics.js" />
-    <Content Include="_Clientside\Employer.js" />
-    <Content Include="_Clientside\Indicators.js" />
-    <Content Include="_Clientside\Jobs.js" />
-    <Content Include="_Clientside\Resources\Bank\Atm\Iframe\iframe.html" />
-    <Content Include="_Clientside\Resources\Bank\Atm\Images\economy.png" />
-    <Content Include="_Clientside\Resources\Bank\Atm\Images\piggy-bank.png" />
-    <Content Include="_Clientside\Resources\Bank\Atm\Images\safebox%281%29.png" />
-    <Content Include="_Clientside\Resources\Bank\Atm\Images\safebox.png" />
-    <Content Include="_Clientside\Resources\Bank\Atm\index.html" />
-    <Content Include="_Clientside\Resources\Bank\Atm\style.css" />
-    <Content Include="_Clientside\Resources\Bus\bus.css" />
-    <Content Include="_Clientside\Resources\Bus\bus.html" />
-    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-1045183535.png" />
-    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-1074790547.png" />
-    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-1076751822.png" />
-    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-1716589765.png" />
-    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-2084633992.png" />
-    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-275439685.png" />
-    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-619010992.png" />
-    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-771403250.png" />
-    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\100416529.png" />
-    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\137902532.png" />
-    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\1593441988.png" />
-    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\1649403952.png" />
-    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\2017895192.png" />
-    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\324215364.png" />
-    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\453432689.png" />
-    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\487013001.png" />
-    <Content Include="_Clientside\Resources\CrimeBot\index.html" />
-    <Content Include="_Clientside\Resources\CrimeBot\style.css" />
-    <Content Include="_Clientside\Resources\css\bootstrap.css" />
-    <Content Include="_Clientside\Resources\Descriptions\Images\arrow.gif" />
-    <Content Include="_Clientside\Resources\Descriptions\Images\notepad.png" />
-    <Content Include="_Clientside\Resources\Descriptions\Images\pen-card.png" />
-    <Content Include="_Clientside\Resources\Descriptions\Images\save-card.png" />
-    <Content Include="_Clientside\Resources\Descriptions\Images\type-card.png" />
-    <Content Include="_Clientside\Resources\Descriptions\index.html" />
-    <Content Include="_Clientside\Resources\Descriptions\style.css" />
-    <Content Include="_Clientside\Resources\Employer\Images\boxes.png" />
-    <Content Include="_Clientside\Resources\Employer\Images\mower.png" />
-    <Content Include="_Clientside\Resources\Employer\Images\thief.png" />
-    <Content Include="_Clientside\Resources\Employer\Images\trash.png" />
-    <Content Include="_Clientside\Resources\Employer\index.html" />
-    <Content Include="_Clientside\Resources\Employer\style.css" />
-    <Content Include="_Clientside\Resources\fonts\font-awesome.css" />
-    <Content Include="_Clientside\Resources\fonts\fontawesome-webfont.svg" />
-    <Content Include="_Clientside\Resources\js\bootstrap.js" />
-    <Content Include="_Clientside\Resources\js\jquery.js" />
-    <Content Include="_Clientside\Resources\Login\Images\bg.jpg" />
-    <Content Include="_Clientside\Resources\Login\login.css" />
-    <Content Include="_Clientside\Resources\Login\login.html" />
-    <Content Include="_Clientside\Resources\Offer\Images\money-card.png" />
-    <Content Include="_Clientside\Resources\Offer\Images\name-card.png" />
-    <Content Include="_Clientside\Resources\Offer\Images\type-card.png" />
-    <Content Include="_Clientside\Resources\Offer\index.html" />
-    <Content Include="_Clientside\Resources\Offer\style.css" />
-    <Content Include="_Clientside\Resources\WheelMenu\index.html" />
-    <Content Include="_Clientside\ItemsMenu.js" />
-    <Content Include="_Clientside\MoneyText.js" />
-    <Content Include="_Clientside\Resources\WheelMenu\raphael.icons.min.js" />
-    <Content Include="_Clientside\Resources\WheelMenu\raphael.min.js" />
-    <Content Include="_Clientside\Resources\Characters\Images\credit-card.png" />
-    <Content Include="_Clientside\Resources\Characters\Images\id-card.png" />
-    <Content Include="_Clientside\Resources\Characters\Images\money-card.png" />
-    <Content Include="_Clientside\Resources\Characters\Images\name-card.png" />
-    <Content Include="_Clientside\Resources\Characters\Images\surname-card.png" />
-    <Content Include="_Clientside\Resources\Characters\index.html" />
-    <Content Include="_Clientside\Resources\Characters\style.css" />
-    <Content Include="_Clientside\Resources\WheelMenu\style.css" />
-    <Content Include="_Clientside\Telephone.js" />
-    <Content Include="_Clientside\TelephoneBooth.js" />
-    <Content Include="_Clientside\VehicleLogic.js" />
-    <Content Include="_Clientside\VehiclesMenu.js" />
-    <Content Include="_Clientside\Resources\WheelMenu\wheelnav.js" />
-    <Content Include="_Clientside\Resources\WheelMenu\wheelnav.min.js" />
-    <Content Include="_Clientside\WheelMenu.js" />
+    <Content Include="_Clientside\Animations.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Atm.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\BwGui.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Carshop.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Cef.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\CharacterCreator.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\CinematicCamera.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Core.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\CornerBotMenu.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\CrimeBot.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Diagnostics.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Employer.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Indicators.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Jobs.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Bank\Atm\Iframe\iframe.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Bank\Atm\Images\economy.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Bank\Atm\Images\piggy-bank.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Bank\Atm\Images\safebox%281%29.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Bank\Atm\Images\safebox.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Bank\Atm\index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Bank\Atm\style.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Bus\bus.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Bus\bus.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-1045183535.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-1074790547.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-1076751822.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-1716589765.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-2084633992.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-275439685.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-619010992.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\-771403250.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\100416529.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\137902532.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\1593441988.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\1649403952.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\2017895192.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\324215364.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\453432689.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\CrimeBot\Images\Guns\487013001.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\CrimeBot\index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\CrimeBot\style.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\css\bootstrap.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Descriptions\Images\arrow.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Descriptions\Images\notepad.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Descriptions\Images\pen-card.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Descriptions\Images\save-card.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Descriptions\Images\type-card.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Descriptions\index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Descriptions\style.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Employer\Images\boxes.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Employer\Images\mower.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Employer\Images\thief.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Employer\Images\trash.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Employer\index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Employer\style.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\fonts\font-awesome.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\fonts\fontawesome-webfont.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\js\bootstrap.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\js\jquery.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Login\Images\bg.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Login\login.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Login\login.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Offer\Images\money-card.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Offer\Images\name-card.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Offer\Images\type-card.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Offer\index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Offer\style.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\WheelMenu\index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\ItemsMenu.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\MoneyText.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\WheelMenu\raphael.icons.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\WheelMenu\raphael.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Characters\Images\credit-card.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Characters\Images\id-card.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Characters\Images\money-card.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Characters\Images\name-card.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Characters\Images\surname-card.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Characters\index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\Characters\style.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\WheelMenu\style.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Telephone.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\TelephoneBooth.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\VehicleLogic.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\VehiclesMenu.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\WheelMenu\wheelnav.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\Resources\WheelMenu\wheelnav.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_Clientside\WheelMenu.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201706042235471_InitialCreate.resx">
@@ -326,6 +513,9 @@
     <TypeScriptCompile Include="types-gtanetwork\System.d.ts" />
     <TypeScriptCompile Include="types-gtanetwork\System.Drawing.dll.d.ts" />
     <TypeScriptCompile Include="types-gtanetwork\Xilium.CefGlue.dll.d.ts" />
+    <TypeScriptCompile Include="_Clientside\TypeScript\MenuBuilder.ts" />
+    <TypeScriptCompile Include="_Clientside\TypeScript\MenuLogin.ts" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
