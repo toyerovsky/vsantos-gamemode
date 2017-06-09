@@ -1,3 +1,4 @@
+/// <reference path="../../types-gtanetwork/index.d.ts" />
 var screenX = API.getScreenResolutionMantainRatio().Width;
 var screenY = API.getScreenResolutionMantainRatio().Height;
 var panelMinX = (screenX / 32);
@@ -11,14 +12,18 @@ var textnotification = null;
 var textnotifications = [];
 var padding = 10;
 var selectedInput = null;
+// Menu Properties
 var tabIndex = [];
 var tab = 0;
 var menuElements = [];
 var isReady = false;
 var currentPage = 0;
 var clickDelay = new Date().getTime();
+// Current Menu
 var currentMenu = null;
+// On-Update Event -- Draws all of our stuff.
 API.onUpdate.connect(() => {
+    // Notifications can be global.
     drawNotification();
     drawTextNotification();
     if (!isReady) {
@@ -33,6 +38,10 @@ API.onUpdate.connect(() => {
         menuElements[currentPage][i].isClicked();
     }
 });
+/**
+ * Initialize how many pages our menu is going to have.
+ * @param pages - Number of pages.
+ */
 function createMenu(pages) {
     if (currentMenu !== null) {
         isReady = false;
@@ -55,6 +64,7 @@ class Menu {
         }
         this._blur = false;
     }
+    /** Start drawing our menu. */
     set Ready(value) {
         isReady = value;
         currentPage = 0;
@@ -62,6 +72,7 @@ class Menu {
     get Ready() {
         return isReady;
     }
+    /** Used to blur the background behind the menu. */
     set Blur(value) {
         this._blur = value;
         if (value) {
@@ -74,6 +85,7 @@ class Menu {
     get Blur() {
         return this._blur;
     }
+    /** Get the current menu page number or set the current menu page number */
     set Page(value) {
         currentPage = value;
     }
@@ -89,7 +101,7 @@ class Menu {
             API.showCursor(true);
             return;
         }
-        if (!value) {
+        else {
             API.setHudVisible(true);
             API.setChatVisible(true);
             API.setCanOpenChat(true);
@@ -97,6 +109,9 @@ class Menu {
             return;
         }
     }
+    /**
+     *  Delete any open menu instances.
+     */
     killMenu() {
         isReady = false;
         API.showCursor(false);
@@ -119,6 +134,14 @@ class Menu {
         }
         currentPage--;
     }
+    /**
+     * Create a new panel.
+     * @param page - The page you would like to add panels to.
+     * @param xStart
+     * @param yStart
+     * @param xGridWidth
+     * @param yGridHeight
+     */
     createPanel(page, xStart, yStart, xGridWidth, yGridHeight) {
         let newPanel = new Panel(page, xStart, yStart, xGridWidth, yGridHeight);
         menuElements[page].push(newPanel);
@@ -185,7 +208,7 @@ class ProgressBar {
         API.sendChatMessage("Created");
     }
     draw() {
-        API.drawRectangle(this._xPos + 5, this._yPos + 5, ((this._width / 100) * this._currentProgress), this._height, this._r, this._g, this._b, this._alpha);
+        API.drawRectangle(this._xPos + 5, this._yPos + 5, ((Math.round(this._width) / 100) * this._currentProgress), this._height, this._r, this._g, this._b, this._alpha);
         if (this._drawText) {
             API.drawText("" + Math.round(this._currentProgress), this._xPos + (((Math.round(this._width) / 100) * this._currentProgress) / 2), this._yPos, 0.5, 255, 255, 255, 255, 4, 1, false, true, 100);
         }
@@ -195,9 +218,11 @@ class ProgressBar {
         this._g = g;
         this._b = b;
     }
+    /** The alpha property for the bar. */
     set Alpha(value) {
         this._alpha = value;
     }
+    /** Draw any text? */
     set DrawText(value) {
         this._drawText = value;
     }
@@ -236,22 +261,25 @@ class ProgressBar {
 }
 class Notification {
     constructor(text, displayTime) {
-        this._currentPosX = 26 * panelMinX;
-        this._currentPosY = screenY;
-        this._targetX = 26 * panelMinX;
-        this._targetY = 15 * panelMinY;
+        this._currentPosX = 26 * panelMinX; // Starting Position
+        this._currentPosY = screenY; // Starting Position Y
+        this._targetX = 26 * panelMinX; // Ending Position
+        this._targetY = 15 * panelMinY; // Ending Position Y
         this._width = panelMinX * 5;
         this._height = panelMinY * 3;
+        // Text Settings
         this._text = text;
         this._r = 255;
         this._g = 165;
         this._b = 0;
         this._offset = 0;
         this._textScale = 0.5;
-        this._lastUpdateTime = new Date().getTime();
+        // Animation Settings
+        this._lastUpdateTime = new Date().getTime(); //ms
         this._alpha = 255;
         this._displayTime = displayTime;
         this._incrementer = 0;
+        // Sound Settings
         this._sound = true;
     }
     draw() {
@@ -262,14 +290,17 @@ class Notification {
             this._sound = false;
             API.playSoundFrontEnd("GOLF_NEW_RECORD", "HUD_AWARDS");
         }
-        API.drawRectangle(this._currentPosX, this._currentPosY - 5, this._width, 5, this._r, this._g, this._b, this._alpha - 30);
-        API.drawRectangle(this._currentPosX, this._currentPosY, this._width, this._height, 0, 0, 0, this._alpha - 30);
+        // Starts below max screen.
+        API.drawRectangle(this._currentPosX, this._currentPosY - 5, Math.round(this._width), 5, this._r, this._g, this._b, this._alpha - 30);
+        API.drawRectangle(this._currentPosX, this._currentPosY, Math.round(this._width), this._height, 0, 0, 0, this._alpha - 30);
         API.drawText(this._text, this._offset + this._currentPosX + (Math.round(this._width) / 2), this._currentPosY + (this._height / 4), this._textScale, 255, 255, 255, this._alpha, 4, 1, false, false, Math.round(this._width) - padding);
         this.animate();
     }
     animate() {
+        // Did we reach our goal?
         if (this._currentPosY <= this._targetY) {
             this._currentPosY = this._targetY;
+            // Ready to fade?
             if (new Date().getTime() > this._lastUpdateTime + this._displayTime) {
                 this.fade();
                 return;
@@ -277,6 +308,7 @@ class Notification {
             return;
         }
         this._lastUpdateTime = new Date().getTime();
+        // If not let's reach our goal.
         if (this._currentPosY <= this._targetY + (this._height / 6)) {
             this._currentPosY -= 3;
             return;
@@ -319,6 +351,7 @@ class Notification {
     }
 }
 class TextElement {
+    // Constructor
     constructor(text, x, y, width, height, line) {
         this._xPos = x;
         this._yPos = y + (panelMinY * line);
@@ -358,15 +391,18 @@ class TextElement {
         }
         this.drawAsNormal();
     }
+    //** Sets the text */
     set Text(value) {
         this._text = value;
     }
+    //** Is this text element in a hover state? */
     set Hovered(value) {
         this._hovered = value;
     }
     get Hovered() {
         return this._hovered;
     }
+    //** Sets the color of the main text. A = Alpha */
     Color(r, g, b, a) {
         this._fontR = r;
         this._fontG = g;
@@ -379,78 +415,105 @@ class TextElement {
         this._hoverTextB = b;
         this._hoverTextAlpha = a;
     }
+    /** Sets the color for RGB of R type. Max of 255 */
     set R(value) {
         this._fontR = value;
     }
+    /** Gets the color for RGB of R type. */
     get R() {
         return this._fontR;
     }
+    /** Sets the color for RGB of G type. Max of 255 */
     set G(value) {
         this._fontG = value;
     }
+    /** Gets the color for RGB of G type. */
     get G() {
         return this._fontG;
     }
+    /** Sets the color for RGB of B type. Max of 255 */
     set B(value) {
         this._fontB = value;
     }
+    /** Gets the color for RGB of B type. */
     get B() {
         return this._fontB;
     }
+    /** Sets the font Alpha property */
     set Alpha(value) {
         this._fontAlpha = value;
     }
     get Alpha() {
         return this._fontAlpha;
     }
+    /** Sets the font Alpha property */
     set HoverAlpha(value) {
         this._hoverTextAlpha = value;
     }
     get HoverAlpha() {
         return this._hoverTextAlpha;
     }
+    /** Sets the hover color for the text RGB of R type. */
     set HoverR(value) {
         this._hoverTextR = value;
     }
     get HoverR() {
         return this._hoverTextR;
     }
+    /** Sets the hover color for the text RGB of G type. */
     set HoverG(value) {
         this._hoverTextG = value;
     }
     get HoverG() {
         return this._hoverTextG;
     }
+    /** Sets the hover color for the text RGB of B type. */
     set HoverB(value) {
         this._hoverTextB = value;
     }
     get HoverB() {
         return this._hoverTextB;
     }
+    /** Set your font type. 0 - 7
+    * 0 Normal
+    * 1 Cursive
+    * 2 All Caps
+    * 3 Squares / Arrows / Etc.
+    * 4 Condensed Normal
+    * 5 Garbage
+    * 6 Condensed Normal
+    * 7 Bold GTA Style
+    */
     set Font(value) {
         this._font = value;
     }
     get Font() {
         return this._font;
     }
+    /** Sets the size of the text. 0.6 is pretty normal. 1 is quite large. */
     set FontScale(value) {
         this._fontScale = value;
     }
     get FontScale() {
         return this._fontScale;
     }
+    /** Centers the content vertically. Do not use if your box is not very high to begin with */
     set VerticalCentered(value) {
         this._centeredVertically = value;
     }
     get VerticalCentered() {
         return this._centeredVertically;
     }
+    /** Use this if you want centered content. */
     set Centered(value) {
         this._centered = value;
     }
     get Centered() {
         return this._centered;
     }
+    /**
+     *  Set Offset
+     */
     set Offset(value) {
         this._offset = value;
     }
@@ -484,6 +547,13 @@ class TextElement {
     }
 }
 class Panel {
+    /**
+     *
+     * @param x - Max of 31. Starts on left side.
+     * @param y - Max of 17. Starts at the top.
+     * @param width - Max of 31. Each number fills a square.
+     * @param height - Max of 17. Each number fills a square.
+     */
     constructor(page, x, y, width, height) {
         this._page = page;
         this._padding = 10;
@@ -523,6 +593,9 @@ class Panel {
         this._hoverable = false;
         this._line = 0;
     }
+    /**
+     * Do not call this. It's specifically used for the menu builder file.
+     */
     draw() {
         if (this._page !== currentPage) {
             return;
@@ -531,207 +604,262 @@ class Panel {
         if (!isReady) {
             return;
         }
+        // Only used if using text lines.
         if (this._textLines.length > 0) {
             for (var i = 0; i < this._textLines.length; i++) {
                 this._textLines[i].draw();
             }
         }
+        // Only used if using input panels.
         if (this._inputPanels.length > 0) {
             for (var i = 0; i < this._inputPanels.length; i++) {
                 this._inputPanels[i].draw();
             }
         }
+        // Only used if using progress bars.
         if (this._progressBars.length > 0) {
             for (var i = 0; i < this._progressBars.length; i++) {
                 this._progressBars[i].draw();
             }
         }
     }
+    // Normal Versions
     drawRectangles() {
         if (this._backgroundImage !== null) {
             this.drawBackgroundImage();
             return;
         }
         if (this._hovered) {
-            API.drawRectangle(this._xPos, this._yPos, this._width, this._height, this._hoverR, this._hoverG, this._hoverB, this._hoverAlpha);
+            API.drawRectangle(this._xPos, this._yPos, Math.round(this._width), this._height, this._hoverR, this._hoverG, this._hoverB, this._hoverAlpha);
             if (this._header) {
-                API.drawRectangle(this._xPos, this._yPos + this._height - 5, this._width, 5, 255, 255, 255, 50);
+                API.drawRectangle(this._xPos, this._yPos + this._height - 5, Math.round(this._width), 5, 255, 255, 255, 50);
             }
             return;
         }
-        API.drawRectangle(this._xPos, this._yPos, this._width, this._height, this._r, this._g, this._b, this._alpha);
+        API.drawRectangle(this._xPos, this._yPos, Math.round(this._width), this._height, this._r, this._g, this._b, this._alpha);
         if (this._header) {
-            API.drawRectangle(this._xPos, this._yPos + this._height - 5, this._width, 5, 255, 255, 255, 50);
+            API.drawRectangle(this._xPos, this._yPos + this._height - 5, Math.round(this._width), 5, 255, 255, 255, 50);
         }
     }
     drawBackgroundImage() {
         if (this._backgroundImagePadding > 1) {
-            API.dxDrawTexture(this._backgroundImage, new Point(this._xPos + this._backgroundImagePadding, this._yPos + this._backgroundImagePadding), new Size(this._width - (this._backgroundImagePadding * 2), this._height - (this._backgroundImagePadding * 2)), 0);
-            API.drawRectangle(this._xPos, this._yPos, this._width, this._height, this._r, this._g, this._b, this._alpha);
+            API.dxDrawTexture(this._backgroundImage, new Point(this._xPos + this._backgroundImagePadding, this._yPos + this._backgroundImagePadding), new Size(Math.round(this._width) - (this._backgroundImagePadding * 2), this._height - (this._backgroundImagePadding * 2)), 0);
+            API.drawRectangle(this._xPos, this._yPos, Math.round(this._width), this._height, this._r, this._g, this._b, this._alpha);
             return;
         }
-        API.dxDrawTexture(this._backgroundImage, new Point(this._xPos, this._yPos), new Size(this._width, this._height), 0);
+        API.dxDrawTexture(this._backgroundImage, new Point(this._xPos, this._yPos), new Size(Math.round(this._width), this._height), 0);
     }
+    // Function Settings
     set Function(value) {
         this._function = value;
     }
+    /** Add an array or a single value as a function. IMPORTANT! Any function you write must be able to take an array of arguments. */
     addFunctionArgs(value) {
         this._functionArgs = value;
     }
+    // HOVER AUDIO
+    /** Sets the hover audio library. Ex: "Cycle_Item" */
     set HoverAudioLib(value) {
         this._hoverAudioLib = value;
     }
     get HoverAudioLib() {
         return this._hoverAudioLib;
     }
+    /** Sets the hover audio name. Ex: "DLC_Dmod_Prop_Editor_Sounds" */
     set HoverAudioName(value) {
         this._hoverAudioName = value;
     }
     get HoverAudioName() {
         return this._hoverAudioName;
     }
+    // FUNCTION AUDIO
+    /** Sets the function audio library. Ex: "Cycle_Item" */
     set FunctionAudioLib(value) {
         this._functionAudioLib = value;
     }
     get FunctionAudioLib() {
         return this._functionAudioLib;
     }
+    /** Sets the function audio name. Ex: "DLC_Dmod_Prop_Editor_Sounds" */
     set FunctionAudioName(value) {
         this._functionAudioName = value;
     }
     get FunctionAudioName() {
         return this._functionAudioName;
     }
+    /** Sets if the function audio plays. */
     set FunctionAudio(value) {
         this._functionClickAudio = value;
     }
     get FunctionAudio() {
         return this._functionClickAudio;
     }
+    // Background Alpha
+    /** Sets the background alpha property */
     set MainAlpha(value) {
         this._alpha = value;
     }
     get MainAlpha() {
         return this._alpha;
     }
+    /** Sets the background image padding property */
     set MainBackgroundImagePadding(value) {
         this._backgroundImagePadding = value;
     }
     get MainBackgroundImagePadding() {
         return this._backgroundImagePadding;
     }
+    /** Uses a custom image for your panel background. Must include extension. EX. 'clientside/image.jpg' */
     set MainBackgroundImage(value) {
         this._backgroundImage = value;
     }
     get MainBackgroundImage() {
         return this._backgroundImage;
     }
+    /** Sets the color for RGB of R type. Max of 255 */
     set MainColorR(value) {
         this._r = value;
     }
+    /** Gets the color for RGB of R type. */
     get MainColorR() {
         return this._r;
     }
+    /** Sets the color for RGB of G type. Max of 255 */
     set MainColorG(value) {
         this._g = value;
     }
+    /** Gets the color for RGB of G type. */
     get MainColorG() {
         return this._g;
     }
+    /** Sets the color for RGB of B type. Max of 255 */
     set MainColorB(value) {
         this._b = value;
     }
+    /** Gets the color for RGB of B type. */
     get MainColorB() {
         return this._b;
     }
+    /** Sets RGB Color of Main */
     MainBackgroundColor(r, g, b, alpha) {
         this._r = r;
         this._g = g;
         this._b = b;
         this._alpha = alpha;
     }
+    /** Sets the RGB Color of Hover */
     HoverBackgroundColor(r, g, b, alpha) {
         this._hoverR = r;
         this._hoverG = g;
         this._hoverB = b;
         this._hoverAlpha = alpha;
     }
+    /** Is there a hover state? */
     set Hoverable(value) {
         this._hoverable = value;
     }
     get Hoverable() {
         return this._hoverable;
     }
+    /** Sets the hover alpha */
     set HoverAlpha(value) {
         this._hoverAlpha = value;
     }
     get HoverAlpha() {
         return this._hoverAlpha;
     }
+    /** Sets the hover color for RGB of R type. */
     set HoverR(value) {
         this._hoverR = value;
     }
     get HoverR() {
         return this._hoverR;
     }
+    /** Sets the hover color for RGB of G type. */
     set HoverG(value) {
         this._hoverG = value;
     }
     get HoverG() {
         return this._hoverG;
     }
+    /** Sets the hover color for RGB of B type. */
     set HoverB(value) {
         this._hoverB = value;
     }
     get HoverB() {
         return this._hoverB;
     }
+    /** Sets the font Outline property */
     set FontOutline(value) {
         this._outline = value;
     }
     get FontOutline() {
         return this._outline;
     }
+    /** Sets the font Shadow property */
     set FontShadow(value) {
         this._shadow = value;
     }
     get FontShadow() {
         return this._shadow;
     }
+    /** Sets the Tooltip text for your element. */
     set Tooltip(value) {
         this._tooltip = value;
     }
     get Tooltip() {
         return this._tooltip;
     }
+    /** Adds a stylized line under your your box. */
     set Header(value) {
         this._header = value;
     }
     get Header() {
         return this._header;
     }
+    /** If your text needs to be pushed in a certain direction either add or remove pixels here. */
     set Offset(value) {
         this._offset = value;
     }
     get Offset() {
         return this._offset;
     }
+    /**
+     *  Used to add text elements to your panels.
+     * @param value
+     */
     addText(value) {
-        let textElement = new TextElement(value, this._xPos, this._yPos, this._width, this._height, this._line);
+        let textElement = new TextElement(value, this._xPos, this._yPos, Math.round(this._width), this._height, this._line);
         this._textLines.push(textElement);
         this._line += 1;
         return textElement;
     }
+    /**
+     *
+     * @param x - Start position of X inside the panel.
+     * @param y - Start Position of Y inside the panel.
+     * @param width - How wide. Generally the width of your panel.
+     * @param height - How tall. 1 or 2 is pretty normal.
+     */
     addInput(x, y, width, height) {
         let inputPanel = new InputPanel(this._page, (x * panelMinX) + this._xPos, (y * panelMinY) + this._yPos, width, height);
         this._inputPanels.push(inputPanel);
         return inputPanel;
     }
+    /**
+     *
+     * @param x - Start position of X inside the panel.
+     * @param y - Start Position of Y inside the panel.
+     * @param width
+     * @param height
+     * @param currentProgress - 0 to 100
+     */
     addProgressBar(x, y, width, height, currentProgress) {
         let progressBar = new ProgressBar((x * panelMinX) + this._xPos, (y * panelMinY) + this._yPos, width, height, currentProgress);
         this._progressBars.push(progressBar);
         return progressBar;
     }
+    // Hover Action
     isHovered() {
         if (!API.isCursorShown()) {
             return;
@@ -740,7 +868,7 @@ class Panel {
             return;
         }
         let cursorPos = API.getCursorPositionMantainRatio();
-        if (cursorPos.X > this._xPos && cursorPos.X < (this._xPos + this._width) && cursorPos.Y > this._yPos && cursorPos.Y < this._yPos + this._height) {
+        if (cursorPos.X > this._xPos && cursorPos.X < (this._xPos + Math.round(this._width)) && cursorPos.Y > this._yPos && cursorPos.Y < this._yPos + this._height) {
             if (!this._hovered) {
                 this._hovered = true;
                 this.setTextHoverState(true);
@@ -763,16 +891,20 @@ class Panel {
         this._hoverTime = 0;
         this.setTextHoverState(false);
     }
+    // Click Action
     isClicked() {
+        // Is there even a cursor?
         if (!API.isCursorShown()) {
             return;
         }
+        // Is there a function if they click it?
         if (this._function === null) {
             return;
         }
-        if (API.isControlJustPressed(237)) {
+        // Are they even left clicking?
+        if (API.isControlJustPressed(237 /* CursorAccept */)) {
             let cursorPos = API.getCursorPositionMantainRatio();
-            if (cursorPos.X > this._xPos && cursorPos.X < (this._xPos + this._width) && cursorPos.Y > this._yPos && cursorPos.Y < this._yPos + this._height) {
+            if (cursorPos.X > this._xPos && cursorPos.X < (this._xPos + Math.round(this._width)) && cursorPos.Y > this._yPos && cursorPos.Y < this._yPos + this._height) {
                 if (new Date().getTime() < clickDelay + 200) {
                     return;
                 }
@@ -795,6 +927,7 @@ class Panel {
             this._textLines[i].Hovered = value;
         }
     }
+    // Type
     returnType() {
         return "Panel";
     }
@@ -834,10 +967,12 @@ class InputPanel {
         this._inputTextScale = 0.45;
         tabIndex.push(this);
     }
+    /** Sets whether or not there is an error. */
     set isError(value) {
         this._isError = value;
     }
-    set Selected(value) {
+    /** Sets whether or not this input is selected. */
+    set selected(value) {
         this._selected = value;
         if (value) {
             selectedInput = this;
@@ -846,33 +981,39 @@ class InputPanel {
             selectedInput = null;
         }
     }
-    get Selected() {
+    get selected() {
         return this._selected;
     }
+    // Hover BACKGROUND PARAMETERS
+    /** Set R of RGB on hover background. */
     set HoverR(value) {
         this._hoverR = value;
     }
     get HoverR() {
         return this._hoverR;
     }
+    /** Set G of RGB on hover background. */
     set HoverG(value) {
         this._hoverG = value;
     }
     get HoverG() {
         return this._hoverG;
     }
+    /** Set B of RGB on hover background. */
     set HoverB(value) {
         this._hoverB = value;
     }
     get HoverB() {
         return this._hoverB;
     }
+    /** Set Alpha of RGB on hover background. */
     set HoverAlpha(value) {
         this._hoverAlpha = value;
     }
     get HoverAlpha() {
         return this._hoverAlpha;
     }
+    // Main BACKGROUND PARAMETERS
     MainBackgroundColor(r, g, b, alpha) {
         this._r = r;
         this._g = g;
@@ -891,108 +1032,136 @@ class InputPanel {
         this._selectB = b;
         this._selectAlpha = alpha;
     }
+    /** Set R of RGB on main background. */
     set R(value) {
         this._r = value;
     }
     get R() {
         return this._r;
     }
+    /** Set G of RGB on main background. */
     set G(value) {
         this._g = value;
     }
     get G() {
         return this._g;
     }
+    /** Set B of RGB on main background. */
     set B(value) {
         this._b = value;
     }
     get B() {
         return this._b;
     }
+    /** Set Alpha of RGB on main background. */
     set Alpha(value) {
         this._alpha = value;
     }
     get Alpha() {
         return this._alpha;
     }
+    // SELECTION BACKGROUND PARAMETERS
+    /** Set R of RGB on main background. */
     set SelectR(value) {
         this._selectR = value;
     }
     get SelectR() {
         return this._selectR;
     }
+    /** Set G of RGB on main background. */
     set SelectG(value) {
         this._selectG = value;
     }
     get SelectG() {
         return this._selectG;
     }
+    /** Set B of RGB on main background. */
     set SelectB(value) {
         this._selectB = value;
     }
     get SelectB() {
         return this._selectB;
     }
+    /** Set Alpha of RGB on main background. */
     set SelectAlpha(value) {
         this._selectAlpha = value;
     }
     get SelectAlpha() {
         return this._selectAlpha;
     }
+    /**
+     *  Sets the RGB Parameter for the INPUT Text;
+     * @param r
+     * @param g
+     * @param b
+     * @param alpha
+     */
     InputTextColor(r, g, b, alpha) {
         this._inputTextR = r;
         this._inputTextG = g;
         this._inputTextB = b;
         this._inputTextAlpha = alpha;
     }
+    /** Set R of RGB on input text. */
     set TextR(value) {
         this._inputTextR = value;
     }
     get TextR() {
         return this._inputTextR;
     }
+    /** Set G of RGB on input text. */
     set TextG(value) {
         this._inputTextG = value;
     }
     get TextG() {
         return this._inputTextG;
     }
+    /** Set B of RGB on input text. */
     set TextB(value) {
         this._inputTextB = value;
     }
     get InputB() {
         return this._inputTextB;
     }
+    /** Set Alpha of RGB on input text. */
     set InputAlpha(value) {
         this._inputTextAlpha = value;
     }
     get InputAlpha() {
         return this._inputTextAlpha;
     }
+    /** Input Text Size */
     set InputTextScale(value) {
         this._inputTextScale = value;
     }
     get InputTextScale() {
         return this._inputTextScale;
     }
+    /** Sets the input text. */
     set Input(value) {
         this._input = value;
     }
+    /** Returns whatever the current input is. */
     get Input() {
         return this._input;
     }
+    /** Removes the last character from the input. */
     removeFromInput() {
         this._input = this._input.substring(0, this._input.length - 1);
     }
+    /** Set whether the input should be numeric only. */
     set NumericOnly(value) {
         this._numeric = value;
     }
     get NumericOnly() {
         return this._numeric;
     }
+    /**
+     *  Sets whether the input should be protected or not. */
     set Protected(value) {
         this._protected = value;
     }
+    // Draw what we need to draw.
     draw() {
         if (this._selected) {
             this.selectedDraw();
@@ -1006,12 +1175,13 @@ class InputPanel {
         this.isHovered();
         this.isClicked();
     }
+    //DEBUG
     normalDraw() {
         if (this._isError) {
-            API.drawRectangle(this._xPos + 10, this._yPos + 10, this._width - 20, this._height - 20, 255, 0, 0, 100);
+            API.drawRectangle(this._xPos + 10, this._yPos + 10, Math.round(this._width) - 20, this._height - 20, 255, 0, 0, 100);
         }
         else {
-            API.drawRectangle(this._xPos + 10, this._yPos + 10, this._width - 20, this._height - 20, this._r, this._g, this._b, this._alpha);
+            API.drawRectangle(this._xPos + 10, this._yPos + 10, Math.round(this._width) - 20, this._height - 20, this._r, this._g, this._b, this._alpha);
         }
         if (this._protected) {
             if (this._input.length < 1) {
@@ -1024,7 +1194,7 @@ class InputPanel {
         }
     }
     selectedDraw() {
-        API.drawRectangle(this._xPos + 10, this._yPos + 10, this._width - 20, this._height - 20, this._selectR, this._selectG, this._selectB, this._selectAlpha);
+        API.drawRectangle(this._xPos + 10, this._yPos + 10, Math.round(this._width) - 20, this._height - 20, this._selectR, this._selectG, this._selectB, this._selectAlpha);
         if (this._protected) {
             if (this._input.length < 1) {
                 return;
@@ -1038,19 +1208,19 @@ class InputPanel {
     }
     hoveredDraw() {
         if (this._isError) {
-            API.drawRectangle(this._xPos + 10, this._yPos + 10, this._width - 20, this._height - 20, 255, 0, 0, 100);
+            API.drawRectangle(this._xPos + 10, this._yPos + 10, Math.round(this._width) - 20, this._height - 20, 255, 0, 0, 100);
         }
         else {
-            API.drawRectangle(this._xPos + 10, this._yPos + 10, this._width - 20, this._height - 20, this._hoverR, this._hoverG, this._hoverB, this._hoverAlpha);
+            API.drawRectangle(this._xPos + 10, this._yPos + 10, Math.round(this._width) - 20, this._height - 20, this._hoverR, this._hoverG, this._hoverB, this._hoverAlpha);
         }
         if (this._protected) {
             if (this._input.length < 1) {
                 return;
             }
-            API.drawText("*".repeat(this._input.length), this._xPos + (this._width / 2), this._yPos + (this._height / 2) - 14, this._inputTextScale, this._inputTextR, this._inputTextG, this._inputTextB, this._inputTextAlpha, 4, 1, false, false, (panelMinX * this._width));
+            API.drawText("*".repeat(this._input.length), this._xPos + (Math.round(this._width) / 2), this._yPos + (this._height / 2) - 14, this._inputTextScale, this._inputTextR, this._inputTextG, this._inputTextB, this._inputTextAlpha, 4, 1, false, false, (panelMinX * Math.round(this._width)));
         }
         else {
-            API.drawText(this._input, this._xPos + (this._width / 2), this._yPos + (this._height / 2) - 14, this._inputTextScale, this._inputTextR, this._inputTextG, this._inputTextB, this._inputTextAlpha, 4, 1, false, false, (panelMinX * this._width));
+            API.drawText(this._input, this._xPos + (Math.round(this._width) / 2), this._yPos + (this._height / 2) - 14, this._inputTextScale, this._inputTextR, this._inputTextG, this._inputTextB, this._inputTextAlpha, 4, 1, false, false, (panelMinX * Math.round(this._width)));
         }
     }
     isHovered() {
@@ -1058,7 +1228,7 @@ class InputPanel {
             return;
         }
         let cursorPos = API.getCursorPositionMantainRatio();
-        if (cursorPos.X > this._xPos && cursorPos.X < (this._xPos + this._width) && cursorPos.Y > this._yPos && cursorPos.Y < (this._yPos + this._height)) {
+        if (cursorPos.X > this._xPos && cursorPos.X < (this._xPos + Math.round(this._width)) && cursorPos.Y > this._yPos && cursorPos.Y < (this._yPos + this._height)) {
             if (this._selected) {
                 this._hovered = false;
                 return;
@@ -1070,12 +1240,12 @@ class InputPanel {
         }
     }
     isClicked() {
-        if (API.isControlJustPressed(237)) {
+        if (API.isControlJustPressed(237 /* CursorAccept */)) {
             if (new Date().getTime() < clickDelay + 200) {
                 return;
             }
             let cursorPos = API.getCursorPositionMantainRatio();
-            if (cursorPos.X > this._xPos && cursorPos.X < (this._xPos + this._width) && cursorPos.Y > this._yPos && cursorPos.Y < (this._yPos + this._height)) {
+            if (cursorPos.X > this._xPos && cursorPos.X < (this._xPos + Math.round(this._width)) && cursorPos.Y > this._yPos && cursorPos.Y < (this._yPos + this._height)) {
                 if (!this._selected) {
                     API.playSoundFrontEnd(this._inputAudioLib, this._inputAudioName);
                     this._selected = true;
@@ -1129,6 +1299,7 @@ function drawNotification() {
     return;
 }
 function createNotification(page, text, displayTime) {
+    // Add to queue.
     let notify = new Notification(text, displayTime);
     notifications.push(notify);
     return notify;
@@ -1138,6 +1309,10 @@ function createPlayerTextNotification(text) {
     textnotifications.push(notify);
     return notify;
 }
+/**
+ * Set the page number for whatever current menu is open.
+ * @param value
+ */
 function setPage(value) {
     currentPage = value;
 }
@@ -1150,13 +1325,15 @@ function killMenu() {
     API.setHudVisible(true);
     API.setChatVisible(true);
     API.setCanOpenChat(true);
-    API.callNative("_TRANSITION_FROM_BLURRED", 3000);
+    //API.callNative("_TRANSITION_FROM_BLURRED", 3000);
     menuElements = [];
 }
-API.onKeyDown.connect(function (sender, e) {
+// On-Keydown Event
+API.onKeyDown.connect((sender, e) => {
     if (!isReady) {
         return;
     }
+    // Shift between Input Boxes.
     if (e.KeyCode == Keys.Tab) {
         if (tabIndex[0].Selected) {
             tabIndex[0].Selected = false;
@@ -1407,22 +1584,10 @@ API.onKeyDown.connect(function (sender, e) {
                 keypress = "_";
             }
             break;
-        case Keys.Oemplus:
-            keypress = "=";
-            if (shiftOn) {
-                keypress = "+";
-            }
-            break;
         case Keys.OemQuestion:
             keypress = "/";
             if (shiftOn) {
                 keypress = "?";
-            }
-            break;
-        case Keys.Oemcomma:
-            keypress = ",";
-            if (shiftOn) {
-                keypress = "<";
             }
             break;
         case Keys.OemPeriod:
@@ -1493,17 +1658,28 @@ API.onKeyDown.connect(function (sender, e) {
         return;
     }
 });
+// Panel Variables
 var loginMenu;
 var loginUsername;
 var loginPassword;
 var regUsername;
 var regPassword;
 var regConfirmPassword;
+var loginNotification;
+let index;
+let characters;
+let characterIdTextElement;
+let fullnameTextElement;
+let moneyTextElement;
+let bankTextElement;
+// Main Menu Login Panel Function
 function menuLoginPanel() {
     loginMenu = createMenu(4);
     let panel;
     let inputPanel;
     let textElement;
+    //Warunki użytkowania - Strona 0
+    //Warunki header
     panel = loginMenu.createPanel(0, 12, 4, 8, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
     panel.Header = true;
@@ -1513,25 +1689,29 @@ function menuLoginPanel() {
     textElement.VerticalCentered = true;
     textElement.FontScale = 0.6;
     textElement.Font = 1;
+    //Warunki użytkowania tekst
     panel = loginMenu.createPanel(0, 12, 5, 8, 7);
     panel.MainBackgroundColor(0, 0, 0, 160);
-    textElement = panel.addText("Akceptujac niniejszy kontrakt zgadzasz sie z warunkami uzytkowania obowiazujacymi na serwerze. Pliki jakie otrzymaleś moga sluzyc tylko i wylacznie do gry na serwerze V-Santos.pl manipulacja nimi jest zabroniona. Zlamanie warunków kontraktu bedzie skutkowala permamentna banicja konta.");
+    textElement = panel.addText("Akceptując niniejszy kontrakt zgadzasz się z warunkami użytkowania obowiązującymi na serwerze. Pliki jakie otrzymałeś moga służyć tylko i wyłącznie do rozgrywki na serwerze V-Santos.pl manipulacja nimi jest ściśle zabroniona. Złamanie warunków kontraktu będzie skutkowało permamentną banicją konta.");
     textElement.Color(255, 255, 255, 255);
     textElement.FontScale = 0.4;
     textElement.Font = 4;
     textElement.Centered = false;
+    //Guzik warunków użytkowania
     panel = loginMenu.createPanel(0, 12, 12, 8, 1);
     panel.MainBackgroundColor(0, 0, 0, 160);
     panel.HoverBackgroundColor(25, 25, 25, 160);
     panel.Hoverable = true;
     panel.Function = loginMenu.nextPage;
-    panel.Tooltip = "Zaakceptuj warunki";
-    textElement = panel.addText("Accept");
+    panel.Tooltip = "Zaakceptuj warunki użytkowania";
+    textElement = panel.addText("OK");
     textElement.Color(255, 255, 255, 255);
     textElement.HoverColor(0, 180, 255, 255);
     textElement.Centered = true;
     textElement.VerticalCentered = true;
-    panel = loginMenu.createPanel(1, 12, 4, 7, 1);
+    //Login Screen - Strona 1
+    //Login Header
+    panel = loginMenu.createPanel(1, 12, 4, 8, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
     panel.Header = true;
     textElement = panel.addText("Login");
@@ -1540,52 +1720,35 @@ function menuLoginPanel() {
     textElement.VerticalCentered = true;
     textElement.FontScale = 0.6;
     textElement.Offset = 18;
-    panel = loginMenu.createPanel(1, 19, 4, 1, 1);
-    panel.MainBackgroundColor(0, 0, 0, 175);
-    panel.Tooltip = "Nowe konto?";
-    panel.Function = loginMenu.nextPage;
-    panel.HoverBackgroundColor(25, 25, 25, 160);
-    panel.Hoverable = true;
-    panel.Header = true;
-    textElement = panel.addText(">");
-    textElement.Color(255, 255, 255, 255);
-    textElement.Centered = true;
-    textElement.VerticalCentered = true;
-    textElement.FontScale = 0.6;
-    textElement.HoverColor(0, 180, 255, 255);
+    //Formatka logowania
     panel = loginMenu.createPanel(1, 12, 5, 8, 7);
     panel.MainBackgroundColor(0, 0, 0, 160);
     textElement = panel.addText("Twój e-mail:");
     textElement.Color(255, 255, 255, 255);
     panel.addText("");
-    textElement = panel.addText("Twoje haslo:");
+    textElement = panel.addText("Twoje hasło:");
     textElement.Color(255, 255, 255, 255);
     loginUsername = panel.addInput(0, 1, 8, 1);
     loginPassword = panel.addInput(0, 3, 8, 1);
     loginPassword.Protected = true;
+    //Guzik logowania
     panel = loginMenu.createPanel(1, 12, 12, 8, 1);
     panel.MainBackgroundColor(0, 0, 0, 160);
     panel.HoverBackgroundColor(25, 25, 25, 160);
     panel.Hoverable = true;
-    panel.Tooltip = "Przejdź do logowania";
+    panel.Function = attemptLogin;
+    panel.Tooltip = "Zaloguj się";
     textElement = panel.addText("Login");
     textElement.Color(255, 255, 255, 255);
     textElement.HoverColor(0, 180, 255, 255);
     textElement.Centered = true;
     textElement.VerticalCentered = true;
-    panel = loginMenu.createPanel(2, 12, 4, 7, 1);
-    panel.MainBackgroundColor(0, 0, 0, 175);
-    panel.Header = true;
-    textElement = panel.addText("Rejestracja");
-    textElement.Color(255, 255, 255, 255);
-    textElement.Centered = false;
-    textElement.VerticalCentered = true;
-    textElement.FontScale = 0.6;
-    textElement.Offset = 18;
+    //Wybór postaci - Strona 2
+    //Strzałka w lewo
     panel = loginMenu.createPanel(2, 19, 4, 1, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
-    panel.Tooltip = "Istniejace konto?";
-    panel.Function = loginMenu.prevPage;
+    panel.Tooltip = "Wybierz poprzednią postać";
+    panel.Function = decrementIndex;
     panel.HoverBackgroundColor(25, 25, 25, 160);
     panel.Hoverable = true;
     panel.Header = true;
@@ -1595,43 +1758,121 @@ function menuLoginPanel() {
     textElement.VerticalCentered = true;
     textElement.FontScale = 0.6;
     textElement.HoverColor(0, 180, 255, 255);
-    panel = loginMenu.createPanel(2, 12, 5, 8, 7);
-    panel.MainBackgroundColor(0, 0, 0, 160);
-    textElement = panel.addText("E-mail");
-    textElement.Color(255, 255, 255, 255);
-    panel.addText("");
-    textElement = panel.addText("Haslo");
-    textElement.Color(255, 255, 255, 255);
-    panel.addText("");
-    textElement = panel.addText("Password Again");
-    textElement.Color(255, 255, 255, 255);
-    regUsername = panel.addInput(0, 1, 8, 1);
-    regPassword = panel.addInput(0, 3, 8, 1);
-    regPassword.Protected = true;
-    regConfirmPassword = panel.addInput(0, 5, 8, 1);
-    regConfirmPassword.Protected = true;
-    panel = loginMenu.createPanel(2, 12, 12, 8, 1);
-    panel.MainBackgroundColor(0, 0, 0, 160);
+    //Strzałka w prawo
+    panel = loginMenu.createPanel(2, 19, 4, 1, 1);
+    panel.MainBackgroundColor(0, 0, 0, 175);
+    panel.Tooltip = "Wybierz następną postać";
+    panel.Function = decrementIndex;
     panel.HoverBackgroundColor(25, 25, 25, 160);
     panel.Hoverable = true;
-    panel.Tooltip = "Zarejestruj sie";
-    textElement = panel.addText("Register");
+    panel.Header = true;
+    textElement = panel.addText(">");
     textElement.Color(255, 255, 255, 255);
-    textElement.HoverColor(0, 180, 255, 255);
     textElement.Centered = true;
     textElement.VerticalCentered = true;
+    textElement.FontScale = 0.6;
+    textElement.HoverColor(0, 180, 255, 255);
+    //Header
+    panel = loginMenu.createPanel(2, 12, 4, 7, 1);
+    panel.MainBackgroundColor(0, 0, 0, 175);
+    panel.Header = true;
+    textElement = panel.addText("Wybór postaci");
+    textElement.Color(255, 255, 255, 255);
+    textElement.Centered = false;
+    textElement.VerticalCentered = true;
+    textElement.FontScale = 0.6;
+    textElement.Offset = 18;
+    //Wyświetlanie obecnej postaci
+    //panel = loginMenu.createPanel(2, 12, 5, 8, 7);
+    //panel.MainBackgroundColor(0, 0, 0, 160);
+    //characterIdTextElement = panel.addText("");
+    //fullnameTextElement.Color(255, 255, 255, 255);
+    //panel.addText("");
+    //fullnameTextElement = panel.addText("");
+    //fullnameTextElement.Color(255, 255, 255, 255);
+    //panel.addText("");
+    //moneyTextElement = panel.addText("");
+    //moneyTextElement.Color(255, 255, 255, 255);
+    //panel.addText("");
+    //bankTextElement = panel.addText("");
+    //bankTextElement.Color(255, 255, 255, 255);
+    //panel.addText("");
+    ////Przycisk wyboru postaci
+    //panel = loginMenu.createPanel(2, 12, 12, 8, 1);
+    //panel.MainBackgroundColor(0, 0, 0, 160);
+    //panel.HoverBackgroundColor(25, 25, 25, 160);
+    //panel.Hoverable = true;
+    //panel.Function = selectCharacter;
+    //panel.Tooltip = "Wybierz postać";
+    //textElement = panel.addText("Wybierz postać");
+    //textElement.Color(255, 255, 255, 255);
+    //textElement.HoverColor(0, 180, 255, 255);
+    //textElement.Centered = true;
+    //textElement.VerticalCentered = true;
     loginMenu.Blur = true;
     loginMenu.DisableOverlays(true);
     loginMenu.Ready = true;
 }
-API.onServerEventTrigger.connect((eventName, ...args) => {
-    if (eventName == "ShowLoginCef") {
-        if (args[0]) {
-            API.showCursor(true);
-            menuLoginPanel();
-        }
-        else {
-        }
+function attemptLogin() {
+    let user = loginUsername.Input;
+    let pass = loginPassword.Input;
+    if (user.length < 5) {
+        loginUsername.isError = true;
+        return;
     }
+    loginUsername.isError = false;
+    if (pass.length < 5) {
+        loginPassword.isError = true;
+        return;
+    }
+    else {
+        loginPassword.isError = false;
+        API.triggerServerEvent("OnPlayerEnteredLoginData", user, pass);
+        return;
+    }
+}
+API.onServerEventTrigger.connect(function (eventName, ...args) {
+    if (eventName == "ShowLoginMenu") {
+        var loginCamera = API.createCamera(new Vector3(-1650, -1030, 50), new Vector3(0, 0, 180));
+        API.setActiveCamera(loginCamera);
+        menuLoginPanel();
+    }
+    else if (eventName == "ShowNotification") {
+        createNotification(0, args[0].toString(), parseInt(args[1]));
+    }
+    else if (eventName == "ShowCharacterSelectMenu") {
+        //args[0] json postaci
+        createNotification(0, "Używaj strzałek, aby przewijać swoje postacie.", 3000);
+        characters = JSON.parse(args[0]);
+        loginMenu.Page = 2;
+    }
+    //else if (eventName == "ShowCharacterSelectCef") {
+    //    if (args[0]) {
+    //        charactersList = args[1];
+    //        CEF.load("_Clientside/Resources/Characters/index.html");
+    //    }
+    //    else {
+    //        CEF.hide();
+    //        API.setActiveCamera(null);
+    //    }
+    //}
 });
+function selectCharacter() {
+    if (index >= 0 && index <= characters.length - 1) {
+        API.triggerServerEvent("OnPlayerSelectedCharacter", index);
+    }
+    else {
+        createNotification(0, "Wybrano nieprawidłową postać!", 2000);
+    }
+}
+function incrementIndex() {
+    if (index >= characters.length - 1)
+        return;
+    index++;
+}
+function decrementIndex() {
+    if (index <= 0)
+        return;
+    index--;
+}
 //# sourceMappingURL=Compiled.js.map

@@ -4,13 +4,13 @@ var screenX = API.getScreenResolutionMantainRatio().Width;
 var screenY = API.getScreenResolutionMantainRatio().Height;
 var panelMinX = (screenX / 32);
 var panelMinY = (screenY / 18);
-var button = null;
-var panel = null;
-var image = null;
+var button: any = null;
+var panel: any = null;
+var image: any = null;
 var notification: any = null;
-var notifications = [];
-var textnotification = null;
-var textnotifications = [];
+var notifications: any[] = [];
+var textnotification: any = null;
+var textnotifications: any[] = [];
 var padding = 10;
 var selectedInput: InputPanel = null;
 
@@ -71,7 +71,7 @@ class Menu {
         }
 
         for (var i = 0; i < pages; i++) {
-            let emptyArray = [];
+            let emptyArray: any[] = [];
             menuElements.push(emptyArray);
         }
         this._blur = false;
@@ -112,15 +112,16 @@ class Menu {
 
     public DisableOverlays(value: boolean) {
         this._overlays = value;
-        if (value) {
+        if (value)
+        {
             API.setHudVisible(false);
             API.setChatVisible(false);
             API.setCanOpenChat(false);
             API.showCursor(true);
             return;
         }
-
-        if (!value) {
+        else
+        {
             API.setHudVisible(true);
             API.setChatVisible(true);
             API.setCanOpenChat(true);
@@ -222,7 +223,7 @@ class PlayerTextNotification {
         }
     }
 
-    setColor(r, g, b) {
+    setColor(r: number, g: number, b: number) {
         this._r = r;
         this._g = g;
         this._b = b;
@@ -250,7 +251,7 @@ class ProgressBar {
     private _currentProgress: number;
     private _drawText: boolean;
 
-    constructor(x, y, width, height, currentProgress) {
+    constructor(x: number, y: number, width: number, height: number, currentProgress: any) {
         this._xPos = x * panelMinX;
         this._yPos = y * panelMinY;
         this._width = width * panelMinX - 10;
@@ -265,13 +266,13 @@ class ProgressBar {
     }
 
     draw() {
-        API.drawRectangle(this._xPos + 5, this._yPos + 5, ((this._width / 100) * this._currentProgress), this._height, this._r, this._g, this._b, this._alpha);
+        API.drawRectangle(this._xPos + 5, this._yPos + 5, ((Math.round(this._width) / 100) * this._currentProgress), this._height, this._r, this._g, this._b, this._alpha);
         if (this._drawText) {
             API.drawText("" + Math.round(this._currentProgress), this._xPos + (((Math.round(this._width) / 100) * this._currentProgress) / 2), this._yPos, 0.5, 255, 255, 255, 255, 4, 1, false, true, 100);
         }
     }
 
-    public setColor(r, g, b) {
+    public setColor(r: any, g: any, b: any) {
         this._r = r;
         this._g = g;
         this._b = b;
@@ -288,7 +289,7 @@ class ProgressBar {
     }
 
 
-    public addProgress(value) {
+    public addProgress(value: any) {
         if (this._currentProgress + value > 100) {
             this._currentProgress = 100;
             return;
@@ -296,7 +297,7 @@ class ProgressBar {
         this._currentProgress += value; 
     }
 
-    public subtractProgress(value) {
+    public subtractProgress(value: any) {
         if (this._currentProgress - value < 0) {
             this._currentProgress = 0;
             return;
@@ -304,7 +305,7 @@ class ProgressBar {
         this._currentProgress -= value;
     }
 
-    public setProgressAmount(value) {
+    public setProgressAmount(value: any) {
         if (value >= 100) {
             this._currentProgress = 100;
             return;
@@ -350,7 +351,7 @@ class Notification {
     _sound: boolean;
     _incrementer: number;
 
-    constructor(text, displayTime) {
+    constructor(text: any, displayTime: any) {
         this._currentPosX = 26 * panelMinX; // Starting Position
         this._currentPosY = screenY; // Starting Position Y
         this._targetX = 26 * panelMinX; // Ending Position
@@ -384,8 +385,8 @@ class Notification {
         }
 
         // Starts below max screen.
-        API.drawRectangle(this._currentPosX, this._currentPosY - 5, this._width, 5, this._r, this._g, this._b, this._alpha - 30);
-        API.drawRectangle(this._currentPosX, this._currentPosY, this._width, this._height, 0, 0, 0, this._alpha - 30);
+        API.drawRectangle(this._currentPosX, this._currentPosY - 5, Math.round(this._width), 5, this._r, this._g, this._b, this._alpha - 30);
+        API.drawRectangle(this._currentPosX, this._currentPosY, Math.round(this._width), this._height, 0, 0, 0, this._alpha - 30);
         API.drawText(this._text, this._offset + this._currentPosX + (Math.round(this._width) / 2), this._currentPosY + (this._height / 4), this._textScale, 255, 255, 255, this._alpha, 4, 1, false, false, Math.round(this._width) - padding);
         this.animate();
     }
@@ -427,17 +428,17 @@ class Notification {
         notification = null;
     }
 
-    setText(value) {
+    setText(value: any) {
         this._text = value;
     }
 
-    setColor(r, g, b) {
+    setColor(r: any, g: any, b: any) {
         this._r = r;
         this._g = g;
         this._b = b;
     }
 
-    setTextScale(value) {
+    setTextScale(value: any) {
         this._textScale = value;
     }
 
@@ -760,7 +761,7 @@ class Panel {
      * @param width - Max of 31. Each number fills a square.
      * @param height - Max of 17. Each number fills a square.
      */
-    constructor(page, x, y, width, height) {
+    constructor(page: any, x: any, y: any, width: any, height: any) {
         this._page = page;
         this._padding = 10;
         this._xPos = x * panelMinX;
@@ -842,25 +843,25 @@ class Panel {
 
 
         if (this._hovered) {
-            API.drawRectangle(this._xPos, this._yPos, this._width, this._height, this._hoverR, this._hoverG, this._hoverB, this._hoverAlpha);
+            API.drawRectangle(this._xPos, this._yPos, Math.round(this._width), this._height, this._hoverR, this._hoverG, this._hoverB, this._hoverAlpha);
             if (this._header) {
-                API.drawRectangle(this._xPos, this._yPos + this._height - 5, this._width, 5, 255, 255, 255, 50);
+                API.drawRectangle(this._xPos, this._yPos + this._height - 5, Math.round(this._width), 5, 255, 255, 255, 50);
             }
             return;
         }
 
-        API.drawRectangle(this._xPos, this._yPos, this._width, this._height, this._r, this._g, this._b, this._alpha);
+        API.drawRectangle(this._xPos, this._yPos, Math.round(this._width), this._height, this._r, this._g, this._b, this._alpha);
         if (this._header) {
-            API.drawRectangle(this._xPos, this._yPos + this._height - 5, this._width, 5, 255, 255, 255, 50);
+            API.drawRectangle(this._xPos, this._yPos + this._height - 5, Math.round(this._width), 5, 255, 255, 255, 50);
         }
     }
     private drawBackgroundImage() {
         if (this._backgroundImagePadding > 1) {
-            API.dxDrawTexture(this._backgroundImage, new Point(this._xPos + this._backgroundImagePadding, this._yPos + this._backgroundImagePadding), new Size(this._width - (this._backgroundImagePadding * 2), this._height - (this._backgroundImagePadding * 2)), 0);
-            API.drawRectangle(this._xPos, this._yPos, this._width, this._height, this._r, this._g, this._b, this._alpha);
+            API.dxDrawTexture(this._backgroundImage, new Point(this._xPos + this._backgroundImagePadding, this._yPos + this._backgroundImagePadding), new Size(Math.round(this._width) - (this._backgroundImagePadding * 2), this._height - (this._backgroundImagePadding * 2)), 0);
+            API.drawRectangle(this._xPos, this._yPos, Math.round(this._width), this._height, this._r, this._g, this._b, this._alpha);
             return;
         }
-        API.dxDrawTexture(this._backgroundImage, new Point(this._xPos, this._yPos), new Size(this._width, this._height), 0);
+        API.dxDrawTexture(this._backgroundImage, new Point(this._xPos, this._yPos), new Size(Math.round(this._width), this._height), 0);
     }
     // Function Settings
     set Function(value: any) {
@@ -1087,7 +1088,7 @@ class Panel {
      * @param value
      */
     addText(value: string) {
-        let textElement: TextElement = new TextElement(value, this._xPos, this._yPos, this._width, this._height, this._line);
+        let textElement: TextElement = new TextElement(value, this._xPos, this._yPos, Math.round(this._width), this._height, this._line);
         this._textLines.push(textElement);
         this._line += 1;
         return textElement;
@@ -1132,7 +1133,7 @@ class Panel {
         }
 
         let cursorPos = API.getCursorPositionMantainRatio();
-        if (cursorPos.X > this._xPos && cursorPos.X < (this._xPos + this._width) && cursorPos.Y > this._yPos && cursorPos.Y < this._yPos + this._height) {
+        if (cursorPos.X > this._xPos && cursorPos.X < (this._xPos + Math.round(this._width)) && cursorPos.Y > this._yPos && cursorPos.Y < this._yPos + this._height) {
             if (!this._hovered) {
                 this._hovered = true;
                 this.setTextHoverState(true);
@@ -1175,7 +1176,7 @@ class Panel {
         // Are they even left clicking?
         if (API.isControlJustPressed(Enums.Controls.CursorAccept)) {
             let cursorPos = API.getCursorPositionMantainRatio();
-            if (cursorPos.X > this._xPos && cursorPos.X < (this._xPos + this._width) && cursorPos.Y > this._yPos && cursorPos.Y < this._yPos + this._height) {
+            if (cursorPos.X > this._xPos && cursorPos.X < (this._xPos + Math.round(this._width)) && cursorPos.Y > this._yPos && cursorPos.Y < this._yPos + this._height) {
                 if (new Date().getTime() < clickDelay + 200) {
                     return;
                 }
@@ -1243,7 +1244,7 @@ class InputPanel {
     private _inputTextAlpha: number;
     private _inputTextScale: number;
 
-    constructor(page, x, y, width, height) {
+    constructor(page: any, x: any, y: any, width: any, height: any) {
         this._xPos = x;
         this._yPos = y;
         this._width = width * panelMinX;
@@ -1283,7 +1284,7 @@ class InputPanel {
     }
 
     /** Sets whether or not this input is selected. */
-    set Selected(value: boolean) {
+    set selected(value: boolean) {
         this._selected = value;
         if (value) {
             selectedInput = this;
@@ -1292,7 +1293,7 @@ class InputPanel {
         }
     }
 
-    get Selected(): boolean {
+    get selected(): boolean {
         return this._selected;
     }
 
@@ -1514,11 +1515,12 @@ class InputPanel {
         this.isClicked();
     }
 
+    //DEBUG
     private normalDraw() {
         if (this._isError) {
-            API.drawRectangle(this._xPos + 10, this._yPos + 10, this._width - 20, this._height - 20, 255, 0, 0, 100);
+            API.drawRectangle(this._xPos + 10, this._yPos + 10, Math.round(this._width) - 20, this._height - 20, 255, 0, 0, 100);
         } else {
-            API.drawRectangle(this._xPos + 10, this._yPos + 10, this._width - 20, this._height - 20, this._r, this._g, this._b, this._alpha);
+            API.drawRectangle(this._xPos + 10, this._yPos + 10, Math.round(this._width) - 20, this._height - 20, this._r, this._g, this._b, this._alpha);
         }
         if (this._protected) {
             if (this._input.length < 1) {
@@ -1531,7 +1533,7 @@ class InputPanel {
     }
 
     private selectedDraw() {
-        API.drawRectangle(this._xPos + 10, this._yPos + 10, this._width - 20, this._height - 20, this._selectR, this._selectG, this._selectB, this._selectAlpha);
+        API.drawRectangle(this._xPos + 10, this._yPos + 10, Math.round(this._width) - 20, this._height - 20, this._selectR, this._selectG, this._selectB, this._selectAlpha);
         if (this._protected) {
             if (this._input.length < 1) {
                 return;
@@ -1545,18 +1547,19 @@ class InputPanel {
 
     private hoveredDraw() {
         if (this._isError) {
-            API.drawRectangle(this._xPos + 10, this._yPos + 10, this._width - 20, this._height - 20, 255, 0, 0, 100);
+            API.drawRectangle(this._xPos + 10, this._yPos + 10, Math.round(this._width) - 20, this._height - 20, 255, 0, 0, 100);
         } else {
-            API.drawRectangle(this._xPos + 10, this._yPos + 10, this._width - 20, this._height - 20, this._hoverR, this._hoverG, this._hoverB, this._hoverAlpha);
+            API.drawRectangle(this._xPos + 10, this._yPos + 10, Math.round(this._width) - 20, this._height - 20, this._hoverR, this._hoverG, this._hoverB, this._hoverAlpha);
         }
 
         if (this._protected) {
             if (this._input.length < 1) {
                 return;
             }
-            API.drawText("*".repeat(this._input.length), this._xPos + (this._width / 2), this._yPos + (this._height / 2) - 14, this._inputTextScale, this._inputTextR, this._inputTextG, this._inputTextB, this._inputTextAlpha, 4, 1, false, false, (panelMinX * this._width));
+
+            API.drawText("*".repeat(this._input.length), this._xPos + (Math.round(this._width) / 2), this._yPos + (this._height / 2) - 14, this._inputTextScale, this._inputTextR, this._inputTextG, this._inputTextB, this._inputTextAlpha, 4, 1, false, false, (panelMinX * Math.round(this._width)));
         } else {
-            API.drawText(this._input, this._xPos + (this._width / 2), this._yPos + (this._height / 2) - 14, this._inputTextScale, this._inputTextR, this._inputTextG, this._inputTextB, this._inputTextAlpha, 4, 1, false, false, (panelMinX * this._width));
+            API.drawText(this._input, this._xPos + (Math.round(this._width) / 2), this._yPos + (this._height / 2) - 14, this._inputTextScale, this._inputTextR, this._inputTextG, this._inputTextB, this._inputTextAlpha, 4, 1, false, false, (panelMinX * Math.round(this._width)));
         }
     }
 
@@ -1566,7 +1569,7 @@ class InputPanel {
         }
 
         let cursorPos = API.getCursorPositionMantainRatio();
-        if (cursorPos.X > this._xPos && cursorPos.X < (this._xPos + this._width) && cursorPos.Y > this._yPos && cursorPos.Y < (this._yPos + this._height)) {
+        if (cursorPos.X > this._xPos && cursorPos.X < (this._xPos + Math.round(this._width)) && cursorPos.Y > this._yPos && cursorPos.Y < (this._yPos + this._height)) {
             if (this._selected) {
                 this._hovered = false;
                 return;
@@ -1583,7 +1586,7 @@ class InputPanel {
                 return;
             }
             let cursorPos = API.getCursorPositionMantainRatio();
-            if (cursorPos.X > this._xPos && cursorPos.X < (this._xPos + this._width) && cursorPos.Y > this._yPos && cursorPos.Y < (this._yPos + this._height)) {
+            if (cursorPos.X > this._xPos && cursorPos.X < (this._xPos + Math.round(this._width)) && cursorPos.Y > this._yPos && cursorPos.Y < (this._yPos + this._height)) {
                 if (!this._selected) {
                     API.playSoundFrontEnd(this._inputAudioLib, this._inputAudioName);
                     this._selected = true;
@@ -1672,12 +1675,12 @@ function killMenu() {
     API.setHudVisible(true);
     API.setChatVisible(true);
     API.setCanOpenChat(true);
-    API.callNative("_TRANSITION_FROM_BLURRED", 3000);
+    //API.callNative("_TRANSITION_FROM_BLURRED", 3000);
     menuElements = [];
 }
 
 // On-Keydown Event
-API.onKeyDown.connect(function (sender, e) {
+API.onKeyDown.connect((sender, e) => {
     if (!isReady) {
         return;
     }
@@ -1711,303 +1714,291 @@ API.onKeyDown.connect(function (sender, e) {
 
     let keypress = "";
     switch (e.KeyCode) {
-        case Keys.Space:
-            keypress = " ";
-            break;
-        case Keys.A:
-            keypress = "a";
-            if (shiftOn) {
-                keypress = "A";
-            }
-            break;
-        case Keys.B:
-            keypress = "b";
-            if (shiftOn) {
-                keypress = "B";
-            }
-            break;
-        case Keys.C:
-            keypress = "c";
-            if (shiftOn) {
-                keypress = "C";
-            }
-            break;
-        case Keys.D:
-            keypress = "d";
-            if (shiftOn) {
-                keypress = "D";
-            }
-            break;
-        case Keys.E:
-            keypress = "e";
-            if (shiftOn) {
-                keypress = "E";
-            }
-            break;
-        case Keys.F:
-            keypress = "f";
-            if (shiftOn) {
-                keypress = "F";
-            }
-            break;
-        case Keys.G:
-            keypress = "g";
-            if (shiftOn) {
-                keypress = "G";
-            }
-            break;
-        case Keys.H:
-            keypress = "h";
-            if (shiftOn) {
-                keypress = "H";
-            }
-            break;
-        case Keys.I:
-            keypress = "i";
-            if (shiftOn) {
-                keypress = "I";
-            }
-            break;
-        case Keys.J:
-            keypress = "j";
-            if (shiftOn) {
-                keypress = "J";
-            }
-            break;
-        case Keys.K:
-            keypress = "k";
-            if (shiftOn) {
-                keypress = "K";
-            }
-            break;
-        case Keys.L:
-            keypress = "l";
-            if (shiftOn) {
-                keypress = "L";
-            }
-            break;
-        case Keys.M:
-            keypress = "m";
-            if (shiftOn) {
-                keypress = "M";
-            }
-            break;
-        case Keys.N:
-            keypress = "n";
-            if (shiftOn) {
-                keypress = "N";
-            }
-            break;
-        case Keys.O:
-            keypress = "o";
-            if (shiftOn) {
-                keypress = "O";
-            }
-            break;
-        case Keys.P:
-            keypress = "p";
-            if (shiftOn) {
-                keypress = "P";
-            }
-            break;
-        case Keys.Q:
-            keypress = "q";
-            if (shiftOn) {
-                keypress = "Q";
-            }
-            break;
-        case Keys.R:
-            keypress = "r";
-            if (shiftOn) {
-                keypress = "R";
-            }
-            break;
-        case Keys.S:
-            keypress = "s";
-            if (shiftOn) {
-                keypress = "S";
-            }
-            break;
-        case Keys.T:
-            keypress = "t";
-            if (shiftOn) {
-                keypress = "T";
-            }
-            break;
-        case Keys.U:
-            keypress = "u";
-            if (shiftOn) {
-                keypress = "U";
-            }
-            break;
-        case Keys.V:
-            keypress = "v";
-            if (shiftOn) {
-                keypress = "V";
-            }
-            break;
-        case Keys.W:
-            keypress = "w";
-            if (shiftOn) {
-                keypress = "W";
-            }
-            break;
-        case Keys.X:
-            keypress = "x";
-            if (shiftOn) {
-                keypress = "X";
-            }
-            break;
-        case Keys.Y:
-            keypress = "y";
-            if (shiftOn) {
-                keypress = "Y";
-            }
-            break;
-        case Keys.Z:
-            keypress = "z";
-            if (shiftOn) {
-                keypress = "Z";
-            }
-            break;
-        case Keys.D0:
-            keypress = "0";
-            if (shiftOn) {
-                keypress = ")";
-            }
-            break;
-        case Keys.D1:
-            keypress = "1";
-            if (shiftOn) {
-                keypress = "!";
-            }
-            break;
-        case Keys.D2:
-            keypress = "2";
-            if (shiftOn) {
-                keypress = "@";
-            }
-            break;
-        case Keys.D3:
-            keypress = "3";
-            if (shiftOn) {
-                keypress = "#";
-            }
-            break;
-        case Keys.D4:
-            keypress = "4";
-            if (shiftOn) {
-                keypress = "$";
-            }
-            break;
-        case Keys.D5:
-            keypress = "5";
-            if (shiftOn) {
-                keypress = "%";
-            }
-            break;
-        case Keys.D6:
-            keypress = "6";
-            if (shiftOn) {
-                keypress = "^";
-            }
-            break;
-        case Keys.D7:
-            keypress = "7";
-            if (shiftOn) {
-                keypress = "&";
-            }
-            break;
-        case Keys.D8:
-            keypress = "8";
-            if (shiftOn) {
-                keypress = "*";
-            }
-            break;
-        case Keys.D9:
-            keypress = "9";
-            if (shiftOn) {
-                keypress = "(";
-            }
-            break;
-        case Keys.OemMinus:
-            keypress = "-";
-            if (shiftOn) {
-                keypress = "_";
-            }
-            break;
-        case Keys.Oemplus:
-            keypress = "=";
-            if (shiftOn) {
-                keypress = "+";
-            }
-            break;
-        case Keys.OemQuestion:
-            keypress = "/";
-            if (shiftOn) {
-                keypress = "?";
-            }
-            break;
-        case Keys.Oemcomma:
-            keypress = ",";
-            if (shiftOn) {
-                keypress = "<";
-            }
-            break;
-        case Keys.OemPeriod:
-            keypress = ".";
-            if (shiftOn) {
-                keypress = ">";
-            }
-            break;
-        case Keys.OemSemicolon:
-            keypress = ";";
-            if (shiftOn) {
-                keypress = ":";
-            }
-            break;
-        case Keys.OemOpenBrackets:
-            keypress = "[";
-            if (shiftOn) {
-                keypress = "{";
-            }
-            break;
-        case Keys.OemCloseBrackets:
-            keypress = "]";
-            if (shiftOn) {
-                keypress = "}";
-            }
-            break;
-        case Keys.NumPad0:
-            keypress = "0";
-            break;
-        case Keys.NumPad1:
-            keypress = "1";
-            break;
-        case Keys.NumPad2:
-            keypress = "2";
-            break;
-        case Keys.NumPad3:
-            keypress = "3";
-            break;
-        case Keys.NumPad4:
-            keypress = "4";
-            break;
-        case Keys.NumPad5:
-            keypress = "5";
-            break;
-        case Keys.NumPad6:
-            keypress = "6";
-            break;
-        case Keys.NumPad7:
-            keypress = "7";
-            break;
-        case Keys.NumPad8:
-            keypress = "8";
-            break;
-        case Keys.NumPad9:
-            keypress = "9";
-            break;
+    case Keys.Space:
+        keypress = " ";
+        break;
+    case Keys.A:
+        keypress = "a";
+        if (shiftOn) {
+            keypress = "A";
+        }
+        break;
+    case Keys.B:
+        keypress = "b";
+        if (shiftOn) {
+            keypress = "B";
+        }
+        break;
+    case Keys.C:
+        keypress = "c";
+        if (shiftOn) {
+            keypress = "C";
+        }
+        break;
+    case Keys.D:
+        keypress = "d";
+        if (shiftOn) {
+            keypress = "D";
+        }
+        break;
+    case Keys.E:
+        keypress = "e";
+        if (shiftOn) {
+            keypress = "E";
+        }
+        break;
+    case Keys.F:
+        keypress = "f";
+        if (shiftOn) {
+            keypress = "F";
+        }
+        break;
+    case Keys.G:
+        keypress = "g";
+        if (shiftOn) {
+            keypress = "G";
+        }
+        break;
+    case Keys.H:
+        keypress = "h";
+        if (shiftOn) {
+            keypress = "H";
+        }
+        break;
+    case Keys.I:
+        keypress = "i";
+        if (shiftOn) {
+            keypress = "I";
+        }
+        break;
+    case Keys.J:
+        keypress = "j";
+        if (shiftOn) {
+            keypress = "J";
+        }
+        break;
+    case Keys.K:
+        keypress = "k";
+        if (shiftOn) {
+            keypress = "K";
+        }
+        break;
+    case Keys.L:
+        keypress = "l";
+        if (shiftOn) {
+            keypress = "L";
+        }
+        break;
+    case Keys.M:
+        keypress = "m";
+        if (shiftOn) {
+            keypress = "M";
+        }
+        break;
+    case Keys.N:
+        keypress = "n";
+        if (shiftOn) {
+            keypress = "N";
+        }
+        break;
+    case Keys.O:
+        keypress = "o";
+        if (shiftOn) {
+            keypress = "O";
+        }
+        break;
+    case Keys.P:
+        keypress = "p";
+        if (shiftOn) {
+            keypress = "P";
+        }
+        break;
+    case Keys.Q:
+        keypress = "q";
+        if (shiftOn) {
+            keypress = "Q";
+        }
+        break;
+    case Keys.R:
+        keypress = "r";
+        if (shiftOn) {
+            keypress = "R";
+        }
+        break;
+    case Keys.S:
+        keypress = "s";
+        if (shiftOn) {
+            keypress = "S";
+        }
+        break;
+    case Keys.T:
+        keypress = "t";
+        if (shiftOn) {
+            keypress = "T";
+        }
+        break;
+    case Keys.U:
+        keypress = "u";
+        if (shiftOn) {
+            keypress = "U";
+        }
+        break;
+    case Keys.V:
+        keypress = "v";
+        if (shiftOn) {
+            keypress = "V";
+        }
+        break;
+    case Keys.W:
+        keypress = "w";
+        if (shiftOn) {
+            keypress = "W";
+        }
+        break;
+    case Keys.X:
+        keypress = "x";
+        if (shiftOn) {
+            keypress = "X";
+        }
+        break;
+    case Keys.Y:
+        keypress = "y";
+        if (shiftOn) {
+            keypress = "Y";
+        }
+        break;
+    case Keys.Z:
+        keypress = "z";
+        if (shiftOn) {
+            keypress = "Z";
+        }
+        break;
+    case Keys.D0:
+        keypress = "0";
+        if (shiftOn) {
+            keypress = ")";
+        }
+        break;
+    case Keys.D1:
+        keypress = "1";
+        if (shiftOn) {
+            keypress = "!";
+        }
+        break;
+    case Keys.D2:
+        keypress = "2";
+        if (shiftOn) {
+            keypress = "@";
+        }
+        break;
+    case Keys.D3:
+        keypress = "3";
+        if (shiftOn) {
+            keypress = "#";
+        }
+        break;
+    case Keys.D4:
+        keypress = "4";
+        if (shiftOn) {
+            keypress = "$";
+        }
+        break;
+    case Keys.D5:
+        keypress = "5";
+        if (shiftOn) {
+            keypress = "%";
+        }
+        break;
+    case Keys.D6:
+        keypress = "6";
+        if (shiftOn) {
+            keypress = "^";
+        }
+        break;
+    case Keys.D7:
+        keypress = "7";
+        if (shiftOn) {
+            keypress = "&";
+        }
+        break;
+    case Keys.D8:
+        keypress = "8";
+        if (shiftOn) {
+            keypress = "*";
+        }
+        break;
+    case Keys.D9:
+        keypress = "9";
+        if (shiftOn) {
+            keypress = "(";
+        }
+        break;
+    case Keys.OemMinus:
+        keypress = "-";
+        if (shiftOn) {
+            keypress = "_";
+        }
+        break;
+    case Keys.OemQuestion:
+        keypress = "/";
+        if (shiftOn) {
+            keypress = "?";
+        }
+        break;
+    case Keys.OemPeriod:
+        keypress = ".";
+        if (shiftOn) {
+            keypress = ">";
+        }
+        break;
+    case Keys.OemSemicolon:
+        keypress = ";";
+        if (shiftOn) {
+            keypress = ":";
+        }
+        break;
+    case Keys.OemOpenBrackets:
+        keypress = "[";
+        if (shiftOn) {
+            keypress = "{";
+        }
+        break;
+    case Keys.OemCloseBrackets:
+        keypress = "]";
+        if (shiftOn) {
+            keypress = "}";
+        }
+        break;
+    case Keys.NumPad0:
+        keypress = "0";
+        break;
+    case Keys.NumPad1:
+        keypress = "1";
+        break;
+    case Keys.NumPad2:
+        keypress = "2";
+        break;
+    case Keys.NumPad3:
+        keypress = "3";
+        break;
+    case Keys.NumPad4:
+        keypress = "4";
+        break;
+    case Keys.NumPad5:
+        keypress = "5";
+        break;
+    case Keys.NumPad6:
+        keypress = "6";
+        break;
+    case Keys.NumPad7:
+        keypress = "7";
+        break;
+    case Keys.NumPad8:
+        keypress = "8";
+        break;
+    case Keys.NumPad9:
+        keypress = "9";
+        break;
     }
 
     if (keypress === "") {

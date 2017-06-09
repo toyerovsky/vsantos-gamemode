@@ -27,7 +27,7 @@ namespace Serverside.Controllers
             Character = character;
             AccountController = accountController;
             AccountController.CharacterController = this;
-            Character.Account = accountController.Account;
+            Character.Account = accountController.AccountData;
             Character.LastLoginTime = DateTime.Now;
             Character.Online = true;
             ContextFactory.Instance.SaveChanges();
@@ -39,7 +39,7 @@ namespace Serverside.Controllers
         public CharacterController(AccountController accountController, string name, string surname, PedHash model)
         {
             accountController.CharacterController = this;
-            Character.Account = accountController.Account;
+            Character.Account = accountController.AccountData;
             Character.Name = name;
             Character.Surname = surname;
             Character.CreateTime = DateTime.Now;

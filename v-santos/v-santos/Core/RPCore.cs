@@ -46,7 +46,7 @@ namespace Serverside.Core
                         i.CurrentlyInUse = false;
                     }
                     ac.Client.resetData("RP_ACCOUNT");
-                    ac.Account.Online = false;
+                    ac.AccountData.Online = false;
                     ac.Save(true);
                 }
                 ContextFactory.Instance.SaveChanges();

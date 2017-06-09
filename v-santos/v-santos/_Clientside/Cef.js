@@ -106,14 +106,11 @@ API.onServerEventTrigger.connect(function (eventName, args) {
         CEF.load("_Clientside/Resources/WheelMenu/index.html");
     }
     else if (eventName == "ShowBusMenu") {
-        CEF.load("_Clientside/Resources/Bootstrap/bus.html");
+        CEF.load("_Clientside/Resources/Bus/bus.html");
         busMenuDataSource = args[0];
     }
 });
 
-function Login(login, password) {
-    API.triggerServerEvent("OnPlayerEnteredLoginData", login, password);
-}
 
 function GetPlayerCharacters() {
     CEF.call("LoadCharacters", charactersList);

@@ -43,13 +43,14 @@ namespace Serverside.Core.Login
             {
                 LoginToAccount(player, args[0].ToString(), args[1].ToString());
             }
-            //Przy używaniu tego musimy jako args[0] wysłać UID postaci
+            //Przy używaniu tego musimy jako args[0] wysłać indeks na liście postaci
             else if (eventName == "OnPlayerSelectedCharacter")
             {
                 AccountController loggedAccount = player.GetAccountController();
 
-                var id = Convert.ToInt64(args[0]);
-                Character character = ContextFactory.Instance.Characters.FirstOrDefault(x => x.Id == id);              
+                Character character =
+                    ContextFactory.Instance.Characters.Where(ch => ch.Account == loggedAccount.AccountData).ToList()[
+                        Convert.ToInt32(args[0])];              
 
                 if (character != null)
                 {
@@ -85,18 +86,63 @@ namespace Serverside.Core.Login
                     API.triggerClientEvent(player, "ToggleHud", true);
                     RPChat.SendMessageToPlayer(player,
                         $"Witaj, twoja postać {character.Name + " " + character.Surname} została pomyślnie załadowana, życzymy miłej gry!", ChatMessageType.ServerInfo);
+                    player.Notify($"~w~Witaj zalogowałeś się na konto {loggedAccount.AccountData.Email}.");
+                    player.Notify($"~w~Ostatnie logowanie: {loggedAccount.AccountData.LastLogin}");
+                    //usuwam to ze względów bezpieczeństwa
+                    //player.Notify($"~w~Z adresu IP: {AccountData.Ip}");
+
                 }
                 if (OnPlayerLogin != null) OnPlayerLogin.Invoke(loggedAccount);
             }
         }
 
-        [Command("/dlogin", GreedyArg = true, SensitiveInfo = true, Alias = "l")]
-        public void DebugLoginToAccount(Client sender, string email, string password)
+        //[Command("/dlogin", GreedyArg = true, SensitiveInfo = true, Alias = "l")]
+        //public void DebugLoginToAccount(Client sender, string email, string password)
+        //{
+        //    Tuple<long, short, string> userData = FDb.CheckPasswordMatch(email, password);
+        //    if (userData.Item1 == -1)
+        //    {
+        //        API.shared.sendChatMessageToPlayer(sender, "Podane login lub hasło są nieprawidłowe, bądź takie konto nie istnieje");
+        //    }
+        //    else
+        //    {
+        //        Account account = new Account
+        //        {
+        //            UserId = userData.Item1,
+        //            MainGroup = userData.Item2,
+        //            OtherGroups = userData.Item3,
+        //            Email = email,
+        //            SocialClub = sender.name,
+        //            Ip = sender.address
+        //        };
+
+        //        //Sprawdzenie czy konto z danym userid istnieje jak nie dodanie konta do bazy danych i załadowanie go do core.
+        //        if (!AccountController.RegisterAccount(sender, account))
+        //        {
+        //            //Sprawdzenie czy ktoś już jest zalogowany z tego konta.
+        //            AccountController _ac = RPEntityManager.GetAccount(userData.Item1);
+        //            if (_ac != null)
+        //            {
+        //                if (_ac.Account.Online)
+        //                {
+        //                    API.shared.kickPlayer(_ac.Client);
+        //                    RPChat.SendMessageToPlayer(sender,
+        //                        $"Osoba o IP: {_ac.Account.Ip} znajduje się obecnie na twoim koncie. Została ona wyrzucona z serwera. Rozważ zmianę hasła.", ChatMessageType.ServerInfo);
+        //                }
+        //            }
+        //            AccountController.LoadAccount(sender, userData.Item1);
+        //        }
+        //    }
+        //}
+
+        public static void LoginToAccount(Client sender, string email, string password)
         {
             Tuple<long, short, string> userData = FDb.CheckPasswordMatch(email, password);
             if (userData.Item1 == -1)
             {
-                API.shared.sendChatMessageToPlayer(sender, "Podane login lub hasło są nieprawidłowe, bądź takie konto nie istnieje");
+                //args[0] wiadomosc
+                //args[1] czas wyswietlania w ms
+                sender.triggerEvent("ShowNotification", "Podane login lub hasło są nieprawidłowe, bądź takie konto nie istnieje", 3000);
             }
             else
             {
@@ -117,54 +163,14 @@ namespace Serverside.Core.Login
                     AccountController _ac = RPEntityManager.GetAccount(userData.Item1);
                     if (_ac != null)
                     {
-                        if (_ac.Account.Online)
+                        if (_ac.AccountData.Online)
                         {
                             API.shared.kickPlayer(_ac.Client);
-                            RPChat.SendMessageToPlayer(sender,
-                                $"Osoba o IP: {_ac.Account.Ip} znajduje się obecnie na twoim koncie. Została ona wyrzucona z serwera. Rozważ zmianę hasła.", ChatMessageType.ServerInfo);
+                            sender.triggerEvent("ShowNotification", $"Osoba o IP: {_ac.AccountData.Ip} znajduje się obecnie na twoim koncie. Została ona wyrzucona z serwera. Rozważ zmianę hasła.", 5000);
                         }
                     }
                     AccountController.LoadAccount(sender, userData.Item1);
                 }
-            }
-        }
-
-        public static bool LoginToAccount(Client sender, string email, string password)
-        {
-            Tuple<long, short, string> userData = FDb.CheckPasswordMatch(email, password);
-            if (userData.Item1 == -1)
-            {
-                API.shared.sendChatMessageToPlayer(sender, "Podane login lub hasło są nieprawidłowe, bądź takie konto nie istnieje");
-                return false;
-            }
-            else
-            {
-                Account account = new Account
-                {
-                    UserId = userData.Item1,
-                    MainGroup = userData.Item2,
-                    OtherGroups = userData.Item3,
-                    Email = email,
-                    SocialClub = sender.name,
-                    Ip = sender.address
-                };
-
-                //Sprawdzenie czy konto z danym userid istnieje jak nie dodanie konta do bazy danych i załadowanie go do core.
-                if (!AccountController.RegisterAccount(sender, account))
-                {
-                    //Sprawdzenie czy ktoś już jest zalogowany z tego konta.
-                    AccountController _ac = RPEntityManager.GetAccount(userData.Item1);
-                    if (_ac != null)
-                    {
-                        if (_ac.Account.Online)
-                        {
-                            API.shared.kickPlayer(_ac.Client);
-                            RPChat.SendMessageToPlayer(sender, $"Osoba o IP: {_ac.Account.Ip} znajduje się obecnie na twoim koncie. Została ona wyrzucona z serwera. Rozważ zmianę hasła.", ChatMessageType.ServerInfo);
-                        }
-                    }
-                    AccountController.LoadAccount(sender, userData.Item1);
-                }
-                return true;
             }
         }
 
@@ -178,15 +184,12 @@ namespace Serverside.Core.Login
             //Nie używać tego wymiaru, jest zajęty na logowanie
             player.dimension = 2137;
             player.position = new Vector3(-1666f, -1020f, 12f);
-
-            API.shared.triggerClientEvent(player, "ShowLoginCef", true, new Vector3(-1650f, -1030f, 50f), new Vector3(0f, 0f, 180f));
-            //DEBUG
-            //API.shared.triggerClientEvent(player, "ToggleHud", false);
+            API.shared.triggerClientEvent(player, "ShowLoginMenu");
         }
 
         public static void LogOut(AccountController account)
         {
-            account.Account.Online = false;
+            account.AccountData.Online = false;
             if (account.CharacterController != null)
                 account.CharacterController.Character.Online = false;
             account.Save();
@@ -197,7 +200,7 @@ namespace Serverside.Core.Login
         public static void LogOut(Client player)
         {
             AccountController account = player.GetAccountController();
-            account.Account.Online = false;
+            account.AccountData.Online = false;
             if (account.CharacterController != null)
                 account.CharacterController.Character.Online = false;
             account.Save();

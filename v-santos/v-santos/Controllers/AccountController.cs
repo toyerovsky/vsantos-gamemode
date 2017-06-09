@@ -14,43 +14,52 @@ namespace Serverside.Controllers
     public class AccountController
     {
         public long AccountId;
-        public Account Account;
+        public Account AccountData;
         public Client Client { get; private set; }
         public CharacterController CharacterController;
         public int ServerId => RPEntityManager.CalculateServerId(this);
 
         public AccountController(Account accountdata, Client client)
         {
-            Account = accountdata;
+            AccountData = accountdata;
             Client = client;
 
             client.setData("RP_ACCOUNT", this);
-            API.shared.sendNotificationToPlayer(client, $"~w~Witaj zalogowałeś się na konto {Account.Email}.");
-            API.shared.sendNotificationToPlayer(client, $"~w~Ostatnie logowanie: {Account.LastLogin}");
-            API.shared.sendNotificationToPlayer(client, $"~w~Z adresu IP: {Account.Ip}");
 
-            Account.LastLogin = DateTime.Now;
-            Account.Online = true;
+            AccountData.LastLogin = DateTime.Now;
+            AccountData.Online = true;
 
             RPEntityManager.AddAccount(AccountId, this);
             //tutaj dajemy inne rzeczy które mają być inicjowane po zalogowaniu się na konto, np: wybór postaci.
 
-            RPChat.SendMessageToPlayer(client, $"Witaj, {accountdata.SocialClub} zostałeś pomyślnie zalogowany. Wybierz postać.", ChatMessageType.ServerInfo);
-            API.shared.triggerClientEvent(client, "ShowLoginCef", false);
+            //TODO: tutaj ma się wyświetlać nick z forum a nie social club
+            client.triggerEvent("ShowNotification", $"Witaj, {accountdata.SocialClub} zostałeś pomyślnie zalogowany. Wybierz postać.", 3000);
 
-            if (Account.Character == null || Account.Character.Count == 0)
+            //Nie działa zmieniam
+            //if (Account.Character == null || Account.Character.Count == 0)
+            //{
+            //    if (!CharacterController.AddCharacter(this, Account.Email, "Testowy", PedHash.Michael))
+            //    {
+            //        RPChat.SendMessageToPlayer(client, "Postać o wybranym imieniu i nazwisku już istnieje.", ChatMessageType.ServerInfo);
+            //        client.kick("Postać o wybranym imieniu i nazwisku już istnieje.");
+            //        return;
+            //    }
+            //}
+
+            if (AccountData.Character.Count == 0)
             {
-                if(!CharacterController.AddCharacter(this, Account.Email, "Testowy", PedHash.Michael))
+                AccountData.Character.Add(new Character
                 {
-                    RPChat.SendMessageToPlayer(client, "Postać o wybranym imieniu i nazwisku już istnieje.", ChatMessageType.ServerInfo);
-                    client.kick("Postać o wybranym imieniu i nazwisku już istnieje.");
-                    return;
-                }
+                    Account = AccountData,
+                    Name = AccountData.Email,
+                    Surname = "Testowy",
+                    Model = (int)PedHash.Michael,
+                });
             }
 
-            var characters = Account.Character.ToList();
+            var characters = AccountData.Character.ToList();
 
-            string json = JsonConvert.SerializeObject(characters.Where(c => c.IsAlive == true && c.Account == Account).Select(
+            string json = JsonConvert.SerializeObject(characters.Where(c => c.IsAlive && c.Account == AccountData).Select(
                 ch => new
                 {
                     ch.Id,
@@ -60,8 +69,8 @@ namespace Serverside.Controllers
                     ch.BankMoney
                 }).ToList());
 
-            API.shared.triggerClientEvent(client, "ShowCharacterSelectCef", true, json);
-            RPChat.SendMessageToPlayer(client, "Używaj strzałek, aby przewijać swoje postacie.", ChatMessageType.ServerInfo);
+            client.triggerEvent("ShowCharacterSelectMenu", json);
+
 
             ContextFactory.Instance.SaveChanges();
         }
@@ -75,8 +84,7 @@ namespace Serverside.Controllers
 
         public static void LoadAccount(Client sender, long userId)
         {
-            Account accountData = ContextFactory.Instance.Accounts.FirstOrDefault(x => x.UserId == userId);
-            new AccountController(accountData, sender);
+            new AccountController(ContextFactory.Instance.Accounts.FirstOrDefault(x => x.UserId == userId), sender);
         }
 
         public static bool RegisterAccount(Client sender, Account account)
@@ -94,7 +102,7 @@ namespace Serverside.Controllers
 
         public static List<Character> GetCharacters(AccountController account)
         {
-            return account.Account.Character.ToList();
+            return account.AccountData.Character.ToList();
         }
 
         public static void LoadCharacter(AccountController account, Character character)
@@ -104,7 +112,7 @@ namespace Serverside.Controllers
 
         public static bool HasCharacterSlot(AccountController account)
         {
-            if (account.Account.Character?.Count() > 3)
+            if (account.AccountData.Character?.Count() > 3)
             {
                 API.shared.sendChatMessageToPlayer(account.Client, "~r~Błąd: ~w~Osiągnąłeś maksymalny limit postaci na konto!");
                 return false;
@@ -118,8 +126,8 @@ namespace Serverside.Controllers
             if (CharacterController != null)
                 CharacterController.Save(resourceStop);
 
-            ContextFactory.Instance.Accounts.Attach(Account);
-            ContextFactory.Instance.Entry(Account).State = EntityState.Modified;
+            ContextFactory.Instance.Accounts.Attach(AccountData);
+            ContextFactory.Instance.Entry(AccountData).State = EntityState.Modified;
             ContextFactory.Instance.SaveChanges();
         }
 
