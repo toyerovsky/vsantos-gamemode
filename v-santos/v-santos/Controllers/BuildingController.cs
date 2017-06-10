@@ -28,6 +28,8 @@ namespace Serverside.Controllers
             Initialize();
         }
 
+        
+
         //Tworzenie nowego budynku
         public BuildingController(long creatorId, float internalX, float internalY, float internalZ, float externalX, float externalY, float externalZ, decimal cost, int internalDimension, Character character = null, Group group = null)
         {
@@ -77,7 +79,11 @@ namespace Serverside.Controllers
                     //args[0] jako true rysuje panel informacji
                     player.triggerEvent("DrawBuildingComponents", false);
                     player.SetData("CurrentDoors", this);
-                    player.SetData("DoorsTarget", new Vector3(BuildingData.ExternalPickupPositionX, BuildingData.ExternalPickupPositionY, BuildingData.ExternalPickupPositionZ));
+
+                    //Doors target jest potrzebne ponieważ Colshape nie ma pola position... dodatkowo przydaje się aby sprawdzać po stronie klienta czy
+                    //Gracz jest obecnie w zasięgu jakichś drzwi
+
+                    player.SetSyncedData("DoorsTarget", new Vector3(BuildingData.ExternalPickupPositionX, BuildingData.ExternalPickupPositionY, BuildingData.ExternalPickupPositionZ));
                 }
             };
 
@@ -88,7 +94,7 @@ namespace Serverside.Controllers
                     var player = API.shared.getPlayerFromHandle(e);
                     player.triggerEvent("DisposeBuildingComponents");
                     player.ResetData("CurrentDoors");
-                    player.ResetData("DoorsTarget");
+                    player.ResetSyncedData("DoorsTarget");
                 }
             };
 
@@ -100,7 +106,7 @@ namespace Serverside.Controllers
                     //args[0] jako true rysuje panel informacji
                     player.triggerEvent("DrawBuildingComponents", true);
                     player.SetData("CurrentDoors", this);
-                    player.SetData("DoorsTarget", new Vector3(BuildingData.InternalPickupPositionX, BuildingData.InternalPickupPositionY, BuildingData.InternalPickupPositionZ));
+                    player.SetSyncedData("DoorsTarget", new Vector3(BuildingData.InternalPickupPositionX, BuildingData.InternalPickupPositionY, BuildingData.InternalPickupPositionZ));
                 }
             };
 
@@ -111,7 +117,7 @@ namespace Serverside.Controllers
                     var player = API.shared.getPlayerFromHandle(e);
                     player.triggerEvent("DisposeBuildingComponents");
                     player.ResetData("CurrentDoors");
-                    player.ResetData("DoorsTarget");
+                    player.ResetSyncedData("DoorsTarget");
                 }
             };
 
@@ -139,7 +145,8 @@ namespace Serverside.Controllers
             BuildingLabel = null;
 
             sender.RemoveMoney(BuildingData.Cost.Value);
-            sender.triggerEvent("ShowShard", "Zakupiono budynek");
+            sender.triggerEvent("ShowShard", "Zakupiono budynek", 5000);
+            API.shared.playSoundFrontEnd(sender, "BASE_JUMP_PASSED", "HUD_AWARDS ");
             BuildingData.Character = sender.GetAccountController().CharacterController.Character;
             Save();
         }
@@ -152,7 +159,7 @@ namespace Serverside.Controllers
 
         public static void PassDoors(Client player)
         {
-            if (!player.HasData("CurrentDoors") || !player.HasData("DoorsTarget")) return;
+            if (!player.HasData("CurrentDoors") || !player.HasSyncedData("DoorsTarget")) return;
 
             BuildingController controller = (BuildingController)player.GetData("CurrentDoors");
 
@@ -164,7 +171,7 @@ namespace Serverside.Controllers
 
             if (controller.PlayersInBuilding.Contains(player))
             {
-                player.position = (Vector3)player.GetData("DoorsTarget");
+                player.position = (Vector3)player.GetSyncedData("DoorsTarget");
                 player.dimension = 0;
                 controller.PlayersInBuilding.Remove(player);
 
@@ -172,12 +179,12 @@ namespace Serverside.Controllers
             }
             else
             {
-                player.position = (Vector3)player.GetData("DoorsTarget");
+                player.position = (Vector3)player.GetSyncedData("DoorsTarget");
                 player.dimension = ((BuildingController) player.GetData("CurrentDoors")).InteriorDoorsColshape
                     .dimension;
                 controller.PlayersInBuilding.Add(player);
                 player.GetAccountController().CharacterController.CurrentBuilding =
-                    ((BuildingController) player.GetData("CurrentDoors"));
+                    (BuildingController) player.GetData("CurrentDoors");
             }
         }
 
