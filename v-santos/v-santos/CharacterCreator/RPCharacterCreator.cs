@@ -1,21 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using GTANetworkServer;
-//using Serverside.Bank;
 using Serverside.Core.Extensions;
 
 namespace Serverside.CharacterCreator
 {
     public class RPCharacterCreator : Script
     {
-        private readonly List<CharacterCreator> _creators;
-
         public RPCharacterCreator()
         {
             API.onResourceStart += API_onResourceStart;
             API.onClientEventTrigger += API_onClientEventTrigger;
-            _creators = new List<CharacterCreator>();
         }
 
         private void API_onResourceStart()
@@ -26,414 +21,445 @@ namespace Serverside.CharacterCreator
         #region Subskrypcja zdarzenia, i dopasowanie zmienianego obiektu
         private void API_onClientEventTrigger(Client sender, string eventName, params object[] arguments)
         {
-            if (eventName == "OnCreatorFatherChanged")
+            switch (eventName)
             {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                case "OnCreatorFatherChanged":
+                    {
 
-                if (characterCreator != null)
-                {
-                    characterCreator.FatherId = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorMotherChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
 
-                if (characterCreator != null)
-                {
-                    characterCreator.MotherId = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorShapeMixChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        if (characterCreator != null)
+                        {
+                            characterCreator.FatherId = Convert.ToInt32(arguments[0]);
 
-                if (characterCreator != null)
-                {
-                    characterCreator.ShapeMix = float.Parse(arguments[0].ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorSkinMixChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        }
+                    }
+                    break;
+                case "OnCreatorMotherChanged":
+                    {
 
-                if (characterCreator != null)
-                {
-                    characterCreator.SkinMix = float.Parse(arguments[0].ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorHairChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
 
-                if (characterCreator != null)
-                {
-                    characterCreator.HairId = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorHairTextureChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        if (characterCreator != null)
+                        {
+                            characterCreator.MotherId = Convert.ToInt32(arguments[0]);
 
-                if (characterCreator != null)
-                {
-                    characterCreator.HairTexture = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorHairColorChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        }
+                    }
+                    break;
+                case "OnCreatorShapeMixChanged":
+                    {
 
-                if (characterCreator != null)
-                {
-                    characterCreator.HairColor = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorMakeupChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
 
-                if (characterCreator != null)
-                {
-                    characterCreator.MakeupId = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorFirstMakeupColorChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        if (characterCreator != null)
+                        {
+                            characterCreator.ShapeMix = float.Parse(arguments[0].ToString(), CultureInfo.InvariantCulture.NumberFormat);
 
-                if (characterCreator != null)
-                {
-                    characterCreator.FirstMakeupColor = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorSecondMakeupColorChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        }
+                    }
+                    break;
+                case "OnCreatorSkinMixChanged":
+                    {
 
-                if (characterCreator != null)
-                {
-                    characterCreator.SecondMakeupColor = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorMakeupOpacityChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
 
-                if (characterCreator != null)
-                {
-                    characterCreator.MakeupOpacity = float.Parse(arguments[0].ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorEyeBrowsChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        if (characterCreator != null)
+                        {
+                            characterCreator.SkinMix = float.Parse(arguments[0].ToString(), CultureInfo.InvariantCulture.NumberFormat);
 
-                if (characterCreator != null)
-                {
-                    characterCreator.EyeBrowsId = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorFirstEyeBrowsColorChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        }
+                    }
+                    break;
+                case "OnCreatorHairChanged":
+                    {
 
-                if (characterCreator != null)
-                {
-                    characterCreator.FirstEyeBrowsColor = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorSecondEyeBrowsColorChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
 
-                if (characterCreator != null)
-                {
-                    characterCreator.SecondEyeBrowsColor = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorEyeBrowsOpacityChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        if (characterCreator != null)
+                        {
+                            characterCreator.HairId = Convert.ToInt32(arguments[0]);
 
-                if (characterCreator != null)
-                {
-                    characterCreator.EyeBrowsOpacity = float.Parse(arguments[0].ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorLipstickChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        }
+                    }
+                    break;
+                case "OnCreatorHairTextureChanged":
+                    {
 
-                if (characterCreator != null)
-                {
-                    characterCreator.LipstickId = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorFirstLipstickColorChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
 
-                if (characterCreator != null)
-                {
-                    characterCreator.FirstLipstickColor = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorSecondLipstickColorChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        if (characterCreator != null)
+                        {
+                            characterCreator.HairTexture = Convert.ToInt32(arguments[0]);
 
-                if (characterCreator != null)
-                {
-                    characterCreator.SecondLipstickColor = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorLipstickOpacityChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        }
+                    }
+                    break;
+                case "OnCreatorHairColorChanged":
+                    {
 
-                if (characterCreator != null)
-                {
-                    characterCreator.LipstickOpacity = float.Parse(arguments[0].ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorFeetsChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
 
-                if (characterCreator != null)
-                {
-                    characterCreator.FeetsId = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorFeetsTextureChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        if (characterCreator != null)
+                        {
+                            characterCreator.HairColor = Convert.ToInt32(arguments[0]);
 
-                if (characterCreator != null)
-                {
-                    characterCreator.FeetsTexture = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorLegsChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        }
+                    }
+                    break;
+                case "OnCreatorMakeupChanged":
+                    {
 
-                if (characterCreator != null)
-                {
-                    characterCreator.LegsId = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorLegsTextureChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
 
-                if (characterCreator != null)
-                {
-                    characterCreator.LegsTexture = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorTopChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        if (characterCreator != null)
+                        {
+                            characterCreator.MakeupId = Convert.ToInt32(arguments[0]);
 
-                if (characterCreator != null)
-                {
-                    characterCreator.TopId = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorTopTextureChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        }
+                    }
+                    break;
+                case "OnCreatorFirstMakeupColorChanged":
+                    {
 
-                if (characterCreator != null)
-                {
-                    characterCreator.TopTexture = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorHatChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
 
-                if (characterCreator != null)
-                {
-                    characterCreator.HatId = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorHatTextureChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        if (characterCreator != null)
+                        {
+                            characterCreator.FirstMakeupColor = Convert.ToInt32(arguments[0]);
 
-                if (characterCreator != null)
-                {
-                    characterCreator.HatTexture = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorGlassesChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        }
+                    }
+                    break;
+                case "OnCreatorSecondMakeupColorChanged":
+                    {
 
-                if (characterCreator != null)
-                {
-                    characterCreator.GlassesId = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorGlassesTextureChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
 
-                if (characterCreator != null)
-                {
-                    characterCreator.GlassesTexture = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorEarsChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        if (characterCreator != null)
+                        {
+                            characterCreator.SecondMakeupColor = Convert.ToInt32(arguments[0]);
 
-                if (characterCreator != null)
-                {
-                    characterCreator.EarsId = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorEarsTextureChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        }
+                    }
+                    break;
+                case "OnCreatorMakeupOpacityChanged":
+                    {
 
-                if (characterCreator != null)
-                {
-                    characterCreator.EarsTexture = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorAccessoryChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
 
-                if (characterCreator != null)
-                {
-                    characterCreator.AccessoryId = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorAccessoryTextureChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        if (characterCreator != null)
+                        {
+                            characterCreator.MakeupOpacity = float.Parse(arguments[0].ToString(), CultureInfo.InvariantCulture.NumberFormat);
 
-                if (characterCreator != null)
-                {
-                    characterCreator.AccessoryTexture = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorTorsoChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        }
+                    }
+                    break;
+                case "OnCreatorEyeBrowsChanged":
+                    {
 
-                if (characterCreator != null)
-                {
-                    characterCreator.TorsoId = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorUndershirtChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
 
-                if (characterCreator != null)
-                {
-                    characterCreator.UndershirtId = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
-            }
-            else if (eventName == "OnCreatorUndershirtTextureChanged")
-            {
-                if (!sender.hasData("CharacterCreatorID")) return;
-                var characterCreator = _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] as CharacterCreator;
+                        if (characterCreator != null)
+                        {
+                            characterCreator.EyeBrowsId = Convert.ToInt32(arguments[0]);
 
-                if (characterCreator != null)
-                {
-                    characterCreator.UndershirtTexture = Convert.ToInt32(arguments[0]);
-                    _creators[Convert.ToInt32(sender.getData("CharacterCreatorID"))] = characterCreator;
-                }
+                        }
+                    }
+                    break;
+                case "OnCreatorFirstEyeBrowsColorChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.FirstEyeBrowsColor = Convert.ToInt32(arguments[0]);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorSecondEyeBrowsColorChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.SecondEyeBrowsColor = Convert.ToInt32(arguments[0]);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorEyeBrowsOpacityChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.EyeBrowsOpacity = float.Parse(arguments[0].ToString(), CultureInfo.InvariantCulture.NumberFormat);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorLipstickChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.LipstickId = Convert.ToInt32(arguments[0]);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorFirstLipstickColorChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.FirstLipstickColor = Convert.ToInt32(arguments[0]);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorSecondLipstickColorChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.SecondLipstickColor = Convert.ToInt32(arguments[0]);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorLipstickOpacityChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.LipstickOpacity = float.Parse(arguments[0].ToString(), CultureInfo.InvariantCulture.NumberFormat);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorFeetsChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.FeetsId = Convert.ToInt32(arguments[0]);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorFeetsTextureChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.FeetsTexture = Convert.ToInt32(arguments[0]);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorLegsChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.LegsId = Convert.ToInt32(arguments[0]);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorLegsTextureChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.LegsTexture = Convert.ToInt32(arguments[0]);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorTopChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.TopId = Convert.ToInt32(arguments[0]);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorTopTextureChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.TopTexture = Convert.ToInt32(arguments[0]);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorHatChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.HatId = Convert.ToInt32(arguments[0]);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorHatTextureChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.HatTexture = Convert.ToInt32(arguments[0]);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorGlassesChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.GlassesId = Convert.ToInt32(arguments[0]);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorGlassesTextureChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.GlassesTexture = Convert.ToInt32(arguments[0]);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorEarsChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.EarsId = Convert.ToInt32(arguments[0]);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorEarsTextureChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.EarsTexture = Convert.ToInt32(arguments[0]);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorAccessoryChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.AccessoryId = Convert.ToInt32(arguments[0]);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorAccessoryTextureChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.AccessoryTexture = Convert.ToInt32(arguments[0]);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorTorsoChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.TorsoId = Convert.ToInt32(arguments[0]);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorUndershirtChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.UndershirtId = Convert.ToInt32(arguments[0]);
+
+                        }
+                    }
+                    break;
+                case "OnCreatorUndershirtTextureChanged":
+                    {
+
+                        var characterCreator = sender.GetAccountController().CharacterController.CharacterCreator;
+
+                        if (characterCreator != null)
+                        {
+                            characterCreator.UndershirtTexture = Convert.ToInt32(arguments[0]);
+
+                        }
+                    }
+                    break;
             }
         }
         #endregion
 
-        private void RPLogin_OnCharacterNotCreated(Client player)
-        {
-            API.triggerClientEvent(player, "OnPlayerCreateCharacter");
-            CharacterCreator creator = new CharacterCreator(player);
-            _creators.Add(creator);
-            player.SetData("CharacterCreatorID", _creators.IndexOf(creator));
-        }
-
-        [Command("test")]
+        [Command("kreator")]
         public void Test(Client sender)
         {
             API.shared.setPlayerSkin(sender, PedHash.FreemodeMale01);
@@ -447,15 +473,11 @@ namespace Serverside.CharacterCreator
                 player.Gender ? CharacterCreator.MenEars : CharacterCreator.WomanEars, player.Gender ? CharacterCreator.MenAccesories : CharacterCreator.WomanAccesories,
                 player.Name + " " + player.Surname);
 
-            CharacterCreator creator = new CharacterCreator(sender)
+            CharacterCreator creator = new CharacterCreator(sender.GetAccountController().CharacterController)
             {
                 FatherId = 0,
                 MotherId = 0
             };
-
-            _creators.Add(creator);
-            sender.SetData("CharacterCreatorID", _creators.IndexOf(creator));
-
         }
     }
 }

@@ -47,15 +47,6 @@ namespace Serverside.Controllers
             //API.shared.consoleOutput("[GM] Załadowano " + ContextFactory.Instance.Groups.Count() + " grup.");
         }
 
-        public static string GetName(int groupId)
-        {
-            if (groupId > -1)
-            {
-                return RPEntityManager.GetGroups()[groupId].Data.Name;
-            }
-            return "Zła wartość GroupID";
-        }
-
         public bool HasMoney(decimal money)
         {
             return Data.Money >= money;
@@ -91,6 +82,11 @@ namespace Serverside.Controllers
         public bool CanPlayerTakeMoney(AccountController account)
         {
             return Data.Workers.Single(w => w.Character == account.CharacterController.Character).PaycheckRight;
+        }
+
+        public bool CanPlayerWriteOnChat(AccountController account)
+        {
+            return Data.Workers.Single(w => w.Character == account.CharacterController.Character).ChatRight;
         }
 
         public void Save()

@@ -513,8 +513,9 @@
     <TypeScriptCompile Include="types-gtanetwork\System.d.ts" />
     <TypeScriptCompile Include="types-gtanetwork\System.Drawing.dll.d.ts" />
     <TypeScriptCompile Include="types-gtanetwork\Xilium.CefGlue.dll.d.ts" />
+    <TypeScriptCompile Include="_Clientside\TypeScript\CharacterCreatorMenu.ts" />
     <TypeScriptCompile Include="_Clientside\TypeScript\MenuBuilder.ts" />
-    <TypeScriptCompile Include="_Clientside\TypeScript\MenuLogin.ts" />
+    <TypeScriptCompile Include="_Clientside\TypeScript\LoginMenu.ts" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

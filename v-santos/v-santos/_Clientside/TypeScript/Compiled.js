@@ -1658,6 +1658,13 @@ API.onKeyDown.connect((sender, e) => {
         return;
     }
 });
+function showCharacterCreatorMenu() {
+}
+API.onServerEventTrigger.connect((eventName, args) => {
+    if (eventName === "OnPlayerCreateCharacter") {
+        showCharacterCreatorMenu();
+    }
+});
 //Zmienne panelu logowania
 var loginMenu;
 var loginUsername;

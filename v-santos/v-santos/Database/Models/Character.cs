@@ -83,5 +83,40 @@ namespace Serverside.Database.Models
         public int Job { get; set; }
         public decimal? MoneyJob { get; set; }
         public decimal? JobLimit { get; set; }
+
+        //Kreator postaci
+        public int? AccessoryId { get; set; }
+        public int? AccessoryTexture { get; set; }
+        public int? EarsId { get; set; }
+        public int? EarsTexture { get; set; }
+        public int? EyebrowsId { get; set; }
+        public float? EyeBrowsOpacity { get; set; }
+        public int? FatherId { get; set; }
+        public int? ShoesId { get; set; }
+        public int? ShoesTexture { get; set; }
+        public int? FirstEyebrowsColor { get; set; }
+        public int? FirstLipstickColor { get; set; }
+        public int? FirstMakeupColor { get; set; }
+        public int? GlassesId { get; set; }
+        public int? GlassesTexture { get; set; }
+        public int? HairId { get; set; }
+        public int? HairTexture { get; set; }
+        public int? HairColor { get; set; }
+        public int? HatId { get; set; }
+        public int? HatTexture { get; set; }
+        public int? LegsId { get; set; }
+        public int? LegsTexture { get; set; }
+        public float? LipstickOpacity { get; set; }
+        public int? MakeupId { get; set; }
+        public float? MakeupOpacity { get; set; }
+        public int? MotherId { get; set; }
+        public int? SecondEyebrowsColor { get; set; }
+        public int? SecondLipstickColor { get; set; }
+        public int? SecondMakeupColor { get; set; }
+        public float? ShapeMix { get; set; }
+        public int? TopId { get; set; }
+        public int? TopTexture { get; set; }
+        public int? TorsoId { get; set; }
+        public int? UndershirtId { get; set; }
     }
 }

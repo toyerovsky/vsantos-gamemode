@@ -123,6 +123,12 @@ namespace Serverside.Core
             return Groups.Find(x => x.Data.Name.StartsWith(groupName.ToLower()));
         }
 
+        public static List<GroupController> GetPlayerGroups(AccountController controller)
+        {
+            return Groups.Where(
+                g => g.Data.Workers.Any(x => x.Character.Id == controller.CharacterController.Character.Id)).ToList();
+        }
+
         public static List<GroupController> GetGroups()
         {
             return Groups;

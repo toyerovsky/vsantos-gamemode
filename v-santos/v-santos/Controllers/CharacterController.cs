@@ -11,15 +11,23 @@ namespace Serverside.Controllers
 {
     public class CharacterController
     {
-        public Character Character = new Character();
+        public Character Character { get; set; }
         public AccountController AccountController { get; private set; }
         //Cellphone controller przypisujemy w przedmiotcie telefonu
         public CellphoneController CellphoneController { get; set; }
         public string FormatName => Character.Name + " " + Character.Surname;
         public long? OnDutyGroupId { get; set; }
         public Core.Description.Description Description { get; set; }
+        public CharacterCreator.CharacterCreator CharacterCreator { get; set; }
 
         public event DimensionChangeEventHandler OnPlayerDimensionChanged;
+
+        //Pola determinujące co gracz może robić w danym momencie
+        //Np żeby kiedy jest nieprzytomny nie mógł mówić
+        public bool CanPM { get; set; }
+        public bool CanCommand { get; set; }
+        public bool CanTalk { get; set; }
+        public bool CanNarrate { get; set; }
 
         //ŁADUJE POSTAC
         public CharacterController(AccountController accountController, Character character)
@@ -32,19 +40,21 @@ namespace Serverside.Controllers
             Character.Online = true;
             ContextFactory.Instance.SaveChanges();
 
+            if (Character.Freemode) CharacterCreator = new CharacterCreator.CharacterCreator(this);
             Description = new Core.Description.Description(AccountController);
         }
 
         //GENERUJE, ŁADUJE I ZAPISUJE DO DB NOWA POSTAC
         public CharacterController(AccountController accountController, string name, string surname, PedHash model)
         {
+            Character = new Character();
             accountController.CharacterController = this;
             Character.Account = accountController.AccountData;
             Character.Name = name;
             Character.Surname = surname;
             Character.CreateTime = DateTime.Now;
-            Character.Model = (int)model;//PedHash.DrFriedlander.GetHashCode(); //Global.GlobalVars._defaultPedModel.GetHashCode();
-            Character.ModelName = model.ToString(); //"DrFriedlander";
+            Character.Model = (int)model;
+            Character.ModelName = model.ToString();
             Character.HitPoints = 100;
             Character.IsAlive = true;
             Character.LastPositionX = 18.7854f;
@@ -54,6 +64,7 @@ namespace Serverside.Controllers
             ContextFactory.Instance.Characters.Add(Character);
             ContextFactory.Instance.SaveChanges();
 
+            if (Character.Freemode) CharacterCreator = new CharacterCreator.CharacterCreator(this);
             Description = new Core.Description.Description(accountController);
         }
 

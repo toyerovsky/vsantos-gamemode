@@ -71,7 +71,12 @@ namespace Serverside.Core
             {
                 return false;
             }
-            return convertedNumber >= 0 && convertedNumber <= 100000000;
+            return convertedNumber >= 0 && convertedNumber <= 999999999;
+        }
+
+        public static bool IsGroupSlotValid(short slot)
+        {
+            return slot <= 3 && slot >= 0;
         }
     }
 }

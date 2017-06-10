@@ -1,13 +1,90 @@
 ﻿using System;
 using System.Collections.Generic;
 using GTANetworkServer;
+using Serverside.Controllers;
 
 namespace Serverside.CharacterCreator
 {
     public class CharacterCreator
     {
-        private API api = new API();
-        private Client Player { get; set; }
+        private API _api = new API();
+        private CharacterController CharacterController { get; set; }
+
+        public CharacterCreator(CharacterController characterController)
+        {
+            CharacterController = characterController;
+            
+            if (CharacterController.Character.AccessoryId != null) AccessoryId = CharacterController.Character.AccessoryId.Value;
+            if (CharacterController.Character.AccessoryTexture != null) AccessoryTexture = CharacterController.Character.AccessoryTexture.Value;
+            if (CharacterController.Character.EarsId != null) EarsId = CharacterController.Character.EarsId.Value;
+            if (CharacterController.Character.EarsTexture != null) EarsTexture = CharacterController.Character.EarsTexture.Value;
+            if (CharacterController.Character.EyeBrowsOpacity != null) EyeBrowsOpacity = CharacterController.Character.EyeBrowsOpacity.Value;
+            if (CharacterController.Character.EyebrowsId != null) EyeBrowsId = CharacterController.Character.EyebrowsId.Value;
+            if (CharacterController.Character.FatherId != null) FatherId = CharacterController.Character.FatherId.Value;
+            if (CharacterController.Character.FirstEyebrowsColor != null) FirstEyeBrowsColor = CharacterController.Character.FirstEyebrowsColor.Value;
+            if (CharacterController.Character.SecondEyebrowsColor != null) SecondEyeBrowsColor = CharacterController.Character.SecondEyebrowsColor.Value;
+            if (CharacterController.Character.FirstLipstickColor != null) FirstLipstickColor = CharacterController.Character.FirstLipstickColor.Value;
+            if (CharacterController.Character.SecondLipstickColor != null) SecondLipstickColor = CharacterController.Character.SecondLipstickColor.Value;
+            if (CharacterController.Character.FirstMakeupColor != null) FirstMakeupColor = CharacterController.Character.FirstMakeupColor.Value;
+            if (CharacterController.Character.SecondMakeupColor != null) SecondMakeupColor = CharacterController.Character.SecondMakeupColor.Value;
+            if (CharacterController.Character.MotherId != null) MotherId = CharacterController.Character.MotherId.Value;
+            if (CharacterController.Character.GlassesId != null) GlassesId = CharacterController.Character.GlassesId.Value;
+            if (CharacterController.Character.GlassesTexture != null) GlassesTexture = CharacterController.Character.GlassesTexture.Value;
+            if (CharacterController.Character.HairId != null) HairId = CharacterController.Character.HairId.Value;
+            if (CharacterController.Character.HairTexture != null) HairTexture = CharacterController.Character.HairTexture.Value;
+            if (CharacterController.Character.HairColor != null) HairColor = CharacterController.Character.HairColor.Value;
+            if (CharacterController.Character.HatId != null) HatId = CharacterController.Character.HatId.Value;
+            if (CharacterController.Character.HatTexture != null) HatTexture = CharacterController.Character.HatTexture.Value;
+            if (CharacterController.Character.LegsId != null) LegsId = CharacterController.Character.LegsId.Value;
+            if (CharacterController.Character.LegsTexture != null) LegsTexture = CharacterController.Character.LegsTexture.Value;
+            if (CharacterController.Character.LipstickOpacity != null) LipstickOpacity = CharacterController.Character.LipstickOpacity.Value;
+            if (CharacterController.Character.MakeupId != null) MakeupId = CharacterController.Character.MakeupId.Value;
+            if (CharacterController.Character.MakeupOpacity != null) MakeupOpacity = CharacterController.Character.MakeupOpacity.Value;
+            if (CharacterController.Character.UndershirtId != null) UndershirtId = CharacterController.Character.UndershirtId.Value;
+            if (CharacterController.Character.TorsoId != null) TorsoId = CharacterController.Character.TorsoId.Value;
+            if (CharacterController.Character.TopTexture != null) TopTexture = CharacterController.Character.TopTexture.Value;
+            if (CharacterController.Character.TopId != null) TopId = CharacterController.Character.TopId.Value;
+            if (CharacterController.Character.ShoesTexture != null) FeetsTexture = CharacterController.Character.ShoesTexture.Value;
+            if (CharacterController.Character.ShoesId != null) FeetsId = CharacterController.Character.ShoesId.Value;
+            if (CharacterController.Character.ShapeMix != null) ShapeMix = CharacterController.Character.ShapeMix.Value;
+        }
+
+        public void Save()
+        {
+            CharacterController.Character.AccessoryId = AccessoryId;
+            CharacterController.Character.AccessoryTexture = AccessoryTexture;
+            CharacterController.Character.EarsId = EarsId;
+            CharacterController.Character.EarsTexture = EarsTexture;
+            CharacterController.Character.EyeBrowsOpacity = EyeBrowsOpacity;
+            CharacterController.Character.EyebrowsId = EyeBrowsId;
+            CharacterController.Character.FatherId = FatherId;
+            CharacterController.Character.FirstEyebrowsColor = FirstEyeBrowsColor;
+            CharacterController.Character.SecondEyebrowsColor = SecondEyeBrowsColor;
+            CharacterController.Character.FirstLipstickColor = FirstLipstickColor;
+            CharacterController.Character.SecondLipstickColor = SecondLipstickColor;
+            CharacterController.Character.FirstMakeupColor = FirstMakeupColor;
+            CharacterController.Character.SecondMakeupColor = SecondMakeupColor;
+            CharacterController.Character.MotherId = MotherId;
+            CharacterController.Character.GlassesId = GlassesId;
+            CharacterController.Character.GlassesTexture = GlassesTexture;
+            CharacterController.Character.HairId = HairId;
+            CharacterController.Character.HairTexture = HairTexture;
+            CharacterController.Character.HairColor = HairColor;
+            CharacterController.Character.HatId = HatId;
+            CharacterController.Character.LegsId = LegsId;
+            CharacterController.Character.LegsTexture = LegsTexture;
+            CharacterController.Character.LipstickOpacity = LipstickOpacity;
+            CharacterController.Character.MakeupId = MakeupId;
+            CharacterController.Character.MakeupOpacity = MakeupOpacity;
+            CharacterController.Character.UndershirtId = UndershirtId;
+            CharacterController.Character.TorsoId = TorsoId;
+            CharacterController.Character.TopTexture = TopTexture;
+            CharacterController.Character.TopId = TopId;
+            CharacterController.Character.ShoesTexture = FeetsTexture;
+            CharacterController.Character.ShoesId = FeetsId;
+            CharacterController.Character.ShapeMix = ShapeMix;
+            CharacterController.Save();
+        }
 
         #region Statyczne listy obiektów
 
@@ -294,284 +371,265 @@ namespace Serverside.CharacterCreator
 
         #endregion
 
-        //public static List<String> OpacityList
-        //{
-        //    get
-        //    {
-        //        var list = new List<String>(10);
 
-        //        for (float i = 0; i < list.Count; i += 0.1f)
-        //        {
-        //            list.Add(i.ToString());
-        //        }
-
-        //        return list;
-        //    }
-        //}
-
-        public CharacterCreator(Client player)
-        {
-            Player = player;
-        }
-
-        private int hairId;
+        private int _hairId;
 
         public int HairId
         {
-            get { return hairId; }
+            get => _hairId;
 
             set
             {
-                hairId = value;
-                api.setPlayerClothes(Player, 2, value, 0);
+                _hairId = value;
+                _api.setPlayerClothes(CharacterController.AccountController.Client, 2, value, 0);
             }
         }
 
-        private int hairTexture;
+        private int _hairTexture;
 
         public int HairTexture
         {
-            get { return hairTexture; }
+            get => _hairTexture;
 
             set
             {
-                hairTexture = value;
-                api.setPlayerClothes(Player, 2, hairId, value);
+                _hairTexture = value;
+                _api.setPlayerClothes(CharacterController.AccountController.Client, 2, _hairId, value);
             }
         }
 
-        private int hairColor;
+        private int _hairColor;
 
         public int HairColor
         {
-            get { return hairColor; }
+            get => _hairColor;
             set
             {
-                hairColor = value;
+                _hairColor = value;
                 //_SET_PED_HAIR_COLOR(Ped ped, int colorID, int highlightColorID)
 
                 //dziwnie działa
-                //api.setPlayerClothes(Player, 2, hairId, value);
+                //api.setPlayerClothes(CharacterController.AccountController.Client, 2, hairId, value);
 
-                api.sendNativeToPlayer(Player, Hash._SET_PED_HAIR_COLOR, Player.handle, value, 0);
+                _api.sendNativeToPlayer(CharacterController.AccountController.Client, Hash._SET_PED_HAIR_COLOR, CharacterController.AccountController.Client.handle, value, 0);
             }
         }
 
-        private int motherId;
+        private int _motherId;
 
         public int MotherId
         {
-            get { return motherId; }
+            get => _motherId;
             set
             {
                 //SET_PED_HEAD_BLEND_DATA(Ped ped, int shapeFirstID, int shapeSecondID,
                 //int shapeThirdID, int skinFirstID, int skinSecondID, int skinThirdID, float shapeMix,
                 //float skinMix, float thirdMix, BOOL isParent)
-                motherId = value;
-                api.sendNativeToPlayer(Player, Hash.SET_PED_HEAD_BLEND_DATA, Player.handle, value, fatherId,
-                    0, value, fatherId, 0, shapeMix, skinMix, 0f, false);
+                _motherId = value;
+                _api.sendNativeToPlayer(CharacterController.AccountController.Client, Hash.SET_PED_HEAD_BLEND_DATA, CharacterController.AccountController.Client.handle, value, _fatherId,
+                    0, value, _fatherId, 0, _shapeMix, _skinMix, 0f, false);
             }
         }
 
-        private int fatherId;
+        private int _fatherId;
 
         public int FatherId
         {
-            get { return fatherId; }
+            get => _fatherId;
             set
             {
-                fatherId = value;
-                api.sendNativeToPlayer(Player, Hash.SET_PED_HEAD_BLEND_DATA, Player.handle, motherId, value,
-                    0, motherId, value, 0, shapeMix, skinMix, 0f, false);
+                _fatherId = value;
+                _api.sendNativeToPlayer(CharacterController.AccountController.Client, Hash.SET_PED_HEAD_BLEND_DATA, CharacterController.AccountController.Client.handle, _motherId, value,
+                    0, _motherId, value, 0, _shapeMix, _skinMix, 0f, false);
             }
         }
 
-        private float shapeMix;
+        private float _shapeMix;
 
         public float ShapeMix
         {
-            get { return shapeMix; }
+            get => _shapeMix;
             set
             {
-                shapeMix = value;
-                api.sendNativeToPlayer(Player, Hash.SET_PED_HEAD_BLEND_DATA, Player.handle, motherId, fatherId,
-                    0, motherId, fatherId, 0, value, skinMix, 0f, false);
+                _shapeMix = value;
+                _api.sendNativeToPlayer(CharacterController.AccountController.Client, Hash.SET_PED_HEAD_BLEND_DATA, CharacterController.AccountController.Client.handle, _motherId, _fatherId,
+                    0, _motherId, _fatherId, 0, value, _skinMix, 0f, false);
             }
         }
 
-        private float skinMix;
+        private float _skinMix;
 
         public float SkinMix
         {
-            get { return skinMix; }
+            get => _skinMix;
             set
             {
-                skinMix = value;
-                api.sendNativeToPlayer(Player, Hash.SET_PED_HEAD_BLEND_DATA, Player.handle, motherId, fatherId,
-                    0, motherId, fatherId, 0, shapeMix, value, 0f, false);
+                _skinMix = value;
+                _api.sendNativeToPlayer(CharacterController.AccountController.Client, Hash.SET_PED_HEAD_BLEND_DATA, CharacterController.AccountController.Client.handle, _motherId, _fatherId,
+                    0, _motherId, _fatherId, 0, _shapeMix, value, 0f, false);
             }
         }       
 
-        private int eyeBrowsId;
+        private int _eyeBrowsId;
 
         public int EyeBrowsId
         {
-            get { return eyeBrowsId; }
+            get => _eyeBrowsId;
             set
             {
-                eyeBrowsId = value;
+                _eyeBrowsId = value;
                 //SET_PED_HEAD_OVERLAY(Ped ped, int overlayID, int index, float opacity)
-                api.sendNativeToPlayer(Player, Hash.SET_PED_HEAD_OVERLAY, Player.handle, 2, value, eyeBrowsOpacity);
+                _api.sendNativeToPlayer(CharacterController.AccountController.Client, Hash.SET_PED_HEAD_OVERLAY, CharacterController.AccountController.Client.handle, 2, value, _eyeBrowsOpacity);
             }
         }
 
-        private float eyeBrowsOpacity;
+        private float _eyeBrowsOpacity;
 
         public float EyeBrowsOpacity
         {
-            get { return eyeBrowsOpacity; }
+            get => _eyeBrowsOpacity;
             set
             {
-                eyeBrowsOpacity = value;
-                api.sendNativeToPlayer(Player, Hash.SET_PED_HEAD_OVERLAY, Player.handle, 2, eyeBrowsId, value);
+                _eyeBrowsOpacity = value;
+                _api.sendNativeToPlayer(CharacterController.AccountController.Client, Hash.SET_PED_HEAD_OVERLAY, CharacterController.AccountController.Client.handle, 2, _eyeBrowsId, value);
             }
         }
 
-        private int firstEyeBrowsColor;
+        private int _firstEyeBrowsColor;
 
         public int FirstEyeBrowsColor
         {
-            get { return firstEyeBrowsColor; }
+            get => _firstEyeBrowsColor;
             set
             {
-                firstEyeBrowsColor = value;
+                _firstEyeBrowsColor = value;
                 //_SET_PED_HEAD_OVERLAY_COLOR(Ped ped, int overlayID, int colorType, int colorID, int secondColorID)
-                api.sendNativeToPlayer(Player, Hash._SET_PED_HEAD_OVERLAY_COLOR, Player.handle, 2, 1,
-                    value, secondEyeBrowsColor);
+                _api.sendNativeToPlayer(CharacterController.AccountController.Client, Hash._SET_PED_HEAD_OVERLAY_COLOR, CharacterController.AccountController.Client.handle, 2, 1,
+                    value, _secondEyeBrowsColor);
             }
         }
 
-        private int secondEyeBrowsColor;
+        private int _secondEyeBrowsColor;
 
         public int SecondEyeBrowsColor
         {
-            get { return secondEyeBrowsColor; }
+            get => _secondEyeBrowsColor;
             set
             {
-                secondEyeBrowsColor = value;
-                api.sendNativeToPlayer(Player, Hash._SET_PED_HEAD_OVERLAY_COLOR, Player.handle, 2, 1,
-                    firstEyeBrowsColor, value);
+                _secondEyeBrowsColor = value;
+                _api.sendNativeToPlayer(CharacterController.AccountController.Client, Hash._SET_PED_HEAD_OVERLAY_COLOR, CharacterController.AccountController.Client.handle, 2, 1,
+                    _firstEyeBrowsColor, value);
             }
         }
 
-        private int lipstickId;
+        private int _lipstickId;
 
         public int LipstickId
         {
-            get { return eyeBrowsId; }
+            get => _eyeBrowsId;
             set
             {
-                lipstickId = value;
+                _lipstickId = value;
                 //SET_PED_HEAD_OVERLAY(Ped ped, int overlayID, int index, float opacity) 
-                api.sendNativeToPlayer(Player, Hash.SET_PED_HEAD_OVERLAY, Player.handle, 8, value, lipstickOpacity);
+                _api.sendNativeToPlayer(CharacterController.AccountController.Client, Hash.SET_PED_HEAD_OVERLAY, CharacterController.AccountController.Client.handle, 8, value, _lipstickOpacity);
             }
         }
 
-        private float lipstickOpacity;
+        private float _lipstickOpacity;
 
         public float LipstickOpacity
         {
-            get { return eyeBrowsOpacity; }
+            get => _eyeBrowsOpacity;
             set
             {
-                lipstickOpacity = value;
-                api.sendNativeToPlayer(Player, Hash.SET_PED_HEAD_OVERLAY, Player.handle, 8, lipstickId, value);
+                _lipstickOpacity = value;
+                _api.sendNativeToPlayer(CharacterController.AccountController.Client, Hash.SET_PED_HEAD_OVERLAY, CharacterController.AccountController.Client.handle, 8, _lipstickId, value);
             }
         }
 
-        private int firstLipstickColor;
+        private int _firstLipstickColor;
 
         public int FirstLipstickColor
         {
-            get { return firstLipstickColor; }
+            get => _firstLipstickColor;
             set
             {
-                firstLipstickColor = value;
+                _firstLipstickColor = value;
                 //_SET_PED_HEAD_OVERLAY_COLOR(Ped ped, int overlayID, int colorType, int colorID, int secondColorID)
                 //2
-                api.sendNativeToPlayer(Player, Hash._SET_PED_HEAD_OVERLAY_COLOR, Player.handle, 8, 1,
-                    value, secondLipstickColor);
+                _api.sendNativeToPlayer(CharacterController.AccountController.Client, Hash._SET_PED_HEAD_OVERLAY_COLOR, CharacterController.AccountController.Client.handle, 8, 1,
+                    value, _secondLipstickColor);
             }
         }
 
-        private int secondLipstickColor;
+        private int _secondLipstickColor;
 
         public int SecondLipstickColor
         {
-            get { return secondLipstickColor; }
+            get => _secondLipstickColor;
             set
             {
-                secondLipstickColor = value;
+                _secondLipstickColor = value;
                 //_SET_PED_HEAD_OVERLAY_COLOR(Ped ped, int overlayID, int colorType, int colorID, int secondColorID)
                 //2
-                api.sendNativeToPlayer(Player, Hash._SET_PED_HEAD_OVERLAY_COLOR, Player.handle, 8, 1,
-                    firstEyeBrowsColor, value);
+                _api.sendNativeToPlayer(CharacterController.AccountController.Client, Hash._SET_PED_HEAD_OVERLAY_COLOR, CharacterController.AccountController.Client.handle, 8, 1,
+                    _firstEyeBrowsColor, value);
             }
         }
 
-        private int makeupId;
+        private int _makeupId;
 
         public int MakeupId
         {
-            get { return makeupId; }
+            get => _makeupId;
             set
             {
-                makeupId = value;
+                _makeupId = value;
                 //SET_PED_HEAD_OVERLAY(Ped ped, int overlayID, int index, float opacity) 
-                api.sendNativeToPlayer(Player, Hash.SET_PED_HEAD_OVERLAY, Player.handle, 4, value, makeupOpacity);
+                _api.sendNativeToPlayer(CharacterController.AccountController.Client, Hash.SET_PED_HEAD_OVERLAY, CharacterController.AccountController.Client.handle, 4, value, _makeupOpacity);
             }
         }
 
-        private float makeupOpacity;
+        private float _makeupOpacity;
 
         public float MakeupOpacity
         {
-            get { return makeupOpacity; }
+            get => _makeupOpacity;
             set
             {
-                makeupOpacity = value;
+                _makeupOpacity = value;
                 //SET_PED_HEAD_OVERLAY(Ped ped, int overlayID, int index, float opacity) 
-                api.sendNativeToPlayer(Player, Hash.SET_PED_HEAD_OVERLAY, Player.handle, 4, makeupId, value);
+                _api.sendNativeToPlayer(CharacterController.AccountController.Client, Hash.SET_PED_HEAD_OVERLAY, CharacterController.AccountController.Client.handle, 4, _makeupId, value);
             }
         }
 
-        private int firstMakeupColor;
+        private int _firstMakeupColor;
 
         public int FirstMakeupColor
         {
-            get { return firstMakeupColor; }
+            get => _firstMakeupColor;
             set
             {
-                firstMakeupColor = value;
+                _firstMakeupColor = value;
                 //_SET_PED_HEAD_OVERLAY_COLOR(Ped ped, int overlayID, int colorType, int colorID, int secondColorID)
                 //0
-                api.sendNativeToPlayer(Player, Hash._SET_PED_HEAD_OVERLAY_COLOR, Player.handle, 4, 1,
-                    value, secondMakeupColor);
+                _api.sendNativeToPlayer(CharacterController.AccountController.Client, Hash._SET_PED_HEAD_OVERLAY_COLOR, CharacterController.AccountController.Client.handle, 4, 1,
+                    value, _secondMakeupColor);
             }
         }
 
-        private int secondMakeupColor;
+        private int _secondMakeupColor;
 
         public int SecondMakeupColor
         {
-            get { return secondMakeupColor; }
+            get => _secondMakeupColor;
             set
             {
-                secondMakeupColor = value;
+                _secondMakeupColor = value;
                 //_SET_PED_HEAD_OVERLAY_COLOR(Ped ped, int overlayID, int colorType, int colorID, int secondColorID)
                 //0
-                api.sendNativeToPlayer(Player, Hash._SET_PED_HEAD_OVERLAY_COLOR, Player.handle, 4, 1,
-                    firstMakeupColor, value);
+                _api.sendNativeToPlayer(CharacterController.AccountController.Client, Hash._SET_PED_HEAD_OVERLAY_COLOR, CharacterController.AccountController.Client.handle, 4, 1,
+                    _firstMakeupColor, value);
             }
         }
 
@@ -582,152 +640,152 @@ namespace Serverside.CharacterCreator
                 foreach (var item in faceFeatures)
                 {
                     //_SET_PED_FACE_FEATURE(Ped ped, int index, float scale)
-                    api.sendNativeToPlayer(Player, Hash._SET_PED_FACE_FEATURE, Player.handle, item.Key, item.Value);
+                    _api.sendNativeToPlayer(CharacterController.AccountController.Client, Hash._SET_PED_FACE_FEATURE, CharacterController.AccountController.Client.handle, item.Key, item.Value);
                 }
             }
         }
 
-        private int legsId;
+        private int _legsId;
 
         public int LegsId
         {
-            get { return legsId; }
+            get => _legsId;
             set
             {
-                legsId = value;
-                api.setPlayerClothes(Player, 4, value, legsTexture);
+                _legsId = value;
+                _api.setPlayerClothes(CharacterController.AccountController.Client, 4, value, _legsTexture);
             }
         }
 
-        private int legsTexture;
+        private int _legsTexture;
 
         public int LegsTexture
         {
-            get { return legsTexture; }
+            get => _legsTexture;
             set
             {
-                legsTexture = value;
-                api.setPlayerClothes(Player, 4, legsId, value);
+                _legsTexture = value;
+                _api.setPlayerClothes(CharacterController.AccountController.Client, 4, _legsId, value);
             }
         }
 
-        private int feetsId;
+        private int _feetsId;
 
         public int FeetsId
         {
-            get { return feetsId; }
+            get => _feetsId;
             set
             {
-                feetsId = value;
-                api.setPlayerClothes(Player, 6, value, feetsTexture);
+                _feetsId = value;
+                _api.setPlayerClothes(CharacterController.AccountController.Client, 6, value, _feetsTexture);
             }
         }
 
-        private int feetsTexture;
+        private int _feetsTexture;
 
         public int FeetsTexture
         {
-            get { return feetsTexture; }
+            get => _feetsTexture;
             set
             {
-                feetsTexture = value;
-                api.setPlayerClothes(Player, 6, feetsId, value);
+                _feetsTexture = value;
+                _api.setPlayerClothes(CharacterController.AccountController.Client, 6, _feetsId, value);
             }
         }
 
-        private int accessoryId;
+        private int _accessoryId;
 
         public int AccessoryId
         {
-            get { return accessoryId; }
+            get => _accessoryId;
             set
             {
-                accessoryId = value;
-                api.setPlayerClothes(Player, 7, value, accessoryTexture);
+                _accessoryId = value;
+                _api.setPlayerClothes(CharacterController.AccountController.Client, 7, value, _accessoryTexture);
             }
         }
 
-        private int accessoryTexture;
+        private int _accessoryTexture;
 
         public int AccessoryTexture
         {
-            get { return accessoryTexture; }
+            get => _accessoryTexture;
             set
             {
-                accessoryTexture = value;
-                api.setPlayerClothes(Player, 7, accessoryId, value);
+                _accessoryTexture = value;
+                _api.setPlayerClothes(CharacterController.AccountController.Client, 7, _accessoryId, value);
             }
         }
 
-        private int hatId;
+        private int _hatId;
 
         public int HatId
         {
-            get { return hatId; }
+            get => _hatId;
             set
             {
-                hatId = value;
-                api.setPlayerAccessory(Player, 0, value, hatTexture);
+                _hatId = value;
+                _api.setPlayerAccessory(CharacterController.AccountController.Client, 0, value, _hatTexture);
             }
         }
 
-        private int hatTexture;
+        private int _hatTexture;
 
         public int HatTexture
         {
-            get { return hatTexture; }
+            get => _hatTexture;
             set
             {
-                hatTexture = value;
-                api.setPlayerAccessory(Player, 0, hatId, value);
+                _hatTexture = value;
+                _api.setPlayerAccessory(CharacterController.AccountController.Client, 0, _hatId, value);
             }
         }
 
-        private int glassesId;
+        private int _glassesId;
 
         public int GlassesId
         {
-            get { return glassesId; }
+            get => _glassesId;
             set
             {
-                glassesId = value;
-                api.setPlayerAccessory(Player, 1, value, glassesTexture);
+                _glassesId = value;
+                _api.setPlayerAccessory(CharacterController.AccountController.Client, 1, value, _glassesTexture);
             }
         }
 
-        private int glassesTexture;
+        private int _glassesTexture;
 
         public int GlassesTexture
         {
-            get { return glassesTexture; }
+            get => _glassesTexture;
             set
             {
-                glassesTexture = value;
-                api.setPlayerAccessory(Player, 1, glassesId, value);
+                _glassesTexture = value;
+                _api.setPlayerAccessory(CharacterController.AccountController.Client, 1, _glassesId, value);
             }
         }
         
-        private int earsId;
+        private int _earsId;
 
         public int EarsId
         {
-            get { return earsId; }
+            get => _earsId;
             set
             {
-                earsId = value;
-                api.setPlayerAccessory(Player, 2, value, earsTexture);
+                _earsId = value;
+                _api.setPlayerAccessory(CharacterController.AccountController.Client, 2, value, _earsTexture);
             }
         }
 
-        private int earsTexture;
+        private int _earsTexture;
 
         public int EarsTexture
         {
-            get { return earsTexture; }
+            get => _earsTexture;
             set
             {
-                earsTexture = value;
-                api.setPlayerAccessory(Player, 2, earsId, value);
+                _earsTexture = value;
+                _api.setPlayerAccessory(CharacterController.AccountController.Client, 2, _earsId, value);
             }
         }
 
@@ -736,65 +794,65 @@ namespace Serverside.CharacterCreator
             
         }
 
-        private int topId;
+        private int _topId;
 
         public int TopId
         {
-            get { return topId; }
+            get => _topId;
             set
             {
-                topId = value;
-                //api.sendNativeToPlayer(Player, Hash.SET_PED_COMPONENT_VARIATION, Player.handle, 3, value, topTexture, 2);
-                api.setPlayerClothes(Player, 11, value, topTexture);
+                _topId = value;
+                //api.sendNativeToPlayer(CharacterController.AccountController.Client, Hash.SET_PED_COMPONENT_VARIATION, CharacterController.AccountController.Client.handle, 3, value, topTexture, 2);
+                _api.setPlayerClothes(CharacterController.AccountController.Client, 11, value, _topTexture);
             }
         }
 
-        private int topTexture;
+        private int _topTexture;
 
         public int TopTexture
         {
-            get { return topTexture; }
+            get => _topTexture;
             set
             {
-                topTexture = value;
-                //api.sendNativeToPlayer(Player, Hash.SET_PED_COMPONENT_VARIATION, Player.handle, 3, topId, value, 2);
-                api.setPlayerClothes(Player, 11, topId, value);
+                _topTexture = value;
+                //api.sendNativeToPlayer(CharacterController.AccountController.Client, Hash.SET_PED_COMPONENT_VARIATION, CharacterController.AccountController.Client.handle, 3, topId, value, 2);
+                _api.setPlayerClothes(CharacterController.AccountController.Client, 11, _topId, value);
             }
         }
 
-        private int torsoId;
+        private int _torsoId;
 
         public int TorsoId
         {
-            get { return torsoId; }
+            get => _torsoId;
             set
             {
-                torsoId = value;
-                api.setPlayerClothes(Player, 3, value, 0);
+                _torsoId = value;
+                _api.setPlayerClothes(CharacterController.AccountController.Client, 3, value, 0);
             }
         }
 
-        private int undershirtId;
+        private int _undershirtId;
 
         public int UndershirtId
         {
-            get { return undershirtId; }
+            get => _undershirtId;
             set
             {
-                undershirtId = value;
-                api.setPlayerClothes(Player, 8, value, undershirtTexture);
+                _undershirtId = value;
+                _api.setPlayerClothes(CharacterController.AccountController.Client, 8, value, _undershirtTexture);
             }
         }
 
-        private int undershirtTexture;
+        private int _undershirtTexture;
 
         public int UndershirtTexture
         {
-            get { return undershirtTexture; }
+            get => _undershirtTexture;
             set
             {
-                undershirtTexture = value;
-                api.setPlayerClothes(Player, 8, undershirtId, value);
+                _undershirtTexture = value;
+                _api.setPlayerClothes(CharacterController.AccountController.Client, 8, _undershirtId, value);
             }
         }
     }
