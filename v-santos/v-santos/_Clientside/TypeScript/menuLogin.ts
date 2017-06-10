@@ -9,16 +9,16 @@ var regConfirmPassword: InputPanel;
 var loginNotification: any;
 
 var index: number = 0;
-var characters: any;
+var characters: any[];
 let fullnameTextElement: TextElement;
 let moneyTextElement: TextElement;
 let bankTextElement: TextElement;
+
 
 function menuLoginPanel()
 {
     loginMenu = createMenu(2);
     let panel: Panel;
-    let inputPanel: InputPanel;
     let textElement: TextElement;
 
     //Login Screen - Strona 0
@@ -148,7 +148,7 @@ function attemptLogin() {
     }
 }
 
-API.onServerEventTrigger.connect((eventName: string, args: Array<any>) => {
+API.onServerEventTrigger.connect((eventName: string, args: System.Array<any>) => {
     if (eventName == "ShowLoginMenu")
     {
         var loginCamera = API.createCamera(new Vector3(-1650, -1030, 50), new Vector3(0, 0, 180));
@@ -173,6 +173,7 @@ function selectCharacter()
 {
     if (index >= 0 && index <= characters.length - 1) {
         API.triggerServerEvent("OnPlayerSelectedCharacter", index);
+        loginMenu.killMenu();
         API.setActiveCamera(null);
     } else {
         createNotification(0, "Wybrano nieprawidłową postać!", 2000);
@@ -195,7 +196,7 @@ function decrementIndex()
 
 function fillCharacterSelect()
 {
-    fullnameTextElement.Text = characters[index]["Name"] + " " + characters[index]["Surname"];
-    moneyTextElement.Text = "Gotówka: $" + characters[index]["Money"];
-    bankTextElement.Text = "Bank: $" + characters[index]["BankMoney"];
+    fullnameTextElement.Text = characters[index].Name + " " + characters[index].Surname;
+    moneyTextElement.Text = "Gotówka: $" + characters[index].Money;
+    bankTextElement.Text = "Bank: $" + characters[index].BankMoney;
 }

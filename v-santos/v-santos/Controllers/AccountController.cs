@@ -48,7 +48,7 @@ namespace Serverside.Controllers
             //        return;
             //    }
             //}
-            
+
             //w tym momencie po takim przypisaniu do json jego wartość to "[]"
             //string json = JsonConvert.SerializeObject(AccountData.Character.Where(c => c.IsAlive == true).Select(
             //    ch => new
@@ -59,13 +59,25 @@ namespace Serverside.Controllers
             //        ch.BankMoney
             //    }).ToList());
 
-            string json = JsonConvert.SerializeObject(new
+            //Rozwiązanie pomocnicze dopóki tamto nie zostanie naprawione
+            string json = JsonConvert.SerializeObject(new List<Character>
             {
-                Name = "test",
-                Surname = "test2",
-                Money = 500,
-                BankMoney = 122,
-            });
+                new Character
+                {
+                    Name = "test1",
+                    Surname = "test1",
+                    Money = 500,
+                    BankMoney = 122
+                },
+
+                new Character
+                {
+                    Name = "test2",
+                    Surname = "test2",
+                    Money = 611,
+                    BankMoney = 244,
+                }
+            }.Select(x => new {x.Name, x.Surname, x.Money, x.BankMoney}));
 
             API.shared.consoleOutput(json);
             client.triggerEvent("ShowCharacterSelectMenu", json);

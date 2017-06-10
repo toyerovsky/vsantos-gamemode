@@ -1674,7 +1674,6 @@ let bankTextElement;
 function menuLoginPanel() {
     loginMenu = createMenu(2);
     let panel;
-    let inputPanel;
     let textElement;
     //Login Screen - Strona 0
     //Login Header
@@ -1813,6 +1812,7 @@ API.onServerEventTrigger.connect((eventName, args) => {
 function selectCharacter() {
     if (index >= 0 && index <= characters.length - 1) {
         API.triggerServerEvent("OnPlayerSelectedCharacter", index);
+        loginMenu.killMenu();
         API.setActiveCamera(null);
     }
     else {
@@ -1832,8 +1832,8 @@ function decrementIndex() {
     fillCharacterSelect();
 }
 function fillCharacterSelect() {
-    fullnameTextElement.Text = characters[index]["Name"] + " " + characters[index]["Surname"];
-    moneyTextElement.Text = "Gotówka: $" + characters[index]["Money"];
-    bankTextElement.Text = "Bank: $" + characters[index]["BankMoney"];
+    fullnameTextElement.Text = characters[index].Name + " " + characters[index].Surname;
+    moneyTextElement.Text = "Gotówka: $" + characters[index].Money;
+    bankTextElement.Text = "Bank: $" + characters[index].BankMoney;
 }
 //# sourceMappingURL=Compiled.js.map
