@@ -95,8 +95,7 @@ namespace Serverside.Database
             }
             APIExtensions.ConsoleOutput("[RPCore] Połączono z bazą danych!", ConsoleColor.DarkGreen);
             return new RoleplayConnection(_connectionString);
-            //return new RoleplayConnection("server=v-santos.pl;uid=srv;pwd=WL8oTnufAAEFgoIt;database=rp"); // TYLKO DO GENEROWANIA BAZY DANYCH ZOSTAWIC TYLKO TĄ LINIE 
-
+            //return new RoleplayConnection("server=v-santos.pl;uid=srv;pwd=WL8oTnufAAEFgoIt;database=rp"); // TYLKO DO GENEROWANIA BAZY DANYCH 
         }
 
         public static void Destroy()
