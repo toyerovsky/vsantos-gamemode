@@ -13,8 +13,9 @@ namespace Serverside.Controllers
 {
     public class AccountController
     {
-        public long AccountId;
+        public long AccountId => AccountData.UserId;
         public Account AccountData;
+
         public Client Client { get; private set; }
         public CharacterController CharacterController;
         public int ServerId => RPEntityManager.CalculateServerId(this);
@@ -29,57 +30,52 @@ namespace Serverside.Controllers
             AccountData.LastLogin = DateTime.Now;
             AccountData.Online = true;
 
-            RPEntityManager.AddAccount(AccountId, this);
+            //Przenoszę dodawanie konta do RPEntityManager w inne miejsce bo jeśli wyłączymy serwer jak gracz jest w oknie logowania to wywala NullReferenceException
+
             //tutaj dajemy inne rzeczy które mają być inicjowane po zalogowaniu się na konto, np: wybór postaci.
 
             //TODO: tutaj ma się wyświetlać nick z forum a nie social club
             client.triggerEvent("ShowNotification", $"Witaj, {accountdata.SocialClub} zostałeś pomyślnie zalogowany. Wybierz postać.", 3000);
 
-            //Nie działa zmieniam
-            //if (Account.Character == null || Account.Character.Count == 0)
+            //jezus maria było dobrze to musiałeś zepsuć
+            //if (AccountData.Character == null) AccountData.Character = ContextFactory.Instance.Characters.Where(ch => ch.Account.UserId == AccountId).ToList();
+            //if (AccountData.Character.Count == 0)
             //{
-            //    if (!CharacterController.AddCharacter(this, Account.Email, "Testowy", PedHash.Michael))
+            //    if (!CharacterController.AddCharacter(this, AccountData.Email, "Testowy", PedHash.Michael))
             //    {
             //        RPChat.SendMessageToPlayer(client, "Postać o wybranym imieniu i nazwisku już istnieje.", ChatMessageType.ServerInfo);
             //        client.kick("Postać o wybranym imieniu i nazwisku już istnieje.");
             //        return;
             //    }
             //}
+            
+            //w tym momencie po takim przypisaniu do json jego wartość to "[]"
+            //string json = JsonConvert.SerializeObject(AccountData.Character.Where(c => c.IsAlive == true).Select(
+            //    ch => new
+            //    {
+            //        ch.Name,
+            //        ch.Surname,
+            //        ch.Money,
+            //        ch.BankMoney
+            //    }).ToList());
 
-            if (AccountData.Character.Count == 0)
+            string json = JsonConvert.SerializeObject(new
             {
-                AccountData.Character.Add(new Character
-                {
-                    Account = AccountData,
-                    Name = AccountData.Email,
-                    Surname = "Testowy",
-                    Model = (int)PedHash.Michael,
-                });
-            }
+                Name = "test",
+                Surname = "test2",
+                Money = 500,
+                BankMoney = 122,
+            });
 
-            var characters = AccountData.Character.ToList();
-
-            string json = JsonConvert.SerializeObject(characters.Where(c => c.IsAlive && c.Account == AccountData).Select(
-                ch => new
-                {
-                    ch.Id,
-                    ch.Name,
-                    ch.Surname,
-                    ch.Money,
-                    ch.BankMoney
-                }).ToList());
-
+            API.shared.consoleOutput(json);
             client.triggerEvent("ShowCharacterSelectMenu", json);
-
-
             ContextFactory.Instance.SaveChanges();
         }
 
         public static AccountController GetAccountControllerFromName(string formatname)
         {
             Client client = API.shared.getAllPlayers().FirstOrDefault(x => x.GetAccountController().CharacterController.FormatName.ToLower().Contains(formatname.ToLower()));
-            if (client != null) return client.GetAccountController();
-            return null;
+            return client != null ? client.GetAccountController() : null;
         }
 
         public static void LoadAccount(Client sender, long userId)
@@ -123,8 +119,7 @@ namespace Serverside.Controllers
         public void Save(bool resourceStop = false)
         {
             //tutaj wywołać metody synchronizacji danych z innych controllerów np character.
-            if (CharacterController != null)
-                CharacterController.Save(resourceStop);
+            CharacterController?.Save(resourceStop);
 
             ContextFactory.Instance.Accounts.Attach(AccountData);
             ContextFactory.Instance.Entry(AccountData).State = EntityState.Modified;
@@ -133,8 +128,7 @@ namespace Serverside.Controllers
 
         public static bool DoesAccountExist(long userid)
         {
-            if (ContextFactory.Instance.Accounts.FirstOrDefault(x => x.UserId == userid) == null) return false;
-            return true;
+            return ContextFactory.Instance.Accounts.FirstOrDefault(x => x.UserId == userid) != null;
         }
 
         public static bool IsAccountBanned(Client player)
@@ -142,15 +136,12 @@ namespace Serverside.Controllers
             var ipban = ContextFactory.Instance.Bans.FirstOrDefault(ban => ban.Active && ban.Ip == player.address);
             if (ipban != null) return true;
             var socialclub = ContextFactory.Instance.Bans.FirstOrDefault(ban => ban.Active && ban.IsSocialClubBanned && ban.SocialClub == player.socialClubName);
-            if (socialclub != null) return true;
-            return false;
+            return socialclub != null;
         }
 
         public static bool IsAccountBanned(Account account)
         {
-            var accountban = ContextFactory.Instance.Bans.FirstOrDefault(ban => ban.Active && ban.AccountId == account.Id);
-            if (accountban != null) return true;
-            return false;
+            return ContextFactory.Instance.Bans.FirstOrDefault(ban => ban.Active && ban.AccountId == account.Id) != null;
         }
     }
 }

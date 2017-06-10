@@ -88,6 +88,7 @@ namespace Serverside.Core.Login
                         $"Witaj, twoja postać {character.Name + " " + character.Surname} została pomyślnie załadowana, życzymy miłej gry!", ChatMessageType.ServerInfo);
                     player.Notify($"~w~Witaj zalogowałeś się na konto {loggedAccount.AccountData.Email}.");
                     player.Notify($"~w~Ostatnie logowanie: {loggedAccount.AccountData.LastLogin}");
+                    RPEntityManager.AddAccount(loggedAccount.AccountId, loggedAccount);
                     //usuwam to ze względów bezpieczeństwa
                     //player.Notify($"~w~Z adresu IP: {AccountData.Ip}");
 
@@ -96,44 +97,44 @@ namespace Serverside.Core.Login
             }
         }
 
-        //[Command("/dlogin", GreedyArg = true, SensitiveInfo = true, Alias = "l")]
-        //public void DebugLoginToAccount(Client sender, string email, string password)
-        //{
-        //    Tuple<long, short, string> userData = FDb.CheckPasswordMatch(email, password);
-        //    if (userData.Item1 == -1)
-        //    {
-        //        API.shared.sendChatMessageToPlayer(sender, "Podane login lub hasło są nieprawidłowe, bądź takie konto nie istnieje");
-        //    }
-        //    else
-        //    {
-        //        Account account = new Account
-        //        {
-        //            UserId = userData.Item1,
-        //            MainGroup = userData.Item2,
-        //            OtherGroups = userData.Item3,
-        //            Email = email,
-        //            SocialClub = sender.name,
-        //            Ip = sender.address
-        //        };
+        [Command("/dlogin", GreedyArg = true, SensitiveInfo = true, Alias = "l")]
+        public void DebugLoginToAccount(Client sender, string email, string password)
+        {
+            Tuple<long, short, string> userData = FDb.CheckPasswordMatch(email, password);
+            if (userData.Item1 == -1)
+            {
+                API.shared.sendChatMessageToPlayer(sender, "Podane login lub hasło są nieprawidłowe, bądź takie konto nie istnieje");
+            }
+            else
+            {
+                Account account = new Account
+                {
+                    UserId = userData.Item1,
+                    MainGroup = userData.Item2,
+                    OtherGroups = userData.Item3,
+                    Email = email,
+                    SocialClub = sender.name,
+                    Ip = sender.address
+                };
 
-        //        //Sprawdzenie czy konto z danym userid istnieje jak nie dodanie konta do bazy danych i załadowanie go do core.
-        //        if (!AccountController.RegisterAccount(sender, account))
-        //        {
-        //            //Sprawdzenie czy ktoś już jest zalogowany z tego konta.
-        //            AccountController _ac = RPEntityManager.GetAccount(userData.Item1);
-        //            if (_ac != null)
-        //            {
-        //                if (_ac.Account.Online)
-        //                {
-        //                    API.shared.kickPlayer(_ac.Client);
-        //                    RPChat.SendMessageToPlayer(sender,
-        //                        $"Osoba o IP: {_ac.Account.Ip} znajduje się obecnie na twoim koncie. Została ona wyrzucona z serwera. Rozważ zmianę hasła.", ChatMessageType.ServerInfo);
-        //                }
-        //            }
-        //            AccountController.LoadAccount(sender, userData.Item1);
-        //        }
-        //    }
-        //}
+                //Sprawdzenie czy konto z danym userid istnieje jak nie dodanie konta do bazy danych i załadowanie go do core.
+                if (!AccountController.RegisterAccount(sender, account))
+                {
+                    //Sprawdzenie czy ktoś już jest zalogowany z tego konta.
+                    AccountController _ac = RPEntityManager.GetAccount(userData.Item1);
+                    if (_ac != null)
+                    {
+                        if (_ac.AccountData.Online)
+                        {
+                            API.shared.kickPlayer(_ac.Client);
+                            RPChat.SendMessageToPlayer(sender,
+                                $"Osoba o IP: {_ac.AccountData.Ip} znajduje się obecnie na twoim koncie. Została ona wyrzucona z serwera. Rozważ zmianę hasła.", ChatMessageType.ServerInfo);
+                        }
+                    }
+                    AccountController.LoadAccount(sender, userData.Item1);
+                }
+            }
+        }
 
         public static void LoginToAccount(Client sender, string email, string password)
         {
@@ -153,7 +154,7 @@ namespace Serverside.Core.Login
                     OtherGroups = userData.Item3,
                     Email = email,
                     SocialClub = sender.name,
-                    Ip = sender.address
+                    Ip = sender.address,
                 };
 
                 //Sprawdzenie czy konto z danym userid istnieje jak nie dodanie konta do bazy danych i załadowanie go do core.

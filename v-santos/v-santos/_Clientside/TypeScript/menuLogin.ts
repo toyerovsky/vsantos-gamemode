@@ -1,4 +1,5 @@
-﻿// Panel Variables
+﻿//Zmienne panelu logowania
+
 var loginMenu: Menu;
 var loginUsername: InputPanel;
 var loginPassword: InputPanel;
@@ -7,58 +8,22 @@ var regPassword: InputPanel;
 var regConfirmPassword: InputPanel;
 var loginNotification: any;
 
-let index: number;
-let characters: any[];
-let characterIdTextElement: TextElement;
+var index: number = 0;
+var characters: any;
 let fullnameTextElement: TextElement;
 let moneyTextElement: TextElement;
 let bankTextElement: TextElement;
 
-// Main Menu Login Panel Function
 function menuLoginPanel()
 {
-    loginMenu = createMenu(4);
+    loginMenu = createMenu(2);
     let panel: Panel;
     let inputPanel: InputPanel;
     let textElement: TextElement;
 
-    //Warunki użytkowania - Strona 0
-    //Warunki header
-    panel = loginMenu.createPanel(0, 12, 4, 8, 1);
-    panel.MainBackgroundColor(0, 0, 0, 175);
-    panel.Header = true;
-    textElement = panel.addText("Warunki uzytkowania");
-    textElement.Color(255, 255, 255, 255);
-    textElement.Centered = true;
-    textElement.VerticalCentered = true;
-    textElement.FontScale = 0.6;
-    textElement.Font = 1;
-
-    //Warunki użytkowania tekst
-    panel = loginMenu.createPanel(0, 12, 5, 8, 7);
-    panel.MainBackgroundColor(0, 0, 0, 160);
-    textElement = panel.addText("Akceptując niniejszy kontrakt zgadzasz się z warunkami użytkowania obowiązującymi na serwerze. Pliki jakie otrzymałeś moga służyć tylko i wyłącznie do rozgrywki na serwerze V-Santos.pl manipulacja nimi jest ściśle zabroniona. Złamanie warunków kontraktu będzie skutkowało permamentną banicją konta.");
-    textElement.Color(255, 255, 255, 255);
-    textElement.FontScale = 0.4;
-    textElement.Font = 4;
-    textElement.Centered = false;
-
-    //Guzik warunków użytkowania
-    panel = loginMenu.createPanel(0, 12, 12, 8, 1);
-    panel.MainBackgroundColor(0, 0, 0, 160);
-    panel.HoverBackgroundColor(25, 25, 25, 160);
-    panel.Hoverable = true;
-    panel.Function = loginMenu.nextPage;
-    panel.Tooltip = "Zaakceptuj warunki użytkowania";
-    textElement = panel.addText("OK");
-    textElement.Color(255, 255, 255, 255);
-    textElement.HoverColor(0, 180, 255, 255);
-    textElement.Centered = true;
-    textElement.VerticalCentered = true;
-
-    //Login Screen - Strona 1
+    //Login Screen - Strona 0
     //Login Header
-    panel = loginMenu.createPanel(1, 12, 4, 8, 1);
+    panel = loginMenu.createPanel(0, 12, 4, 8, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
     panel.Header = true;
     textElement = panel.addText("Login");
@@ -69,7 +34,7 @@ function menuLoginPanel()
     textElement.Offset = 18;
 
     //Formatka logowania
-    panel = loginMenu.createPanel(1, 12, 5, 8, 7);
+    panel = loginMenu.createPanel(0, 12, 5, 8, 7);
     panel.MainBackgroundColor(0, 0, 0, 160);
     textElement = panel.addText("Twój e-mail:");
     textElement.Color(255, 255, 255, 255);
@@ -80,8 +45,10 @@ function menuLoginPanel()
     loginPassword = panel.addInput(0, 3, 8, 1);
     loginPassword.Protected = true;
 
+    //Podpowiedź odnośnie nie posiadania konta
+
     //Guzik logowania
-    panel = loginMenu.createPanel(1, 12, 12, 8, 1);
+    panel = loginMenu.createPanel(0, 12, 12, 8, 1);
     panel.MainBackgroundColor(0, 0, 0, 160);
     panel.HoverBackgroundColor(25, 25, 25, 160);
     panel.Hoverable = true;
@@ -93,9 +60,20 @@ function menuLoginPanel()
     textElement.Centered = true;
     textElement.VerticalCentered = true;
 
-    //Wybór postaci - Strona 2
+    //Wybór postaci - Strona 1
+    //Header wyboru postaci
+    panel = loginMenu.createPanel(1, 13, 4, 6, 1);
+    panel.MainBackgroundColor(0, 0, 0, 175);
+    panel.Header = true;
+    textElement = panel.addText("Wybór postaci");
+    textElement.Color(255, 255, 255, 255);
+    textElement.Centered = false;
+    textElement.VerticalCentered = true;
+    textElement.FontScale = 0.6;
+    textElement.Offset = 18;
+
     //Strzałka w lewo
-    panel = loginMenu.createPanel(2, 19, 4, 1, 1);
+    panel = loginMenu.createPanel(1, 12, 4, 1, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
     panel.Tooltip = "Wybierz poprzednią postać";
     panel.Function = decrementIndex;
@@ -110,7 +88,7 @@ function menuLoginPanel()
     textElement.HoverColor(0, 180, 255, 255);
 
     //Strzałka w prawo
-    panel = loginMenu.createPanel(2, 19, 4, 1, 1);
+    panel = loginMenu.createPanel(1, 19, 4, 1, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
     panel.Tooltip = "Wybierz następną postać";
     panel.Function = decrementIndex;
@@ -124,45 +102,28 @@ function menuLoginPanel()
     textElement.FontScale = 0.6;
     textElement.HoverColor(0, 180, 255, 255);
 
-    //Header
-    panel = loginMenu.createPanel(2, 12, 4, 7, 1);
-    panel.MainBackgroundColor(0, 0, 0, 175);
-    panel.Header = true;
-    textElement = panel.addText("Wybór postaci");
-    textElement.Color(255, 255, 255, 255);
-    textElement.Centered = false;
-    textElement.VerticalCentered = true;
-    textElement.FontScale = 0.6;
-    textElement.Offset = 18;
-
     //Wyświetlanie obecnej postaci
-    //panel = loginMenu.createPanel(2, 12, 5, 8, 7);
-    //panel.MainBackgroundColor(0, 0, 0, 160);
-    //characterIdTextElement = panel.addText("");
-    //fullnameTextElement.Color(255, 255, 255, 255);
-    //panel.addText("");
-    //fullnameTextElement = panel.addText("");
-    //fullnameTextElement.Color(255, 255, 255, 255);
-    //panel.addText("");
-    //moneyTextElement = panel.addText("");
-    //moneyTextElement.Color(255, 255, 255, 255);
-    //panel.addText("");
-    //bankTextElement = panel.addText("");
-    //bankTextElement.Color(255, 255, 255, 255);
-    //panel.addText("");
+    panel = loginMenu.createPanel(1, 12, 5, 8, 7);
+    panel.MainBackgroundColor(0, 0, 0, 160);
+    fullnameTextElement = panel.addText("");
+    fullnameTextElement.Color(255, 255, 255, 255)
+    moneyTextElement = panel.addText("");
+    moneyTextElement.Color(255, 255, 255, 255);
+    bankTextElement = panel.addText("");
+    bankTextElement.Color(255, 255, 255, 255);
 
-    ////Przycisk wyboru postaci
-    //panel = loginMenu.createPanel(2, 12, 12, 8, 1);
-    //panel.MainBackgroundColor(0, 0, 0, 160);
-    //panel.HoverBackgroundColor(25, 25, 25, 160);
-    //panel.Hoverable = true;
-    //panel.Function = selectCharacter;
-    //panel.Tooltip = "Wybierz postać";
-    //textElement = panel.addText("Wybierz postać");
-    //textElement.Color(255, 255, 255, 255);
-    //textElement.HoverColor(0, 180, 255, 255);
-    //textElement.Centered = true;
-    //textElement.VerticalCentered = true;
+    //Przycisk wyboru postaci
+    panel = loginMenu.createPanel(1, 12, 12, 8, 1);
+    panel.MainBackgroundColor(0, 0, 0, 160);
+    panel.HoverBackgroundColor(25, 25, 25, 160);
+    panel.Hoverable = true;
+    panel.Function = selectCharacter;
+    panel.Tooltip = "Wybierz postać jaką chcesz grać";
+    textElement = panel.addText("Wybierz postać");
+    textElement.Color(255, 255, 255, 255);
+    textElement.HoverColor(0, 180, 255, 255);
+    textElement.Centered = true;
+    textElement.VerticalCentered = true;
 
     loginMenu.Blur = true;
     loginMenu.DisableOverlays(true);
@@ -187,8 +148,7 @@ function attemptLogin() {
     }
 }
 
-API.onServerEventTrigger.connect(function (eventName: string, ...args: Array<any>)
-{
+API.onServerEventTrigger.connect((eventName: string, args: Array<any>) => {
     if (eventName == "ShowLoginMenu")
     {
         var loginCamera = API.createCamera(new Vector3(-1650, -1030, 50), new Vector3(0, 0, 180));
@@ -203,25 +163,17 @@ API.onServerEventTrigger.connect(function (eventName: string, ...args: Array<any
     {
         //args[0] json postaci
         createNotification(0, "Używaj strzałek, aby przewijać swoje postacie.", 3000);
-        characters = JSON.parse(args[0]);
-        loginMenu.Page = 2;
+        characters = JSON.parse(args[0].toString());
+        loginMenu.nextPage();
+        fillCharacterSelect();
     }
-    //else if (eventName == "ShowCharacterSelectCef") {
-    //    if (args[0]) {
-    //        charactersList = args[1];
-    //        CEF.load("_Clientside/Resources/Characters/index.html");
-    //    }
-    //    else {
-    //        CEF.hide();
-    //        API.setActiveCamera(null);
-    //    }
-    //}
 });
 
 function selectCharacter()
 {
     if (index >= 0 && index <= characters.length - 1) {
         API.triggerServerEvent("OnPlayerSelectedCharacter", index);
+        API.setActiveCamera(null);
     } else {
         createNotification(0, "Wybrano nieprawidłową postać!", 2000);
     }
@@ -231,10 +183,19 @@ function incrementIndex()
 {
     if (index >= characters.length - 1) return;
     index++;
+    fillCharacterSelect();
 }
 
 function decrementIndex()
 {
     if (index <= 0) return;
     index--;
+    fillCharacterSelect();
+}
+
+function fillCharacterSelect()
+{
+    fullnameTextElement.Text = characters[index]["Name"] + " " + characters[index]["Surname"];
+    moneyTextElement.Text = "Gotówka: $" + characters[index]["Money"];
+    bankTextElement.Text = "Bank: $" + characters[index]["BankMoney"];
 }

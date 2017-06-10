@@ -1,6 +1,6 @@
 var drawVehicleHUD = true;
 var drawAnimationHUD = false;
-var drawStreetHUD = true;
+var drawStreetHUD = false;
 var currentMoney = null;
 var currentSpeed = null;
 var currentMilage = null;
