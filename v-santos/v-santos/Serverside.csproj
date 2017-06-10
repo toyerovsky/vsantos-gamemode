@@ -64,9 +64,11 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -83,12 +85,14 @@
     <Compile Include="Bank\BankHelper.cs" />
     <Compile Include="Bank\Models\AtmModel.cs" />
     <Compile Include="Bank\RPBank.cs" />
+    <Compile Include="Buildings\RPBuildings.cs" />
     <Compile Include="CharacterCreator\CharacterCreator.cs" />
     <Compile Include="CharacterCreator\RPCharacterCreator.cs" />
     <Compile Include="Constant\ConstantAssemblyInfo.cs" />
     <Compile Include="Constant\ConstantItems.cs" />
     <Compile Include="Constant\ConstantMessages.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BuildingController.cs" />
     <Compile Include="Controllers\CellphoneController.cs" />
     <Compile Include="Controllers\CharacterController.cs" />
     <Compile Include="Controllers\GroupController.cs" />
@@ -133,13 +137,7 @@
     <Compile Include="Corners\Models\CornerModel.cs" />
     <Compile Include="Corners\RPCornerBots.cs" />
     <Compile Include="Corners\RPCorners.cs" />
-    <Compile Include="Database\BuildingDatabaseHelper.cs" />
-    <Compile Include="Database\CharacterDatabaseHelper.cs" />
-    <Compile Include="Database\CrimeBotDatabaseHelper.cs" />
-    <Compile Include="Database\DescriptionDatabaseHelper.cs" />
     <Compile Include="Database\ForumDatabaseHelper.cs" />
-    <Compile Include="Database\GroupDatabaseHelper.cs" />
-    <Compile Include="Database\ItemDatabaseHelper.cs" />
     <Compile Include="Database\Models\Account.cs" />
     <Compile Include="Database\Models\Ban.cs" />
     <Compile Include="Database\Models\Building.cs" />
@@ -153,10 +151,6 @@
     <Compile Include="Database\Models\Vehicle.cs" />
     <Compile Include="Database\Models\Worker.cs" />
     <Compile Include="Database\RoleplayConnection.cs" />
-    <Compile Include="Database\TelephoneContactDatabaseHelper.cs" />
-    <Compile Include="Database\TelephoneMessageDatabaseHelper.cs" />
-    <Compile Include="Database\VehicleDatabaseHelper.cs" />
-    <Compile Include="Database\WorkerDatabaseHelper.cs" />
     <Compile Include="Employer\EmployerBot.cs" />
     <Compile Include="Employer\RPEmployer.cs" />
     <Compile Include="Groups\Base\CityHall.cs" />
@@ -191,6 +185,10 @@
     <Compile Include="Migrations\201706101547035_Creator.cs" />
     <Compile Include="Migrations\201706101547035_Creator.Designer.cs">
       <DependentUpon>201706101547035_Creator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201706101758214_Buildings.cs" />
+    <Compile Include="Migrations\201706101758214_Buildings.Designer.cs">
+      <DependentUpon>201706101758214_Buildings.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Offers\Enums.cs" />
@@ -508,6 +506,9 @@
     <EmbeddedResource Include="Migrations\201706101547035_Creator.resx">
       <DependentUpon>201706101547035_Creator.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706101758214_Buildings.resx">
+      <DependentUpon>201706101758214_Buildings.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="types-gtanetwork\Declarations.d.ts" />
@@ -523,6 +524,8 @@
     <TypeScriptCompile Include="_Clientside\TypeScript\MenuBuilder.ts" />
     <TypeScriptCompile Include="_Clientside\TypeScript\LoginMenu.ts" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

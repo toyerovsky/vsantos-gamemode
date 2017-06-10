@@ -87,7 +87,7 @@ namespace Serverside.Controllers
         public static AccountController GetAccountControllerFromName(string formatname)
         {
             Client client = API.shared.getAllPlayers().FirstOrDefault(x => x.GetAccountController().CharacterController.FormatName.ToLower().Contains(formatname.ToLower()));
-            return client != null ? client.GetAccountController() : null;
+            return client?.GetAccountController();
         }
 
         public static void LoadAccount(Client sender, long userId)

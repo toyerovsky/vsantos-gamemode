@@ -24,7 +24,7 @@ namespace Serverside.WheelMenu
             APIExtensions.ConsoleOutput("[RPWheelMenu] Uruchomione pomyslnie.", ConsoleColor.DarkMagenta);
         }
 
-        private void API_onClientEventTrigger(GTANetworkServer.Client sender, string eventName, params object[] arguments)
+        private void API_onClientEventTrigger(Client sender, string eventName, params object[] arguments)
         {
             if (eventName == "RequestWheelMenu")
             {

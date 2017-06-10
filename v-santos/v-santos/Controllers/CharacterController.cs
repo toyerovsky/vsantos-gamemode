@@ -19,6 +19,7 @@ namespace Serverside.Controllers
         public long? OnDutyGroupId { get; set; }
         public Core.Description.Description Description { get; set; }
         public CharacterCreator.CharacterCreator CharacterCreator { get; set; }
+        public BuildingController CurrentBuilding { get; set; }
 
         public event DimensionChangeEventHandler OnPlayerDimensionChanged;
 

@@ -7,7 +7,6 @@ namespace Serverside.Database
     public class ForumDatabaseHelper
     {
         #region Nie patrzeć publicznie
-        //private readonly string ServerConnectionString = "server=v-santos.pl;uid=srv;pwd=WL8oTnufAAEFgoIt;database=rp;";
         private readonly string ForumConnectionString = "server=v-santos.pl;uid=srv;pwd=WL8oTnufAAEFgoIt;database=vsantos;";
         #endregion
 

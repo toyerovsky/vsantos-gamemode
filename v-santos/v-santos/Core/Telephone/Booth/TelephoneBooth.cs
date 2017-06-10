@@ -20,7 +20,7 @@ namespace Serverside.Core.Telephone.Booth
             Api = api;
             Data = data;
 
-            api.createTextLabel($"BUDKA\nNumer: {Data.Number}", new Vector3(Data.Position.Position.X, Data.Position.Position.Y, Data.Position.Position.Z + 1), 7f, 1f, true);
+            api.createTextLabel($"~y~BUDKA\n~w~Numer: {Data.Number}", new Vector3(Data.Position.Position.X, Data.Position.Position.Y, Data.Position.Position.Z + 1), 7f, 1f, true);
             ColShape = api.createCylinderColShape(Data.Position.Position, 1f, 2f);
             Marker = api.createMarker(1, Data.Position.Position, new Vector3(0, 0, 0), new Vector3(1f, 1f, 1f),
                 new Vector3(1, 1, 1), 100, 255, 0, 0);

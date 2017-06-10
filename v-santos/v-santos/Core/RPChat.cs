@@ -15,7 +15,7 @@ namespace Serverside.Core
         Do = 21,
         ServerMe = 25,
         Loud = 30,
-        OOC = 31,
+        OOC = 32,
 
         ServerDo,
         PrivateMessage,
@@ -91,6 +91,12 @@ namespace Serverside.Core
             SendMessageToNearbyPlayers(player, message, ChatMessageType.Do);
         }
 
+        [Command("ado")]
+        public void SendAdministratorDoMessage(Client player, string message)
+        {
+            API.shared.sendChatMessageToAll("~#847DB7~", $"** {message} **");
+        }
+
 
         [Command("w", "~y~UŻYJ: ~w~ /w [id] [treść]", GreedyArg = true)]
         public void SendPrivateMessageToPlayer(Client sender, int ID, string message)
@@ -135,7 +141,7 @@ namespace Serverside.Core
                 {
                     var clients = RPEntityManager.GetAccounts().Where(a => groups[groupSlot].Data.Workers
                         .Any(w => w.Character.Id.Equals(a.Value.CharacterController.Character.Id))).Select(c => c.Value.Client).ToList();
-                    SendMessageToSpecifiedPlayers(sender, clients, message, ChatMessageType.GroupOOC, groups[groupSlot].Data.Color.ToHex());
+                    SendMessageToSpecifiedPlayers(sender, clients, message, ChatMessageType.GroupOOC, $"~{groups[groupSlot].Data.Color.ToHex()}~");
                 }
                 else
                 {
@@ -147,9 +153,10 @@ namespace Serverside.Core
 
         #endregion
 
-        private static void SendMessageToSpecifiedPlayers(Client sender, List<Client> players, string message, ChatMessageType chatMessageType, string color = null)
+        public static void SendMessageToSpecifiedPlayers(Client sender, List<Client> players, string message, ChatMessageType chatMessageType, string color = "")
         {
-            message = PrepareMessage(message);
+            message = PrepareMessage(sender.name, message, chatMessageType);
+
             if (chatMessageType == ChatMessageType.GroupOOC)
             {
                 message = $"[{sender.GetAccountController().ServerId}] {sender.name}: {message}";
@@ -161,41 +168,18 @@ namespace Serverside.Core
             }
         }
 
-        public static void SendMessageToNearbyPlayers(Client player, string message, ChatMessageType chatMessageType)
+        /// <summary>
+        /// Przy czacie grupowym podajemy kolor grupy
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="message"></param>
+        /// <param name="chatMessageType"></param>
+        /// <param name="color"></param>
+        public static void SendMessageToNearbyPlayers(Client player, string message, ChatMessageType chatMessageType, string color = "")
         {
-            message = PrepareMessage(message);
-            string color = null;
-
+            message = PrepareMessage(player.name, message, chatMessageType);
             switch (chatMessageType)
             {
-                case ChatMessageType.Normal:
-                    message = $"{player.name} mówi: {message}";
-                    color = "~#FFFFFF~";
-                    break;
-                case ChatMessageType.Quiet:
-                    message = $"{player.name} szepcze: {message}";
-                    color = "~#FFFFFF~";
-                    break;
-                case ChatMessageType.Loud:
-                    message = $"{player.name} krzyczy: {message}!";
-                    color = "~#FFFFFF~";
-                    break;
-                case ChatMessageType.Me:
-                    message = $"** {player.name} {message}";
-                    color = "~#C2A2DA~";
-                    break;
-                case ChatMessageType.ServerMe:
-                    message = $"* {player.name} {message}";
-                    color = "~#C2A2DA~";
-                    break;
-                case ChatMessageType.Do:
-                    message = $"** {message} (( {player.name} )) **";
-                    color = "~#847DB7~";
-                    break;
-                case ChatMessageType.PhoneOthers:
-                    message = $"{player.name} mówi(telefon): {message}";
-                    color = "~#FFFFFF~";
-                    break;
                 case ChatMessageType.OOC:
                     message = $"(( [{player.GetAccountController().ServerId}] {player.name} {message} ))";
                     color = "~#CCCCCC~";
@@ -212,28 +196,65 @@ namespace Serverside.Core
 
         public static void SendMessageToPlayer(Client player, string message, ChatMessageType chatMessageType, Client secondPlayer = null)
         {
-            message = PrepareMessage(message);
-            string color = null;
+            message = PrepareMessage(player.name, message, chatMessageType);
+            string color = "";
 
-            if (chatMessageType == ChatMessageType.ServerInfo)
+            if (chatMessageType == ChatMessageType.PrivateMessage && secondPlayer != null)
             {
-                API.shared.sendChatMessageToPlayer(player, "~g~ [INFO] ~w~" + message);
-            }
-            else if (chatMessageType == ChatMessageType.PrivateMessage && secondPlayer != null)
-            {
-                API.shared.sendChatMessageToPlayer(player,
-                    $"~o~ [{secondPlayer.GetAccountController().ServerId}] {secondPlayer.name}: {message}");
+                message = $"~o~ [{secondPlayer.GetAccountController().ServerId}] {secondPlayer.name}: {message}";
             }
             else if (chatMessageType == ChatMessageType.Phone)
             {
                 color = "~#ffdb00~";
-                API.shared.sendChatMessageToPlayer(player, color, player.GetAccountController().CharacterController.Character.Gender ? 
-                    $"Głos z telefonu (Mężczyzna): {message}" : $"Głos z telefonu (Kobieta): {message}");
+                message = player.GetAccountController().CharacterController.Character.Gender
+                    ? $"Głos z telefonu (Mężczyzna): {message}"
+                    : $"Głos z telefonu (Kobieta): {message}";
             }
+            API.shared.sendChatMessageToPlayer(player, color, message);
         }
 
-        private static string PrepareMessage(string message)
+        private static string PrepareMessage(string name, string message, ChatMessageType chatMessageType)
         {
+            string color = string.Empty;
+            switch (chatMessageType)
+            {
+                case ChatMessageType.Normal:
+                    message = $"{name} mówi: {message}";
+                    color = "~#FFFFFF~";
+                    break;
+                case ChatMessageType.Quiet:
+                    message = $"{name} szepcze: {message}";
+                    color = "~#FFFFFF~";
+                    break;
+                case ChatMessageType.Loud:
+                    message = $"{name} krzyczy: {message}!";
+                    color = "~#FFFFFF~";
+                    break;
+                case ChatMessageType.Me:
+                    message = $"** {name} {message}";
+                    color = "~#C2A2DA~";
+                    break;
+                case ChatMessageType.ServerMe:
+                    message = $"* {name} {message}";
+                    color = "~#C2A2DA~";
+                    break;
+                case ChatMessageType.Do:
+                    message = $"** {message} (( {name} )) **";
+                    color = "~#847DB7~";
+                    break;
+                case ChatMessageType.PhoneOthers:
+                    message = $"{name} mówi(telefon): {message}";
+                    color = "~#FFFFFF~";
+                    break;
+                case ChatMessageType.ServerInfo:
+                    message = $"~g~ [INFO] ~w~ {message}";
+                    break;
+                case ChatMessageType.ServerDo:
+                    message = $"** {message} **";
+                    color = "~#847DB7~";
+                    break;
+            }
+
             if (char.IsLower(message.First()))
             {
                 message = char.ToUpper(message.First()) + message.Substring(1);
@@ -243,7 +264,7 @@ namespace Serverside.Core
             {
                 message += ".";
             }
-            return message;
+            return color + message;
         }
     }
 }

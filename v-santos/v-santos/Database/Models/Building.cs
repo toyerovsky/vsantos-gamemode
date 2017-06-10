@@ -15,14 +15,12 @@ namespace Serverside.Database.Models
 
         public ICollection<Item> Item { get; set; }
 
-        public decimal EnterCharge { get; set; }
+        public decimal? EnterCharge { get; set; }
 
-        //public Vector3 ExternalPickupPosition { get; set; }
         public float ExternalPickupPositionX { get; set; }
         public float ExternalPickupPositionY { get; set; }
         public float ExternalPickupPositionZ { get; set; }
 
-        //public Vector3 InternalPickupPosition { get; set; }
         public float InternalPickupPositionX { get; set; }
         public float InternalPickupPositionY { get; set; }
         public float InternalPickupPositionZ { get; set; }
@@ -34,10 +32,11 @@ namespace Serverside.Database.Models
         public bool HasCCTV { get; set; }
         public bool HasSafe { get; set; }
 
+
         public int InternalDimension { get; set; }
 
         public string Description { get; set; }
-        //Zamysł: Przy tworzeniu przedmiotu będzie zapisywane kto go stworzył, a jak stworzy go serwer to 0
         public long CreatorsId { get; set; }
+        public decimal? Cost { get; set; }
     }
 }

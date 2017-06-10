@@ -12,10 +12,12 @@ namespace Serverside.Core
         private static readonly SortedList<long, AccountController> Accounts = new SortedList<long, AccountController>();
         private static readonly List<VehicleController> Vehicles = new List<VehicleController>();
         private static readonly List<GroupController> Groups = new List<GroupController>();
+        private static readonly List<BuildingController> Buildings = new List<BuildingController>();
 
         public static void Init()
         {
             GroupController.LoadGroups(); //Ładuje grupy z bazy danych do zmiennej Groups
+
         }
 
         #region ACCOUNT METHODS
@@ -133,6 +135,11 @@ namespace Serverside.Core
         {
             return Groups;
         }
+        #endregion
+
+        #region BUILDINGS
+    
+
         #endregion
     }
 }

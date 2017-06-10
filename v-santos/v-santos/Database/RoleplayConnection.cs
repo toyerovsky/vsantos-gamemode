@@ -89,7 +89,7 @@ namespace Serverside.Database
             {
                 APIExtensions.ConsoleOutput("[RPCore] Błąd połączenia z bazą danych, sprawdź konfiguracje!", ConsoleColor.DarkRed);
                 APIExtensions.ConsoleOutput(aEx.Message, ConsoleColor.DarkRed);
-                API.shared.stopResource("vsantos");
+                API.shared.stopResource("v-santos");
                 //APIExtensions.ConsoleOutput(a_ex.ToString(), ConsoleColor.DarkRed);
                 //throw new Exception();
             }
