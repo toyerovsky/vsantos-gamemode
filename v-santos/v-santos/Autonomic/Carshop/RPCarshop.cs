@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using GTANetworkServer;
+using GTANetworkServer.Constant;
 using GTANetworkShared;
 using Newtonsoft.Json;
 using Serverside.Autonomic.Carshop.Models;
+using Serverside.Controllers;
+using Serverside.Core;
 using Serverside.Core.Extensions;
 using Serverside.Core.Extenstions;
 
@@ -125,10 +128,8 @@ namespace Serverside.Autonomic.Carshop
                 {
                     sender.RemoveMoney(vehicle.Cost);
                     Random r = new Random();
-                    //Co to jest
-                    //new VehicleController(new FullPosition(new Vector3(-50, -1680, 29.5), new Vector3(0, 0, 0)),
-                    //    vehicle.Name, 0, r.Next(0, 150), r.Next(0, 150), 0f, 0f);
-
+                    new VehicleController(new FullPosition(new Vector3(-50, -1680, 29.5), new Vector3(0, 0, 0)),
+                        vehicleHash, "", 0, 0, APIExtensions.GetRandomColor(), APIExtensions.GetRandomColor(), 0f, 0f, sender.GetAccountController().CharacterController.Character);
                 }
                 else
                 {

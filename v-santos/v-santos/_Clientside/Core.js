@@ -24,4 +24,7 @@ API.onServerEventTrigger.connect(function (eventName, args)
     else if (eventName === "ShowShard") {
         API.showShard(args[0], args[1]);
     }
+    else if (eventName === "ResetCamera") {
+        API.setActiveCamera(null);
+    }
 });

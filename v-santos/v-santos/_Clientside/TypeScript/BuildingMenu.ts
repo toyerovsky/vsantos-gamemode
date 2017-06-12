@@ -66,6 +66,7 @@ function showBuildingPanel(buildingInfo: System.Array<string>)
     panel.Header = true;
     panel.HoverBackgroundColor(150, 25, 25, 160);
     panel.Hoverable = true;
+    panel.Function = () => buildingMenu.killMenu();
     textElement = panel.addText("X");
     textElement.Color(255, 255, 255, 255);
     textElement.Centered = true;
@@ -105,4 +106,6 @@ function showBuildingPanel(buildingInfo: System.Array<string>)
         textElement.Centered = true;
         textElement.VerticalCentered = true;
     }
+
+    buildingMenu.Ready = true;
 }

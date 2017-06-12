@@ -78,9 +78,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Admin\AdminGroups.cs" />
-    <Compile Include="Admin\AdminTeleport.cs" />
+    <Compile Include="Admin\AdminCore.cs" />
     <Compile Include="Autonomic\Carshop\Models\CarshopVehicle.cs" />
     <Compile Include="Autonomic\Carshop\RPCarshop.cs" />
+    <Compile Include="Autonomic\Market\Models\Market.cs" />
+    <Compile Include="Autonomic\Market\Models\MarketItem.cs" />
+    <Compile Include="Autonomic\Market\RPMarket.cs" />
     <Compile Include="Bank\Atm.cs" />
     <Compile Include="Bank\BankHelper.cs" />
     <Compile Include="Bank\Models\AtmModel.cs" />
@@ -120,6 +123,7 @@
     <Compile Include="Core\RPChat.cs" />
     <Compile Include="Core\RPCore.cs" />
     <Compile Include="Core\RPEntityManager.cs" />
+    <Compile Include="Core\RPScoreBoard.cs" />
     <Compile Include="Core\Telephone\Booth\RPTelephoneBooth.cs" />
     <Compile Include="Core\Telephone\Booth\TelephoneBooth.cs" />
     <Compile Include="Core\Telephone\Booth\Models\TelephoneBoothModel.cs" />
@@ -227,6 +231,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Constant\Files\dict.txt" />
+    <Content Include="_Clientside\MarketMenu.js" />
     <Content Include="meta.xml" />
     <Content Include="_Clientside\Animations.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -524,12 +529,11 @@
     <TypeScriptCompile Include="_Clientside\TypeScript\BuildingMenu.ts" />
     <TypeScriptCompile Include="_Clientside\TypeScript\MenuBuilder.ts" />
     <TypeScriptCompile Include="_Clientside\TypeScript\LoginMenu.ts" />
+    <TypeScriptCompile Include="_Clientside\TypeScript\Scoreboard.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Structs\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

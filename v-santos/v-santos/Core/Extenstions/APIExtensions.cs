@@ -39,6 +39,12 @@ namespace Serverside.Core.Extensions
             return "RGBA(" + c.red.ToString() + "," + c.green.ToString() + "," + c.blue.ToString() + "," + c.alpha.ToString() + ")";
         }
 
+        public static Color GetRandomColor()
+        {
+            Random r = new Random();
+            return new Color(r.Next(256), r.Next(256), r.Next(256), r.Next(256));
+        }
+
         public static Color ToColor(this string hex)
         {
             if (hex.StartsWith("#"))

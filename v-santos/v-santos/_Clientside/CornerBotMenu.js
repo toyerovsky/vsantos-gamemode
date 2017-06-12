@@ -59,6 +59,7 @@ API.onServerEventTrigger.connect(function (eventName, args) {
                 costResult = API.getUserInput("Cena", 4);
                 if (costResult.trim() == "" || isNaN(costResult)) {
                     API.sendNotification("Wprowadzono nieporawny koszt.");
+                    costResult = null;
                 }
             }
             else if (index == 4) {
