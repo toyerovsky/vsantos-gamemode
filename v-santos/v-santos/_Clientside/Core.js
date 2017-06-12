@@ -1,6 +1,3 @@
-var resX = API.getScreenResolutionMantainRatio().Width;
-var resY = API.getScreenResolutionMantainRatio().Height;
-
 API.onKeyDown.connect(function (sender, e)
 {
     if (e.KeyCode === Keys.F12)

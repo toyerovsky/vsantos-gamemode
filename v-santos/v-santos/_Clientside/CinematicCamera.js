@@ -8,13 +8,17 @@ var resX = API.getScreenResolutionMantainRatio().Width;
 var resY = API.getScreenResolutionMantainRatio().Height;
 var currentCamera = null;
 var markersHidden = false;
+var directorModeToggle = false;
 
-// stuyk
+API.onClientEventTrigger.connect(function (eventName, args)
+{
+    if (eventName == "ToggleHud") directorMode = !directorMode;
+});
 
-API.onKeyDown.connect(function(player, e) {
-	if (API.isChatOpen()) {
-		return;
-	}
+
+API.onKeyDown.connect(function (player, e)
+{
+    if (API.isChatOpen() || !directorModeToggle) return;
 	
 	// Toggle Director Mode / On & Off
 	if (e.KeyCode == Keys.F12) {
@@ -232,7 +236,7 @@ API.onUpdate.connect(function() {
 	}
 	
 	// From Top to Bottom
-	API.drawText("~g~Tryb re?yserski", 27, resY - 465, 0.6, 50, 211, 82, 255, 1, 0, true, true, 0);
+	API.drawText("~g~Tryb re¿yserski", 27, resY - 465, 0.6, 50, 211, 82, 255, 1, 0, true, true, 0);
 	API.drawText("~y~F11 - Animuj kamery", 27, resY - 425, 0.5, 50, 211, 82, 255, 4, 0, true, true, 0);
 	API.drawText("~b~Znaczniki ukryte: ~w~" + markersHidden, 27, resY - 390, 0.5, 50, 211, 82, 255, 4, 0, true, true, 0);
 	
@@ -240,9 +244,9 @@ API.onUpdate.connect(function() {
 		API.drawText("~y~Dystans widzenia: ~w~" + API.getCameraFov(API.getActiveCamera()), 27, resY - 355, 0.5, 50, 211, 82, 255, 4, 0, true, true, 0);
 	}
 	
-	API.drawText("~o~Pr?dko??: ~w~" + defaultSpeed, 27, resY - 320, 0.5, 50, 211, 82, 255, 4, 0, true, true, 0);
+	API.drawText("~o~Prêdkoœæ: ~w~" + defaultSpeed, 27, resY - 320, 0.5, 50, 211, 82, 255, 4, 0, true, true, 0);
 	API.drawText("~g~Obecnie: ~w~" + currentCamera, 27, resY - 285, 0.5, 50, 211, 82, 255, 4, 0, true, true, 0);
-	API.drawText("~b~Ilo?? kamer: ~w~" + activeCameras.length, 27, resY - 250, 0.5, 50, 211, 82, 255, 4, 0, true, true, 0);
+	API.drawText("~b~Iloœæ kamer: ~w~" + activeCameras.length, 27, resY - 250, 0.5, 50, 211, 82, 255, 4, 0, true, true, 0);
 });
 
 // stuyk
@@ -341,7 +345,7 @@ function cameraAnimateAllPoints()
 		API.sleep(defaultSpeed);
 		i++;
 	}
-	API.sendNotification("Droga zako?czona.");
+	API.sendNotification("Droga zakoñczona.");
 	
 	for (i = 0; i < activeCameraMarkers.length; i++) {
 		API.setMarkerColor(activeCameraMarkers[i], 50, 0, 0, 255);

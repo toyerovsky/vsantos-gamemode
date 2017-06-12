@@ -16,7 +16,6 @@ namespace Serverside.Controllers
         public ColShape InteriorDoorsColshape { get; set; }
         public ColShape ExteriorDoorsColshape { get; set; }
         public Marker BuildingMarker { get; set; }
-        public TextLabel BuildingLabel { get; set; }
 
         public List<Client> PlayersInBuilding { get; set; } = new List<Client>();
         public bool DoorsLocked { get; set; } = true;
@@ -27,8 +26,6 @@ namespace Serverside.Controllers
             BuildingData = data;
             Initialize();
         }
-
-        
 
         //Tworzenie nowego budynku
         public BuildingController(long creatorId, float internalX, float internalY, float internalZ, float externalX, float externalY, float externalZ, decimal cost, int internalDimension, Character character = null, Group group = null)
@@ -68,15 +65,19 @@ namespace Serverside.Controllers
 
             ExteriorDoorsColshape = API.shared.createCylinderColShape(externalPosition, 5, 5);
             ExteriorDoorsColshape.dimension = BuildingData.InternalDimension;
+
+            //Jeśli budynek jest na sprzedaż marker jest zielony jeśli nie żółty
+            
             BuildingMarker = API.shared.createMarker(2, externalPosition, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f),
-                new Vector3(1f, 1f, 1f), 255, 100, 100, 100);
+                new Vector3(1f, 1f, 1f), 255, BuildingData.Cost.HasValue ? 0 : 255, 255, 0);
 
             InteriorDoorsColshape.onEntityEnterColShape += (s, e) =>
             {
                 if (API.shared.getEntityType(e).Equals(EntityType.Player))
                 {
                     var player = API.shared.getPlayerFromHandle(e);
-                    //args[0] jako true rysuje panel informacji
+                    //args[0] jako true określa że gracz jest na zewnątrz budynku
+                    //args[1] to informacje o budynku
                     player.triggerEvent("DrawBuildingComponents", false);
                     player.SetData("CurrentDoors", this);
 
@@ -100,11 +101,18 @@ namespace Serverside.Controllers
 
             ExteriorDoorsColshape.onEntityEnterColShape += (s, e) =>
             {
+                //Jeśli podchodzi od zewnątrz rysujemy panel informacji
                 if (API.shared.getEntityType(e).Equals(EntityType.Player))
                 {
                     var player = API.shared.getPlayerFromHandle(e);
                     //args[0] jako true rysuje panel informacji
-                    player.triggerEvent("DrawBuildingComponents", true);
+                    player.triggerEvent("DrawBuildingComponents", true, new List<string>
+                    {
+                        this.BuildingData.Name,
+                        this.BuildingData.Description,
+                        this.BuildingData.EnterCharge.HasValue ? BuildingData.EnterCharge.ToString() : "",
+                        this.BuildingData.Cost.HasValue ? BuildingData.Cost.ToString() : ""
+                    });
                     player.SetData("CurrentDoors", this);
                     player.SetSyncedData("DoorsTarget", new Vector3(BuildingData.InternalPickupPositionX, BuildingData.InternalPickupPositionY, BuildingData.InternalPickupPositionZ));
                 }
@@ -120,11 +128,6 @@ namespace Serverside.Controllers
                     player.ResetSyncedData("DoorsTarget");
                 }
             };
-
-            if (BuildingData.Cost.HasValue)
-            {
-                BuildingLabel = API.shared.createTextLabel($"~g~NA SPRZEDAŻ\n~w~Cena: {BuildingData.Cost.Value}\n(( /kup ))", new Vector3(BuildingData.ExternalPickupPositionX, BuildingData.ExternalPickupPositionY, BuildingData.ExternalPickupPositionZ + 5), 10f, 1f, true);
-            }
         }
 
         public void Buy(Client sender)
@@ -141,13 +144,14 @@ namespace Serverside.Controllers
                 return;
             }
 
-            API.shared.deleteEntity(BuildingLabel);
-            BuildingLabel = null;
+            BuildingMarker.color = new GTANetworkServer.Constant.Color(255, 255, 0);
 
             sender.RemoveMoney(BuildingData.Cost.Value);
             sender.triggerEvent("ShowShard", "Zakupiono budynek", 5000);
-            API.shared.playSoundFrontEnd(sender, "BASE_JUMP_PASSED", "HUD_AWARDS ");
+            API.shared.playSoundFrontEnd(sender, "BASE_JUMP_PASSED", "HUD_AWARDS");
+
             BuildingData.Character = sender.GetAccountController().CharacterController.Character;
+            BuildingData.Cost = null;
             Save();
         }
 
@@ -169,6 +173,15 @@ namespace Serverside.Controllers
                 return;
             }
 
+            if (controller.BuildingData.EnterCharge.HasValue &&
+                !player.HasMoney(controller.BuildingData.EnterCharge.Value))
+            {
+                player.Notify("Nie posiadasz wystarczającej ilości gotówki");
+                return;
+            }
+
+            if (controller.BuildingData.EnterCharge.HasValue) player.RemoveMoney(controller.BuildingData.EnterCharge.Value);
+
             if (controller.PlayersInBuilding.Contains(player))
             {
                 player.position = (Vector3)player.GetSyncedData("DoorsTarget");
@@ -183,8 +196,7 @@ namespace Serverside.Controllers
                 player.dimension = ((BuildingController) player.GetData("CurrentDoors")).InteriorDoorsColshape
                     .dimension;
                 controller.PlayersInBuilding.Add(player);
-                player.GetAccountController().CharacterController.CurrentBuilding =
-                    (BuildingController) player.GetData("CurrentDoors");
+                player.GetAccountController().CharacterController.CurrentBuilding = player.GetData("CurrentDoors");
             }
         }
 
@@ -200,7 +212,6 @@ namespace Serverside.Controllers
             API.shared.deleteColShape(InteriorDoorsColshape);
             API.shared.deleteColShape(ExteriorDoorsColshape);
             API.shared.deleteEntity(BuildingMarker);
-            if (BuildingMarker != null) API.shared.deleteEntity(BuildingLabel);
         }
     }
 }

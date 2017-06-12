@@ -234,7 +234,6 @@
     <Content Include="_Clientside\Atm.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="_Clientside\Buildings.js" />
     <Content Include="_Clientside\BwGui.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -522,11 +521,15 @@
     <TypeScriptCompile Include="types-gtanetwork\System.d.ts" />
     <TypeScriptCompile Include="types-gtanetwork\System.Drawing.dll.d.ts" />
     <TypeScriptCompile Include="types-gtanetwork\Xilium.CefGlue.dll.d.ts" />
+    <TypeScriptCompile Include="_Clientside\TypeScript\BuildingMenu.ts" />
     <TypeScriptCompile Include="_Clientside\TypeScript\MenuBuilder.ts" />
     <TypeScriptCompile Include="_Clientside\TypeScript\LoginMenu.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Structs\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

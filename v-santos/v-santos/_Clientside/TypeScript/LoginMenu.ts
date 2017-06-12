@@ -13,7 +13,7 @@ var characters: any[];
 let fullnameTextElement: TextElement;
 let moneyTextElement: TextElement;
 let bankTextElement: TextElement;
-
+let selectFlag: boolean = false;
 
 function menuLoginPanel()
 {
@@ -26,9 +26,9 @@ function menuLoginPanel()
     panel = loginMenu.createPanel(0, 12, 4, 8, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
     panel.Header = true;
-    textElement = panel.addText("Login");
+    textElement = panel.addText("V-Santos - Login");
     textElement.Color(255, 255, 255, 255);
-    textElement.Centered = false;
+    textElement.Centered = true;
     textElement.VerticalCentered = true;
     textElement.FontScale = 0.6;
     textElement.Offset = 18;
@@ -65,9 +65,9 @@ function menuLoginPanel()
     panel = loginMenu.createPanel(1, 13, 4, 6, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
     panel.Header = true;
-    textElement = panel.addText("Wybór postaci");
+    textElement = panel.addText("V-Santos - Wybór postaci");
     textElement.Color(255, 255, 255, 255);
-    textElement.Centered = false;
+    textElement.Centered = true;
     textElement.VerticalCentered = true;
     textElement.FontScale = 0.6;
     textElement.Offset = 18;
@@ -105,12 +105,16 @@ function menuLoginPanel()
     //Wyświetlanie obecnej postaci
     panel = loginMenu.createPanel(1, 12, 5, 8, 7);
     panel.MainBackgroundColor(0, 0, 0, 160);
+    panel.addText("");
     fullnameTextElement = panel.addText("");
-    fullnameTextElement.Color(255, 255, 255, 255)
+    fullnameTextElement.Color(255, 255, 255, 255);
+    fullnameTextElement.Centered = true;
     moneyTextElement = panel.addText("");
     moneyTextElement.Color(255, 255, 255, 255);
+    moneyTextElement.Centered = true;
     bankTextElement = panel.addText("");
     bankTextElement.Color(255, 255, 255, 255);
+    bankTextElement.Centered = true;
 
     //Przycisk wyboru postaci
     panel = loginMenu.createPanel(1, 12, 12, 8, 1);
@@ -130,18 +134,23 @@ function menuLoginPanel()
     loginMenu.Ready = true;
 }
 
-function attemptLogin() {
+function attemptLogin()
+{
     let user = loginUsername.Input;
     let pass = loginPassword.Input;
-    if (user.length < 5) {
+    if (user.length < 5)
+    {
         loginUsername.isError = true;
         return;
     }
     loginUsername.isError = false;
-    if (pass.length < 5) {
+    if (pass.length < 5)
+    {
         loginPassword.isError = true;
         return;
-    } else {
+    }
+    else
+    {
         loginPassword.isError = false;
         API.triggerServerEvent("OnPlayerEnteredLoginData", user, pass);
         return;
@@ -164,18 +173,41 @@ API.onServerEventTrigger.connect((eventName: string, args: System.Array<any>) =>
         //args[0] json postaci
         createNotification(0, "Używaj strzałek, aby przewijać swoje postacie.", 3000);
         characters = JSON.parse(args[0].toString());
-        loginMenu.nextPage();
         fillCharacterSelect();
+        loginMenu.nextPage();
+        selectFlag = true;
+    }
+});
+
+API.onKeyDown.connect((sender: any, e: System.Windows.Forms.KeyEventArgs) =>
+{
+    if (e.KeyCode == Keys.Left && selectFlag)
+    {
+        decrementIndex();    
+    }
+    else if (e.KeyCode == Keys.Right && selectFlag)
+    {
+        incrementIndex();
+    }
+    else if (e.KeyCode == Keys.Enter && selectFlag)
+    {
+        selectCharacter();
     }
 });
 
 function selectCharacter()
 {
-    if (index >= 0 && index <= characters.length - 1) {
+    if (index >= 0 && index <= characters.length - 1)
+    {
         API.triggerServerEvent("OnPlayerSelectedCharacter", index);
+        loginMenu.Blur = false;
+        loginMenu.DisableOverlays(false);
         loginMenu.killMenu();
+        selectFlag = false;
         API.setActiveCamera(null);
-    } else {
+    }
+    else
+    {
         createNotification(0, "Wybrano nieprawidłową postać!", 2000);
     }
 }
