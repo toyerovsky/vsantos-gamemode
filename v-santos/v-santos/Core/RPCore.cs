@@ -28,7 +28,7 @@ namespace Serverside.Core
             //API.getSetting<string>("database_server"), API.getSetting<string>("database_user"), API.getSetting<string>("database_password"), API.getSetting<string>("database_database")
             ContextFactory.SetConnectionParameters("v-santos.pl", "srv", "WL8oTnufAAEFgoIt", "rp"); // NIE WYMAGANE
             RPEntityManager.Init();
-            //ContextFactory.Instance.SaveChanges();
+            ContextFactory.Instance.SaveChanges();
         }
         private void API_onResourceStop()
         {
@@ -41,7 +41,7 @@ namespace Serverside.Core
                     ac.CharacterController.Character.Online = false;
 
                     //Zmiana w przedmiocie pola CurrentlyInUse na false
-                    foreach (var i in ac.CharacterController.Character.Item.Where(i => i.CurrentlyInUse == true).ToList())
+                    foreach (var i in ac.CharacterController.Character.Items.Where(i => i.CurrentlyInUse == true).ToList())
                     {
                         i.CurrentlyInUse = false;
                     }
@@ -105,7 +105,7 @@ namespace Serverside.Core
         {
             if (bool.Parse(toggle))
             {
-                List<Database.Models.Vehicle> v = sender.GetAccountController().CharacterController.Character.Vehicle.ToList();
+                List<Database.Models.Vehicle> v = sender.GetAccountController().CharacterController.Character.Vehicles.ToList();
                 foreach (Database.Models.Vehicle veh in v)
                 {
                     API.shared.consoleOutput(GTANetworkServer.Constant.LogCat.Debug, veh.VehicleHash.ToString() + " | " + veh.NumberPlate + " | " + veh.Milage.ToString());
@@ -132,7 +132,7 @@ namespace Serverside.Core
         public static void LoadVehicle(Client sender, string id)
         {
             AccountController ac = sender.GetAccountController();
-            new VehicleController(ac.CharacterController.Character.Vehicle.Where(x => x.Id == int.Parse(id)).First());
+            new VehicleController(ac.CharacterController.Character.Vehicles.Where(x => x.Id == int.Parse(id)).First());
         }
 
         [Command("savevc", GreedyArg = true, SensitiveInfo = true)]
@@ -151,7 +151,7 @@ namespace Serverside.Core
             AccountController ac = sender.GetAccountController();
             Vehicle veh = API.shared.getEntityFromHandle<Vehicle>(API.shared.getPlayerVehicle(sender));
             VehicleController vc = veh.getData("VehicleController");
-            if (vc != null && vc.VehicleData == ac.CharacterController.Character.Vehicle)
+            if (vc != null && vc.VehicleData == ac.CharacterController.Character.Vehicles)
                 vc.Dispose();
         }
         #endregion

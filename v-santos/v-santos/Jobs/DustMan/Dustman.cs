@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using GTANetworkServer;
 using GTANetworkShared;
 using Serverside.Controllers;
 using Serverside.Core.Extensions;
-using Serverside.Core.Login;
 using Serverside.Jobs.DustMan;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Serverside.Jobs.Dustman
 {
@@ -47,22 +47,22 @@ namespace Serverside.Jobs.Dustman
         public Dustman(VehicleController vehicle)
         {
             Controller = vehicle;
-            RPLogin.OnPlayerLogin += RPLogin_OnPlayerLogin;
+            AccountController.OnPlayerCharacterLogin += RPLogin_OnPlayerLogin;
         }
 
-        private void RPLogin_OnPlayerLogin(AccountController player)
+        private void RPLogin_OnPlayerLogin(Client sender, AccountController account)
         {
             //Tutaj na wypadek jak gracz dostanie kicka to żeby miał nadal ten sam postęp.
             //&& player.Editor.LastLoginTime.HasValue && player.Editor.LastLoginTime.Value.Minute.CompareTo(DateTime.Now.Minute) < 30
-            if (Workers.Any(w => w.Player.AccountId == player.AccountId))
+            if (Workers.Any(w => w.Player.AccountId == account.AccountId))
             {
-                player.Client.Notify("Zostałeś rozłączony z serwerem, zadbaliśmy aby zapisać postępy...");
-                player.Client.Notify("twojej pracy.");
+                sender.Notify("Zostałeś rozłączony z serwerem, zadbaliśmy aby zapisać postępy...");
+                sender.Notify("twojej pracy.");
 
                 //var point = Workers.Single(p => p.Player.GetAccountController().CharacterController.Character.Id == player.CharacterController.Character.Id).GetLastPoint();
 
-                Workers.Remove(Workers.Single(p => p.Player.CharacterController.Character.Id == player.CharacterController.Character.Id));
-                var worker = new DustmanWorker(player, Controller.Vehicle);
+                Workers.Remove(Workers.Single(p => p.Player.CharacterController.Character.Id == account.CharacterController.Character.Id));
+                var worker = new DustmanWorker(account, Controller.Vehicle);
                 Workers.Add(worker);
             }
         }

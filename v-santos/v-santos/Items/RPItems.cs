@@ -60,7 +60,7 @@ namespace Serverside.Items
                 var player = sender.GetAccountController();
                 int index = Convert.ToInt32(API.getEntityData(sender, "SelectedItem"));
 
-                List<Database.Models.Item> userItems = player.CharacterController.Character.Item.ToList();
+                List<Database.Models.Item> userItems = player.CharacterController.Character.Items.ToList();
 
                 Item item = CreateItem(userItems[index]);
                 item.UseItem(player);
@@ -70,7 +70,7 @@ namespace Serverside.Items
                 var player = sender.GetAccountController();
 
                 int index = Convert.ToInt32(API.getEntityData(sender, "SelectedItem"));
-                List<Database.Models.Item> userItems = player.CharacterController.Character.Item.ToList();
+                List<Database.Models.Item> userItems = player.CharacterController.Character.Items.ToList();
 
                 Item item = CreateItem(userItems[index]);
                 RPChat.SendMessageToPlayer(sender, item.ItemInfo, ChatMessageType.ServerInfo);
@@ -81,7 +81,7 @@ namespace Serverside.Items
                 var player = sender.GetAccountController();
 
                 int index = Convert.ToInt32(API.getEntityData(sender, "SelectedItem"));
-                List<Database.Models.Item> userItems = player.CharacterController.Character.Item.ToList();
+                List<Database.Models.Item> userItems = player.CharacterController.Character.Items.ToList();
 
                 Item item = CreateItem(userItems[index]);
                 RPChat.SendMessageToPlayer(sender, item.UseInfo, ChatMessageType.ServerInfo);
@@ -90,7 +90,7 @@ namespace Serverside.Items
             else if (eventName == "BackToItemList")
             {
                 var player = sender.GetAccountController();
-                string itemsJson = JsonConvert.SerializeObject(player.CharacterController.Character.Item.ToList());
+                string itemsJson = JsonConvert.SerializeObject(player.CharacterController.Character.Items.ToList());
                 API.triggerClientEvent(sender, "ShowItems", itemsJson);
             }
             //args[0] to numer na jaki dzwoni
@@ -99,7 +99,7 @@ namespace Serverside.Items
                 var player = sender.GetAccountController();
 
                 if (Convert.ToInt32(args[0]) == 555 && player.CharacterController.OnDutyGroupId.HasValue &&
-                    player.CharacterController.Character.Worker.First(x => x.Group.Id == player.CharacterController.OnDutyGroupId).Group.GroupType == GroupType.CrimeGroup)
+                    player.CharacterController.Character.Workers.First(x => x.Group.Id == player.CharacterController.OnDutyGroupId).Group.GroupType == GroupType.CrimeGroup)
                 {
                     //CrimeGroup group =
                     //    RPGroups.Groups.Single(g => g.Id == player.CharacterController.OnDutyGroupId.Value) as
@@ -207,7 +207,7 @@ namespace Serverside.Items
             //args[0] to numer kontaktu args[1] to nazwa 
             else if (eventName == "OnPlayerTelephoneContactAdded")
             {
-                if (!sender.GetAccountController().CharacterController.Character.Item
+                if (!sender.GetAccountController().CharacterController.Character.Items
                     .Any(i => i.ItemType == (int)ItemType.Cellphone && i.CurrentlyInUse.HasValue &&
                               i.CurrentlyInUse.Value))
                 {
@@ -222,7 +222,7 @@ namespace Serverside.Items
                 {
                     Name = name,
                     Number = number,
-                    Id = sender.GetAccountController().CharacterController.Character.Item
+                    Id = sender.GetAccountController().CharacterController.Character.Items
                         .Single(i => i.ItemType == (int)ItemType.Cellphone && i.CurrentlyInUse.HasValue &&
                                      i.CurrentlyInUse.Value).Id
                 };
@@ -237,7 +237,7 @@ namespace Serverside.Items
         [Command("p")]
         public void ShowItemsList(Client sender)
         {
-            API.triggerClientEvent(sender, "ShowItems", JsonConvert.SerializeObject(sender.GetAccountController().CharacterController.Character.Item.ToList()));
+            API.triggerClientEvent(sender, "ShowItems", JsonConvert.SerializeObject(sender.GetAccountController().CharacterController.Character.Items.ToList()));
         }
         #endregion
     }

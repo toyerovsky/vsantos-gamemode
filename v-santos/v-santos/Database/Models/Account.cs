@@ -9,6 +9,9 @@ namespace Serverside.Database.Models
     {
         [Key]
         public int Id { get; set; }
+        [StringLength(50)]
+        public string Name { get; set; }
+        [Index("IX_UserId", IsUnique = true)]
         public long UserId { get; set; }
         [EmailAddress]
         [StringLength(50)]
@@ -23,7 +26,7 @@ namespace Serverside.Database.Models
         public bool Online { get; set; }
         [DataType(DataType.DateTime)]
         public DateTime LastLogin { get; set; }
-        public virtual ICollection<Character> Character { get; set; }
-        public virtual ICollection<Ban> Ban { get; set; }
+        public virtual ICollection<Character> Characters { get; set; }
+        public virtual ICollection<Ban> Bans { get; set; }
     }
 }

@@ -103,7 +103,7 @@ namespace Serverside.Corners
             else if (BotHandle.hasData("TransactionLevel") && BotHandle.getData("TransactionLevel") == 1 && e.Player == Seller.Client && (e.ChatMessageType == ChatMessageType.Normal || e.ChatMessageType == ChatMessageType.Quiet || e.ChatMessageType == ChatMessageType.Loud) && (e.Message.Contains(MoneyCount.ToString(CultureInfo.InvariantCulture)) || LowerMoneyCounts.Any(Convert.ToDecimal(e.Message).Equals)))
             {
                 //Sprawdzamy czy gracz posiada dany narkotyk
-                if (Seller.CharacterController.Character.Item.Any(i => i.ItemType == (int)ItemType.Drug && i.FirstParameter == (int)DrugType))
+                if (Seller.CharacterController.Character.Items.Any(i => i.ItemType == (int)ItemType.Drug && i.FirstParameter == (int)DrugType))
                 {
                     EndTransaction(LowerMoneyCounts.Any(Convert.ToDecimal(e.Message).Equals) ? LowerMoneyCounts.First(Convert.ToDecimal(e.Message).Equals) : MoneyCount);
                 }
@@ -119,7 +119,7 @@ namespace Serverside.Corners
             {
                 //Jeśli gracz zgodzi się na cenę bota
                 //Sprawdzamy czy gracz posiada dany narkotyk
-                if (Seller.CharacterController.Character.Item.Any(i => i.ItemType == (int)ItemType.Drug && i.FirstParameter == (int)DrugType))
+                if (Seller.CharacterController.Character.Items.Any(i => i.ItemType == (int)ItemType.Drug && i.FirstParameter == (int)DrugType))
                 {
                     if (!e.Message.All(char.IsDigit)) EndTransaction(MoneyCount);
                     else EndTransaction(LowerMoneyCounts.Any(Convert.ToDecimal(e.Message).Equals) ? LowerMoneyCounts.First(Convert.ToDecimal(e.Message).Equals) : MoneyCount);
@@ -150,8 +150,8 @@ namespace Serverside.Corners
             SendMessageToNerbyPlayers("wystawia dyskretnie dłoń z gotówką i odbiera narkotyk.", ChatMessageType.Me);
             SendMessageToNerbyPlayers(GoodFarewell, ChatMessageType.Normal);
 
-            Seller.CharacterController.Character.Item.Remove(
-                Seller.CharacterController.Character.Item.First(x => x.ItemType == (int)ItemType.Drug && x.FirstParameter == (int) DrugType));
+            Seller.CharacterController.Character.Items.Remove(
+                Seller.CharacterController.Character.Items.First(x => x.ItemType == (int)ItemType.Drug && x.FirstParameter == (int) DrugType));
             Seller.CharacterController.Save();
             Seller.Client.AddMoney(money);
 

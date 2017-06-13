@@ -10,7 +10,7 @@ namespace Serverside.Database
         private readonly string ForumConnectionString = "server=v-santos.pl;uid=srv;pwd=WL8oTnufAAEFgoIt;database=vsantos;";
         #endregion
 
-        public Tuple<long, short, string> CheckPasswordMatch(string email, string password)
+        public Tuple<long, string, short, string> CheckPasswordMatch(string email, string password)
         {
             if (UserExist(email))
             {
@@ -20,7 +20,7 @@ namespace Serverside.Database
                     connection.Open();
                     command.Connection = connection;
                     command.CommandType = CommandType.Text;
-                    command.CommandText = "SELECT member_id, members_pass_hash, members_pass_salt, member_group_id, mgroup_others FROM core_members WHERE email = @P0";
+                    command.CommandText = "SELECT member_id, name, members_pass_hash, members_pass_salt, member_group_id, mgroup_others FROM core_members WHERE email = @P0";
 
                     command.Parameters.Add(new MySqlParameter("@P0", email));
 
@@ -31,25 +31,26 @@ namespace Serverside.Database
                             if (reader.Read())
                             {
                                 var id = reader.GetInt64(0);
-                                var hash = reader.GetString(1);
-                                var salt = reader.GetString(2);
-                                var groupid = reader.GetInt16(3);
-                                var othergroups = reader.GetString(4);
+                                var name = reader.GetString(1);
+                                var hash = reader.GetString(2);
+                                var salt = reader.GetString(3);
+                                var groupid = reader.GetInt16(4);
+                                var othergroups = reader.GetString(5);
                                 if (hash != "" && salt != "")
                                 {
 
                                     if (hash.Equals(GenerateIpbHash(password, salt)))
                                     {
-                                        return Tuple.Create(id, groupid, othergroups);
+                                        return Tuple.Create(id, name, groupid, othergroups);
                                     }
                                     else
                                     {
-                                        return Tuple.Create(long.Parse("-1"), short.Parse("-1"), "");
+                                        return Tuple.Create(long.Parse("-1"), "", short.Parse("-1"), "");
                                     }
 
                                 }
                             }
-                            return Tuple.Create(long.Parse("-1"), short.Parse("-1"), "");
+                            return Tuple.Create(long.Parse("-1"), "", short.Parse("-1"), "");
                         }
                         catch (Exception ex)
                         {
@@ -63,7 +64,7 @@ namespace Serverside.Database
                     }
                 }
             }
-            return Tuple.Create(long.Parse("-1"), short.Parse("-1"), "");
+            return Tuple.Create(long.Parse("-1"), "", short.Parse("-1"), "");
             //return 1; DEBUG !
         }
 

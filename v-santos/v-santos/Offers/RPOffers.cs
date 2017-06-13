@@ -107,7 +107,7 @@ namespace Serverside.Offers
                         return;
                     }
 
-                    var items = sender.GetAccountController().CharacterController.Character.Item.ToList();
+                    var items = sender.GetAccountController().CharacterController.Character.Items.ToList();
 
                     //Tutaj sprawdzamy czy gracz posiada taki numer na liście. Numerujemy od 0 więc items.Count - 1
                     if (itemIndex > items.Count - 1)

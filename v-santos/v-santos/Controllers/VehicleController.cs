@@ -45,7 +45,7 @@ namespace Serverside.Controllers
             float engineMultipier = 0f;
             float torqueMultipier = 0f;
 
-            foreach (var tuning in VehicleData.Tuning)
+            foreach (var tuning in VehicleData.Tunings)
             {
                 if ((ItemType)tuning.ItemType == ItemType.Tuning)
                 {
@@ -95,7 +95,7 @@ namespace Serverside.Controllers
                 SecondaryColor = secondaryColor.ToHex(),
                 EnginePowerMultipler = enginePowerMultiplier,
                 EngineTorqueMultipler = engineTorqueMultiplier,
-                Tuning = new List<Database.Models.Item>(),
+                Tunings = new List<Database.Models.Item>(),
             };
                
             Initialize();
@@ -150,7 +150,7 @@ namespace Serverside.Controllers
                 SecondaryColor = secondaryColor.ToHex(),
                 EnginePowerMultipler = enginePowerMultiplier,
                 EngineTorqueMultipler = engineTorqueMultiplier,
-                Tuning = new List<Database.Models.Item>(),
+                Tunings = new List<Database.Models.Item>(),
             };
 
             Initialize();
@@ -193,12 +193,12 @@ namespace Serverside.Controllers
 
         public static Vehicle GetVehicleData(CharacterController cc, long id)
         {
-            return cc?.Character.Vehicle.Single(x => x.Id == id);
+            return cc?.Character.Vehicles.Single(x => x.Id == id);
         }
 
         public static List<Vehicle> GetVehiclesData(CharacterController cc)
         {
-            return cc.Character.Vehicle.ToList();
+            return cc.Character.Vehicles.ToList();
         }
 
         //Pojazdy z prac nie są trzymane w bazie danych

@@ -8,9 +8,9 @@ namespace Serverside.Database.Models
     {
         public Character()
         {
-            Vehicle = new List<Vehicle>();
-            Item = new List<Item>();
-            Building = new List<Building>();
+            Vehicles = new List<Vehicle>();
+            Items = new List<Item>();
+            Buildings = new List<Building>();
         }
 
         [Key]
@@ -27,11 +27,11 @@ namespace Serverside.Database.Models
         public int Model { get; set; }
         public string ModelName { get; set; }
 
-        public virtual ICollection<Vehicle> Vehicle { get; set; }
-        public virtual ICollection<Item> Item { get; set; }
-        public virtual ICollection<Building> Building { get; set; }
+        public virtual ICollection<Vehicle> Vehicles { get; set; }
+        public virtual ICollection<Item> Items { get; set; }
+        public virtual ICollection<Building> Buildings { get; set; }
         public virtual ICollection<Description> Descriptions { get; set; }
-        public virtual ICollection<Worker> Worker { get; set; }
+        public virtual ICollection<Worker> Workers { get; set; }
 
         public decimal Money { get; set; }
         public long BankAccountNumber { get; set; }

@@ -102,9 +102,9 @@ namespace Serverside.Core.Vehicles
             {
                 var player = sender.GetAccountController();
 
-                if (player.CharacterController.Character.Vehicle.Any(v => v.Id == sender.GetData("SelectedVehicleID")))
+                if (player.CharacterController.Character.Vehicles.Any(v => v.Id == sender.GetData("SelectedVehicleID")))
                 {
-                    ShowVehiclesInformation(player.Client, player.CharacterController.Character.Vehicle.Single(v => v.Id == sender.GetData("SelectedVehicleID")));
+                    ShowVehiclesInformation(player.Client, player.CharacterController.Character.Vehicles.Single(v => v.Id == sender.GetData("SelectedVehicleID")));
                 }
 
             }
@@ -236,7 +236,7 @@ namespace Serverside.Core.Vehicles
                     VehicleController controller = RPEntityManager.GetVehicle(Api.getPlayerVehicle(player.Client));
                     if (controller == null) return;
 
-                    string tuningJson = JsonConvert.SerializeObject(controller.VehicleData.Tuning);
+                    string tuningJson = JsonConvert.SerializeObject(controller.VehicleData.Tunings);
                     API.triggerClientEvent(sender, "OnPlayerManageVehicle", tuningJson);
                 }
                 else

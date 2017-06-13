@@ -6,6 +6,9 @@ using Serverside.Controllers;
 using Serverside.Database;
 using Serverside.Database.Models;
 using Serverside.Core.Extensions;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Serverside.Core.Login
 {
@@ -13,13 +16,12 @@ namespace Serverside.Core.Login
     {
         public static ForumDatabaseHelper FDb;
 
-        public static event LoginEventHandler OnPlayerLogin;
-
         public RPLogin()
         {
             API.onResourceStart += API_onResourceStart;
             API.onClientEventTrigger += API_onClientEventTrigger;
             API.onPlayerBeginConnect += API_onPlayerBeginConnect;
+            AccountController.OnPlayerCharacterLogin += RPLogin_OnPlayerLogin;
             FDb = new ForumDatabaseHelper();
         }
 
@@ -29,7 +31,7 @@ namespace Serverside.Core.Login
             {
                 cancelConnection.Reason = "Aby grać na serwerze musisz włączyć CEF.";
                 cancelConnection.Cancel = true;
-            }   
+            }
         }
 
         private void API_onResourceStart()
@@ -46,61 +48,24 @@ namespace Serverside.Core.Login
             //Przy używaniu tego musimy jako args[0] wysłać indeks na liście postaci
             else if (eventName == "OnPlayerSelectedCharacter")
             {
-                AccountController loggedAccount = player.GetAccountController();
-
-                Character character =
-                    ContextFactory.Instance.Characters.Where(ch => ch.Account == loggedAccount.AccountData).ToList()[
-                        Convert.ToInt32(args[0])];              
-
-                if (character != null)
-                {
-                    AccountController.LoadCharacter(loggedAccount, character);
-
-                    player.nametag = "(" + RPEntityManager.CalculateServerId(loggedAccount) + ") " + character.Name + " " + character.Surname;
-
-                    API.shared.setPlayerName(player, character.Name + " " + character.Surname);
-                    player.setSkin((PedHash)character.Model);
-
-                    API.shared.setEntityPosition(player, new Vector3(character.LastPositionX, character.LastPositionY, character.LastPositionZ));
-
-                    player.dimension = 0;
-
-                    if (character.BWState > 0)
-                    {
-                        API.shared.setPlayerHealth(player, -1);
-                    }
-                    else
-                    {
-                        API.shared.setPlayerHealth(player, character.HitPoints);
-                    }
-
-                    API.triggerClientEvent(player, "ShowCharacterSelectCef", false);
-
-                    player.SetData("CanTalk", true);
-                    player.SetData("CanNarrate", true);
-                    player.SetData("CanPM", true);
-                    player.SetData("CanCommand", true);
-                    player.SetData("CanPay", true);
-
-                    API.triggerClientEvent(player, "Money_Changed", $"${character.Money}");
-                    API.triggerClientEvent(player, "ToggleHud", true);
-                    RPChat.SendMessageToPlayer(player,
-                        $"Witaj, twoja postać {character.Name + " " + character.Surname} została pomyślnie załadowana, życzymy miłej gry!", ChatMessageType.ServerInfo);
-                    player.Notify($"~w~Witaj zalogowałeś się na konto {loggedAccount.AccountData.Email}.");
-                    player.Notify($"~w~Ostatnie logowanie: {loggedAccount.AccountData.LastLogin}");
-                    RPEntityManager.AddAccount(loggedAccount.AccountId, loggedAccount);
-                    //usuwam to ze względów bezpieczeństwa
-                    //player.Notify($"~w~Z adresu IP: {AccountData.Ip}");
-
-                }
-                if (OnPlayerLogin != null) OnPlayerLogin.Invoke(loggedAccount);
+                int characterId = Convert.ToInt32(args[0]);
+                CharacterController.SelectCharacter(player, characterId);
             }
+        }
+
+        private void RPLogin_OnPlayerLogin(Client sender, AccountController account)
+        {
+            //w tym momencie po takim przypisaniu do json jego wartość to "[]" // NAPRAWIONE
+            var chs = account.AccountData.Characters.Where(c => c.IsAlive == true).Select(x => new { x.Name, x.Surname, x.Money, x.BankMoney }).ToList();
+            string json = JsonConvert.SerializeObject(chs);
+            API.shared.consoleOutput(json);
+            sender.triggerEvent("ShowCharacterSelectMenu", json);
         }
 
         [Command("/dlogin", GreedyArg = true, SensitiveInfo = true, Alias = "l")]
         public void DebugLoginToAccount(Client sender, string email, string password)
         {
-            Tuple<long, short, string> userData = FDb.CheckPasswordMatch(email, password);
+            Tuple<long, string, short, string> userData = FDb.CheckPasswordMatch(email, password);
             if (userData.Item1 == -1)
             {
                 API.shared.sendChatMessageToPlayer(sender, "Podane login lub hasło są nieprawidłowe, bądź takie konto nie istnieje");
@@ -110,15 +75,21 @@ namespace Serverside.Core.Login
                 Account account = new Account
                 {
                     UserId = userData.Item1,
-                    MainGroup = userData.Item2,
-                    OtherGroups = userData.Item3,
+                    Name = userData.Item2,
+                    MainGroup = userData.Item3,
+                    OtherGroups = userData.Item4,
                     Email = email,
                     SocialClub = sender.name,
                     Ip = sender.address
                 };
 
+
                 //Sprawdzenie czy konto z danym userid istnieje jak nie dodanie konta do bazy danych i załadowanie go do core.
-                if (!AccountController.RegisterAccount(sender, account))
+                if (!AccountController.DoesAccountExist(userData.Item1))
+                {
+                    AccountController.RegisterAccount(sender, account);
+                }
+                else
                 {
                     //Sprawdzenie czy ktoś już jest zalogowany z tego konta.
                     AccountController _ac = RPEntityManager.GetAccount(userData.Item1);
@@ -138,7 +109,7 @@ namespace Serverside.Core.Login
 
         public static void LoginToAccount(Client sender, string email, string password)
         {
-            Tuple<long, short, string> userData = FDb.CheckPasswordMatch(email, password);
+            Tuple<long, string, short, string> userData = FDb.CheckPasswordMatch(email, password);
             if (userData.Item1 == -1)
             {
                 //args[0] wiadomosc
@@ -150,15 +121,20 @@ namespace Serverside.Core.Login
                 Account account = new Account
                 {
                     UserId = userData.Item1,
-                    MainGroup = userData.Item2,
-                    OtherGroups = userData.Item3,
+                    Name = userData.Item2,
+                    MainGroup = userData.Item3,
+                    OtherGroups = userData.Item4,
                     Email = email,
                     SocialClub = sender.name,
                     Ip = sender.address,
                 };
 
                 //Sprawdzenie czy konto z danym userid istnieje jak nie dodanie konta do bazy danych i załadowanie go do core.
-                if (!AccountController.RegisterAccount(sender, account))
+                if (!AccountController.DoesAccountExist(userData.Item1))
+                {
+                    AccountController.RegisterAccount(sender, account);
+                }
+                else
                 {
                     //Sprawdzenie czy ktoś już jest zalogowany z tego konta.
                     AccountController _ac = RPEntityManager.GetAccount(userData.Item1);
@@ -167,7 +143,8 @@ namespace Serverside.Core.Login
                         if (_ac.AccountData.Online)
                         {
                             API.shared.kickPlayer(_ac.Client);
-                            sender.triggerEvent("ShowNotification", $"Osoba o IP: {_ac.AccountData.Ip} znajduje się obecnie na twoim koncie. Została ona wyrzucona z serwera. Rozważ zmianę hasła.", 5000);
+                            RPChat.SendMessageToPlayer(sender,
+                                $"Osoba o IP: {_ac.AccountData.Ip} znajduje się obecnie na twoim koncie. Została ona wyrzucona z serwera. Rozważ zmianę hasła.", ChatMessageType.ServerInfo);
                         }
                     }
                     AccountController.LoadAccount(sender, userData.Item1);

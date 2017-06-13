@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GTANetworkServer;
-using Serverside.Core.Login;
+using Serverside.Controllers;
 
 namespace Serverside.Core
 {
@@ -16,12 +16,12 @@ namespace Serverside.Core
             API.onPlayerFinishedDownload += API_onPlayerFinishedDownload;
             API.onClientEventTrigger += API_onClientEventTrigger;
             API.onUpdate += API_onUpdate;
-            RPLogin.OnPlayerLogin += RPLogin_OnPlayerLogin;
+            CharacterController.OnPlayerCharacterLogin += RPLogin_OnPlayerLogin;
         }
 
-        private void RPLogin_OnPlayerLogin(Controllers.AccountController sender)
+        private void RPLogin_OnPlayerLogin(Client sender, CharacterController character)
         {
-            API.triggerClientEventForAll("playerlist_join", sender.Client.socialClubName, sender.CharacterController.FormatName);
+            API.triggerClientEventForAll("playerlist_join", sender.socialClubName, character.FormatName);
         }
 
 
