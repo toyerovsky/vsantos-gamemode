@@ -15,9 +15,8 @@ namespace Serverside.Controllers
         public static event CharacterLoginEventHandler OnPlayerCharacterLogin;
         public Character Character { get; set; }
         public AccountController AccountController { get; private set; }
-        //Cellphone controller przypisujemy w przedmiotcie telefonu
         public CellphoneController CellphoneController { get; set; }
-        public string FormatName => Character.Name + " " + Character.Surname;
+        public string FormatName => $"{Character.Name} {Character.Surname}";
         public long? OnDutyGroupId { get; set; }
         public Core.Description.Description Description { get; set; }
         public CharacterCreator.CharacterCreator CharacterCreator { get; set; }
@@ -27,10 +26,11 @@ namespace Serverside.Controllers
 
         //Pola determinujące co gracz może robić w danym momencie
         //Np żeby kiedy jest nieprzytomny nie mógł mówić
-        public bool CanPM { get; set; }
-        public bool CanCommand { get; set; }
-        public bool CanTalk { get; set; }
-        public bool CanNarrate { get; set; }
+        public bool CanPM { get; set; } = false;
+        public bool CanCommand { get; set; } = false;
+        public bool CanTalk { get; set; } = false;
+        public bool CanNarrate { get; set; } = false;
+        public bool CanPay { get; set; } = false;
 
         //ŁADUJE POSTAC
         public CharacterController(AccountController accountController, Character character)
@@ -72,8 +72,6 @@ namespace Serverside.Controllers
             if (Character.Freemode) CharacterCreator = new CharacterCreator.CharacterCreator(this);
             Description = new Core.Description.Description(accountController);
         }
-
-        
 
         public void Save(bool resourceStop = false)
         {
@@ -128,15 +126,14 @@ namespace Serverside.Controllers
                 return;
             }
 
-            if (account.AccountData.Characters.Count() == 0)
+            if (account.AccountData.Characters.Count == 0)
             {
-                //API.shared.sendChatMessageToPlayer(player, "You have no characters.");
                 player.triggerEvent("ShowNotification", "Twoje konto nie posiada żadnych postaci!", 3000);
             }
             else
             {
-                long characterid = account.AccountData.Characters.ToList()[selectId].Id;
-                Character characterData = ContextFactory.Instance.Characters.FirstOrDefault(x => x.Id == characterid);
+                long characterId = account.AccountData.Characters.ToList()[selectId].Id;
+                Character characterData = ContextFactory.Instance.Characters.FirstOrDefault(x => x.Id == characterId);
                 CharacterController characterController = new CharacterController(account, characterData);
                 characterController.LoginCharacter(account);
             }
@@ -149,9 +146,9 @@ namespace Serverside.Controllers
 
             Character character = accountController.CharacterController.Character;
 
-            accountController.Client.nametag = "(" + RPEntityManager.CalculateServerId(accountController) + ") " + character.Name + " " + character.Surname;
+            accountController.Client.nametag = $"({RPEntityManager.CalculateServerId(accountController)}) {accountController.CharacterController.FormatName}";
 
-            API.shared.setPlayerName(accountController.Client, character.Name + " " + character.Surname);
+            accountController.Client.name =  accountController.CharacterController.FormatName;
             accountController.Client.setSkin((PedHash)character.Model);
 
             API.shared.setEntityPosition(accountController.Client, new Vector3(character.LastPositionX, character.LastPositionY, character.LastPositionZ));
@@ -167,17 +164,17 @@ namespace Serverside.Controllers
                 API.shared.setPlayerHealth(accountController.Client, character.HitPoints);
             }
 
-            API.shared.triggerClientEvent(accountController.Client, "ShowCharacterSelectCef", false);
+            //API.shared.triggerClientEvent(accountController.Client, "ShowCharacterSelectCef", false);
 
-            accountController.Client.SetData("CanTalk", true);
-            accountController.Client.SetData("CanNarrate", true);
-            accountController.Client.SetData("CanPM", true);
-            accountController.Client.SetData("CanCommand", true);
-            accountController.Client.SetData("CanPay", true);
+            accountController.CharacterController.CanTalk =  true;
+            accountController.CharacterController.CanNarrate = true;
+            accountController.CharacterController.CanPM = true;
+            accountController.CharacterController.CanCommand = true;
+            accountController.CharacterController.CanPay = true;
 
-            API.shared.triggerClientEvent(accountController.Client, "Money_Changed", $"${character.Money}");
-            API.shared.triggerClientEvent(accountController.Client, "ToggleHud", true);
-            RPChat.SendMessageToPlayer(accountController.Client, $"Witaj, twoja postać {character.Name + " " + character.Surname} została pomyślnie załadowana, życzymy miłej gry!", ChatMessageType.ServerInfo);
+            accountController.Client.triggerEvent("Money_Changed", $"${character.Money}");
+            accountController.Client.triggerEvent("ToggleHud", true);
+            accountController.Client.triggerEvent("ShowNotification", $"Witaj, twoja postać {accountController.CharacterController.FormatName} została pomyślnie załadowana, życzymy miłej gry!", 5000);
             if (OnPlayerCharacterLogin != null) OnPlayerCharacterLogin.Invoke(AccountController.Client, this);
         }
 

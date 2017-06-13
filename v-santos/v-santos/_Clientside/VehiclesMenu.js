@@ -23,7 +23,7 @@ API.onServerEventTrigger.connect(function (eventName, args)
             vehiclesMenu.AddItem(vehicleMenuItem);
             vehiclesMenu.BindMenuToItem(vehicleInfoMenu, vehicleMenuItem);
         }
-        
+        //
         var spawnMenuItem = API.createMenuItem("Spawn/Unspawn", "");
         vehicleInfoMenu.AddItem(spawnMenuItem);
         var infoVehicleMenuItem = API.createMenuItem("Informacje", "");

@@ -6,8 +6,6 @@ using Serverside.Controllers;
 using Serverside.Database;
 using Serverside.Database.Models;
 using Serverside.Core.Extensions;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace Serverside.Core.Login
@@ -154,11 +152,6 @@ namespace Serverside.Core.Login
 
         public static void LoginMenu(Client player)
         {
-            player.SetData("CanTalk", false);
-            player.SetData("CanNarrate", false);
-            player.SetData("CanPM", false);
-            player.SetData("CanCommand", true);
-
             //Nie używać tego wymiaru, jest zajęty na logowanie
             player.dimension = 2137;
             player.position = new Vector3(-1666f, -1020f, 12f);

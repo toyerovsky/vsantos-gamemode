@@ -28,8 +28,8 @@ namespace Serverside.Core
         {
             if (eventName == "ChangePosition" )
             {
-                if (!(arguments[0] is Vector3))
-                sender.position = arguments[0];
+                var vector3 = arguments[0] as Vector3;
+                if (vector3 != null) sender.position = vector3;
             }
         }
 
@@ -105,8 +105,6 @@ namespace Serverside.Core
             account.CharacterController.Character.CurrentDimension = e.CurrentDimension;
             account.CharacterController.Save();
         }
-
-
 
         [Command("q")]
         public static void Quit(Client player)

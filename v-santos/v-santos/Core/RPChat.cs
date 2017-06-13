@@ -44,7 +44,7 @@ namespace Serverside.Core
         private void API_onChatMessageHandler(Client sender, string message, CancelEventArgs e)
         {
             e.Cancel = true;
-            if (!sender.GetAccountController().CharacterController.CanTalk) return;
+            if (sender.GetAccountController() == null || !sender.GetAccountController().CharacterController.CanTalk) return;
             SendMessageToNearbyPlayers(sender, message, sender.GetAccountController().CharacterController.CellphoneController.CurrentlyTalking ? ChatMessageType.PhoneOthers : ChatMessageType.Normal);
             SaidEventHandler handler = OnPlayerSaid;
             SaidEventArgs eventArgs = new SaidEventArgs(sender, message, ChatMessageType.Normal);
@@ -53,7 +53,7 @@ namespace Serverside.Core
 
         private void API_onChatCommand(Client sender, string command, CancelEventArgs e)
         {
-            if (!sender.GetAccountController().CharacterController.CanCommand) e.Cancel = true;
+            if (sender.GetAccountController() == null || !sender.GetAccountController().CharacterController.CanCommand) e.Cancel = true;
         }
 
         #region Komendy
@@ -97,7 +97,6 @@ namespace Serverside.Core
             API.shared.sendChatMessageToAll("~#847DB7~", $"** {message} **");
         }
 
-
         [Command("w", "~y~UŻYJ: ~w~ /w [id] [treść]", GreedyArg = true)]
         public void SendPrivateMessageToPlayer(Client sender, int ID, string message)
         {
@@ -129,7 +128,7 @@ namespace Serverside.Core
         {
             if (Validator.IsGroupSlotValid(groupSlot))
             {
-                SendMessageToPlayer(sender, "Podany slot grupy jest nieprawidłowy.", ChatMessageType.ServerInfo);
+                sender.Notify("Podany slot grupy jest nieprawidłowy.");
                 return;
             }
 
@@ -148,7 +147,6 @@ namespace Serverside.Core
                     sender.Notify("Nie posiadasz uprawnień do czatu w tej grupie.");
                 }
             }
-
         }
 
         #endregion

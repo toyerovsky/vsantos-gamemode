@@ -17,22 +17,10 @@ namespace Serverside.Core.Money
             APIExtensions.ConsoleOutput("[RPMoney] Uruchomione pomyslnie.", ConsoleColor.DarkMagenta);
         }
 
-        [Command("plac", "~y~UŻYJ: ~w~ /plac [id] [kwota]", Alias = "pay", GreedyArg = true)]
-        public void TransferWalletMoney(Client sender, string id, string unsafeMoneyCount)
+        [Command("plac", "~y~UŻYJ: ~w~ /plac [id] [kwota]", Alias = "pay")]
+        public void TransferWalletMoney(Client sender, int id, decimal safeMoneyCount)
         {
-            decimal safeMoneyCount;
-            int ID;
-
-            if (Validator.IsMoneyStringValid(unsafeMoneyCount) && Validator.IsIntIdValid(id))
-            {
-                safeMoneyCount = Convert.ToDecimal(unsafeMoneyCount);
-                ID = Convert.ToInt32(id);
-            }
-            else
-            {
-                sender.Notify("Podano dane w nieprawidłowym formacie.");
-                return;
-            }
+            if (!sender.GetAccountController().CharacterController.CanPay) return;
 
             if (!sender.HasMoney(safeMoneyCount))
             {
@@ -40,28 +28,28 @@ namespace Serverside.Core.Money
                 return;
             }
 
-            if (sender.GetAccountController().ServerId == ID)
+            if (sender.GetAccountController().ServerId == id)
             {
                 sender.Notify("Nie możesz podać gotówki samemu sobie.");
                 return;
             }
-            
-            //Client gettingPlayer;
 
-            Client gettingPlayer = API.getPlayersInRadiusOfPlayer(6f, sender).Find(x => x.GetAccountController().ServerId == ID); // łatwe i proste :D
-            //if (PlayerFinder.TryFindClientInRadiusOfClientByServerId(sender, ID, 6, out gettingPlayer)) // po chuj te kombinacje XD
-            //{
-                
-                //temu zabieramy
-                sender.RemoveMoney(safeMoneyCount);
+            Client gettingPlayer = API.getPlayersInRadiusOfPlayer(6f, sender).Find(x => x.GetAccountController().ServerId == id);
+            if (gettingPlayer == null)
+            {
+                sender.Notify("Nie znaleziono gracza o podanym Id");
+                return;
+            }
 
-                //temu dodajemy gotówke
-                gettingPlayer.AddMoney(safeMoneyCount);
+            //temu zabieramy
+            sender.RemoveMoney(safeMoneyCount);
 
-                API.sendChatMessageToPlayer(sender,
-                    $"~g~Osoba {gettingPlayer.name} otrzymała od ciebie ${safeMoneyCount}.");
-                API.sendChatMessageToPlayer(gettingPlayer, $"~g~Osoba {sender.name} przekazała ci ${safeMoneyCount}.");
-            //}
+            //temu dodajemy gotówke
+            gettingPlayer.AddMoney(safeMoneyCount);
+
+            API.sendChatMessageToPlayer(sender,
+                $"~g~Osoba {gettingPlayer.name} otrzymała od ciebie ${safeMoneyCount}.");
+            API.sendChatMessageToPlayer(gettingPlayer, $"~g~Osoba {sender.name} przekazała ci ${safeMoneyCount}.");
         }
     }
 }
