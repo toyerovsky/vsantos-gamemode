@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using GTANetworkShared;
+using Serverside.Constant.Structs;
 using Serverside.Items;
 
 namespace Serverside.Constant
@@ -69,42 +70,42 @@ namespace Serverside.Constant
             get { return new List<ServerItem>(); }
         }
 
-        public static Dictionary<string, Vector3> DefaultInteriors = new Dictionary<string, Vector3>()
+        public static readonly List<BuildingData> DefaultInteriors = new List<BuildingData>
         {
-            {"Garaż 2 auta", new Vector3(173.2903, -1003.6, -99.65707)},
-            {"Garaż 6 aut",  new Vector3(197.8153, -1002.293, -99.65749)},
-            {"Garaż 10 aut", new Vector3(229.9559, -981.7928, -99.66071)},
-            {"Tanie mieszkanie", new Vector3(261.4586, -998.8196, -99.00863)},
-            {"4 Integrity Way Apt 28", new Vector3(-18.07856, -583.6725, 79.46569)},
-            {"4 Integrity Way, Apt 30", new Vector3(-35.31277, -580.4199, 88.71221)},
-            {"Dell Perro Heights, Apt 4", new Vector3(-1468.14, -541.815, 73.4442)},
-            {"Dell Perro Heights Apt 7", new Vector3(-1477.14, -538.7499, 55.5264)},
-            {"Richard Majestic, Apt 2", new Vector3(-915.811, -379.432, 113.6748)},
-            {"Tinsel Towers, Apt 42", new Vector3(-614.86, 40.6783, 97.60007)},
-            {"EclipseTowers, Apt 3", new Vector3(-773.407, 341.766, 211.397)},
-            {"3655 Wild Oats Drive", new Vector3(-169.286, 486.4938, 137.4436)},
-            {"2044 North Conker Avenue", new Vector3(340.9412, 437.1798, 149.3925)},
-            {"2045 North Conker Avenue", new Vector3(373.023, 416.105, 145.7006)},
-            {"2862 Hillcrest Avenue", new Vector3(-676.127, 588.612, 145.1698)},
-            {"2868 Hillcrest Avenue", new Vector3(-763.107, 615.906, 144.1401)},
-            {"2874 Hillcrest Avenue", new Vector3(-857.798, 682.563, 152.6529)},
-            {"2677 Whispymound Drive", new Vector3(120.5, 549.952, 184.097)},
-            {"2133 Mad Wayne Thunder", new Vector3(-1288, 440.748, 97.69459) },
-            {"CharCreator", new Vector3(402.5164, -1002.847, -99.2587)},
-            {"Mission Carpark", new Vector3(405.9228, -954.1149, -99.6627)},
-            {"Torture Room", new Vector3(136.5146, -2203.149, 7.30914)},
-            {"Solomon's Office", new Vector3(-1005.84, -478.92, 50.02733)},
-            {"Psychiatrist's Office", new Vector3(-1908.024, -573.4244, 19.09722)},
-            {"Omega's Garage", new Vector3(2331.344, 2574.073, 46.68137)},
-            {"Movie Theatre", new Vector3(-1427.299, -245.1012, 16.8039)},
-            {"Motel", new Vector3(152.2605, -1004.471, -98.99999)},
-            {"Mandrazos Ranch", new Vector3(152.2605, 1146.954, 114.337)},
-            {"Life Invader Office", new Vector3(-1044.193, -236.9535, 37.96496)},
-            {"Lester's House", new Vector3(1273.9, -1719.305, 54.77141)},
-            {"FBI Top Floor", new Vector3(134.5835, -749.339, 258.152)},
-            {"FBI Floor 47", new Vector3(134.5835, -766.486, 234.152)},
-            {"FBI Floor 49", new Vector3(134.635, -765.831, 242.152)},
-            {"IAA Office", new Vector3(117.22, -620.938, 206.1398)},
+            new BuildingData("Garaż 2 auta", new Vector3(173.2903, -1003.6, -99.65707)),
+            new BuildingData("Garaż 6 aut",  new Vector3(197.8153, -1002.293, -99.65749)),
+            new BuildingData("Garaż 10 aut", new Vector3(229.9559, -981.7928, -99.66071)),
+            new BuildingData("Tanie mieszkanie", new Vector3(261.4586, -998.8196, -99.00863)),
+            new BuildingData("4 Integrity Way Apt 28", new Vector3(-18.07856, -583.6725, 79.46569)),
+            new BuildingData("4 Integrity Way, Apt 30", new Vector3(-35.31277, -580.4199, 88.71221)),
+            new BuildingData("Dell Perro Heights, Apt 4", new Vector3(-1468.14, -541.815, 73.4442)),
+            new BuildingData("Dell Perro Heights Apt 7", new Vector3(-1477.14, -538.7499, 55.5264)),
+            new BuildingData("Richard Majestic, Apt 2", new Vector3(-915.811, -379.432, 113.6748)),
+            new BuildingData("Tinsel Towers, Apt 42", new Vector3(-614.86, 40.6783, 97.60007)),
+            new BuildingData("EclipseTowers, Apt 3", new Vector3(-773.407, 341.766, 211.397)),
+            new BuildingData("3655 Wild Oats Drive", new Vector3(-169.286, 486.4938, 137.4436)),
+            new BuildingData("2044 North Conker Avenue", new Vector3(340.9412, 437.1798, 149.3925)),
+            new BuildingData("2045 North Conker Avenue", new Vector3(373.023, 416.105, 145.7006)),
+            new BuildingData("2862 Hillcrest Avenue", new Vector3(-676.127, 588.612, 145.1698)),
+            new BuildingData("2868 Hillcrest Avenue", new Vector3(-763.107, 615.906, 144.1401)),
+            new BuildingData("2874 Hillcrest Avenue", new Vector3(-857.798, 682.563, 152.6529)),
+            new BuildingData("2677 Whispymound Drive", new Vector3(120.5, 549.952, 184.097)),
+            new BuildingData("2133 Mad Wayne Thunder", new Vector3(-1288, 440.748, 97.69459)),
+            new BuildingData("CharCreator", new Vector3(402.5164, -1002.847, -99.2587)),
+            new BuildingData("Mission Carpark", new Vector3(405.9228, -954.1149, -99.6627)),
+            new BuildingData("Torture Room", new Vector3(136.5146, -2203.149, 7.30914)),
+            new BuildingData("Solomon's Office", new Vector3(-1005.84, -478.92, 50.02733)),
+            new BuildingData("Psychiatrist's Office", new Vector3(-1908.024, -573.4244, 19.09722)),
+            new BuildingData("Omega's Garage", new Vector3(2331.344, 2574.073, 46.68137)),
+            new BuildingData("Movie Theatre", new Vector3(-1427.299, -245.1012, 16.8039)),
+            new BuildingData("Motel", new Vector3(152.2605, -1004.471, -98.99999)),
+            new BuildingData("Mandrazos Ranch", new Vector3(152.2605, 1146.954, 114.337)),
+            new BuildingData("Life Invader Office", new Vector3(-1044.193, -236.9535, 37.96496)),
+            new BuildingData("Lester's House", new Vector3(1273.9, -1719.305, 54.77141)),
+            new BuildingData("FBI Top Floor", new Vector3(134.5835, -749.339, 258.152)),
+            new BuildingData("FBI Floor 47", new Vector3(134.5835, -766.486, 234.152)),
+            new BuildingData("FBI Floor 49", new Vector3(134.635, -765.831, 242.152)),
+            new BuildingData("IAA Office", new Vector3(117.22, -620.938, 206.1398)),
         };
     }
 }

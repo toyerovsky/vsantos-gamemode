@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using GTANetworkServer;
@@ -7,8 +6,6 @@ using Serverside.Core;
 using Serverside.Database;
 using Serverside.Database.Models;
 using Serverside.Core.Extensions;
-using Newtonsoft.Json;
-using System.Threading.Tasks;
 
 namespace Serverside.Controllers
 {
@@ -32,31 +29,21 @@ namespace Serverside.Controllers
             AccountData.LastLogin = DateTime.Now;
             AccountData.Online = true;
 
-            //Przenoszę dodawanie konta do RPEntityManager w inne miejsce bo jeśli wyłączymy serwer jak gracz jest w oknie logowania to wywala NullReferenceException
-
             //tutaj dajemy inne rzeczy które mają być inicjowane po zalogowaniu się na konto, np: wybór postaci.
 
-            //TODO: tutaj ma się wyświetlać nick z forum a nie social club // DONE
-            
-            //client.Notify($"~w~Witaj zalogowałeś się na konto {AccountData.Email}.");
-            //client.Notify($"~w~Ostatnie logowanie: {AccountData.LastLogin}");
-            //usuwam to ze względów bezpieczeństwa
             //to zrobimy to bezpiecznie :) // DeMoN
             string[] ip = AccountData.Ip.Split('.');
-            string bezpieczneip = string.Format("{0}.{1}.***.***", ip[0], ip[1]);
-            //client.Notify($"~w~Z adresu IP: {bezpieczneip}");
-            client.triggerEvent("ShowNotification", $"Witaj, {AccountData.Name} zostałeś pomyślnie zalogowany. ~n~Ostatnie logowanie: {AccountData.LastLogin} z adresu IP: {bezpieczneip}", 5000);
+            string safeIp = $"{ip[0]}.{ip[1]}.***.***";
+            client.triggerEvent("ShowNotification", $"Witaj, {AccountData.Name} zostałeś pomyślnie zalogowany. ~n~Ostatnie logowanie: {AccountData.LastLogin} z adresu IP: {safeIp}", 5000);
 
-            //jezus maria było dobrze to musiałeś zepsuć // naprawione :D // DeMoN
-            if (AccountData.Characters == null || AccountData.Characters.Count() == 0)
+            if (AccountData.Characters == null || AccountData.Characters.Count == 0)
             {
-                
-                    if (!CharacterController.AddCharacter(this, AccountData.Email, "Testowy", PedHash.Michael))
-                    {
-                        //RPChat.SendMessageToPlayer(client, "Postać o wybranym imieniu i nazwisku już istnieje.", ChatMessageType.ServerInfo);
-                        //client.kick("Postać o wybranym imieniu i nazwisku już istnieje.");
-                        //return;
-                    }
+                if (!CharacterController.AddCharacter(this, AccountData.Email, "Testowy", PedHash.Michael))
+                {
+                    //RPChat.SendMessageToPlayer(client, "Postać o wybranym imieniu i nazwisku już istnieje.", ChatMessageType.ServerInfo);
+                    //client.kick("Postać o wybranym imieniu i nazwisku już istnieje.");
+                    //return;
+                }
             }
 
             ContextFactory.Instance.SaveChanges();
@@ -66,7 +53,6 @@ namespace Serverside.Controllers
 
         public static AccountController GetAccountControllerFromName(string formatname)
         {
-            //Client client = API.shared.getAllPlayers().FirstOrDefault(x => x.GetAccountController().CharacterController.FormatName.ToLower().Contains(formatname.ToLower())); // znowu nie potrzebne użycie API... // DeMoN
             Client client = RPEntityManager.GetAccounts().First(x => x.Value.CharacterController.FormatName.ToLower().Contains(formatname.ToLower())).Value.Client;
             return client?.GetAccountController();
         }

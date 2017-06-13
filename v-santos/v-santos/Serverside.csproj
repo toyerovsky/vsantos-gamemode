@@ -94,6 +94,7 @@
     <Compile Include="Constant\ConstantAssemblyInfo.cs" />
     <Compile Include="Constant\ConstantItems.cs" />
     <Compile Include="Constant\ConstantMessages.cs" />
+    <Compile Include="Constant\Structs\BuildingData.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BuildingController.cs" />
     <Compile Include="Controllers\CellphoneController.cs" />
@@ -557,6 +558,8 @@
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="_Clientside\TypeScript\Resources\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -3,7 +3,7 @@
 API.onServerEventTrigger.connect(function(eventName, args) {
     if (eventName === "ShowAdminMarketItemMenu") {
         menuPool = API.getMenuPool();
-        var menu = API.createMenu("Dodaj przedmiot do sklepu", 0, 0, 6);
+        var menu = API.createMenu("Dodaj nowy budynek", 0, 0, 6);
 
         var nameItem = API.createMenuItem("Nazwa", "Ustal nazwe przedmiotu.");
         menu.AddItem(nameItem);

@@ -191,12 +191,10 @@ API.onKeyDown.connect((sender: any, e: System.Windows.Forms.KeyEventArgs) =>
     {
         //API.playSoundFrontEnd("GOLF_NEW_RECORD", "HUD_AWARDS");
         //API.playSoundFrontEnd("Click", "DLC_HEIST_HACKING_SNAKE_SOUNDS");
-        API.playSoundFrontEnd("Click", "DLC_HEIST_HACKING_SNAKE_SOUNDS");
         decrementIndex();    
     }
     else if ((e.KeyCode == Keys.Right || e.KeyCode == Keys.D) && selectFlag)
     {
-        API.playSoundFrontEnd("Click", "DLC_HEIST_HACKING_SNAKE_SOUNDS");
         incrementIndex();
     }
     else if (e.KeyCode == Keys.Enter && selectFlag)
@@ -226,6 +224,7 @@ function selectCharacter()
 function incrementIndex()
 {
     if (index >= characters.length - 1) return;
+    API.playSoundFrontEnd("Click", "DLC_HEIST_HACKING_SNAKE_SOUNDS");
     index++;
     fillCharacterSelect();
 }
@@ -233,6 +232,7 @@ function incrementIndex()
 function decrementIndex()
 {
     if (index <= 0) return;
+    API.playSoundFrontEnd("Click", "DLC_HEIST_HACKING_SNAKE_SOUNDS");
     index--;
     fillCharacterSelect();
 }

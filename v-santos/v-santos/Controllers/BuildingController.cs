@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 using GTANetworkServer;
 using GTANetworkShared;
 using Serverside.Core;
@@ -28,10 +29,12 @@ namespace Serverside.Controllers
         }
 
         //Tworzenie nowego budynku
-        public BuildingController(long creatorId, float internalX, float internalY, float internalZ, float externalX, float externalY, float externalZ, decimal cost, int internalDimension, Character character = null, Group group = null)
+        public BuildingController(string name, string description, long creatorId, float internalX, float internalY, float internalZ, float externalX, float externalY, float externalZ, decimal cost, int internalDimension, Character character = null, Group group = null)
         {
             BuildingData = new Building
             {
+                Name = name,
+                Description = description,
                 CreatorsId = creatorId,
                 InternalPickupPositionX = internalX,
                 InternalPickupPositionY = internalY,
@@ -113,6 +116,7 @@ namespace Serverside.Controllers
                         this.BuildingData.EnterCharge.HasValue ? BuildingData.EnterCharge.ToString() : "",
                         this.BuildingData.Cost.HasValue ? BuildingData.Cost.ToString() : ""
                     });
+
                     player.SetData("CurrentDoors", this);
                     player.SetSyncedData("DoorsTarget", new Vector3(BuildingData.InternalPickupPositionX, BuildingData.InternalPickupPositionY, BuildingData.InternalPickupPositionZ));
                 }
@@ -128,6 +132,13 @@ namespace Serverside.Controllers
                     player.ResetSyncedData("DoorsTarget");
                 }
             };
+        }
+
+        public static int GetNextFreeDimension()
+        {
+            int last = ContextFactory.Instance.Buildings.OrderByDescending(x => x.InternalDimension).Select(x => x.InternalDimension).First();
+            if (last == 2137 || last == 666) last++;
+            return last;
         }
 
         public void Buy(Client sender)

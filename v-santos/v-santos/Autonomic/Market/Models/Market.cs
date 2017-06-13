@@ -11,5 +11,6 @@ namespace Serverside.Autonomic.Market.Models
         public string Name { get; set; }
         public Vector3 StartPosition { get; set; }
         public Vector3 EndPosition { get; set; }
+        public List<MarketItem> Items { get; set; }
     }
 }

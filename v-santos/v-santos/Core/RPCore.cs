@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GTANetworkServer;
+using GTANetworkShared;
 using Serverside.Controllers;
 using Serverside.Core.Login;
 using Serverside.Database;
@@ -19,7 +20,17 @@ namespace Serverside.Core
             API.onPlayerBeginConnect += API_onPlayerBeginConnect;
             API.onPlayerConnected += API_onPlayerConnectedHandler;
             API.onPlayerFinishedDownload += API_onPlayerFinishedDownload;
-            API.onPlayerDisconnected += API_onPlayerDisconnectedHandler;        
+            API.onPlayerDisconnected += API_onPlayerDisconnectedHandler;
+            API.onClientEventTrigger += API_onClientEventTrigger;
+        }
+
+        private void API_onClientEventTrigger(Client sender, string eventName, params object[] arguments)
+        {
+            if (eventName == "ChangePosition" )
+            {
+                if (!(arguments[0] is Vector3))
+                sender.position = arguments[0];
+            }
         }
 
         private void API_onResourceStart()
@@ -54,6 +65,7 @@ namespace Serverside.Core
             });
             dbStop.Wait();
         }
+
         private void API_onPlayerBeginConnect(Client player, CancelEventArgs cancelConnection)
         {
             APIExtensions.ConsoleOutput("PlayerBeginConnect: " + player.socialClubName, ConsoleColor.Blue);
@@ -63,6 +75,7 @@ namespace Serverside.Core
                 cancelConnection.Cancel = true;
             }
         }
+
         private void API_onPlayerConnectedHandler(Client player)
         {
             APIExtensions.ConsoleOutput("PlayerConnected: " + player.socialClubName, ConsoleColor.Blue);
@@ -71,11 +84,13 @@ namespace Serverside.Core
                 player.kick("~r~Jesteś zbanowany. Życzymy miłego dnia! :)");
             }
         }
+
         private void API_onPlayerFinishedDownload(Client player)
         {
             APIExtensions.ConsoleOutput("PlayerFinishedDownload: " + player.socialClubName, ConsoleColor.Blue);
             RPLogin.LoginMenu(player);
         }
+
         private void API_onPlayerDisconnectedHandler(Client player, string reason)
         {
             APIExtensions.ConsoleOutput("PlayerDisconnected: " + player.socialClubName, ConsoleColor.Blue);
@@ -83,6 +98,7 @@ namespace Serverside.Core
             if (account == null) return;
             RPLogin.LogOut(account);
         }
+
         private void Client_OnPlayerDimensionChanged(object player, DimensionChangeEventArgs e)
         {
             AccountController account = e.Player.GetAccountController();
@@ -90,7 +106,7 @@ namespace Serverside.Core
             account.CharacterController.Save();
         }
 
-        
+
 
         [Command("q")]
         public static void Quit(Client player)
@@ -110,7 +126,8 @@ namespace Serverside.Core
                 {
                     API.shared.consoleOutput(GTANetworkServer.Constant.LogCat.Debug, veh.VehicleHash.ToString() + " | " + veh.NumberPlate + " | " + veh.Milage.ToString());
                 }
-            } else
+            }
+            else
             {
                 Database.Models.Character ch = sender.GetAccountController().CharacterController.Character;
                 List<Database.Models.Vehicle> v = ContextFactory.Instance.Vehicles.Where(x => x.Character == ch).ToList();
@@ -132,7 +149,7 @@ namespace Serverside.Core
         public static void LoadVehicle(Client sender, string id)
         {
             AccountController ac = sender.GetAccountController();
-            new VehicleController(ac.CharacterController.Character.Vehicles.Where(x => x.Id == int.Parse(id)).First());
+            new VehicleController(ac.CharacterController.Character.Vehicles.First(x => x.Id == int.Parse(id)));
         }
 
         [Command("savevc", GreedyArg = true, SensitiveInfo = true)]

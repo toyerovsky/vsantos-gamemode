@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using GTANetworkServer;
 using Serverside.Autonomic.Market.Models;
-using Serverside.Controllers;
 using Serverside.Core;
 using Serverside.Core.Extensions;
 using Serverside.Items;
@@ -12,7 +11,7 @@ namespace Serverside.Autonomic.Market
 {
     public sealed class RPMarket : Script
     {
-        private List<MarketItem> MarketItems { get; set; }
+        private List <Models.Market> Markets { get; set; }
 
         public RPMarket()
         {
@@ -24,28 +23,29 @@ namespace Serverside.Autonomic.Market
         {
             if (eventName == "AddMarketItem")
             {
-                MarketItem item = new MarketItem()
+                var item = new MarketItem
                 {
                     Name = arguments[0].ToString(),
                     ItemType = (ItemType)Enum.Parse(typeof(ItemType), (string)arguments[1]),
                     Cost = (decimal)arguments[2]
                 };
-                XmlHelper.AddXmlObject(item, $@"{Constant.ConstantAssemblyInfo.XmlDirectory}\MarketItems\", item.Name);
+
+
             }
         }
 
         private void OnResourceStartHandler()
         {
             APIExtensions.ConsoleOutput("[RPMarket] Uruchomione pomyślnie.", ConsoleColor.DarkMagenta);
-            MarketItems = XmlHelper.GetXmlObjects<MarketItem>($@"{Constant.ConstantAssemblyInfo.XmlDirectory}\MarketItems\");
+            Markets = XmlHelper.GetXmlObjects<Models.Market>($@"{Constant.ConstantAssemblyInfo.XmlDirectory}\Markets\");
         }
 
         [Command("dodajprzedmiotsklep")]
         public void AddItemToShop(Client sender)
         {
-
-            List<string> values = Enum.GetNames(typeof(ItemType)).ToList();
-            API.triggerClientEvent(sender, "ShowAdminMarketItemMenu", values);
+            var values = Enum.GetNames(typeof(ItemType)).ToList();
+            var markets = XmlHelper.GetXmlObjects<Models.Market>($@"{Constant.ConstantAssemblyInfo.XmlDirectory}\Markets\").Select(x => new {x.Id, x.Name}).ToList();
+            API.triggerClientEvent(sender, "ShowAdminMarketItemMenu", values, markets);
         }
 
         [Command("kup")]

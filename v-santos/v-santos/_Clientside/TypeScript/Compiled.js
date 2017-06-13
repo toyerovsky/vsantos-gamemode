@@ -1,7 +1,14 @@
 /// <reference path="../../types-gtanetwork/index.d.ts" />
+class BuildingInfo {
+}
 let drawScaleform = false;
 let scaleForm = null;
 let buildingMenu = null;
+var menuPool = null;
+let buildings = null;
+let buildingName;
+let buildingDescription;
+let buildingEnterCharge;
 API.onKeyDown.connect((sender, e) => {
     if (e.KeyCode === Keys.E && API.hasEntitySyncedData(API.getLocalPlayer(), "DoorsTarget")) {
         API.triggerServerEvent("PassDoors");
@@ -10,6 +17,14 @@ API.onKeyDown.connect((sender, e) => {
         API.triggerServerEvent("KnockDoors");
     }
 });
+function getBuilding(name) {
+    for (var i = 0; i < buildings.length; i++) {
+        if (buildings[i].name == name) {
+            return buildings[i];
+        }
+    }
+    return null;
+}
 API.onServerEventTrigger.connect((eventName, args) => {
     if (eventName == "DrawBuildingComponents") {
         scaleForm = API.requestScaleform('instructional_buttons');
@@ -31,18 +46,94 @@ API.onServerEventTrigger.connect((eventName, args) => {
         if (buildingMenu != null)
             buildingMenu.killMenu();
     }
+    else if (eventName == "ShowBuildingManagePanel") {
+        var buildingInfo = new BuildingInfo();
+        var info = args[0];
+        buildingInfo.name = info[0];
+        buildingInfo.description = info[1];
+        buildingInfo.enterCharge = info[2];
+        showBuildingManagePanel(buildingInfo);
+    }
+    else if (eventName == "ShowAdminBuildingMenu") {
+        menuPool = API.getMenuPool();
+        var menu = API.createMenu("Dodaj budynek", 0, 0, 6);
+        buildings = [];
+        var newBuilding;
+        var list = JSON.parse(args[0]);
+        for (var i = 0; i < list.length; i++) {
+            newBuilding = new BuildingInfo();
+            newBuilding.name = list[i].Name;
+            newBuilding.internalPosition = list[i].InternalPostion;
+            buildings.push(newBuilding);
+        }
+        var interiorNames = new List(String);
+        for (var j = 0; j < buildings.length; j++) {
+            interiorNames.Add(buildings[j].name);
+        }
+        var nameItem = API.createMenuItem("Nazwa", "Ustal nazwe budynku.");
+        menu.AddItem(nameItem);
+        var descriptionItem = API.createMenuItem("Opis", "Ustal opis budynku. (opcjonalne)");
+        menu.AddItem(descriptionItem);
+        var interiorsItem = API.createListItem("Interior", "Ustal interior budynku", interiorNames, 0);
+        menu.AddItem(interiorsItem);
+        var costItem = API.createMenuItem("Koszt", "Ustal cenę budynku");
+        menu.AddItem(costItem);
+        var saveItem = API.createMenuItem("Zapisz", "");
+        menu.AddItem(saveItem);
+        menuPool.Add(menu);
+        menu.Visible = true;
+        var nameResult = null;
+        var descriptionResult = "";
+        var interiorResult = null;
+        var costResult = null;
+        menu.OnItemSelect.connect((sender, item, index) => {
+            if (item === nameItem) {
+                nameResult = API.getUserInput("Nazwa budynku", 30);
+            }
+            else if (item === costItem) {
+                costResult = API.getUserInput("Cena", 10);
+                if (costResult.trim() == "" || isNaN(costResult)) {
+                    API.sendNotification("Wprowadzono nieporawny koszt.");
+                    costResult = null;
+                }
+            }
+            else if (item == descriptionItem) {
+                descriptionResult = API.getUserInput("Opis budynku", 100);
+            }
+            else if (item == saveItem) {
+                if (nameResult != null &&
+                    costResult != null &&
+                    interiorResult != null) {
+                    API.triggerServerEvent("AddBuilding", nameResult, costResult, interiorResult, descriptionResult);
+                    menu.Visible = false;
+                }
+                else {
+                    API.sendNotification("Dane nie zostały zaincjalizowane.");
+                }
+            }
+        });
+        interiorsItem.OnListChanged.connect((sender, newIndex) => {
+            interiorResult = sender.IndexToItem(sender.Index);
+            let building = getBuilding(interiorResult);
+            if (building != null) {
+                API.triggerServerEvent("ChangePosition", building.internalPosition);
+            }
+        });
+    }
 });
 API.onUpdate.connect(() => {
     if (drawScaleform)
         API.renderScaleform(scaleForm, 0, 0, 1280, 720);
 });
 function showBuildingPanel(buildingInfo) {
+    if (buildingMenu != null)
+        buildingMenu.killMenu();
     buildingMenu = createMenu(1);
     let panel;
     let textElement;
     //Panel budynku
     //Header z nazwą budynku
-    panel = loginMenu.createPanel(0, 12, 4, 7, 1);
+    panel = buildingMenu.createPanel(0, 12, 4, 7, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
     panel.Header = true;
     textElement = panel.addText(buildingInfo[0]);
@@ -52,7 +143,7 @@ function showBuildingPanel(buildingInfo) {
     textElement.FontScale = 0.6;
     textElement.Offset = 18;
     //Guzik zamykania
-    panel = loginMenu.createPanel(0, 19, 4, 1, 1);
+    panel = buildingMenu.createPanel(0, 19, 4, 1, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
     panel.Header = true;
     panel.HoverBackgroundColor(150, 25, 25, 160);
@@ -64,8 +155,8 @@ function showBuildingPanel(buildingInfo) {
     textElement.VerticalCentered = true;
     textElement.FontScale = 0.6;
     textElement.Offset = 18;
-    //opis budynku
-    panel = loginMenu.createPanel(0, 12, 5, 8, 7);
+    //Opis budynku
+    panel = buildingMenu.createPanel(0, 12, 5, 8, 7);
     panel.MainBackgroundColor(0, 0, 0, 160);
     textElement = panel.addText(buildingInfo[1]);
     textElement.Color(255, 255, 255, 255);
@@ -80,7 +171,7 @@ function showBuildingPanel(buildingInfo) {
     if (buildingInfo[3] !== "") {
         textElement = panel.addText(`Cena $${buildingInfo[3]}`);
         textElement.Color(255, 255, 255, 255);
-        panel = loginMenu.createPanel(0, 12, 12, 8, 1);
+        panel = buildingMenu.createPanel(0, 12, 12, 8, 1);
         panel.MainBackgroundColor(0, 0, 0, 160);
         panel.HoverBackgroundColor(25, 25, 25, 160);
         panel.Hoverable = true;
@@ -92,6 +183,73 @@ function showBuildingPanel(buildingInfo) {
         textElement.Centered = true;
         textElement.VerticalCentered = true;
     }
+    buildingMenu.Ready = true;
+}
+function showBuildingManagePanel(buildingInfo) {
+    if (buildingMenu != null)
+        buildingMenu.killMenu();
+    buildingMenu = createMenu(1);
+    let panel;
+    let textElement;
+    //Panel budynku
+    //Header z nazwą budynku
+    panel = buildingMenu.createPanel(0, 12, 4, 7, 1);
+    panel.MainBackgroundColor(0, 0, 0, 175);
+    panel.Header = true;
+    textElement = panel.addText("Zarządzanie budynkiem");
+    textElement.Color(255, 255, 255, 255);
+    textElement.Centered = true;
+    textElement.VerticalCentered = true;
+    textElement.FontScale = 0.6;
+    textElement.Offset = 18;
+    //Guzik zamykania
+    panel = buildingMenu.createPanel(0, 19, 4, 1, 1);
+    panel.MainBackgroundColor(0, 0, 0, 175);
+    panel.Header = true;
+    panel.HoverBackgroundColor(150, 25, 25, 160);
+    panel.Hoverable = true;
+    panel.Function = () => buildingMenu.killMenu();
+    textElement = panel.addText("X");
+    textElement.Color(255, 255, 255, 255);
+    textElement.Centered = true;
+    textElement.VerticalCentered = true;
+    textElement.FontScale = 0.6;
+    textElement.Offset = 18;
+    //Nazwa budynku
+    panel = buildingMenu.createPanel(0, 12, 5, 8, 7);
+    panel.MainBackgroundColor(0, 0, 0, 160);
+    textElement = panel.addText("Nazwa:");
+    textElement.Color(255, 255, 255, 255);
+    panel.addText("");
+    //Opis budynku
+    textElement = panel.addText("Opis:");
+    textElement.Color(255, 255, 255, 255);
+    panel.addText("");
+    panel.addText("");
+    panel.addText("");
+    //Opłata za przejście
+    textElement = panel.addText("Opłata za przejście:");
+    textElement.Color(255, 255, 255, 255);
+    panel.addText("");
+    buildingName = panel.addInput(0, 1, 8, 1);
+    buildingName.Input = buildingInfo.name;
+    buildingDescription = panel.addInput(0, 3, 8, 1);
+    buildingDescription.Input = buildingInfo.description;
+    buildingEnterCharge = panel.addInput(0, 7, 8, 1);
+    buildingEnterCharge.Input = buildingInfo.enterCharge.toString();
+    buildingEnterCharge.NumericOnly = true;
+    //Guzik zapisywania
+    panel = buildingMenu.createPanel(0, 12, 12, 8, 1);
+    panel.MainBackgroundColor(0, 0, 0, 160);
+    panel.HoverBackgroundColor(25, 25, 25, 160);
+    panel.Hoverable = true;
+    panel.Function = () => { API.triggerServerEvent("EdingBuildingInfo", buildingName.Input, buildingDescription.Input, buildingEnterCharge.Input); };
+    panel.Tooltip = "Zapisz bieżące informacje";
+    textElement = panel.addText("Zapisz");
+    textElement.Color(255, 255, 255, 255);
+    textElement.HoverColor(0, 180, 255, 255);
+    textElement.Centered = true;
+    textElement.VerticalCentered = true;
     buildingMenu.Ready = true;
 }
 //Zmienne panelu logowania
@@ -260,11 +418,9 @@ API.onKeyDown.connect((sender, e) => {
     if ((e.KeyCode == Keys.Left || e.KeyCode == Keys.A) && selectFlag) {
         //API.playSoundFrontEnd("GOLF_NEW_RECORD", "HUD_AWARDS");
         //API.playSoundFrontEnd("Click", "DLC_HEIST_HACKING_SNAKE_SOUNDS");
-        API.playSoundFrontEnd("Click", "DLC_HEIST_HACKING_SNAKE_SOUNDS");
         decrementIndex();
     }
     else if ((e.KeyCode == Keys.Right || e.KeyCode == Keys.D) && selectFlag) {
-        API.playSoundFrontEnd("Click", "DLC_HEIST_HACKING_SNAKE_SOUNDS");
         incrementIndex();
     }
     else if (e.KeyCode == Keys.Enter && selectFlag) {
@@ -288,12 +444,14 @@ function selectCharacter() {
 function incrementIndex() {
     if (index >= characters.length - 1)
         return;
+    API.playSoundFrontEnd("Click", "DLC_HEIST_HACKING_SNAKE_SOUNDS");
     index++;
     fillCharacterSelect();
 }
 function decrementIndex() {
     if (index <= 0)
         return;
+    API.playSoundFrontEnd("Click", "DLC_HEIST_HACKING_SNAKE_SOUNDS");
     index--;
     fillCharacterSelect();
 }
