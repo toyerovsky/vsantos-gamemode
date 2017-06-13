@@ -81,6 +81,7 @@
     <Compile Include="Admin\AdminCore.cs" />
     <Compile Include="Autonomic\Carshop\Models\CarshopVehicle.cs" />
     <Compile Include="Autonomic\Carshop\RPCarshop.cs" />
+    <Compile Include="Autonomic\Market\Market.cs" />
     <Compile Include="Autonomic\Market\Models\Market.cs" />
     <Compile Include="Autonomic\Market\Models\MarketItem.cs" />
     <Compile Include="Autonomic\Market\RPMarket.cs" />
@@ -550,6 +551,7 @@
     <TypeScriptCompile Include="types-gtanetwork\System.d.ts" />
     <TypeScriptCompile Include="types-gtanetwork\System.Drawing.dll.d.ts" />
     <TypeScriptCompile Include="types-gtanetwork\Xilium.CefGlue.dll.d.ts" />
+    <TypeScriptCompile Include="_Clientside\TypeScript\Admin.ts" />
     <TypeScriptCompile Include="_Clientside\TypeScript\BuildingMenu.ts" />
     <TypeScriptCompile Include="_Clientside\TypeScript\MenuBuilder.ts" />
     <TypeScriptCompile Include="_Clientside\TypeScript\LoginMenu.ts" />

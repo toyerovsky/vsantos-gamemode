@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity.Core.Common;
 using System.Linq;
 using GTANetworkServer;
 using GTANetworkShared;
@@ -67,6 +68,34 @@ namespace Serverside.Admin
                 return;
             }
             API.kickPlayer(controller.Client, reason);
+        }
+
+        [Command("fly")]
+        public void StartFying(Client sender)
+        {
+            if (sender.HasData("FlyState"))
+            {
+                sender.ResetData("FlyState");
+                API.triggerClientEvent(sender, "FreeCamEventStop");
+            }
+
+            sender.SetData("FlyState", true);
+            API.triggerClientEvent(sender, "FreeCamEvent", API.getEntityPosition(sender));
+        }
+
+        [Command("inv")]
+        public void SetPlayerInvicible(Client player)
+        {
+            if (API.getEntityInvincible(player))
+            {
+                player.invincible = false;
+                player.Notify("Wyłączono niewidzialność.");
+            }
+            else
+            {
+                player.invincible = true;
+                player.Notify("Włączono niewidzialność.");
+            }
         }
     }
 }

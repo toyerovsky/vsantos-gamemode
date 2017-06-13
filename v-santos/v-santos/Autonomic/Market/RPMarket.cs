@@ -11,7 +11,7 @@ namespace Serverside.Autonomic.Market
 {
     public sealed class RPMarket : Script
     {
-        private List <Models.Market> Markets { get; set; }
+        private List <Market> Markets { get; set; }
 
         public RPMarket()
         {
@@ -23,6 +23,12 @@ namespace Serverside.Autonomic.Market
         {
             if (eventName == "AddMarketItem")
             {
+                /*
+                 * args[0] nameResult
+                 * args[1] typeResult
+                 * args[2] decimal costResult
+                 * args[3] List<string> names
+                 */
                 var item = new MarketItem
                 {
                     Name = arguments[0].ToString(),
@@ -30,14 +36,24 @@ namespace Serverside.Autonomic.Market
                     Cost = (decimal)arguments[2]
                 };
 
-
+                var names = (List<string>) arguments[3];
+                foreach (var name in names)
+                {
+                    var market = Markets.First(x => x.MarketData.Name == name);
+                    if (market != null)
+                    {
+                        market.MarketData.Items.Add(item);
+                        XmlHelper.AddXmlObject(market, $@"{Constant.ConstantAssemblyInfo.XmlDirectory}\Markets\", market.MarketData.Name);
+                    }
+                }
             }
         }
 
         private void OnResourceStartHandler()
         {
             APIExtensions.ConsoleOutput("[RPMarket] Uruchomione pomyślnie.", ConsoleColor.DarkMagenta);
-            Markets = XmlHelper.GetXmlObjects<Models.Market>($@"{Constant.ConstantAssemblyInfo.XmlDirectory}\Markets\");
+            XmlHelper.GetXmlObjects<Models.Market>($@"{Constant.ConstantAssemblyInfo.XmlDirectory}\Markets\")
+                .ForEach(x => Markets.Add(new Market(x)));
         }
 
         [Command("dodajprzedmiotsklep")]
