@@ -5,7 +5,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <StartAction>Program</StartAction>
-    <StartProgram>C:\Users\Toyer\Desktop\GTAN Server\GTANetworkServer.exe</StartProgram>
-    <StartWorkingDirectory>C:\Users\Toyer\Desktop\GTAN Server\</StartWorkingDirectory>
+    <StartProgram>C:\gtansrv\GTANetworkServer.exe</StartProgram>
+    <StartWorkingDirectory>C:\gtansrv\</StartWorkingDirectory>
   </PropertyGroup>
 </Project>

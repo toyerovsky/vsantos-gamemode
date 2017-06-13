@@ -44,7 +44,7 @@ namespace Serverside.Groups
             if (player.CharacterController.OnDutyGroupId.HasValue)
             {
                 sender.Notify(
-                    $"Zszedłeś ze służby grupy: {player.CharacterController.Character.Worker.Single(g => g.Group.Id == player.CharacterController.OnDutyGroupId).Group.Name}");
+                    $"Zszedłeś ze służby grupy: {player.CharacterController.Character.Workers.Single(g => g.Group.Id == player.CharacterController.OnDutyGroupId).Group.Name}");
 
                 player.CharacterController.OnDutyGroupId = null;
                 sender.resetNametagColor();

@@ -114,17 +114,22 @@ function menuLoginPanel() {
     let textElement;
     //Login Screen - Strona 0
     //Login Header
-    panel = loginMenu.createPanel(0, 12, 4, 8, 1);
+    panel = loginMenu.createPanel(0, 12, 3, 8, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
     panel.Header = true;
-    textElement = panel.addText("V-Santos - Login");
+    textElement = panel.addText("Logowanie");
     textElement.Color(255, 255, 255, 255);
     textElement.Centered = true;
     textElement.VerticalCentered = true;
     textElement.FontScale = 0.6;
     textElement.Offset = 18;
+    // Second Page Input Panel Example / Image
+    panel = loginMenu.createPanel(0, 12, 4, 8, 2);
+    panel.MainBackgroundColor(0, 0, 0, 255);
+    panel.MainBackgroundImagePadding = 5;
+    panel.MainBackgroundImage = "_Clientside/TypeScript/logo.png";
     //Formatka logowania
-    panel = loginMenu.createPanel(0, 12, 5, 8, 7);
+    panel = loginMenu.createPanel(0, 12, 6, 8, 7);
     panel.MainBackgroundColor(0, 0, 0, 160);
     textElement = panel.addText("Twój e-mail:");
     textElement.Color(255, 255, 255, 255);
@@ -136,7 +141,7 @@ function menuLoginPanel() {
     loginPassword.Protected = true;
     //Podpowiedź odnośnie nie posiadania konta
     //Guzik logowania
-    panel = loginMenu.createPanel(0, 12, 12, 8, 1);
+    panel = loginMenu.createPanel(0, 12, 13, 8, 1);
     panel.MainBackgroundColor(0, 0, 0, 160);
     panel.HoverBackgroundColor(25, 25, 25, 160);
     panel.Hoverable = true;
@@ -176,7 +181,7 @@ function menuLoginPanel() {
     panel = loginMenu.createPanel(1, 19, 4, 1, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
     panel.Tooltip = "Wybierz następną postać";
-    panel.Function = decrementIndex;
+    panel.Function = incrementIndex;
     panel.HoverBackgroundColor(25, 25, 25, 160);
     panel.Hoverable = true;
     panel.Header = true;
@@ -252,13 +257,18 @@ API.onServerEventTrigger.connect((eventName, args) => {
     }
 });
 API.onKeyDown.connect((sender, e) => {
-    if (e.KeyCode == Keys.Left && selectFlag) {
+    if ((e.KeyCode == Keys.Left || e.KeyCode == Keys.A) && selectFlag) {
+        //API.playSoundFrontEnd("GOLF_NEW_RECORD", "HUD_AWARDS");
+        //API.playSoundFrontEnd("Click", "DLC_HEIST_HACKING_SNAKE_SOUNDS");
+        API.playSoundFrontEnd("Click", "DLC_HEIST_HACKING_SNAKE_SOUNDS");
         decrementIndex();
     }
-    else if (e.KeyCode == Keys.Right && selectFlag) {
+    else if ((e.KeyCode == Keys.Right || e.KeyCode == Keys.D) && selectFlag) {
+        API.playSoundFrontEnd("Click", "DLC_HEIST_HACKING_SNAKE_SOUNDS");
         incrementIndex();
     }
     else if (e.KeyCode == Keys.Enter && selectFlag) {
+        API.playSoundFrontEnd("Click", "DLC_HEIST_HACKING_SNAKE_SOUNDS");
         selectCharacter();
     }
 });

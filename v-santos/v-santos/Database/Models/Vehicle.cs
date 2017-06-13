@@ -51,6 +51,6 @@ namespace Serverside.Database.Models
         public int WheelType { get; set; }
         public int WheelColor { get; set; }
 
-        public virtual ICollection<Item> Tuning { get; set; }
+        public virtual ICollection<Item> Tunings { get; set; }
     }
 }

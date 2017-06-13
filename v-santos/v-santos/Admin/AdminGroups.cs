@@ -51,7 +51,7 @@ namespace Serverside.Admin
                         GroupType = groupType
                     };
 
-                    if (boss.GetAccountController().CharacterController.Character.Worker.Count > 3)
+                    if (boss.GetAccountController().CharacterController.Character.Workers.Count > 3)
                     {
                         GroupController group = RPGroups.CreateGroup(g);
                         group.Data.Workers.Add(new Worker()
@@ -109,7 +109,7 @@ namespace Serverside.Admin
                     return;
                 }
 
-                if (player.CharacterController.Character.Worker.Count <= 3)
+                if (player.CharacterController.Character.Workers.Count <= 3)
                 {
                     group.Data.Workers.Add(new Worker()
                     {

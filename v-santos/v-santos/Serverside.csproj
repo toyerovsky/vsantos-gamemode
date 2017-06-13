@@ -21,7 +21,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\Desktop\GTAN Server\resources\v-santos\</OutputPath>
+    <OutputPath>C:\gtansrv\resources\vsantos\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -194,6 +194,18 @@
     <Compile Include="Migrations\201706101758214_Buildings.Designer.cs">
       <DependentUpon>201706101758214_Buildings.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201706130250468_namefetch.cs" />
+    <Compile Include="Migrations\201706130250468_namefetch.Designer.cs">
+      <DependentUpon>201706130250468_namefetch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201706130318266_CollectionFieldRenames.cs" />
+    <Compile Include="Migrations\201706130318266_CollectionFieldRenames.Designer.cs">
+      <DependentUpon>201706130318266_CollectionFieldRenames.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201706130328190_UniqueAccountUserId.cs" />
+    <Compile Include="Migrations\201706130328190_UniqueAccountUserId.Designer.cs">
+      <DependentUpon>201706130328190_UniqueAccountUserId.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Offers\Enums.cs" />
     <Compile Include="Offers\Offer.cs" />
@@ -232,7 +244,9 @@
   <ItemGroup>
     <Content Include="Constant\Files\dict.txt" />
     <Content Include="_Clientside\MarketMenu.js" />
-    <Content Include="meta.xml" />
+    <Content Include="meta.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="_Clientside\Animations.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -513,6 +527,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201706101758214_Buildings.resx">
       <DependentUpon>201706101758214_Buildings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706130250468_namefetch.resx">
+      <DependentUpon>201706130250468_namefetch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706130318266_CollectionFieldRenames.resx">
+      <DependentUpon>201706130318266_CollectionFieldRenames.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706130328190_UniqueAccountUserId.resx">
+      <DependentUpon>201706130328190_UniqueAccountUserId.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

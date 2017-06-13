@@ -33,5 +33,6 @@ namespace Serverside.Core.Extensions
     }
     public delegate void DimensionChangeEventHandler(object sender, DimensionChangeEventArgs e);
 
-    public delegate void LoginEventHandler(AccountController sender);
+    public delegate void AccountLoginEventHandler(Client sender, AccountController account);
+    public delegate void CharacterLoginEventHandler(Client sender, CharacterController account);
 }

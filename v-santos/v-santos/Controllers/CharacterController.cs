@@ -6,11 +6,13 @@ using Serverside.Database;
 using Serverside.Database.Models;
 using Serverside.Core.Extensions;
 using Serverside.Core;
+using GTANetworkShared;
 
 namespace Serverside.Controllers
 {
     public class CharacterController
     {
+        public static event CharacterLoginEventHandler OnPlayerCharacterLogin;
         public Character Character { get; set; }
         public AccountController AccountController { get; private set; }
         //Cellphone controller przypisujemy w przedmiotcie telefonu
@@ -53,6 +55,8 @@ namespace Serverside.Controllers
             Character.Account = accountController.AccountData;
             Character.Name = name;
             Character.Surname = surname;
+            Character.Money = 10000;
+            Character.BankMoney = 1000000;
             Character.CreateTime = DateTime.Now;
             Character.Model = (int)model;
             Character.ModelName = model.ToString();
@@ -113,6 +117,68 @@ namespace Serverside.Controllers
                 return true;
             }
             return false;
+        }
+
+        public static void SelectCharacter(Client player, int selectId)
+        {
+            AccountController account = player.GetAccountController();
+            if (account == null)
+            {
+                player.triggerEvent("ShowNotification", "Nie udało się załadować twojej postaci... Skontaktuj się z Administratorem!", 5000);
+                return;
+            }
+
+            if (account.AccountData.Characters.Count() == 0)
+            {
+                //API.shared.sendChatMessageToPlayer(player, "You have no characters.");
+                player.triggerEvent("ShowNotification", "Twoje konto nie posiada żadnych postaci!", 3000);
+            }
+            else
+            {
+                long characterid = account.AccountData.Characters.ToList()[selectId].Id;
+                Character characterData = ContextFactory.Instance.Characters.FirstOrDefault(x => x.Id == characterid);
+                CharacterController characterController = new CharacterController(account, characterData);
+                characterController.LoginCharacter(account);
+            }
+        }
+
+        public void LoginCharacter(AccountController accountController)
+        {
+            AccountController = accountController;
+            accountController.CharacterController = this;
+
+            Character character = accountController.CharacterController.Character;
+
+            accountController.Client.nametag = "(" + RPEntityManager.CalculateServerId(accountController) + ") " + character.Name + " " + character.Surname;
+
+            API.shared.setPlayerName(accountController.Client, character.Name + " " + character.Surname);
+            accountController.Client.setSkin((PedHash)character.Model);
+
+            API.shared.setEntityPosition(accountController.Client, new Vector3(character.LastPositionX, character.LastPositionY, character.LastPositionZ));
+
+            accountController.Client.dimension = 0;
+
+            if (character.BWState > 0)
+            {
+                API.shared.setPlayerHealth(accountController.Client, -1);
+            }
+            else
+            {
+                API.shared.setPlayerHealth(accountController.Client, character.HitPoints);
+            }
+
+            API.shared.triggerClientEvent(accountController.Client, "ShowCharacterSelectCef", false);
+
+            accountController.Client.SetData("CanTalk", true);
+            accountController.Client.SetData("CanNarrate", true);
+            accountController.Client.SetData("CanPM", true);
+            accountController.Client.SetData("CanCommand", true);
+            accountController.Client.SetData("CanPay", true);
+
+            API.shared.triggerClientEvent(accountController.Client, "Money_Changed", $"${character.Money}");
+            API.shared.triggerClientEvent(accountController.Client, "ToggleHud", true);
+            RPChat.SendMessageToPlayer(accountController.Client, $"Witaj, twoja postać {character.Name + " " + character.Surname} została pomyślnie załadowana, życzymy miłej gry!", ChatMessageType.ServerInfo);
+            if (OnPlayerCharacterLogin != null) OnPlayerCharacterLogin.Invoke(AccountController.Client, this);
         }
 
         #region DimensionManager
