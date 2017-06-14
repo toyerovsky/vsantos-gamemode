@@ -76,11 +76,11 @@ namespace Serverside.Admin
             if (sender.HasData("FlyState"))
             {
                 sender.ResetData("FlyState");
-                API.triggerClientEvent(sender, "FreeCamEventStop");
+                API.triggerClientEvent(sender, "FreeCamStop");
             }
 
             sender.SetData("FlyState", true);
-            API.triggerClientEvent(sender, "FreeCamEvent", API.getEntityPosition(sender));
+            API.triggerClientEvent(sender, "FreeCamStart", API.getEntityPosition(sender));
         }
 
         [Command("inv")]

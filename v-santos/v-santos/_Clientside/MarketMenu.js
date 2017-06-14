@@ -5,7 +5,13 @@ API.onServerEventTrigger.connect(function(eventName, args) {
         menuPool = API.getMenuPool();
         var menu = API.createMenu("Dodaj nowy budynek", 0, 0, 6);
 
-        var nameItem = API.createMenuItem("Nazwa", "Ustal nazwe przedmiotu.");
+        var nameItem = API.createMenuItem("Nazwa", "Ustal nazwe przedmiotu");
+        menu.AddItem(nameItem);
+        var firstParameterItem = API.createMenuItem("Pierwszy parametr", "Parametry to zmienne zależne od typu przedmiotu");
+        menu.AddItem(nameItem);
+        var secondParameterItem = API.createMenuItem("Drugi parametr", "Parametry to zmienne zależne od typu przedmiotu");
+        menu.AddItem(nameItem);
+        var thirdParameterItem = API.createMenuItem("Trzeci parametr", "Parametry to zmienne zależne od typu przedmiotu");
         menu.AddItem(nameItem);
         var typesItem = API.createListItem("Typy", "Ustal typ przedmiotu", args[0], 0);
         menu.AddItem(typesItem);
@@ -30,6 +36,9 @@ API.onServerEventTrigger.connect(function(eventName, args) {
         var nameResult = null;
         var typeResult = null;
         var costResult = null;
+        var firstParameterResult = null;
+        var secondParameterResult = null;
+        var thirdParameterResult = null;
 
         menu.OnItemSelect.connect(function (sender, item, index) {
             if (item === nameItem) {
@@ -46,17 +55,58 @@ API.onServerEventTrigger.connect(function(eventName, args) {
                 if (nameResult != null &&
                     costResult != null &&
                     typeResult != null) {
-                    API.triggerServerEvent("AddMarketItem", nameResult, typeResult, costResult, names);
+                    API.triggerServerEvent("AddMarketItem", nameResult, typeResult, costResult, names, firstParameterResult, secondParameterResult, thirdParameterResult);
                     menu.Visible = false;
                 }
                 else {
                     API.sendNotification("Dane nie zostały zaincjalizowane.");
                 }
             }
+            else if (item == firstParameterItem) {
+                firstParameterResult = API.getUserInput("Pierwszy parametr", 5);
+                if (firstParameterResult.trim() == "" || isNaN(firstParameterResult)) {
+                    API.sendNotification("Wprowadzono niepoprawny parametr");
+                    firstParameterResult = null;
+                }
+            }
+            else if (item == secondParameterItem) {
+                secondParameterResult = API.getUserInput("Drugi parametr", 5);
+                if (secondParameterResult.trim() == "" || isNaN(secondParameterResult)) {
+                    API.sendNotification("Wprowadzono niepoprawny parametr");
+                    secondParameterResult = null;
+                }
+            }
+            else if (item == thirdParameterItem) {
+                thirdParameterResult = API.getUserInput("Trzeci parametr", 5);
+                if (thirdParameterResult.trim() == "" || isNaN(thirdParameterResult)) {
+                    API.sendNotification("Wprowadzono niepoprawny parametr");
+                    thirdParameterResult = null;
+                }
+            }
         });
 
         types.OnListChanged.connect(function (sender, newIndex) {
             typeResult = sender.IndexToItem(sender.Index);
+        });
+    }
+    else if (eventName == "ShowMarketMenu") {
+
+        menuPool = API.getMenuPool();
+        var menu = API.createMenu("", 3, 3, 5);
+        API.setMenuTitle(menu, "24/7");
+
+        var items = JSON.parse(args[0]);
+
+        for (var i = 0; i < items.length; i++) {
+            var itemMenuItem = API.createMenuItem(items[i]["Name"], "Koszt: " + items[i]["Cost"]);
+            menu.AddItem(itemMenuItem);
+        }
+        menuPool.Add(menu);
+        menu.Visible = true;
+
+        menu.OnItemSelect.connect(function (sender, item, index) {
+            API.triggerServerEvent("OnPlayerBoughtMarketItem", index);
+            menu.Visible = false;
         });
     }
 });

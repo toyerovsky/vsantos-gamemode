@@ -7,10 +7,10 @@ namespace Serverside.Autonomic.Market.Models
     [Serializable]
     public class Market
     {
-        public long Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
-        public Vector3 StartPosition { get; set; }
-        public Vector3 EndPosition { get; set; }
+        public Vector3 Center { get; set; }
+        public float Radius { get; set; }
         public List<MarketItem> Items { get; set; }
     }
 }
