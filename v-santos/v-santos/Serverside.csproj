@@ -500,7 +500,9 @@
     <Content Include="_Clientside\TypeScript\BuildingMenu.ts" />
     <Content Include="_Clientside\TypeScript\LoginMenu.ts" />
     <Content Include="_Clientside\TypeScript\MenuBuilder.ts" />
-    <Content Include="_Clientside\TypeScript\Resources\Images\logo.png" />
+    <Content Include="_Clientside\TypeScript\Resources\Images\logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="_Clientside\TypeScript\Scoreboard.ts" />
     <Content Include="_Clientside\VehicleLogic.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

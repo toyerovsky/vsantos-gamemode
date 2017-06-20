@@ -29,7 +29,7 @@
   <script src="_Clientside/Compiled.js" type="client" lang="javascript" />
   
   <file src="_Clientside/Compiled.js.map" />
-  <file src="_Clientside/TypeScript/Resources/logo.png" />  
+  <file src="_Clientside/TypeScript/Resources/Images/logo.png" />  
   <file src="_Clientside/Resources/Bank/Atm/index.html" />
   <file src="_Clientside/Resources/Bank/Atm/style.css" />
   <file src="_Clientside/Resources/Bank/Atm/Iframe/iframe.html" />
