@@ -4,6 +4,7 @@ using GTANetworkServer;
 using GTANetworkShared;
 using Serverside.Core.Telephone.Booth.Models;
 using Serverside.Core.Extensions;
+using Serverside.Core.Extenstions;
 
 namespace Serverside.Core.Telephone.Booth
 {

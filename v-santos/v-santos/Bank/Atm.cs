@@ -19,8 +19,7 @@ namespace Serverside.Bank
             Api = api;
             Data = data;
 
-            AtmMarker = Api.createMarker(1, Data.Position.Position, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), new Vector3(1f, 1f, 1f), 100,
-                100, 100, 100);
+            AtmMarker = Api.createMarker(1, Data.Position.Position, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), new Vector3(1f, 1f, 1f), 100, 100, 100, 100);
             AtmMarker.invincible = true;
 
             AtmShape = Api.createCylinderColShape(Data.Position.Position, 1f, 2f);

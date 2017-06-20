@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using GTANetworkServer;
-using GTANetworkShared;
 using GTANetworkServer.Constant;
-using Serverside.Core.Extenstions;
+using GTANetworkShared;
 
-namespace Serverside.Core.Extensions
+namespace Serverside.Core.Extenstions
 {
     public static class APIExtensions
     {
