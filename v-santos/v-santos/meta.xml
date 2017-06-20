@@ -37,13 +37,6 @@
   <file src="_Clientside/Resources/Bank/Atm/Images/piggy-bank.png" />
   <file src="_Clientside/Resources/Bank/Atm/Images/safebox(1).png" />
   <file src="_Clientside/Resources/Bank/Atm/Images/safebox.png" />
-  <file src="_Clientside/Resources/Characters/index.html" />
-  <file src="_Clientside/Resources/Characters/style.css" />
-  <file src="_Clientside/Resources/Characters/Images/credit-card.png" />
-  <file src="_Clientside/Resources/Characters/Images/id-card.png" />
-  <file src="_Clientside/Resources/Characters/Images/money-card.png" />
-  <file src="_Clientside/Resources/Characters/Images/name-card.png" />
-  <file src="_Clientside/Resources/Characters/Images/surname-card.png" />
   <file src="_Clientside/Resources/CrimeBot/index.html" />
   <file src="_Clientside/Resources/CrimeBot/style.css" />
   <file src="_Clientside/Resources/CrimeBot/Images/Guns/-1045183535.png" />
@@ -75,8 +68,6 @@
   <file src="_Clientside/Resources/Employer/Images/mower.png" />
   <file src="_Clientside/Resources/Employer/Images/thief.png" />
   <file src="_Clientside/Resources/Employer/Images/trash.png" />
-  <file src="_Clientside/Resources/Login/index.html" />
-  <file src="_Clientside/Resources/Login/style.css" />
   <file src="_Clientside/Resources/Offer/index.html" />
   <file src="_Clientside/Resources/Offer/style.css" />
   <file src="_Clientside/Resources/Offer/Images/money-card.png" />
@@ -88,9 +79,6 @@
   <file src="_Clientside/Resources/WheelMenu/raphael.min.js" />
   <file src="_Clientside/Resources/WheelMenu/wheelnav.js" />
   <file src="_Clientside/Resources/WheelMenu/wheelnav.min.js" />
-  <file src="_Clientside/Resources/Login/login.html" />
-  <file src="_Clientside/Resources/Login/login.css" />
-  <file src="_Clientside/Resources/Login/Images/bg.jpg" />
   <file src="_Clientside/Resources/Bus/bus.html" />
   <file src="_Clientside/Resources/Bus/bus.css" />
   <file src="_Clientside/Resources/css/bootstrap.css" />

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
+using Serverside.Core.Extenstions;
 
 namespace Serverside.Core
 {
@@ -16,6 +17,12 @@ namespace Serverside.Core
         /// <param name="fileName"></param>
         public static void AddXmlObject<T>(T xmlObject, string path, string fileName = "")
         {
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+                APIExtensions.ConsoleOutput($"[XmlHelper] Utworzono ścieżkę {path}", ConsoleColor.Blue);
+            }
+
             using (FileStream xmlStream = File.Create(path + (fileName != "" ? fileName : (GetXmlObjects<T>(path).Count + 1).ToString()) + ".xml"))
             {
                 try
@@ -42,6 +49,12 @@ namespace Serverside.Core
         /// <returns></returns>
         public static List<T> GetXmlObjects<T>(string path)
         {
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+                APIExtensions.ConsoleOutput($"[XmlHelper] Utworzono ścieżkę {path}", ConsoleColor.Blue);
+            }
+
             var readerSerializer = new XmlSerializer(typeof(T));
             var posDirs = Directory.GetFiles(path);
             

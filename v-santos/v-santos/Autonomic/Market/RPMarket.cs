@@ -91,16 +91,10 @@ namespace Serverside.Autonomic.Market
         private void OnResourceStartHandler()
         {
             //TODO: Wczytywanie wszystkich IPL sklepów
-            if (Directory.Exists($@"{Constant.ConstantAssemblyInfo.XmlDirectory}\Markets\"))
-            {
+            
                 APIExtensions.ConsoleOutput("[RPMarket] Uruchomione pomyślnie.", ConsoleColor.DarkMagenta);
                 XmlHelper.GetXmlObjects<Models.Market>($@"{Constant.ConstantAssemblyInfo.XmlDirectory}\Markets\")
-                    .ForEach(x => Markets.Add(new Market(x)));
-            }
-            else
-            {
-                APIExtensions.ConsoleOutput(@"[Error] Dodaj katalog ..\Xml\Markets", ConsoleColor.Red);
-            }
+                    .ForEach(x => Markets.Add(new Market(x)));          
         }
 
         [Command("dodajprzedmiotsklep")]
