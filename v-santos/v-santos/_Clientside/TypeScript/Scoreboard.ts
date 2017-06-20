@@ -6,7 +6,7 @@ class PlayerInfo {
     ping: number = 0;
     color: number[] = [255, 255, 255];
 }
-
+//
 var gCurrentState = 0;
 var gCurrentPage = 0;
 var gStateSet = 0;

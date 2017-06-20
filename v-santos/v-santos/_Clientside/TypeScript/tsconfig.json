@@ -5,7 +5,7 @@
     "removeComments": false,
     "sourceMap": true,
     "target": "es6",
-    "outFile": "Compiled.js"
+    "outFile": "C:\\gtansrv\\resources\\vsantos\\_Clientside\\compiled.js"
   },
   "compileOnSave": true
 }

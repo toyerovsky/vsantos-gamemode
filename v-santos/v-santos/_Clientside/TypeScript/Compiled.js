@@ -1,3 +1,99 @@
+var freeCam = null;
+var normalspeed = 0.5;
+var highspeed = 1.5;
+API.onServerEventTrigger.connect((eventName, args) => {
+    if (eventName == "FreeCamStart") {
+        freeCam = API.createCamera(args[0], new Vector3(0, 0, 0));
+        API.setActiveCamera(freeCam);
+    }
+    if (eventName == "FreeCamStop") {
+        var cameraPos = API.getCameraPosition(freeCam);
+        API.triggerServerEvent("ChangePosition", new Vector3(cameraPos.X, cameraPos.Y, cameraPos.Z + 1));
+        API.setActiveCamera(null);
+        freeCam = null;
+    }
+});
+API.onUpdate.connect(() => {
+    if (freeCam != null) {
+        API.setCameraRotation(freeCam, API.getGameplayCamRot());
+        var cameraRot = API.getCameraRotation(freeCam);
+        var cameraPos = API.getCameraPosition(freeCam);
+        API.setEntityPosition(API.getLocalPlayer(), new Vector3(cameraPos.X, cameraPos.Y, cameraPos.Z - 2.5));
+        API.setEntityRotation(API.getLocalPlayer(), new Vector3(0, 0, cameraRot.Z));
+        var pi = Math.PI;
+        var xradian = ((cameraRot.X * pi) / 180);
+        var yradian = ((cameraRot.Z * pi) / 180);
+        var zradian = ((cameraRot.Z * pi) / 180);
+        if (API.isControlPressed(87)) {
+            API.enableControlThisFrame(87);
+            var OldPos = API.getCameraPosition(freeCam);
+            var newx = -(Math.sin(yradian) * normalspeed);
+            var newy = Math.cos(yradian) * normalspeed;
+            var newz = Math.sin(xradian) * normalspeed; // up or down					
+            API.setCameraPosition(freeCam, new Vector3(OldPos.X + newx, OldPos.Y + newy, OldPos.Z + newz));
+        }
+        if (!API.isChatOpen()) {
+            if (API.isControlPressed(21)) {
+                if (API.isControlPressed(87)) {
+                    API.enableControlThisFrame(21);
+                    var OldPos = API.getCameraPosition(freeCam);
+                    var newx = -(Math.sin(yradian) * highspeed);
+                    var newy = Math.cos(yradian) * highspeed;
+                    var newz = Math.sin(xradian) * highspeed;
+                    API.setCameraPosition(freeCam, new Vector3(OldPos.X + newx, OldPos.Y + newy, OldPos.Z + newz));
+                }
+                if (API.isControlPressed(268)) {
+                    API.enableControlThisFrame(87);
+                    var OldPos = API.getCameraPosition(freeCam);
+                    var newx = Math.sin(yradian) * highspeed;
+                    var newy = -(Math.cos(yradian) * highspeed);
+                    var newz = -(Math.sin(xradian) * highspeed); // up or down					
+                    API.setCameraPosition(freeCam, new Vector3(OldPos.X + newx, OldPos.Y + newy, OldPos.Z + newz));
+                }
+                if (API.isControlPressed(35)) {
+                    API.enableControlThisFrame(35);
+                    var OldPos = API.getCameraPosition(freeCam);
+                    var newx = Math.cos(yradian) * highspeed;
+                    var newy = Math.sin(yradian) * highspeed;
+                    var newz = -(Math.sin(xradian) * highspeed); // up or down					
+                    API.setCameraPosition(freeCam, new Vector3(OldPos.X + newx, OldPos.Y + newy, OldPos.Z + newz));
+                }
+                if (API.isControlPressed(34)) {
+                    API.enableControlThisFrame(34);
+                    var OldPos = API.getCameraPosition(freeCam);
+                    var newx = -(Math.cos(yradian) * highspeed);
+                    var newy = -(Math.sin(yradian) * highspeed);
+                    var newz = Math.sin(xradian) * highspeed; // up or down					
+                    API.setCameraPosition(freeCam, new Vector3(OldPos.X + newx, OldPos.Y + newy, OldPos.Z + newz));
+                }
+            }
+        }
+        if (API.isControlPressed(268)) {
+            API.enableControlThisFrame(87);
+            var OldPos = API.getCameraPosition(freeCam);
+            var newx = Math.sin(yradian) * normalspeed;
+            var newy = -(Math.cos(yradian) * normalspeed);
+            var newz = -(Math.sin(xradian) * normalspeed); // up or down					
+            API.setCameraPosition(freeCam, new Vector3(OldPos.X + newx, OldPos.Y + newy, OldPos.Z + newz));
+        }
+        if (API.isControlPressed(35)) {
+            API.enableControlThisFrame(35);
+            var OldPos = API.getCameraPosition(freeCam);
+            var newx = Math.cos(yradian) * normalspeed;
+            var newy = Math.sin(yradian) * normalspeed;
+            var newz = -(Math.sin(xradian) * normalspeed); // up or down					
+            API.setCameraPosition(freeCam, new Vector3(OldPos.X + newx, OldPos.Y + newy, OldPos.Z + newz));
+        }
+        if (API.isControlPressed(34)) {
+            API.enableControlThisFrame(34);
+            var OldPos = API.getCameraPosition(freeCam);
+            var newx = -(Math.cos(yradian) * normalspeed);
+            var newy = -(Math.sin(yradian) * normalspeed);
+            var newz = Math.sin(xradian) * normalspeed; // up or down					
+            API.setCameraPosition(freeCam, new Vector3(OldPos.X + newx, OldPos.Y + newy, OldPos.Z + newz));
+        }
+    }
+});
 /// <reference path="../../types-gtanetwork/index.d.ts" />
 class BuildingInfo {
 }
@@ -2281,100 +2377,4 @@ API.onUpdate.connect(() => {
         }
     }
 });
-var freeCam = null;
-var normalspeed = 0.5;
-var highspeed = 1.5;
-API.onServerEventTrigger.connect((eventName, args) => {
-    if (eventName == "FreeCamStart") {
-        freeCam = API.createCamera(args[0], new Vector3(0, 0, 0));
-        API.setActiveCamera(freeCam);
-    }
-    if (eventName == "FreeCamStop") {
-        var cameraPos = API.getCameraPosition(freeCam);
-        API.triggerServerEvent("ChangePosition", new Vector3(cameraPos.X, cameraPos.Y, cameraPos.Z + 1));
-        API.setActiveCamera(null);
-        freeCam = null;
-    }
-});
-API.onUpdate.connect(() => {
-    if (freeCam != null) {
-        API.setCameraRotation(freeCam, API.getGameplayCamRot());
-        var cameraRot = API.getCameraRotation(freeCam);
-        var cameraPos = API.getCameraPosition(freeCam);
-        API.setEntityPosition(API.getLocalPlayer(), new Vector3(cameraPos.X, cameraPos.Y, cameraPos.Z - 2.5));
-        API.setEntityRotation(API.getLocalPlayer(), new Vector3(0, 0, cameraRot.Z));
-        var pi = Math.PI;
-        var xradian = ((cameraRot.X * pi) / 180);
-        var yradian = ((cameraRot.Z * pi) / 180);
-        var zradian = ((cameraRot.Z * pi) / 180);
-        if (API.isControlPressed(87)) {
-            API.enableControlThisFrame(87);
-            var OldPos = API.getCameraPosition(freeCam);
-            var newx = -(Math.sin(yradian) * normalspeed);
-            var newy = Math.cos(yradian) * normalspeed;
-            var newz = Math.sin(xradian) * normalspeed; // up or down					
-            API.setCameraPosition(freeCam, new Vector3(OldPos.X + newx, OldPos.Y + newy, OldPos.Z + newz));
-        }
-        if (!API.isChatOpen()) {
-            if (API.isControlPressed(21)) {
-                if (API.isControlPressed(87)) {
-                    API.enableControlThisFrame(21);
-                    var OldPos = API.getCameraPosition(freeCam);
-                    var newx = -(Math.sin(yradian) * highspeed);
-                    var newy = Math.cos(yradian) * highspeed;
-                    var newz = Math.sin(xradian) * highspeed;
-                    API.setCameraPosition(freeCam, new Vector3(OldPos.X + newx, OldPos.Y + newy, OldPos.Z + newz));
-                }
-                if (API.isControlPressed(268)) {
-                    API.enableControlThisFrame(87);
-                    var OldPos = API.getCameraPosition(freeCam);
-                    var newx = Math.sin(yradian) * highspeed;
-                    var newy = -(Math.cos(yradian) * highspeed);
-                    var newz = -(Math.sin(xradian) * highspeed); // up or down					
-                    API.setCameraPosition(freeCam, new Vector3(OldPos.X + newx, OldPos.Y + newy, OldPos.Z + newz));
-                }
-                if (API.isControlPressed(35)) {
-                    API.enableControlThisFrame(35);
-                    var OldPos = API.getCameraPosition(freeCam);
-                    var newx = Math.cos(yradian) * highspeed;
-                    var newy = Math.sin(yradian) * highspeed;
-                    var newz = -(Math.sin(xradian) * highspeed); // up or down					
-                    API.setCameraPosition(freeCam, new Vector3(OldPos.X + newx, OldPos.Y + newy, OldPos.Z + newz));
-                }
-                if (API.isControlPressed(34)) {
-                    API.enableControlThisFrame(34);
-                    var OldPos = API.getCameraPosition(freeCam);
-                    var newx = -(Math.cos(yradian) * highspeed);
-                    var newy = -(Math.sin(yradian) * highspeed);
-                    var newz = Math.sin(xradian) * highspeed; // up or down					
-                    API.setCameraPosition(freeCam, new Vector3(OldPos.X + newx, OldPos.Y + newy, OldPos.Z + newz));
-                }
-            }
-        }
-        if (API.isControlPressed(268)) {
-            API.enableControlThisFrame(87);
-            var OldPos = API.getCameraPosition(freeCam);
-            var newx = Math.sin(yradian) * normalspeed;
-            var newy = -(Math.cos(yradian) * normalspeed);
-            var newz = -(Math.sin(xradian) * normalspeed); // up or down					
-            API.setCameraPosition(freeCam, new Vector3(OldPos.X + newx, OldPos.Y + newy, OldPos.Z + newz));
-        }
-        if (API.isControlPressed(35)) {
-            API.enableControlThisFrame(35);
-            var OldPos = API.getCameraPosition(freeCam);
-            var newx = Math.cos(yradian) * normalspeed;
-            var newy = Math.sin(yradian) * normalspeed;
-            var newz = -(Math.sin(xradian) * normalspeed); // up or down					
-            API.setCameraPosition(freeCam, new Vector3(OldPos.X + newx, OldPos.Y + newy, OldPos.Z + newz));
-        }
-        if (API.isControlPressed(34)) {
-            API.enableControlThisFrame(34);
-            var OldPos = API.getCameraPosition(freeCam);
-            var newx = -(Math.cos(yradian) * normalspeed);
-            var newy = -(Math.sin(yradian) * normalspeed);
-            var newz = Math.sin(xradian) * normalspeed; // up or down					
-            API.setCameraPosition(freeCam, new Vector3(OldPos.X + newx, OldPos.Y + newy, OldPos.Z + newz));
-        }
-    }
-});
-//# sourceMappingURL=Compiled.js.map
+//# sourceMappingURL=compiled.js.map
