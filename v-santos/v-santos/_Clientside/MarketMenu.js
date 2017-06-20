@@ -1,9 +1,11 @@
 ﻿var menuPool = null;
+let menu = null;
 
 API.onServerEventTrigger.connect(function(eventName, args) {
     if (eventName === "ShowAdminMarketItemMenu") {
         menuPool = API.getMenuPool();
-        var menu = API.createMenu("Dodaj nowy budynek", 0, 0, 6);
+
+        menu = API.createMenu("Dodaj nowy przedmiot", 0, 0, 6);
 
         var nameItem = API.createMenuItem("Nazwa", "Ustal nazwe przedmiotu");
         menu.AddItem(nameItem);
@@ -92,8 +94,9 @@ API.onServerEventTrigger.connect(function(eventName, args) {
     else if (eventName == "ShowMarketMenu") {
 
         menuPool = API.getMenuPool();
-        var menu = API.createMenu("", 3, 3, 5);
+        menu = API.createMenu("", 3, 3, 5);
         API.setMenuTitle(menu, "24/7");
+        API.setMenuBannerRectangle(menu, 100, 106, 154, 40);
 
         var items = JSON.parse(args[0]);
 

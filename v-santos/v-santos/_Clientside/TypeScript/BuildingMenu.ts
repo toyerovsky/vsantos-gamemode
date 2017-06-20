@@ -11,11 +11,12 @@ class BuildingInfo
 let drawScaleform: boolean = false;
 let scaleForm: any = null;
 let buildingMenu: Menu = null;
-var menuPool: any = null;
-let buildings: BuildingInfo[] = null;
+let buildings: BuildingInfo[] = [];
 let buildingName: InputPanel;
 let buildingDescription: InputPanel;
 let buildingEnterCharge: InputPanel;
+
+var menuPool: any = null;
 
 API.onKeyDown.connect((sender: any, e: System.Windows.Forms.KeyEventArgs) =>
 {
@@ -49,14 +50,14 @@ API.onServerEventTrigger.connect((eventName: string, args: System.Array<any>) =>
         scaleForm.CallFunction('SET_DATA_SLOT_EMPTY');
         if (args[0])
         {
-            scaleForm.CallFunction('SET_DATA_SLOT', 0, 'E', 'Wejdź');
-            scaleForm.CallFunction('SET_DATA_SLOT', 1, 'K', 'Zapukaj');
+            scaleForm.CallFunction('SET_DATA_SLOT', 0, 't_E', 'Wejdź');
+            scaleForm.CallFunction('SET_DATA_SLOT', 1, 't_K', 'Zapukaj');
             showBuildingPanel(args[1]);
         }
         else
         {
-            scaleForm.CallFunction('SET_DATA_SLOT', 0, 'E', 'Wyjdź');
-            scaleForm.CallFunction('SET_DATA_SLOT', 1, 'K', 'Zapukaj');
+            scaleForm.CallFunction('SET_DATA_SLOT', 0, 't_E', 'Wyjdź');
+            scaleForm.CallFunction('SET_DATA_SLOT', 1, 't_K', 'Zapukaj');
         }
         scaleForm.CallFunction('DRAW_INSTRUCTIONAL_BUTTONS', -1);
         drawScaleform = true;
@@ -79,8 +80,9 @@ API.onServerEventTrigger.connect((eventName: string, args: System.Array<any>) =>
     {
         menuPool = API.getMenuPool();
         var menu = API.createMenu("Dodaj budynek", 0, 0, 6);
+        API.setMenuTitle(menu, "Pojazdy");
+        API.setMenuBannerRectangle(menu, 100, 106, 154, 40);
 
-        buildings = [];
         var newBuilding: BuildingInfo;
 
         var list = JSON.parse(args[0]);
@@ -88,7 +90,7 @@ API.onServerEventTrigger.connect((eventName: string, args: System.Array<any>) =>
         {
             newBuilding = new BuildingInfo();
             newBuilding.name = list[i].Name;
-            newBuilding.internalPosition = list[i].InternalPostion;
+            newBuilding.internalPosition = list[i].InternalPosition;
             buildings.push(newBuilding);
         }
 
@@ -157,7 +159,8 @@ API.onServerEventTrigger.connect((eventName: string, args: System.Array<any>) =>
             let building = getBuilding(interiorResult);
             if (building != null)
             {
-                API.triggerServerEvent("ChangePosition", building.internalPosition);
+                //Jak przesyłamy Vector3 to nie działa
+                API.triggerServerEvent("ChangePosition", building.internalPosition.X, building.internalPosition.Y, building.internalPosition.Z);
             }
         });
     }
@@ -166,6 +169,9 @@ API.onServerEventTrigger.connect((eventName: string, args: System.Array<any>) =>
 API.onUpdate.connect(() =>
 {
     if (drawScaleform) API.renderScaleform(scaleForm, 0, 0, 1280, 720);
+    if (menuPool != null) {
+        menuPool.ProcessMenus();
+    }
 });
 
 function showBuildingPanel(buildingInfo: System.Array<string>) {
@@ -182,7 +188,6 @@ function showBuildingPanel(buildingInfo: System.Array<string>) {
     textElement = panel.addText(buildingInfo[0]);
     textElement.Color(255, 255, 255, 255);
     textElement.Centered = true;
-    textElement.VerticalCentered = true;
     textElement.FontScale = 0.6;
     textElement.Offset = 18;
 
@@ -198,7 +203,6 @@ function showBuildingPanel(buildingInfo: System.Array<string>) {
     textElement.Centered = true;
     textElement.VerticalCentered = true;
     textElement.FontScale = 0.6;
-    textElement.Offset = 18;
 
     //Opis budynku
     panel = buildingMenu.createPanel(0, 12, 5, 8, 7);
@@ -222,7 +226,10 @@ function showBuildingPanel(buildingInfo: System.Array<string>) {
         panel.MainBackgroundColor(0, 0, 0, 160);
         panel.HoverBackgroundColor(25, 25, 25, 160);
         panel.Hoverable = true;
-        panel.Function = () => { API.triggerServerEvent("BuyBuilding") };
+        panel.Function = () => {
+            API.triggerServerEvent("BuyBuilding");
+            buildingMenu.killMenu();
+        };
         panel.Tooltip = "Kup ten budynek";
         textElement = panel.addText("Kup");
         textElement.Color(255, 255, 255, 255);
@@ -231,6 +238,7 @@ function showBuildingPanel(buildingInfo: System.Array<string>) {
         textElement.VerticalCentered = true;
     }
 
+    buildingMenu.DisableOverlays(true);
     buildingMenu.Ready = true;
 }
 
@@ -264,7 +272,6 @@ function showBuildingManagePanel(buildingInfo: BuildingInfo) {
     textElement.Centered = true;
     textElement.VerticalCentered = true;
     textElement.FontScale = 0.6;
-    textElement.Offset = 18;
 
     //Nazwa budynku
     panel = buildingMenu.createPanel(0, 12, 5, 8, 7);
@@ -298,7 +305,13 @@ function showBuildingManagePanel(buildingInfo: BuildingInfo) {
     panel.MainBackgroundColor(0, 0, 0, 160);
     panel.HoverBackgroundColor(25, 25, 25, 160);
     panel.Hoverable = true;
-    panel.Function = () => { API.triggerServerEvent("EdingBuildingInfo", buildingName.Input, buildingDescription.Input, buildingEnterCharge.Input) };
+    panel.Function = () => {
+        API.triggerServerEvent("EdingBuildingInfo",
+            buildingName.Input,
+            buildingDescription.Input,
+            buildingEnterCharge.Input);
+        buildingMenu.killMenu();  
+    };
     panel.Tooltip = "Zapisz bieżące informacje";
     textElement = panel.addText("Zapisz");
     textElement.Color(255, 255, 255, 255);

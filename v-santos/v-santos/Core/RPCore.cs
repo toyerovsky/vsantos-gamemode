@@ -23,14 +23,31 @@ namespace Serverside.Core
             API.onPlayerFinishedDownload += API_onPlayerFinishedDownload;
             API.onPlayerDisconnected += API_onPlayerDisconnectedHandler;
             API.onClientEventTrigger += API_onClientEventTrigger;
+            API.onUpdate += OnUpdateHandler;
+        }
+
+        private float _currentRotation = 0;
+        private void OnUpdateHandler()
+        {
+            if (RPEntityManager.GetBuildings().Count == 0) return;
+            //Kręcące się markery od budynków
+            if (Math.Abs(_currentRotation - 360f) < 0.4) _currentRotation = 0;
+            _currentRotation += 0.4f;
+
+            foreach (var building in RPEntityManager.GetBuildings())
+            {
+                building.BuildingMarker.rotation = new Vector3(building.BuildingMarker.rotation.X, building.BuildingMarker.rotation.Y, _currentRotation);
+            }
         }
 
         private void API_onClientEventTrigger(Client sender, string eventName, params object[] arguments)
         {
-            if (eventName == "ChangePosition" )
+            //args[0] float X
+            //args[1] float Y
+            //args[2] float Z
+            if (eventName == "ChangePosition")
             {
-                var vector3 = arguments[0] as Vector3;
-                if (vector3 != null) sender.position = vector3;
+                sender.position = new Vector3((float)arguments[0], (float)arguments[1], (float)arguments[2]);
             }
         }
 
@@ -42,6 +59,7 @@ namespace Serverside.Core
             RPEntityManager.Init();
             ContextFactory.Instance.SaveChanges();
         }
+
         private void API_onResourceStop()
         {
             Task dbStop = Task.Run(() =>

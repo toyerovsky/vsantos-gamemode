@@ -7,8 +7,8 @@ API.onServerEventTrigger.connect(function (eventName, args)
 
         var editorMenu = API.createMenu(args[10].toString(), 0, 0, 6);
         API.setMenuTitle(editorMenu, "Kreator postaci");
-        API.setMenuBannerRectangle(editorMenu, 100, 0, 255, 0);
-
+        API.setMenuBannerRectangle(editorMenu, 100, 106, 154, 40);
+        
         var basics = API.createMenu(args[10].toString(), 0, 0, 6);
         API.setMenuTitle(basics, "Rodzice");
         API.setMenuBannerRectangle(basics, 100, 0, 255, 0);

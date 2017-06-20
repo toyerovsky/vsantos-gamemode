@@ -13,7 +13,7 @@ var textnotification: any = null;
 var textnotifications: any[] = [];
 var padding = 10;
 var selectedInput: InputPanel = null;
-//////
+
 // Menu Properties
 var tabIndex: any[] = [];
 var tab: number = 0;

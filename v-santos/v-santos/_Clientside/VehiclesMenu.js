@@ -9,7 +9,7 @@ API.onServerEventTrigger.connect(function (eventName, args)
         menuPool = API.getMenuPool();
         var vehiclesMenu = API.createMenu("", 0, 0, 6);
         API.setMenuTitle(vehiclesMenu, "Pojazdy");
-        API.setMenuBannerRectangle(vehiclesMenu, 100, 0, 255, 0);
+        API.setMenuBannerRectangle(vehiclesMenu, 100, 106, 154, 40);
 
         var vehicleInfoMenu = API.createMenu("", 0, 0, 6);
         API.setMenuTitle(vehicleInfoMenu, "Pojazdy");

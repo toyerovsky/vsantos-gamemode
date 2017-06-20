@@ -6,8 +6,10 @@ using GTANetworkShared;
 using Newtonsoft.Json;
 using Serverside.Constant;
 using Serverside.Controllers;
+using Serverside.Core;
 using Serverside.Core.Extensions;
 using Serverside.Core.Extenstions;
+using Serverside.Database;
 
 namespace Serverside.Buildings
 {
@@ -38,15 +40,15 @@ namespace Serverside.Buildings
             else if (eventName == "AddBuilding")
             {
                 /* Argumenty
-                 * args[0] name 
-                 * args[1] cost
-                 * args[2] interior
-                 * args[3] description = ""
+                 * args[0] string name 
+                 * args[1] decimal cost
+                 * args[2] string interiorName
+                 * args[3] string description = ""
                  */
 
                 if (ConstantItems.DefaultInteriors.All(i => i.Name != (string)arguments[2]) || !sender.HasData("AdminDoorPosition")) return;
 
-                var internalPosition = ConstantItems.DefaultInteriors.First(i => i.Name == (string)arguments[2]).InternalPostion;
+                var internalPosition = ConstantItems.DefaultInteriors.First(i => i.Name == (string)arguments[2]).InternalPosition;
                 Vector3 externalPosition = sender.GetData("AdminDoorPosition");
 
                 var building = new BuildingController((string)arguments[0], (string)arguments[3], sender.GetAccountController().AccountId, internalPosition.X,
@@ -77,36 +79,38 @@ namespace Serverside.Buildings
             APIExtensions.ConsoleOutput("[RPBuildings] Uruchomione pomyślnie.", ConsoleColor.DarkMagenta);
         }
 
-        [Command("stworzbudynek")]
-        public void CreateBuilding(Client sender)
-        {
-            sender.Notify("Ustaw się w pozycji markera, a następnie wpisz /tu.");
-            sender.Notify("...użyj /diag aby poznać swoją obecną pozycję.");
-
-            API.onChatCommand += Handler;
-
-            void Handler(Client o, string command, CancelEventArgs cancel)
-            {
-                if (o == sender && command == "/tu")
-                {
-                    cancel.Cancel = true;
-                    o.SetData("AdminDoorPosition", o.position);
-                    sender.triggerEvent("ShowAdminBuildingMenu", JsonConvert.SerializeObject(ConstantItems.DefaultInteriors));
-                    API.onChatCommand -= Handler;
-                }
-            }
-        }
-
+        #region Players Commands
         [Command("drzwi")]
-        public void ManageBuilding(Client sender)
+        public void ManageBuilding(Client sender, long id = -1)
         {
+            //Dla administracji
+            if (id != -1)
+            {
+                var buildindController = RPEntityManager.GetBuilding(id);
+                if (buildindController != null)
+                {
+                    var adminInfo = new List<string>
+                    {
+                        buildindController.BuildingData.Name,
+                        buildindController.BuildingData.Description,
+                        buildindController.BuildingData.EnterCharge.ToString()
+                    };
+
+                    sender.triggerEvent("ShowBuildingManagePanel", adminInfo);
+                    return;
+                }
+                sender.Notify("Budynek o podanym Id nie istnieje.");
+                return;
+            }
+
+            //CurrentBuilding jest po to żeby gracz mógł zarządzać budynkiem ze środka
             if (sender.GetAccountController().CharacterController.CurrentBuilding == null || !sender.HasData("CurrentDoors"))
             {
                 sender.Notify("Aby otworzyć panel zarządzania budynkiem musisz znajdować...");
                 sender.Notify("...się w markerze bądź środku budynku.");
                 return;
             }
-            
+
             //Robimy tak, żeby można było otwierać panel z budynku i z zewnątrz
             BuildingController building = sender.HasData("CurrentDoors") ? sender.GetData("CurrentDoors") : sender.GetAccountController().CharacterController.CurrentBuilding;
 
@@ -126,5 +130,67 @@ namespace Serverside.Buildings
 
             sender.triggerEvent("ShowBuildingManagePanel", info);
         }
+
+        #endregion
+
+        #region Administrators Commands
+
+        [Command("usunbudynek", "~y~UŻYJ ~w~ /usunbudynek (id)")]
+        public void DeleteBuilding(Client sender, long id = -1)
+        {
+            if (id == -1 && !sender.hasData("CurrentDoors"))
+            {
+                sender.Notify("Aby usunąć budynek musisz podać jego Id, lub...");
+                sender.Notify("...znajdować się w jego drzwiach.");
+            }
+
+            if (sender.HasData("CurrentDoors"))
+            {
+                var building = (BuildingController)sender.GetData("CurrentDoors");
+                building.Dispose();
+                ContextFactory.Instance.Buildings.Remove(building.BuildingData);
+                ContextFactory.Instance.SaveChanges();
+                return;
+            }
+
+            if (id != -1 && RPEntityManager.GetBuilding(id) != null)
+            {
+                var building = RPEntityManager.GetBuilding(id);
+                building.Dispose();
+                ContextFactory.Instance.Buildings.Remove(building.BuildingData);
+                ContextFactory.Instance.SaveChanges();
+                return;
+            }
+
+            sender.Notify("Podany budynek nie istnieje.");
+        }
+
+        [Command("stworzbudynek")]
+        public void CreateBuilding(Client sender)
+        {
+            sender.Notify("Ustaw się w pozycji markera, a następnie wpisz /tu.");
+            sender.Notify("...użyj /diag aby poznać swoją obecną pozycję.");
+
+            API.onChatCommand += Handler;
+
+            void Handler(Client o, string command, CancelEventArgs cancel)
+            {
+                if (o == sender && command == "/tu")
+                {
+                    cancel.Cancel = true;
+                    if (RPEntityManager.GetBuildings().Any(b => b.BuildingMarker.position.DistanceTo(o.position) < 5))
+                    {
+                        sender.Notify("W bliskim otoczeniu tego budynku znajduje się już inny budynek.");
+                        return;
+                    }
+
+                    o.SetData("AdminDoorPosition", o.position);
+                    sender.triggerEvent("ShowAdminBuildingMenu", JsonConvert.SerializeObject(ConstantItems.DefaultInteriors));
+                    API.onChatCommand -= Handler;
+                }
+            }
+        }
+
+        #endregion
     }
 }

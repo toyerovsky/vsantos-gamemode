@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using GTANetworkServer;
+using GTANetworkServer.Constant;
 using GTANetworkShared;
 using Serverside.Core;
 using Serverside.Core.Extensions;
@@ -14,11 +15,12 @@ namespace Serverside.Controllers
     public class BuildingController : IDisposable
     {
         public Building BuildingData { get; set; }
+        public long BuildingId => BuildingData.Id;
         public ColShape InteriorDoorsColshape { get; set; }
         public ColShape ExteriorDoorsColshape { get; set; }
         public Marker BuildingMarker { get; set; }
 
-        public List<Client> PlayersInBuilding { get; set; } = new List<Client>();
+        public List<AccountController> PlayersInBuilding { get; set; } = new List<AccountController>();
         public bool DoorsLocked { get; set; } = true;
 
         //Ładowanie budynku
@@ -26,6 +28,7 @@ namespace Serverside.Controllers
         {
             BuildingData = data;
             Initialize();
+            RPEntityManager.Add(this);
         }
 
         //Tworzenie nowego budynku
@@ -50,6 +53,8 @@ namespace Serverside.Controllers
             Initialize();
             ContextFactory.Instance.Buildings.Add(BuildingData);
             ContextFactory.Instance.SaveChanges();
+
+            RPEntityManager.Add(this);
         }
 
         public void Save()
@@ -61,18 +66,19 @@ namespace Serverside.Controllers
 
         private void Initialize()
         {
-            InteriorDoorsColshape = API.shared.createCylinderColShape(new Vector3(BuildingData.InternalPickupPositionX, BuildingData.InternalPickupPositionY, BuildingData.InternalPickupPositionZ), 5, 5);
+            InteriorDoorsColshape = API.shared.createCylinderColShape(new Vector3(BuildingData.InternalPickupPositionX, BuildingData.InternalPickupPositionY, BuildingData.InternalPickupPositionZ), 3, 3);
 
             var externalPosition = new Vector3(BuildingData.ExternalPickupPositionX,
                 BuildingData.ExternalPickupPositionY, BuildingData.ExternalPickupPositionZ);
 
-            ExteriorDoorsColshape = API.shared.createCylinderColShape(externalPosition, 5, 5);
+            ExteriorDoorsColshape = API.shared.createCylinderColShape(externalPosition, 3, 3);
             ExteriorDoorsColshape.dimension = BuildingData.InternalDimension;
 
+            var color = BuildingData.Cost.HasValue ? new Color(106, 154, 40, 255) : new Color(255, 255, 0, 255);
+
             //Jeśli budynek jest na sprzedaż marker jest zielony jeśli nie żółty
-            
-            BuildingMarker = API.shared.createMarker(2, externalPosition, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f),
-                new Vector3(1f, 1f, 1f), 255, BuildingData.Cost.HasValue ? 0 : 255, 255, 0);
+            BuildingMarker = API.shared.createMarker(2, externalPosition, new Vector3(0f, 0f, 0f), new Vector3(180f, 0f, 0f),
+                new Vector3(0.5f, 0.5f, 0.5f), color.alpha, color.red, color.green, color.blue);
 
             InteriorDoorsColshape.onEntityEnterColShape += (s, e) =>
             {
@@ -136,6 +142,8 @@ namespace Serverside.Controllers
 
         public static int GetNextFreeDimension()
         {
+            //Do pierwszego budynku tak trzeba zrobić
+            if (!ContextFactory.Instance.Buildings.Any()) return 1;
             int last = ContextFactory.Instance.Buildings.OrderByDescending(x => x.InternalDimension).Select(x => x.InternalDimension).First();
             if (last == 2137 || last == 666) last++;
             return last;
@@ -193,11 +201,11 @@ namespace Serverside.Controllers
 
             if (controller.BuildingData.EnterCharge.HasValue) player.RemoveMoney(controller.BuildingData.EnterCharge.Value);
 
-            if (controller.PlayersInBuilding.Contains(player))
+            if (controller.PlayersInBuilding.Contains(player.GetAccountController()))
             {
                 player.position = (Vector3)player.GetSyncedData("DoorsTarget");
                 player.dimension = 0;
-                controller.PlayersInBuilding.Remove(player);
+                controller.PlayersInBuilding.Remove(player.GetAccountController());
 
                 player.GetAccountController().CharacterController.CurrentBuilding = null;
             }
@@ -206,7 +214,7 @@ namespace Serverside.Controllers
                 player.position = (Vector3)player.GetSyncedData("DoorsTarget");
                 player.dimension = ((BuildingController) player.GetData("CurrentDoors")).InteriorDoorsColshape
                     .dimension;
-                controller.PlayersInBuilding.Add(player);
+                controller.PlayersInBuilding.Add(player.GetAccountController());
                 player.GetAccountController().CharacterController.CurrentBuilding = player.GetData("CurrentDoors");
             }
         }
@@ -215,11 +223,35 @@ namespace Serverside.Controllers
         {
             if (!player.HasData("CurrentDoors")) return;
             RPChat.SendMessageToNearbyPlayers(player, "unosi dłoń i puka do drzwi budynku", ChatMessageType.ServerMe);
-            RPChat.SendMessageToSpecifiedPlayers(player, ((BuildingController)player.GetData("CurrentDoors")).PlayersInBuilding, "Słychać pukanie do drzwi.", ChatMessageType.ServerDo);
+            RPChat.SendMessageToSpecifiedPlayers(player, ((BuildingController)player.GetData("CurrentDoors")).PlayersInBuilding.Select(x => x.Client).ToList(), "Słychać pukanie do drzwi.", ChatMessageType.ServerDo);
+        }
+
+        public static void LoadBuildings()
+        {
+            foreach (var building in ContextFactory.Instance.Buildings)
+            {
+                new BuildingController(building);
+            }
         }
 
         public void Dispose()
         {
+            //Jeśli budynek zostanie zwolniony to teleportujemy graczy na zewnątrz
+            foreach (var p in RPEntityManager.GetAccounts())
+            {
+                if (p.Value.Client.HasData("CurrentDoors") && p.Value.Client.GetData("CurrentDoors") == this)
+                {
+                    p.Value.Client.ResetData("CurrentDoors");
+                    p.Value.Client.triggerEvent("DisposeBuildingComponents");
+                }
+
+                if (p.Value.CharacterController.CurrentBuilding == this)
+                {
+                    p.Value.Client.dimension = 0;
+                    p.Value.Client.position = p.Value.CharacterController.CurrentBuilding.BuildingMarker.position;
+                    p.Value.Client.Notify("Budynek w którym się znajdowałeś został usunięty.");
+                }
+            }
             API.shared.deleteColShape(InteriorDoorsColshape);
             API.shared.deleteColShape(ExteriorDoorsColshape);
             API.shared.deleteEntity(BuildingMarker);

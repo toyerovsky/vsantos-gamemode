@@ -17,6 +17,7 @@ namespace Serverside.Core
         public static void Init()
         {
             GroupController.LoadGroups(); //Ładuje grupy z bazy danych do zmiennej Groups
+            BuildingController.LoadBuildings();
 
         }
 
@@ -138,7 +139,35 @@ namespace Serverside.Core
         #endregion
 
         #region BUILDINGS
-    
+        public static void Add(BuildingController building)
+        {
+            Buildings.Add(building);
+        }
+
+        public static void Remove(BuildingController building)
+        {
+            Buildings.Remove(building);
+        }
+
+        public static BuildingController GetBuilding(long id)
+        {
+            return Buildings.Find(x => x.BuildingId == id);
+        }
+
+        public static BuildingController GetBuilding(string buildingName)
+        {
+            return Buildings.Find(x => x.BuildingData.Name.StartsWith(buildingName.ToLower()));
+        }
+
+        public static List<BuildingController> GetPlayerBuildings(AccountController controller)
+        {
+            return Buildings.Where(b => b.BuildingData.Character.Id == controller.CharacterController.Character.Id).ToList();
+        }
+
+        public static List<BuildingController> GetBuildings()
+        {
+            return Buildings;
+        }
 
         #endregion
     }

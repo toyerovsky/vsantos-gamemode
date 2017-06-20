@@ -37,7 +37,7 @@ function menuLoginPanel()
     panel = loginMenu.createPanel(0, 12, 4, 8, 2);
     panel.MainBackgroundColor(0, 0, 0, 255);
     panel.MainBackgroundImagePadding = 5;
-    panel.MainBackgroundImage = "_Clientside/TypeScript/Resources/logo.png";
+    panel.MainBackgroundImage = "_Clientside/TypeScript/Resources/Images/logo.png";
 
     //Formatka logowania
     panel = loginMenu.createPanel(0, 12, 6, 8, 7);

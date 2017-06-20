@@ -7,7 +7,7 @@ API.onServerEventTrigger.connect(function (eventName, args)
         menuPool = API.getMenuPool();
         var menu = API.createMenu("", 0, 0, 6);
         API.setMenuTitle(menu, "Przedmioty");
-        API.setMenuBannerRectangle(menu, 100, 0, 255, 0);
+        API.setMenuBannerRectangle(menu, 100, 106, 154, 40);
 
         var items = JSON.parse(args[0]);
 
