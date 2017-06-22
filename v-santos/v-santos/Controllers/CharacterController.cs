@@ -13,17 +13,19 @@ namespace Serverside.Controllers
 {
     public class CharacterController
     {
-        public static event CharacterLoginEventHandler OnPlayerCharacterLogin;
         public Character Character { get; set; }
         public AccountController AccountController { get; private set; }
         public CellphoneController CellphoneController { get; set; }
-        public string FormatName => $"{Character.Name} {Character.Surname}";
-        public long? OnDutyGroupId { get; set; }
+        public GroupController OnDutyGroup { get; set; }
         public Core.Description.Description Description { get; set; }
         public CharacterCreator.CharacterCreator CharacterCreator { get; set; }
         public BuildingController CurrentBuilding { get; set; }
 
+        public string FormatName => $"{Character.Name} {Character.Surname}";
+        public long Id => Character.Id;
+
         public event DimensionChangeEventHandler OnPlayerDimensionChanged;
+        public static event CharacterLoginEventHandler OnPlayerCharacterLogin;
 
         //Pola determinujące co gracz może robić w danym momencie
         //Np żeby kiedy jest nieprzytomny nie mógł mówić

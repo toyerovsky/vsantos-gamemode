@@ -142,15 +142,6 @@ namespace Serverside.Controllers
             };
         }
 
-        public static int GetNextFreeDimension()
-        {
-            //Do pierwszego budynku tak trzeba zrobić
-            if (!ContextFactory.Instance.Buildings.Any()) return 1;
-            int last = ContextFactory.Instance.Buildings.OrderByDescending(x => x.InternalDimension).Select(x => x.InternalDimension).First();
-            if (last == 2137 || last == 666) last++;
-            return last;
-        }
-
         public void Buy(Client sender)
         {
             if (!BuildingData.Cost.HasValue)
@@ -180,6 +171,40 @@ namespace Serverside.Controllers
         {
             BuildingData.Item.Add(item);
             Save();
+        }
+
+        public void Dispose()
+        {
+            //Jeśli budynek zostanie zwolniony to teleportujemy graczy na zewnątrz
+            foreach (var p in RPEntityManager.GetAccounts())
+            {
+                if (p.Value.Client.HasData("CurrentDoors") && p.Value.Client.GetData("CurrentDoors") == this)
+                {
+                    p.Value.Client.ResetData("CurrentDoors");
+                    p.Value.Client.triggerEvent("DisposeBuildingComponents");
+                }
+
+                if (p.Value.CharacterController.CurrentBuilding == this)
+                {
+                    p.Value.Client.dimension = 0;
+                    p.Value.Client.position = p.Value.CharacterController.CurrentBuilding.BuildingMarker.position;
+                    p.Value.Client.Notify("Budynek w którym się znajdowałeś został usunięty.");
+                    p.Value.CharacterController.CurrentBuilding = null;
+                }
+            }
+            API.shared.deleteColShape(InteriorDoorsColshape);
+            API.shared.deleteColShape(ExteriorDoorsColshape);
+            API.shared.deleteEntity(BuildingMarker);
+        }
+
+        #region STATIC
+        public static int GetNextFreeDimension()
+        {
+            //Do pierwszego budynku tak trzeba zrobić
+            if (!ContextFactory.Instance.Buildings.Any()) return 1;
+            int last = ContextFactory.Instance.Buildings.OrderByDescending(x => x.InternalDimension).Select(x => x.InternalDimension).First();
+            if (last == 2137 || last == 666) return ++last;
+            return last;
         }
 
         public static void PassDoors(Client player)
@@ -214,7 +239,7 @@ namespace Serverside.Controllers
             else
             {
                 player.position = (Vector3)player.GetSyncedData("DoorsTarget");
-                player.dimension = ((BuildingController) player.GetData("CurrentDoors")).InteriorDoorsColshape
+                player.dimension = ((BuildingController)player.GetData("CurrentDoors")).InteriorDoorsColshape
                     .dimension;
                 controller.PlayersInBuilding.Add(player.GetAccountController());
                 player.GetAccountController().CharacterController.CurrentBuilding = player.GetData("CurrentDoors");
@@ -225,7 +250,7 @@ namespace Serverside.Controllers
         public static void Knock(Client player)
         {
             if (!player.HasData("CurrentDoors")) return;
-            var building = (BuildingController) player.GetData("CurrentDoors");
+            var building = (BuildingController)player.GetData("CurrentDoors");
             if (building._spamProtector) return;
 
             building._spamProtector = true;
@@ -233,11 +258,11 @@ namespace Serverside.Controllers
             RPChat.SendMessageToSpecifiedPlayers(player, building.PlayersInBuilding.Select(x => x.Client).ToList(), "Słychać pukanie do drzwi.", ChatMessageType.ServerDo);
 
             //Ochrona przed spamem w pukaniu do drzwi
-            Timer timer = new Timer(5000);
+            Timer timer = new Timer(4000);
             timer.Start();
             timer.Elapsed += (o, e) =>
             {
-                building._spamProtector = false; 
+                building._spamProtector = false;
                 timer.Stop();
                 timer.Dispose();
             };
@@ -250,28 +275,6 @@ namespace Serverside.Controllers
                 new BuildingController(building);
             }
         }
-
-        public void Dispose()
-        {
-            //Jeśli budynek zostanie zwolniony to teleportujemy graczy na zewnątrz
-            foreach (var p in RPEntityManager.GetAccounts())
-            {
-                if (p.Value.Client.HasData("CurrentDoors") && p.Value.Client.GetData("CurrentDoors") == this)
-                {
-                    p.Value.Client.ResetData("CurrentDoors");
-                    p.Value.Client.triggerEvent("DisposeBuildingComponents");
-                }
-
-                if (p.Value.CharacterController.CurrentBuilding == this)
-                {
-                    p.Value.Client.dimension = 0;
-                    p.Value.Client.position = p.Value.CharacterController.CurrentBuilding.BuildingMarker.position;
-                    p.Value.Client.Notify("Budynek w którym się znajdowałeś został usunięty.");
-                }
-            }
-            API.shared.deleteColShape(InteriorDoorsColshape);
-            API.shared.deleteColShape(ExteriorDoorsColshape);
-            API.shared.deleteEntity(BuildingMarker);
-        }
+        #endregion
     }
 }

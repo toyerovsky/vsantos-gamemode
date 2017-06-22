@@ -56,11 +56,12 @@ namespace Serverside.Offers
         }
 
         //Oferta bez niczego, np. taxi, naprawa, itp.
-        public Offer(Client sender, Client getter, decimal moneyCount, OfferType type)
+        public Offer(Client sender, Client getter, decimal moneyCount, Action<Client> action)
         {
-            if (type == OfferType.Prawko) _action = OfferActions.GiveIdCard;
-            if (type == OfferType.Dowod) _action = OfferActions.GiveDrivingLicense;
-            if (type == OfferType.Naprawa) _action = OfferActions.RepairVehicle;
+            _action = action;
+            Money = moneyCount;
+            Sender = sender;
+            Getter = getter;
         }
 
         private Action<Client> _action;

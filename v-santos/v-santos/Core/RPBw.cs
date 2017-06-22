@@ -42,9 +42,9 @@ namespace Serverside.Core
         }
 
         [Command("bw", "~y~UŻYJ: ~w~ /bw [ID]")]
-        public void SetPlayerBw(Client player, string id)
+        public void SetPlayerBw(Client player, int id)
         {
-            if (!Validator.IsIntIdValid(id))
+            if (!Validator.IsIdValid(id))
             {
                 API.sendNotificationToPlayer(player, "Wprowadzono dane w nieprawidłowym formacie.");
                 return;
@@ -54,11 +54,9 @@ namespace Serverside.Core
 
             Client getter = RPEntityManager.GetAccountByServerId(getterId).Client;
             
-            //if (PlayerFinder.TryFindClientByServerId(getterId, out getter))
-            //{
+            if (getter == null) return;
                 API.shared.triggerClientEvent(getter, "ToggleHud", true);
                 getter.ResetData("CharacterBW");               
-            //}
         }
         #endregion
 

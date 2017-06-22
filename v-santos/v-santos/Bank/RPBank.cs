@@ -30,21 +30,25 @@ namespace Serverside.Bank
         {
             if (eventName == "OnPlayerAtmTake")
             {
-                if (!Validator.IsMoneyStringValid(arguments[0].ToString())) return;
-                RPChat.SendMessageToNearbyPlayers(sender,
-                    $"wkłada {(Convert.ToDecimal(arguments[0]) > 3000 ? "gruby" : "chudy")} plik gotówki do bankomatu i po przetworzeniu operacji zabiera kartę.", ChatMessageType.ServerMe);
-                BankHelper.TakeMoneyToBank(sender, Convert.ToDecimal(arguments[0]));
+                if (decimal.TryParse(arguments[0].ToString(), out decimal money))
+                {
+                    RPChat.SendMessageToNearbyPlayers(sender,
+                        $"wkłada {(money > 3000 ? "gruby" : "chudy")} plik gotówki do bankomatu i po przetworzeniu operacji zabiera kartę.", ChatMessageType.ServerMe);
+                    BankHelper.TakeMoneyToBank(sender, money);
+                }
             }
             else if (eventName == "OnPlayerAtmGive")
             {
-                if (!Validator.IsMoneyStringValid(arguments[0].ToString())) return;
-                RPChat.SendMessageToNearbyPlayers(sender,
-                    $"wyciąga z bankomatu {(Convert.ToDecimal(arguments[0]) > 3000 ? "gruby" : "chudy")} plik gotówki, oraz kartę.", ChatMessageType.ServerMe);
-                BankHelper.GiveMoneyFromBank(sender, Convert.ToDecimal(arguments[0]));
+                if (decimal.TryParse(arguments[0].ToString(), out decimal money))
+                {
+                    RPChat.SendMessageToNearbyPlayers(sender,
+                        $"wyciąga z bankomatu {(money > 3000 ? "gruby" : "chudy")} plik gotówki, oraz kartę.", ChatMessageType.ServerMe);
+                    BankHelper.GiveMoneyFromBank(sender, money);
+                }
             }
         }
 
-        #region Komendy administracji
+        #region ADMIN COMMANDS
 
         [Command("dodajbankomat")]
         public void CreateAtm(Client sender)

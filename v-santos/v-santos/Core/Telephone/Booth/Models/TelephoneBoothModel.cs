@@ -6,7 +6,7 @@ namespace Serverside.Core.Telephone.Booth.Models
     public class TelephoneBoothModel
     {
         public int Number { get; set; }
-        public int Cost { get; set; }
+        public decimal Cost { get; set; }
         public FullPosition Position { get; set; }
     }
 }

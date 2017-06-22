@@ -52,9 +52,8 @@ namespace Serverside.Core
 
             SendMessageToNearbyPlayers(sender, message, ChatMessageType.Normal);
 
-            SaidEventHandler handler = OnPlayerSaid;
             SaidEventArgs eventArgs = new SaidEventArgs(sender, message, ChatMessageType.Normal);
-            handler?.Invoke(this, eventArgs);
+            OnPlayerSaid?.Invoke(this, eventArgs);
         }
 
         private void API_onChatCommand(Client sender, string command, CancelEventArgs e)
@@ -62,8 +61,7 @@ namespace Serverside.Core
             if (sender.GetAccountController() == null || !sender.GetAccountController().CharacterController.CanCommand) e.Cancel = true;
         }
 
-        #region Komendy
-
+        #region PLAYER COMMANDS
 
         [Command("c", "~y~UŻYJ: ~w~ /c [treść]", GreedyArg = true)]
         public void SendQuietMessage(Client player, string message)
@@ -97,11 +95,6 @@ namespace Serverside.Core
             SendMessageToNearbyPlayers(player, message, ChatMessageType.Do);
         }
 
-        [Command("ado")]
-        public void SendAdministratorDoMessage(Client player, string message)
-        {
-            API.shared.sendChatMessageToAll("~#847DB7~", $"** {message} **");
-        }
 
         [Command("w", "~y~UŻYJ: ~w~ /w [id] [treść]", GreedyArg = true)]
         public void SendPrivateMessageToPlayer(Client sender, int ID, string message)
@@ -153,6 +146,17 @@ namespace Serverside.Core
                     sender.Notify("Nie posiadasz uprawnień do czatu w tej grupie.");
                 }
             }
+        }
+
+        #endregion
+
+        #region ADMIN COMMANDS
+
+        [Command("ado", GreedyArg = true)]
+        public void SendAdministratorDoMessage(Client player, string message)
+        {
+            message = PrepareMessage(player.name, message, ChatMessageType.ServerDo, out string color);
+            API.shared.sendChatMessageToAll(color, message);
         }
 
         #endregion
@@ -209,7 +213,7 @@ namespace Serverside.Core
             }
             else if (chatMessageType == ChatMessageType.Phone)
             {
-                color = "~#ffdb00~";
+                color = "~#FFDB00~";
                 message = player.GetAccountController().CharacterController.Character.Gender
                     ? $"Głos z telefonu (Mężczyzna): {message}"
                     : $"Głos z telefonu (Kobieta): {message}";
@@ -251,7 +255,8 @@ namespace Serverside.Core
                     color = "~#FFFFFF~";
                     break;
                 case ChatMessageType.ServerInfo:
-                    message = $"~g~ [INFO] ~w~ {message}";
+                    message = $"[INFO] ~w~ {message}";
+                    color = "~#6A9828~";
                     break;
                 case ChatMessageType.ServerDo:
                     message = $"** {message} **";

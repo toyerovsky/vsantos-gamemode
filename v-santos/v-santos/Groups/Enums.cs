@@ -4,13 +4,13 @@
     {
         Taxi,
         Bar,
-        Club,
+        Klub,
         Market,
-        CrimeGroup,
-        Workshop,
-        Police,
-        Hospital,
+        Przestepcza,
+        Warsztat,
+        Policja,
+        Szpital,
         Radio,
-        CityHall
+        Urzad
     }
 }

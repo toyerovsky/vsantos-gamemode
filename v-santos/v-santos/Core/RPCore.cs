@@ -9,6 +9,8 @@ using Serverside.Core.Login;
 using Serverside.Database;
 using Serverside.Core.Extensions;
 using Serverside.Core.Extenstions;
+using Serverside.Database.Models;
+using Vehicle = GTANetworkServer.Vehicle;
 
 namespace Serverside.Core
 {
@@ -132,6 +134,52 @@ namespace Serverside.Core
         }
 
         #region DEBUG COMMANDS
+
+        [Command("/dlogin", GreedyArg = true, SensitiveInfo = true, Alias = "l")]
+        public void DebugLoginToAccount(Client sender, string email, string password)
+        {
+            ForumDatabaseHelper FDb = new ForumDatabaseHelper();
+            Tuple<long, string, short, string> userData = FDb.CheckPasswordMatch(email, password);
+            if (userData.Item1 == -1)
+            {
+                API.shared.sendChatMessageToPlayer(sender, "Podane login lub hasło są nieprawidłowe, bądź takie konto nie istnieje");
+            }
+            else
+            {
+                Account account = new Account
+                {
+                    UserId = userData.Item1,
+                    Name = userData.Item2,
+                    MainGroup = userData.Item3,
+                    OtherGroups = userData.Item4,
+                    Email = email,
+                    SocialClub = sender.name,
+                    Ip = sender.address
+                };
+
+
+                //Sprawdzenie czy konto z danym userid istnieje jak nie dodanie konta do bazy danych i załadowanie go do core.
+                if (!AccountController.DoesAccountExist(userData.Item1))
+                {
+                    AccountController.RegisterAccount(sender, account);
+                }
+                else
+                {
+                    //Sprawdzenie czy ktoś już jest zalogowany z tego konta.
+                    AccountController _ac = RPEntityManager.GetAccount(userData.Item1);
+                    if (_ac != null)
+                    {
+                        if (_ac.AccountData.Online)
+                        {
+                            API.shared.kickPlayer(_ac.Client);
+                            RPChat.SendMessageToPlayer(sender,
+                                $"Osoba o IP: {_ac.AccountData.Ip} znajduje się obecnie na twoim koncie. Została ona wyrzucona z serwera. Rozważ zmianę hasła.", ChatMessageType.ServerInfo);
+                        }
+                    }
+                    AccountController.LoadAccount(sender, userData.Item1);
+                }
+            }
+        }
 
         [Command("deb1", GreedyArg = true, SensitiveInfo = true, Alias = "avc")]
         public static void Deb1(Client sender, string toggle = "true")

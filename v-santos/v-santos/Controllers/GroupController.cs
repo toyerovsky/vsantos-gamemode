@@ -74,7 +74,7 @@ namespace Serverside.Controllers
             Save();
         }
 
-        public bool CanPlayerOfferFromWarehouse(AccountController account)
+        public bool CanPlayerOffer(AccountController account)
         {
             return Data.Workers.Single(w => w.Character == account.CharacterController.Character).OfferFromWarehouseRight;
         }

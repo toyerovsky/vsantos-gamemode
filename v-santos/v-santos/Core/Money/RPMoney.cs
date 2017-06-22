@@ -1,6 +1,5 @@
 ﻿using System;
 using GTANetworkServer;
-//using Serverside.Core.Finders;
 using Serverside.Core.Extensions;
 using Serverside.Core.Extenstions;
 
@@ -21,6 +20,11 @@ namespace Serverside.Core.Money
         [Command("plac", "~y~UŻYJ: ~w~ /plac [id] [kwota]", Alias = "pay")]
         public void TransferWalletMoney(Client sender, int id, decimal safeMoneyCount)
         {
+            if (!Validator.IsMoneyValid(safeMoneyCount))
+            {
+                sender.Notify("Podano kwotę gotówki w nieprawidłowym formacie.");
+            }
+
             if (!sender.GetAccountController().CharacterController.CanPay) return;
 
             if (!sender.HasMoney(safeMoneyCount))
@@ -34,7 +38,7 @@ namespace Serverside.Core.Money
                 sender.Notify("Nie możesz podać gotówki samemu sobie.");
                 return;
             }
-
+            
             Client gettingPlayer = API.getPlayersInRadiusOfPlayer(6f, sender).Find(x => x.GetAccountController().ServerId == id);
             if (gettingPlayer == null)
             {

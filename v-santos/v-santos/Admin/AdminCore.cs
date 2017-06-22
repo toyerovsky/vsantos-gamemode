@@ -58,7 +58,7 @@ namespace Serverside.Admin
             API.setPlayerToSpectator(controller.Client);
         }
 
-        [Command("kick", "~y~ UŻYJ ~w~ /kick [id] <powod>", GreedyArg = true)]
+        [Command("kick", "~y~ UŻYJ ~w~ /kick [id] (powod)", GreedyArg = true)]
         public void KickPlayer(Client player, int id, string reason = "")
         {
             var controller = RPEntityManager.GetAccountByServerId(id);

@@ -8,7 +8,6 @@ using Serverside.Controllers;
 using Serverside.Core;
 using Serverside.Core.Extensions;
 using Serverside.Core.Extenstions;
-using Serverside.Core.Finders;
 using Serverside.Corners.Models;
 
 namespace Serverside.Corners
@@ -39,7 +38,6 @@ namespace Serverside.Corners
             Shape = Api.createCylinderColShape(Position.Position, 1f, 2f);
 
             Shape.onEntityEnterColShape += OnEntityEnterColShapeHandler;
-            Shape.onEntityExitColShape += OnEntityExitColShapeHandler;
         }
         
         private void OnEntityEnterColShapeHandler(ColShape shape, NetHandle entity)
@@ -50,9 +48,10 @@ namespace Serverside.Corners
                 return;
             }
 
-            if (!CornerBusy && shape == Shape && Api.getEntityType(entity) == EntityType.Player && API.shared.hasEntityData(entity, "CharacterID"))
+            if (!CornerBusy && shape == Shape && Api.getEntityType(entity) == EntityType.Player)
             {
-                Player = PlayerFinder.FindPlayerByCharacterId(API.shared.getEntityData(entity, "CharacterID"));
+                Player = Api.getPlayerFromHandle(entity).GetAccountController();
+
                 CornerBusy = true;
 
                 Player.Client.Notify("Rozpocząłeś proces sprzedaży, pozostań w znaczniku.", true);
@@ -71,7 +70,12 @@ namespace Serverside.Corners
             timer.Elapsed += (sender, args) =>
             {
                 timer.Stop();
-                CurrentBot = new CornerBot(new API(), CornerBots[GetRandomBot()].Name, CornerBots[GetRandomBot()].PedHash, BotPositions[0], BotPositions.Where(x => x != BotPositions[0]).ToList(), CornerBots[GetRandomBot()].DrugType, CornerBots[GetRandomBot()].MoneyCount, CornerBots[GetRandomBot()].Greeting, CornerBots[GetRandomBot()].GoodFarewell, CornerBots[GetRandomBot()].BadFarewell, Player, CornerBots[GetRandomBot()].BotId);
+
+                var random = new Random().Next(CornerBots.Count);
+
+                CurrentBot = new CornerBot(
+                    new API(), CornerBots[random].Name, CornerBots[random].PedHash, BotPositions[0], BotPositions.Where(x => x != BotPositions[0]).ToList(), CornerBots[random].DrugType, CornerBots[random].MoneyCount, CornerBots[random].Greeting, CornerBots[random].GoodFarewell, CornerBots[random].BadFarewell, Player, CornerBots[random].BotId);
+
                 CurrentBot.Intialize();
                 CurrentBot.OnTransactionEnd += (o, eventArgs) =>
                 {
@@ -83,43 +87,29 @@ namespace Serverside.Corners
             Shape.onEntityExitColShape += (shape, entity) =>
             {
                 if (CornerBusy && shape == Shape && Api.getEntityType(entity) == EntityType.Player &&
-                    entity == Player.Client)
+                    entity == Player.Client.handle)
                 {
                     timer.Dispose();
+
+                    CornerBusy = false;
+                    Player.Client.stopAnimation();
+
+                    if (CurrentBot != null)
+                    {
+                        CurrentBot.Dispose();
+                        CurrentBot = null;
+                    }
+
                     Player = null;
                 }
             };
         }
 
-        public int GetRandomBot()
-        {
-            return new Random().Next(CornerBots.Count);
-        }
-
-        public int GetRandomTime()
-        {
-            return new Random().Next(90, 180);
-        }
-
-        private void OnEntityExitColShapeHandler(ColShape shape, NetHandle entity)
-        {
-            if (CornerBusy && shape == Shape && Api.getEntityType(entity) == EntityType.Player && entity == Player.Client)
-            {
-                CornerBusy = false;
-                Player.Client.stopAnimation();
-                
-                if (CurrentBot != null)
-                {
-                    CurrentBot.Dispose();
-                    CurrentBot = null;
-                }                
-            }
-        }
+        private int GetRandomTime() => new Random().Next(90, 180);
         
         public void Dispose()
         {
             Shape.onEntityEnterColShape -= OnEntityEnterColShapeHandler;
-            Shape.onEntityExitColShape -= OnEntityExitColShapeHandler;
         }
     }
 }

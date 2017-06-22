@@ -6,10 +6,12 @@ namespace Serverside.Groups.Base
 {
     public class CityHall : GroupController
     {
-        //Opcjonalne prawo 1 wydawanie dowodu osobistego
-        //Opcjonalne prawo 2 wydawanie prawa jazdy
+        /* OPCJONALNE PRAWA
+         * 1 - wydawanie dowodu osobistego 
+         * 2 - wydawanie prawa jazdy
+         */
 
-        public CityHall(Database.Models.Group editor) : base(editor)
+        public CityHall(Group editor) : base(editor)
         {
         }
 
