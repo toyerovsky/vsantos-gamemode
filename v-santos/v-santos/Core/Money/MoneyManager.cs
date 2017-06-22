@@ -1,10 +1,10 @@
-﻿using GTANetworkServer;
-//using Serverside.Core.Finders;
+﻿using System.Globalization;
+using GTANetworkServer;
 using Serverside.Core.Extensions;
 
 namespace Serverside.Core.Money
 {    
-    public class MoneyManager
+    public static class MoneyManager
     {
         private delegate void MoneyChangedEventHandler(Client sender);
 
@@ -12,25 +12,20 @@ namespace Serverside.Core.Money
 
         private static readonly API Api = new API();
 
-        public MoneyManager()
+        static MoneyManager()
         {
             MoneyChanged += RPMoney_MoneyChanged;
         }
 
         private static void RPMoney_MoneyChanged(Client sender)
         {
-            //tu sie wysyla event, zeby narysopwalo graczowi stan jego gotowki
-            Api.triggerClientEvent(sender, "Money_Changed",
-                $@"${sender.GetAccountController().CharacterController.Character.Money}");
+            Api.triggerClientEvent(sender, "MoneyChanged", sender.GetAccountController().CharacterController.Character.Money.ToString(CultureInfo.InvariantCulture));
         }
 
         public static bool CanPay(Client sender, decimal count, bool bank = false)
         {
             var player = sender.GetAccountController();
-            if (bank)
-            {
-                return player.CharacterController.Character.BankMoney >= count;
-            }
+            if (bank) return player.CharacterController.Character.BankMoney >= count;
             return player.CharacterController.Character.Money >= count;
         }
 
@@ -44,9 +39,9 @@ namespace Serverside.Core.Money
             else
             {
                 player.CharacterController.Character.Money += count;
+                MoneyChanged?.Invoke(sender);
             }
             player.CharacterController.Save();
-            if (MoneyChanged != null) MoneyChanged.Invoke(sender);
         }
 
         public static void RemoveMoney(Client sender, decimal count, bool bank = false)
@@ -59,9 +54,9 @@ namespace Serverside.Core.Money
             else
             {
                 player.CharacterController.Character.Money -= count;
+                MoneyChanged?.Invoke(sender);
             }
             player.CharacterController.Save();
-            if (MoneyChanged != null) MoneyChanged.Invoke(sender);
         }
     }
 }

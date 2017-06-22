@@ -44,8 +44,8 @@ function getBuilding(name: string): BuildingInfo
 
 API.onServerEventTrigger.connect((eventName: string, args: System.Array<any>) =>
 {
-    if (eventName == "DrawBuildingComponents")
-    {
+    if (eventName == "DrawBuildingComponents") {
+        resource.Core.drawStreetHUD = false;
         scaleForm = API.requestScaleform('instructional_buttons');
         scaleForm.CallFunction('SET_DATA_SLOT_EMPTY');
         if (args[0])
@@ -65,6 +65,7 @@ API.onServerEventTrigger.connect((eventName: string, args: System.Array<any>) =>
     else if (eventName == "DisposeBuildingComponents")
     {
         drawScaleform = false;
+        resource.Core.drawStreetHUD = true;
         if (buildingMenu != null) buildingMenu.killMenu();
     }
     else if (eventName == "ShowBuildingManagePanel")
@@ -80,8 +81,6 @@ API.onServerEventTrigger.connect((eventName: string, args: System.Array<any>) =>
     {
         menuPool = API.getMenuPool();
         var menu = API.createMenu("Dodaj budynek", 0, 0, 6);
-        API.setMenuTitle(menu, "Pojazdy");
-        API.setMenuBannerRectangle(menu, 100, 106, 154, 40);
 
         var newBuilding: BuildingInfo;
 
@@ -128,7 +127,7 @@ API.onServerEventTrigger.connect((eventName: string, args: System.Array<any>) =>
             else if (item === costItem)
             {
                 costResult = API.getUserInput("Cena", 10);
-                if (costResult.trim() == "" || isNaN(costResult)) {
+                if (costResult.trim() == "" || isNaN(parseInt(costResult))) {
                     API.sendNotification("Wprowadzono nieporawny koszt.");
                     costResult = null;
                 }
@@ -174,15 +173,15 @@ API.onUpdate.connect(() =>
     }
 });
 
-function showBuildingPanel(buildingInfo: System.Array<string>) {
-    if (buildingMenu != null) buildingMenu.killMenu();
+function showBuildingPanel(buildingInfo: System.Array<string>)
+{
     buildingMenu = createMenu(1);
     let panel: Panel;
     let textElement: TextElement;
 
     //Panel budynku
     //Header z nazwą budynku
-    panel = buildingMenu.createPanel(0, 12, 4, 7, 1);
+    panel = buildingMenu.createPanel(0, 12, 4, buildingInfo[3] !== "" ? 7 : 8, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
     panel.Header = true;
     textElement = panel.addText(buildingInfo[0]);
@@ -191,38 +190,47 @@ function showBuildingPanel(buildingInfo: System.Array<string>) {
     textElement.FontScale = 0.6;
     textElement.Offset = 18;
 
-    //Guzik zamykania
-    panel = buildingMenu.createPanel(0, 19, 4, 1, 1);
-    panel.MainBackgroundColor(0, 0, 0, 175);
-    panel.Header = true;
-    panel.HoverBackgroundColor(150, 25, 25, 160);
-    panel.Hoverable = true;
-    panel.Function = () => buildingMenu.killMenu();
-    textElement = panel.addText("X");
-    textElement.Color(255, 255, 255, 255);
-    textElement.Centered = true;
-    textElement.VerticalCentered = true;
-    textElement.FontScale = 0.6;
+    //Guzik zamykania pokazujemy tylko kiedy jest włączony guzik kupowania
+    if (buildingInfo[3] !== "") {
+        panel = buildingMenu.createPanel(0, 19, 4, 1, 1);
+        panel.MainBackgroundColor(0, 0, 0, 175);
+        panel.Header = true;
+        panel.HoverBackgroundColor(150, 25, 25, 160);
+        panel.Hoverable = true;
+        panel.Function = () => buildingMenu.killMenu();
+        textElement = panel.addText("X");
+        textElement.Color(255, 255, 255, 255);
+        textElement.Centered = true;
+        textElement.VerticalCentered = true;
+        textElement.FontScale = 0.6;
+    }
 
     //Opis budynku
-    panel = buildingMenu.createPanel(0, 12, 5, 8, 7);
+    panel = buildingMenu.createPanel(0, 12, 5, 8, 4);
     panel.MainBackgroundColor(0, 0, 0, 160);
     textElement = panel.addText(buildingInfo[1]);
     textElement.Color(255, 255, 255, 255);
+    textElement.FontScale = 0.5;
     panel.addText("");
 
     //Opłata za przejście
-    if (buildingInfo[2] !== "") {
-        textElement = panel.addText(`Opłata za przejście $${buildingInfo[2]}`);
+    if (buildingInfo[2] !== "")
+    {
+        textElement = panel.addText(`Opłata za przejście: $${buildingInfo[2]}`);
         textElement.Color(255, 255, 255, 255);
-        panel.addText("");
+        textElement.FontScale = 0.5;
     }
 
     //Guzik kupowania 
     if (buildingInfo[3] !== "") {
+        //panel ceny
+        panel = buildingMenu.createPanel(0, 12, 9, 8, 1);
+        panel.MainBackgroundColor(0, 0, 0, 160);
         textElement = panel.addText(`Cena $${buildingInfo[3]}`);
         textElement.Color(255, 255, 255, 255);
-        panel = buildingMenu.createPanel(0, 12, 12, 8, 1);
+        textElement.FontScale = 0.5;
+
+        panel = buildingMenu.createPanel(0, 12, 10, 8, 1);
         panel.MainBackgroundColor(0, 0, 0, 160);
         panel.HoverBackgroundColor(25, 25, 25, 160);
         panel.Hoverable = true;
@@ -238,18 +246,17 @@ function showBuildingPanel(buildingInfo: System.Array<string>) {
         textElement.VerticalCentered = true;
     }
 
-    buildingMenu.DisableOverlays(true);
+    buildingMenu.DisableOverlays(buildingInfo[3] != "");
     buildingMenu.Ready = true;
 }
 
-function showBuildingManagePanel(buildingInfo: BuildingInfo) {
-    if (buildingMenu != null) buildingMenu.killMenu();
+function showBuildingManagePanel(buildingInfo: BuildingInfo)
+{
     buildingMenu = createMenu(1);
     let panel: Panel;
     let textElement: TextElement;
 
     //Panel budynku
-    //Header z nazwą budynku
     panel = buildingMenu.createPanel(0, 12, 4, 7, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
     panel.Header = true;
@@ -285,7 +292,6 @@ function showBuildingManagePanel(buildingInfo: BuildingInfo) {
     textElement.Color(255, 255, 255, 255);
     panel.addText("");
     panel.addText("");
-    panel.addText("");
 
     //Opłata za przejście
     textElement = panel.addText("Opłata za przejście:");
@@ -294,9 +300,9 @@ function showBuildingManagePanel(buildingInfo: BuildingInfo) {
 
     buildingName = panel.addInput(0, 1, 8, 1);
     buildingName.Input = buildingInfo.name;
-    buildingDescription = panel.addInput(0, 3, 8, 1);
+    buildingDescription = panel.addInput(0, 3, 8, 2);
     buildingDescription.Input = buildingInfo.description;
-    buildingEnterCharge = panel.addInput(0, 7, 8, 1);
+    buildingEnterCharge = panel.addInput(0, 6, 8, 1);
     buildingEnterCharge.Input = buildingInfo.enterCharge.toString();
     buildingEnterCharge.NumericOnly = true;
 
@@ -305,13 +311,28 @@ function showBuildingManagePanel(buildingInfo: BuildingInfo) {
     panel.MainBackgroundColor(0, 0, 0, 160);
     panel.HoverBackgroundColor(25, 25, 25, 160);
     panel.Hoverable = true;
-    panel.Function = () => {
+    panel.Function = () =>
+    {
+        if (buildingName.Input.trim() == "")
+        {
+            buildingName.isError = true;
+        } 
+        if (buildingDescription.Input.trim() == "")
+        {
+            buildingDescription.isError = true;
+        }
+
+        if (buildingName.isError || buildingDescription.isError) {
+            return;
+        }
+
         API.triggerServerEvent("EdingBuildingInfo",
             buildingName.Input,
             buildingDescription.Input,
             buildingEnterCharge.Input);
         buildingMenu.killMenu();  
     };
+
     panel.Tooltip = "Zapisz bieżące informacje";
     textElement = panel.addText("Zapisz");
     textElement.Color(255, 255, 255, 255);
@@ -319,5 +340,6 @@ function showBuildingManagePanel(buildingInfo: BuildingInfo) {
     textElement.Centered = true;
     textElement.VerticalCentered = true;
 
+    buildingMenu.DisableOverlays(true);
     buildingMenu.Ready = true;
 }

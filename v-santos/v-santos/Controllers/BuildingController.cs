@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Timers;
 using GTANetworkServer;
 using GTANetworkServer.Constant;
 using GTANetworkShared;
@@ -66,12 +67,13 @@ namespace Serverside.Controllers
 
         private void Initialize()
         {
-            InteriorDoorsColshape = API.shared.createCylinderColShape(new Vector3(BuildingData.InternalPickupPositionX, BuildingData.InternalPickupPositionY, BuildingData.InternalPickupPositionZ), 3, 3);
+            InteriorDoorsColshape = API.shared.createCylinderColShape(new Vector3(BuildingData.InternalPickupPositionX, BuildingData.InternalPickupPositionY, BuildingData.InternalPickupPositionZ), 1, 3);
+            InteriorDoorsColshape.dimension = BuildingData.InternalDimension;
 
             var externalPosition = new Vector3(BuildingData.ExternalPickupPositionX,
                 BuildingData.ExternalPickupPositionY, BuildingData.ExternalPickupPositionZ);
 
-            ExteriorDoorsColshape = API.shared.createCylinderColShape(externalPosition, 3, 3);
+            ExteriorDoorsColshape = API.shared.createCylinderColShape(externalPosition, 1, 3);
             ExteriorDoorsColshape.dimension = BuildingData.InternalDimension;
 
             var color = BuildingData.Cost.HasValue ? new Color(106, 154, 40, 255) : new Color(255, 255, 0, 255);
@@ -163,7 +165,7 @@ namespace Serverside.Controllers
                 return;
             }
 
-            BuildingMarker.color = new GTANetworkServer.Constant.Color(255, 255, 0);
+            BuildingMarker.color = new Color(255, 255, 0);
 
             sender.RemoveMoney(BuildingData.Cost.Value);
             sender.triggerEvent("ShowShard", "Zakupiono budynek", 5000);
@@ -219,11 +221,26 @@ namespace Serverside.Controllers
             }
         }
 
+        private bool _spamProtector;
         public static void Knock(Client player)
         {
             if (!player.HasData("CurrentDoors")) return;
+            var building = (BuildingController) player.GetData("CurrentDoors");
+            if (building._spamProtector) return;
+
+            building._spamProtector = true;
             RPChat.SendMessageToNearbyPlayers(player, "unosi dłoń i puka do drzwi budynku", ChatMessageType.ServerMe);
-            RPChat.SendMessageToSpecifiedPlayers(player, ((BuildingController)player.GetData("CurrentDoors")).PlayersInBuilding.Select(x => x.Client).ToList(), "Słychać pukanie do drzwi.", ChatMessageType.ServerDo);
+            RPChat.SendMessageToSpecifiedPlayers(player, building.PlayersInBuilding.Select(x => x.Client).ToList(), "Słychać pukanie do drzwi.", ChatMessageType.ServerDo);
+
+            //Ochrona przed spamem w pukaniu do drzwi
+            Timer timer = new Timer(5000);
+            timer.Start();
+            timer.Elapsed += (o, e) =>
+            {
+                building._spamProtector = false; 
+                timer.Stop();
+                timer.Dispose();
+            };
         }
 
         public static void LoadBuildings()

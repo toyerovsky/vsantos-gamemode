@@ -69,7 +69,7 @@ namespace Serverside.Buildings
                 BuildingController building = sender.HasData("CurrentDoors") ? sender.GetData("CurrentDoors") : sender.GetAccountController().CharacterController.CurrentBuilding;
                 building.BuildingData.Name = arguments[0].ToString();
                 building.BuildingData.Description = arguments[1].ToString();
-                building.BuildingData.EnterCharge = Convert.ToDecimal(arguments[2]);
+                if (decimal.TryParse(arguments[2].ToString(), out decimal result)) building.BuildingData.EnterCharge = result;
                 building.Save();
             }
         }
@@ -80,7 +80,31 @@ namespace Serverside.Buildings
         }
 
         #region Players Commands
-        [Command("drzwi")]
+
+        [Command("drzwizamknij")]
+        public void ChangeBuildingLockState(Client sender)
+        {
+            if (!sender.HasData("CurrentDoors"))
+            {
+                sender.Notify("Nie znajdujesz się przy drzwiach.");
+                return;
+            }
+
+            BuildingController building = sender.GetData("CurrentDoors");
+
+            //TODO: Dodanie, żeby właściciel grupy mógł zarządzać budynkiem grupowym
+            if (building.BuildingData.Character == null || building.BuildingData.Character.Id != sender.GetAccountController().CharacterController.Character.Id)
+            {
+                sender.Notify("Nie jesteś właścicielem tego budynku.");
+                return;
+            }
+
+            string text = building.DoorsLocked ? "otwarte" : "zamknięte";
+            sender.Notify($"Drzwi zostały {text}");
+            building.DoorsLocked = !building.DoorsLocked;
+        }
+
+        [Command("drzwi", "~y~UŻYJ ~w~ /drzwi")]
         public void ManageBuilding(Client sender, long id = -1)
         {
             //Dla administracji
@@ -96,6 +120,7 @@ namespace Serverside.Buildings
                         buildindController.BuildingData.EnterCharge.ToString()
                     };
 
+                    sender.SetData("CurrentDoors", buildindController);
                     sender.triggerEvent("ShowBuildingManagePanel", adminInfo);
                     return;
                 }
@@ -104,38 +129,43 @@ namespace Serverside.Buildings
             }
 
             //CurrentBuilding jest po to żeby gracz mógł zarządzać budynkiem ze środka
-            if (sender.GetAccountController().CharacterController.CurrentBuilding == null || !sender.HasData("CurrentDoors"))
+            if (sender.GetAccountController().CharacterController.CurrentBuilding != null ||
+                sender.HasData("CurrentDoors"))
+            {
+                BuildingController building = sender.HasData("CurrentDoors")
+                    ? sender.GetData("CurrentDoors")
+                    : sender.GetAccountController().CharacterController.CurrentBuilding;
+
+                //TODO: Dodanie, żeby właściciel grupy mógł zarządzać budynkiem grupowym
+                if (building.BuildingData.Character.Id != sender.GetAccountController().CharacterController.Character
+                        .Id)
+                {
+                    sender.Notify("Nie jesteś właścicielem tego budynku.");
+                    return;
+                }
+
+                var info = new List<string>
+                {
+                    building.BuildingData.Name,
+                    building.BuildingData.Description,
+                    building.BuildingData.EnterCharge.ToString()
+                };
+
+                sender.triggerEvent("ShowBuildingManagePanel", info);
+
+            }
+            else
             {
                 sender.Notify("Aby otworzyć panel zarządzania budynkiem musisz znajdować...");
                 sender.Notify("...się w markerze bądź środku budynku.");
-                return;
             }
-
-            //Robimy tak, żeby można było otwierać panel z budynku i z zewnątrz
-            BuildingController building = sender.HasData("CurrentDoors") ? sender.GetData("CurrentDoors") : sender.GetAccountController().CharacterController.CurrentBuilding;
-
-            //TODO: Dodanie, żeby właściciel grupy mógł zarządzać budynkiem grupowym
-            if (building.BuildingData.Character.Id != sender.GetAccountController().CharacterController.Character.Id)
-            {
-                sender.Notify("Nie jesteś właścicielem tego budynku.");
-                return;
-            }
-
-            var info = new List<string>
-            {
-                building.BuildingData.Name,
-                building.BuildingData.Description,
-                building.BuildingData.EnterCharge.ToString()
-            };
-
-            sender.triggerEvent("ShowBuildingManagePanel", info);
         }
 
         #endregion
 
         #region Administrators Commands
 
-        [Command("usunbudynek", "~y~UŻYJ ~w~ /usunbudynek (id)")]
+        [Command("usundrzwi", "~y~UŻYJ ~w~ /usundrzwi (id)")]
         public void DeleteBuilding(Client sender, long id = -1)
         {
             if (id == -1 && !sender.hasData("CurrentDoors"))
@@ -165,7 +195,7 @@ namespace Serverside.Buildings
             sender.Notify("Podany budynek nie istnieje.");
         }
 
-        [Command("stworzbudynek")]
+        [Command("dodajdrzwi")]
         public void CreateBuilding(Client sender)
         {
             sender.Notify("Ustaw się w pozycji markera, a następnie wpisz /tu.");

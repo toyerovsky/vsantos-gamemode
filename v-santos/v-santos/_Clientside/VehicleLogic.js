@@ -1,6 +1,4 @@
 var drawVehicleHUD = true;
-var drawAnimationHUD = false;
-var drawStreetHUD = false;
 var currentMoney = null;
 var currentSpeed = null;
 var currentMilage = null;
@@ -17,17 +15,7 @@ var currentRpm = 0;
 API.onUpdate.connect(function (sender, args) {
     var player = API.getLocalPlayer();
     var inVeh = API.isPlayerInAnyVehicle(player);
-    //Rysowanie nazwy ulicy
-    if (drawStreetHUD) 
-    {
-        var pos = API.getEntityPosition(player);
-        var streetname = API.getStreetName(pos);
-        var zoneNameLabel = API.getZoneNameLabel(pos);
-        var zoneName = API.getZoneName(pos);
-        API.drawText(`~y~${streetname}`, (99 * res.Width) / 100, (99 * res.Height) / 100 - 80, 0.5, 255, 255, 255, 255, 1, 2, false, true, 0);
-        API.drawText(`${zoneName} (${zoneNameLabel})`, (99 * res.Width) / 100, (99 * res.Height) / 100 - 40, 0.4, 255, 255, 255, 255, 1, 2, false, true, 0);    
-    }
-
+    
     //Rysowanie rzeczy w pojeüdzie
     if (inVeh)
     {
@@ -157,10 +145,6 @@ API.onServerEventTrigger.connect(function (eventName, args) {
     }
     else if (eventName == "show_vehicle_hud") {
         drawVehicleHUD = true;
-    }
-    else if (eventName == "ToggleHud")
-    {
-        drawStreetHUD = !drawStreetHUD;
     }
 });
 

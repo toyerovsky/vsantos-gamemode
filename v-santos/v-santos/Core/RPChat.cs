@@ -46,7 +46,12 @@ namespace Serverside.Core
         {
             e.Cancel = true;
             if (sender.GetAccountController() == null || !sender.GetAccountController().CharacterController.CanTalk) return;
-            SendMessageToNearbyPlayers(sender, message, sender.GetAccountController().CharacterController.CellphoneController.CurrentlyTalking ? ChatMessageType.PhoneOthers : ChatMessageType.Normal);
+
+            if (sender.GetAccountController().CharacterController.CellphoneController != null)
+                SendMessageToNearbyPlayers(sender, message, sender.GetAccountController().CharacterController.CellphoneController.CurrentlyTalking ? ChatMessageType.PhoneOthers : ChatMessageType.Normal);
+
+            SendMessageToNearbyPlayers(sender, message, ChatMessageType.Normal);
+
             SaidEventHandler handler = OnPlayerSaid;
             SaidEventArgs eventArgs = new SaidEventArgs(sender, message, ChatMessageType.Normal);
             handler?.Invoke(this, eventArgs);
@@ -154,8 +159,8 @@ namespace Serverside.Core
 
         public static void SendMessageToSpecifiedPlayers(Client sender, List<Client> players, string message, ChatMessageType chatMessageType, string color = "")
         {
-            message = PrepareMessage(sender.name, message, chatMessageType);
-
+            message = PrepareMessage(sender.name, message, chatMessageType, out string messageColor);
+            if (color != "") messageColor = color;
             if (chatMessageType == ChatMessageType.GroupOOC)
             {
                 message = $"[{sender.GetAccountController().ServerId}] {sender.name}: {message}";
@@ -163,7 +168,7 @@ namespace Serverside.Core
 
             foreach (var p in players)
             {
-                API.shared.sendChatMessageToPlayer(p, color, message);
+                API.shared.sendChatMessageToPlayer(p, messageColor, message);
             }
         }
 
@@ -176,12 +181,13 @@ namespace Serverside.Core
         /// <param name="color"></param>
         public static void SendMessageToNearbyPlayers(Client player, string message, ChatMessageType chatMessageType, string color = "")
         {
-            message = PrepareMessage(player.name, message, chatMessageType);
+            message = PrepareMessage(player.name, message, chatMessageType, out string messageColor);
+            if (color != "") messageColor = color;
             switch (chatMessageType)
             {
                 case ChatMessageType.OOC:
                     message = $"(( [{player.GetAccountController().ServerId}] {player.name} {message} ))";
-                    color = "~#CCCCCC~";
+                    messageColor = "~#CCCCCC~";
                     break;
             }
 
@@ -189,14 +195,13 @@ namespace Serverside.Core
             //Dla każdego klienta w zasięgu wyświetl wiadomość, zasięg jest pobierany przez rzutowanie enuma do floata
             foreach (var c in clients)
             {
-                API.shared.sendChatMessageToPlayer(c, color, message);
+                API.shared.sendChatMessageToPlayer(c, messageColor, message);
             }
         }
 
         public static void SendMessageToPlayer(Client player, string message, ChatMessageType chatMessageType, Client secondPlayer = null)
         {
-            message = PrepareMessage(player.name, message, chatMessageType);
-            string color = "";
+            message = PrepareMessage(player.name, message, chatMessageType, out string color);
 
             if (chatMessageType == ChatMessageType.PrivateMessage && secondPlayer != null)
             {
@@ -212,9 +217,9 @@ namespace Serverside.Core
             API.shared.sendChatMessageToPlayer(player, color, message);
         }
 
-        private static string PrepareMessage(string name, string message, ChatMessageType chatMessageType)
+        private static string PrepareMessage(string name, string message, ChatMessageType chatMessageType, out string color)
         {
-            string color = string.Empty;
+            color = string.Empty;
             switch (chatMessageType)
             {
                 case ChatMessageType.Normal:
@@ -263,7 +268,7 @@ namespace Serverside.Core
             {
                 message += ".";
             }
-            return color + message;
+            return message;
         }
     }
 }

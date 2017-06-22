@@ -24,12 +24,10 @@ namespace Serverside.Core
             API.triggerClientEventForAll("playerlist_join", sender.socialClubName, character.FormatName);
         }
 
-
         private void API_onPlayerDisconnected(Client player, string reason)
         {
             API.triggerClientEventForAll("playerlist_leave", player.socialClubName);
         }
-
 
         private void API_onPlayerFinishedDownload(Client player)
         {

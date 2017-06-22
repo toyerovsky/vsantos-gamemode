@@ -165,8 +165,9 @@ API.onUpdate.connect(() => {
         }
 
         // Header
-        API.drawText("ID Nazwa", listX + listPadding, listY - listPadding / 2, 0.4, 91, 131, 40, 255, 0, 0, true, true, 0);
-        API.drawText("Ping", listX + listWidth - listPadding, listY - listPadding / 2, 0.4, 91, 131, 40, 255, 0, 2, true, true, 0);
+        API.drawText("V-Santos.pl", listX + listPadding, listY - listPadding / 2, 0.4, 91, 131, 40, 255, 0, 0, true, true, 0);
+        //API.drawText("ping", listX + listWidth - listPadding, listY - listPadding / 2, 0.4, 91, 131, 40, 255, 0, 2, true, true, 0);
+        API.drawText(gPlayers.length.toString() + "/500", listX + listWidth - listPadding, listY - listPadding / 2, 0.4, 91, 131, 40, 255, 0, 2, true, true, 0);
 
         // Players
         for (var i = 0; i < listPageCount; i++) {

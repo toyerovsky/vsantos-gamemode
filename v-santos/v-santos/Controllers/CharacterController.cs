@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
 using GTANetworkServer;
 using Serverside.Database;
@@ -172,10 +173,10 @@ namespace Serverside.Controllers
             accountController.CharacterController.CanCommand = true;
             accountController.CharacterController.CanPay = true;
 
-            accountController.Client.triggerEvent("Money_Changed", $"${character.Money}");
+            accountController.Client.triggerEvent("MoneyChanged", character.Money.ToString(CultureInfo.InvariantCulture));
             accountController.Client.triggerEvent("ToggleHud", true);
             accountController.Client.triggerEvent("ShowNotification", $"Witaj, twoja postać {accountController.CharacterController.FormatName} została pomyślnie załadowana, życzymy miłej gry!", 5000);
-            if (OnPlayerCharacterLogin != null) OnPlayerCharacterLogin.Invoke(AccountController.Client, this);
+            OnPlayerCharacterLogin?.Invoke(AccountController.Client, this);
         }
 
         #region DimensionManager
