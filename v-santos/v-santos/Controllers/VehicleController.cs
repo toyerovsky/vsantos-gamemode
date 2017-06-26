@@ -247,6 +247,22 @@ namespace Serverside.Controllers
             Save();
         }
 
+        public void Repair()
+        {
+            Vehicle.repair();
+            if (_nonDbVehicle) return;
+            VehicleData.Door1Damage = false;
+            VehicleData.Door2Damage = false;
+            VehicleData.Door3Damage = false;
+            VehicleData.Door4Damage = false;
+            VehicleData.Window1Damage = false;
+            VehicleData.Window2Damage = false;
+            VehicleData.Window3Damage = false;
+            VehicleData.Window4Damage = false;
+            VehicleData.Health = 1000f;
+            Save();
+        }
+
         private static float GetFuelTankSize(VehicleClass vc)
         {
             switch (vc)

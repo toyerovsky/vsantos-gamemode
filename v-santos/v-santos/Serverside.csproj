@@ -78,8 +78,11 @@
   <ItemGroup>
     <Compile Include="Admin\AdminGroups.cs" />
     <Compile Include="Admin\AdminCore.cs" />
+    <Compile Include="Admin\Enums.cs" />
     <Compile Include="Autonomic\Carshop\Models\CarshopVehicle.cs" />
     <Compile Include="Autonomic\Carshop\RPCarshop.cs" />
+    <Compile Include="Autonomic\FuelStation\FuelStation.cs" />
+    <Compile Include="Autonomic\FuelStation\RPFuelStation.cs" />
     <Compile Include="Autonomic\Market\Market.cs" />
     <Compile Include="Autonomic\Market\Models\Market.cs" />
     <Compile Include="Autonomic\Market\Models\MarketItem.cs" />
@@ -114,8 +117,6 @@
     <Compile Include="Core\Extenstions\CustomEvents.cs" />
     <Compile Include="Core\Extenstions\EnumsExtensions.cs" />
     <Compile Include="Core\Extenstions\NetHandleExtensions.cs" />
-    <Compile Include="Core\Finders\GroupFinder.cs" />
-    <Compile Include="Core\Finders\PlayerFinder.cs" />
     <Compile Include="Core\FullPosition.cs" />
     <Compile Include="Core\Login\RPLogin.cs" />
     <Compile Include="Core\Money\MoneyManager.cs" />
@@ -159,7 +160,7 @@
     <Compile Include="Employer\EmployerBot.cs" />
     <Compile Include="Employer\RPEmployer.cs" />
     <Compile Include="Groups\Base\CityHall.cs" />
-    <Compile Include="Groups\Base\Group.cs" />
+    <Compile Include="Groups\Base\Police.cs" />
     <Compile Include="Groups\Enums.cs" />
     <Compile Include="Groups\RPGroups.cs" />
     <Compile Include="Items\Item.cs" />
@@ -244,6 +245,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Constant\Files\dict.txt" />
+    <Content Include="Groups\Base\ReadMe.txt" />
     <Content Include="_Clientside\MarketMenu.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -560,6 +562,7 @@
     <TypeScriptCompile Include="types-gtanetwork\System.d.ts" />
     <TypeScriptCompile Include="types-gtanetwork\System.Drawing.dll.d.ts" />
     <TypeScriptCompile Include="types-gtanetwork\Xilium.CefGlue.dll.d.ts" />
+    <TypeScriptCompile Include="_Clientside\TypeScript\FuelStationMenu.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />

@@ -72,7 +72,7 @@ namespace Serverside.Controllers
 
         public static bool HasCharacterSlot(AccountController account)
         {
-            if (account.AccountData.Characters.Count > 3)
+            if (account.AccountData.Characters != null && account.AccountData.Characters.Count > 3)
             {
                 API.shared.sendChatMessageToPlayer(account.Client, "~r~Błąd: ~w~Osiągnąłeś maksymalny limit postaci na konto!");
                 return false;

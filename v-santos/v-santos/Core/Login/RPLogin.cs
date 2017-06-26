@@ -54,56 +54,10 @@ namespace Serverside.Core.Login
 
         private void RPLogin_OnPlayerLogin(Client sender, AccountController account)
         {
-            //w tym momencie po takim przypisaniu do json jego wartość to "[]" // NAPRAWIONE
             var chs = account.AccountData.Characters.Where(c => c.IsAlive == true).Select(x => new { x.Name, x.Surname, x.Money, x.BankMoney }).ToList();
             string json = JsonConvert.SerializeObject(chs);
             API.shared.consoleOutput(json);
             sender.triggerEvent("ShowCharacterSelectMenu", json);
-        }
-
-        [Command("/dlogin", GreedyArg = true, SensitiveInfo = true, Alias = "l")]
-        public void DebugLoginToAccount(Client sender, string email, string password)
-        {
-            Tuple<long, string, short, string> userData = FDb.CheckPasswordMatch(email, password);
-            if (userData.Item1 == -1)
-            {
-                API.shared.sendChatMessageToPlayer(sender, "Podane login lub hasło są nieprawidłowe, bądź takie konto nie istnieje");
-            }
-            else
-            {
-                Account account = new Account
-                {
-                    UserId = userData.Item1,
-                    Name = userData.Item2,
-                    MainGroup = userData.Item3,
-                    OtherGroups = userData.Item4,
-                    Email = email,
-                    SocialClub = sender.name,
-                    Ip = sender.address
-                };
-
-
-                //Sprawdzenie czy konto z danym userid istnieje jak nie dodanie konta do bazy danych i załadowanie go do core.
-                if (!AccountController.DoesAccountExist(userData.Item1))
-                {
-                    AccountController.RegisterAccount(sender, account);
-                }
-                else
-                {
-                    //Sprawdzenie czy ktoś już jest zalogowany z tego konta.
-                    AccountController _ac = RPEntityManager.GetAccount(userData.Item1);
-                    if (_ac != null)
-                    {
-                        if (_ac.AccountData.Online)
-                        {
-                            API.shared.kickPlayer(_ac.Client);
-                            RPChat.SendMessageToPlayer(sender,
-                                $"Osoba o IP: {_ac.AccountData.Ip} znajduje się obecnie na twoim koncie. Została ona wyrzucona z serwera. Rozważ zmianę hasła.", ChatMessageType.ServerInfo);
-                        }
-                    }
-                    AccountController.LoadAccount(sender, userData.Item1);
-                }
-            }
         }
 
         public static void LoginToAccount(Client sender, string email, string password)

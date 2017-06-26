@@ -39,7 +39,7 @@ namespace Serverside.Buildings
             }
             else if (eventName == "AddBuilding")
             {
-                /* Argumenty
+                /* Arguments
                  * args[0] string name 
                  * args[1] decimal cost
                  * args[2] string interiorName
@@ -60,7 +60,7 @@ namespace Serverside.Buildings
             }
             else if (eventName == "EdingBuildingInfo")
             {
-                /* Argumenty
+                /* Arguments
                  * args[0] name 
                  * args[1] description
                  * args[2] enterCharge
@@ -79,7 +79,7 @@ namespace Serverside.Buildings
             APIExtensions.ConsoleOutput("[RPBuildings] Uruchomione pomyślnie.", ConsoleColor.DarkMagenta);
         }
 
-        #region Players Commands
+        #region PLAYER COMMANDS
 
         [Command("drzwizamknij")]
         public void ChangeBuildingLockState(Client sender)
@@ -92,7 +92,7 @@ namespace Serverside.Buildings
 
             BuildingController building = sender.GetData("CurrentDoors");
 
-            //TODO: Dodanie, żeby właściciel grupy mógł zarządzać budynkiem grupowym
+            //TODO: Dodanie zeby pracownicy mogli otwierać budynki grupowe zgodnie z uprawnieniami
             if (building.BuildingData.Character == null || building.BuildingData.Character.Id != sender.GetAccountController().CharacterController.Character.Id)
             {
                 sender.Notify("Nie jesteś właścicielem tego budynku.");
@@ -128,7 +128,7 @@ namespace Serverside.Buildings
                 return;
             }
 
-            //CurrentBuilding jest po to żeby gracz mógł zarządzać budynkiem ze środka
+            //CurrentBuilding jest po to żeby gracz mógł zarządzać budynkiem ze środka oraz do ofert
             if (sender.GetAccountController().CharacterController.CurrentBuilding != null ||
                 sender.HasData("CurrentDoors"))
             {
@@ -137,8 +137,7 @@ namespace Serverside.Buildings
                     : sender.GetAccountController().CharacterController.CurrentBuilding;
 
                 //TODO: Dodanie, żeby właściciel grupy mógł zarządzać budynkiem grupowym
-                if (building.BuildingData.Character.Id != sender.GetAccountController().CharacterController.Character
-                        .Id)
+                if (building.BuildingData.Character == null || building.BuildingData.Character.Id != sender.GetAccountController().CharacterController.Character.Id)
                 {
                     sender.Notify("Nie jesteś właścicielem tego budynku.");
                     return;
@@ -163,7 +162,7 @@ namespace Serverside.Buildings
 
         #endregion
 
-        #region Administrators Commands
+        #region ADMIN COMMANDS
 
         [Command("usundrzwi", "~y~UŻYJ ~w~ /usundrzwi (id)")]
         public void DeleteBuilding(Client sender, long id = -1)
@@ -220,7 +219,6 @@ namespace Serverside.Buildings
                 }
             }
         }
-
         #endregion
     }
 }

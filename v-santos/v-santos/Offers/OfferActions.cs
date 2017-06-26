@@ -24,8 +24,7 @@ namespace Serverside.Offers
         {
             var vehicle = RPEntityManager.GetVehicle(API.shared.getPlayerVehicle(getter));
             if (vehicle == null) return;
-            vehicle.Vehicle.repair();
-            vehicle.Save();
+            vehicle.Repair();
         }
     }
 }

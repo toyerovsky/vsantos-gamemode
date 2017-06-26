@@ -7,7 +7,6 @@ using Serverside.Controllers;
 using Serverside.Core;
 using Serverside.Core.Extensions;
 using Serverside.Core.Extenstions;
-using Serverside.Core.Finders;
 using Serverside.Groups;
 using Serverside.Groups.Base;
 
@@ -59,65 +58,31 @@ namespace Serverside.Offers
         }
 
         #region Komendy
-        [Command("o", "~y~UŻYJ: ~w~ /o [id] [typ] [cena] [indeks]")]
-        public void OfferItem(Client sender, string id, string offerType, string unsafeMoneyCount, string index = null)
+        [Command("o", "~y~UŻYJ: ~w~ /o [id] [typ] [cena] (indeks)")]
+        public void OfferItem(Client sender, int id, OfferType type, decimal safeMoneyCount, int index = -1)
         {
-            int getterId;
-            decimal safeMoneyCount;
-
-            OfferType type;
-
-            if (!Enum.TryParse(offerType, true, out type))
-            {
-                RPChat.SendMessageToPlayer(sender, "Podano nieprawidłowy typ oferty.", ChatMessageType.ServerInfo);
-                return;
-            }
-
-            if (Validator.IsIntIdValid(id) && Validator.IsMoneyStringValid(unsafeMoneyCount))
-            {
-                getterId = Convert.ToInt32(id);
-                safeMoneyCount = Convert.ToDecimal(unsafeMoneyCount);
-            }
-            else
-            {
-                sender.Notify("Podano dane w nieprawidłowym formacie.");
-                return;
-            }
-
-            if (getterId.Equals(sender.GetAccountController().ServerId))
+            if (id.Equals(sender.GetAccountController().ServerId))
             {
                 sender.Notify("Nie możesz oferować przedmiotu samemu sobie.");
                 return;
             }
 
-            Client getter;
             Offer offer = null;
-            if (PlayerFinder.TryFindClientInRadiusOfClientByServerId(sender, getterId, 10, out getter))
+            if (API.getPlayersInRadiusOfPlayer(6f, sender).Any(x => x.GetAccountController().ServerId == id))
             {
-                if (type == OfferType.Przedmiot)
+                Client getter = API.getPlayersInRadiusOfPlayer(6f, sender).Find(x => x.GetAccountController().ServerId == id);
+                if (type == OfferType.Przedmiot && index != -1)
                 {
-                    int itemIndex;
-
-                    if (Validator.IsIntIdValid(index))
-                    {
-                        itemIndex = Convert.ToInt32(index);
-                    }
-                    else
-                    {
-                        sender.Notify("Podano numer przedmiotu w nieprawidłowym formacie");
-                        return;
-                    }
-
                     var items = sender.GetAccountController().CharacterController.Character.Items.ToList();
 
                     //Tutaj sprawdzamy czy gracz posiada taki numer na liście. Numerujemy od 0 więc items.Count - 1
-                    if (itemIndex > items.Count - 1)
+                    if (index > items.Count - 1)
                     {
                         sender.Notify("Nie posiadasz przedmiotu o takim indeksie.");
                         return;
                     }
 
-                    var item = items[itemIndex];
+                    var item = items[index];
 
                     if (item.CurrentlyInUse.HasValue && item.CurrentlyInUse.Value)
                     {
@@ -136,39 +101,64 @@ namespace Serverside.Offers
                     offer = new Offer(sender, getter, vehicle.VehicleData, safeMoneyCount);
                     getter.SetData("Offer", offer);
                 }
-                //Tutaj są oferty wymagające uprawnień grupowych
-                else if (type == OfferType.Dowod || type == OfferType.Prawko || type == OfferType.Naprawa)
+                else if (type == OfferType.Budynek)
                 {
-                    //Sprawdzamy uprawnienia potrzebne do danych ofert
-                    if (type == OfferType.Dowod)
+                    if (sender.GetAccountController().CharacterController.CurrentBuilding != null || sender.HasData("CurrentDoors"))
                     {
-                        var group = sender.GetOnDutyGroup();
-                        if (group == null) return;
-                        if (group.Data.GroupType != GroupType.CityHall ||
-                            !((CityHall) group).CanPlayerGiveIdCard(sender.GetAccountController()))
-                        {
-                            sender.Notify("Twoja grupa, bądź postać nie posiada uprawnień do wydawania dowodu osobistego.");
-                            return;
-                        }
-                    }
-                    else if (type == OfferType.Prawko)
-                    {
-                        var group = sender.GetOnDutyGroup();
-                        if (group == null) return;
-                        if (group.Data.GroupType != GroupType.CityHall || 
-                            !((CityHall) group).CanPlayerGiveDrivingLicense(sender.GetAccountController()))
-                        {
-                            sender.Notify("Twoja grupa, bądź postać nie posiada uprawnień do wydawania prawa jazdy.");
-                            return;
-                        }
-                            
-                    }
+                        BuildingController building = sender.HasData("CurrentDoors")
+                            ? sender.GetData("CurrentDoors")
+                            : sender.GetAccountController().CharacterController.CurrentBuilding;
 
-                    offer = new Offer(sender, getter, safeMoneyCount, type);
-                    getter.SetData("Offer", offer);
+                        if (building.BuildingData.Group != null)
+                        {
+                            sender.Notify("Nie można sprzedać budynku przepisanego pod grupę.");
+                            return;
+                        }
+
+                        if (building.BuildingData.Character.Id != sender.GetAccountController().CharacterController.Character
+                                .Id)
+                        {
+                            sender.Notify("Nie jesteś właścicielem tego budynku.");
+                            return;
+                        }
+
+                        offer = new Offer(sender, getter, building.BuildingData, safeMoneyCount);
+                    }
+                    else
+                    {
+                        sender.Notify("Aby oferować budynek musisz znajdować się w markerze bądź środku budynku");
+                        
+                    }
+                }
+                //Tutaj są oferty wymagające uprawnień grupowych
+                else if (type == OfferType.Dowod)
+                {
+                    var group = sender.GetAccountController().CharacterController.OnDutyGroup;
+                    if (group == null) return;
+                    if (group.Data.GroupType != GroupType.Urzad || !((CityHall)group).CanPlayerGiveIdCard(sender.GetAccountController()))
+                    {
+                        sender.Notify("Twoja grupa, bądź postać nie posiada uprawnień do wydawania dowodu osobistego.");
+                        return;
+                    }
+                    offer = new Offer(sender, getter, safeMoneyCount, c => OfferActions.GiveIdCard(getter));
+                }
+                else if (type == OfferType.Prawko)
+                {
+                    var group = sender.GetAccountController().CharacterController.OnDutyGroup;
+                    if (group == null) return;
+                    if (group.Data.GroupType != GroupType.Urzad || !((CityHall)group).CanPlayerGiveDrivingLicense(sender.GetAccountController()))
+                    {
+                        sender.Notify("Twoja grupa, bądź postać nie posiada uprawnień do wydawania prawa jazdy.");
+                        return;
+                    }
+                    offer = new Offer(sender, getter, safeMoneyCount, c => OfferActions.GiveDrivingLicense(getter));
                 }
 
-                if (offer == null) return;
+                if (offer != null) getter.SetData("Offer", offer);
+            }
+
+            if (offer != null)
+            {
                 List<string> cefList = new List<string>
                 {
                     sender.name,
@@ -179,6 +169,6 @@ namespace Serverside.Offers
                 offer.ShowWindow(cefList);
             }
         }
-        #endregion
     }
+    #endregion
 }

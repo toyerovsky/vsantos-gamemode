@@ -14,12 +14,6 @@ namespace Serverside.Core.Extensions
             return client.GetData("RP_ACCOUNT") as AccountController;
         }
 
-        public static GroupController GetOnDutyGroup(this Client client)
-        {
-            if (!client.GetAccountController().CharacterController.OnDutyGroupId.HasValue)
-                return null;
-            return RPEntityManager.GetGroups().Single(x => x.GroupId == client.GetAccountController().CharacterController.OnDutyGroupId.Value);
-        }
 
         public static void Notify(this Client client, string message, bool flashing = false)
         {

@@ -90,12 +90,12 @@ namespace Serverside.Core.Telephone.Booth
 
         #region Komendy administracji
         [Command("dodajbudke")]
-        public void CreateAtm(Client sender, string cost, string number)
+        public void CreateAtm(Client sender, decimal cost, string number)
         {
             sender.Notify("Ustaw się w wybranej pozycji, a następnie wpisz /tu.");
             sender.Notify("...użyj /diag aby poznać swoją obecną pozycję.");
 
-            if (!Validator.IsMoneyStringValid(cost) || !Validator.IsCellphoneNumberValid(number))
+            if (!Validator.IsMoneyValid(cost) || !Validator.IsCellphoneNumberValid(number))
             {
                 sender.Notify("Wprowadzono dane w nieprawidłowym formacie.");
             }
@@ -124,7 +124,7 @@ namespace Serverside.Core.Telephone.Booth
                                 Z = sender.rotation.Z
                             }
                         },
-                        Cost = int.Parse(cost),
+                        Cost = cost,
                         Number = int.Parse(number)
                     };
 

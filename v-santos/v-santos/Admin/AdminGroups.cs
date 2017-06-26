@@ -6,7 +6,6 @@ using Serverside.Controllers;
 using Serverside.Core;
 using Serverside.Core.Extensions;
 using Serverside.Core.Extenstions;
-using Serverside.Core.Finders;
 using Serverside.Database.Models;
 using Serverside.Groups;
 
@@ -20,11 +19,11 @@ namespace Serverside.Admin
         }
 
         [Command("stworzgrupa", GreedyArg = true)]
-        public void CreateGroup(Client sender, string bossId, string type, string name, string tag, string hexColor)
+        public void CreateGroup(Client sender, int bossId, GroupType type, string name, string tag, string hexColor)
         {
             var player = sender.GetAccountController();
 
-            if (!Validator.IsIntIdValid(bossId))
+            if (!Validator.IsIdValid(bossId))
             {
                 sender.Notify("Wprowadzono ID w nieprawidłowym formacie.");
                 return;
@@ -37,72 +36,64 @@ namespace Serverside.Admin
                 sender.Notify("Wprowadzono nieprawidłowy kolor.");
                 return;
             }
-            Client boss;
 
-            if (PlayerFinder.TryFindClientByServerId(Convert.ToInt32(bossId), out boss))
+            if (RPEntityManager.GetAccountByServerId(bossId) != null)
             {
-                GroupType groupType;
-                if (Enum.TryParse(type, true, out groupType))
-                {
-                    Database.Models.Group g = new Database.Models.Group()
-                    {
-                        Name = name,
-                        Tag = tag,
-                        Color = new GTANetworkServer.Constant.Color(rgb.R, rgb.G, rgb.B),
-                        GroupType = groupType
-                    };
+                var boss = RPEntityManager.GetAccountByServerId(bossId);
 
-                    if (boss.GetAccountController().CharacterController.Character.Workers.Count > 3)
+                Group g = new Group()
+                {
+                    Name = name,
+                    Tag = tag,
+                    Color = new GTANetworkServer.Constant.Color(rgb.R, rgb.G, rgb.B),
+                    GroupType = type
+                };
+
+                if (boss.CharacterController.Character.Workers.Count > 3)
+                {
+                    GroupController group = RPGroups.CreateGroup(g);
+                    group.Data.Workers.Add(new Worker
                     {
-                        GroupController group = RPGroups.CreateGroup(g);
-                        group.Data.Workers.Add(new Worker()
-                        {
-                            Group = group.Data,
-                            Character = boss.GetAccountController().CharacterController.Character,
-                            ChatRight = true,
-                            DoorsRight = true,
-                            OfferFromWarehouseRight = true,
-                            PaycheckRight = true,
-                            RecrutationRight = true,
-                            DutyMinutes = 0,
-                            Salary = 0
-                        });
-                        group.Save();
-                    }
-                    else
-                    {
-                        boss.Notify("Nie posiadasz wolnych slotów grupowych.");
-                        if (boss != sender) sender.Notify(
-                            $"Gracz: {boss.name} nie posiada wolnych slotów grupowych.");
-                    }
+                        Group = group.Data,
+                        Character = boss.CharacterController.Character,
+                        ChatRight = true,
+                        DoorsRight = true,
+                        OfferFromWarehouseRight = true,
+                        PaycheckRight = true,
+                        RecrutationRight = true,
+                        DutyMinutes = 0,
+                        Salary = 0
+                    });
+                    group.Save();
                 }
                 else
                 {
-                    sender.Notify("Wprowadzono nieprawidłowy typ grupy.");
+                    boss.Client.Notify("Nie posiadasz wolnych slotów grupowych.");
+                    if (boss.Client != sender)
+                        sender.Notify(
+                            $"Gracz: {boss.Client.name} nie posiada wolnych slotów grupowych.");
                 }
             }
             else
             {
-                sender.Notify("Nie znaleziono gracza o podanym ID.");
+                sender.Notify("Nie znaleziono gracza o podanym Id");
             }
         }
 
         [Command("wejdzgrupa", GreedyArg = true)]
-        public void JoinGroup(Client sender, string groupId)
+        public void JoinGroup(Client sender, long groupId)
         {
             var player = sender.GetAccountController();
 
-            if (!Validator.IsLongIdValid(groupId))
+            if (!Validator.IsIdValid(groupId))
             {
                 sender.Notify("Wprowadzono ID w nieprawidłowym formacie.");
                 return;
             }
 
-            long gid = long.Parse(groupId);
-
-            if (RPEntityManager.GetGroup(gid) != null)
+            if (RPEntityManager.GetGroup(groupId) != null)
             {
-                GroupController group = RPEntityManager.GetGroup(gid);
+                GroupController group = RPEntityManager.GetGroup(groupId);
 
                 if (group.Data.Workers.Any(p => p.Character == player.CharacterController.Character))
                 {
