@@ -4,6 +4,7 @@ using Serverside.Database;
 using System.Collections.Generic;
 using System.Linq;
 using GTANetworkServer;
+using Serverside.Autonomic.FuelStation;
 
 namespace Serverside.Core
 {
@@ -13,6 +14,7 @@ namespace Serverside.Core
         private static readonly List<VehicleController> Vehicles = new List<VehicleController>();
         private static readonly List<GroupController> Groups = new List<GroupController>();
         private static readonly List<BuildingController> Buildings = new List<BuildingController>();
+        private static readonly List<FuelStation> FuelStations = new List<FuelStation>();
 
         public static void Init()
         {
@@ -27,7 +29,7 @@ namespace Serverside.Core
         public static void RemoveAccount(long accountId) => Accounts.Remove(accountId);
 
         public static AccountController GetAccount(long accountId) => accountId > -1 ? Accounts.Get(accountId) : null;
-        
+
         public static AccountController GetAccountByServerId(int id) => id > -1 ? Accounts.Values.ElementAtOrDefault(id) : null;
 
         public static AccountController GetAccountByCharacterId(long characterId)
@@ -52,7 +54,7 @@ namespace Serverside.Core
 
         #region VEHICLE METHODS
         public static void Add(VehicleController vc) => Vehicles.Add(vc);
-        
+
         public static void Remove(VehicleController vc) => Vehicles.Remove(vc);
 
         public static VehicleController GetVehicle(Vehicle vehicle) => Vehicles.Find(x => x.Vehicle == vehicle);
@@ -83,9 +85,11 @@ namespace Serverside.Core
         }
 
         public static List<GroupController> GetGroups() => Groups;
+
         #endregion
 
         #region BUILDING METHODS
+
         public static void Add(BuildingController building) => Buildings.Add(building);
 
         public static void Remove(BuildingController building) => Buildings.Remove(building);
@@ -103,6 +107,35 @@ namespace Serverside.Core
         }
 
         public static List<BuildingController> GetBuildings() => Buildings;
+
+        #endregion
+
+        #region FUELSTATIONS
+        public static void Add(FuelStation fs) => FuelStations.Add(fs);
+
+        public static void RemoveFuelStation(FuelStation fs) => FuelStations.Remove(fs);
+
+        public static void RemoveFuelStation(int id) => FuelStations.RemoveAt(id);
+
+        public static FuelStation GetFuelStation(long id)
+        {
+            return FuelStations.Find(x => x.Id == id);
+        }
+
+        public static FuelStation GetFuelStation(FuelStation fs)
+        {
+            return FuelStations.Find(x => x.Id == fs.Id);
+        }
+
+        public static FuelStation GetFuelStation(string stationname)
+        {
+            return FuelStations.Find(x => x.Name.StartsWith(stationname.ToLower()));
+        }
+
+        public static List<FuelStation> GetFuelStations()
+        {
+            return FuelStations;
+        }
 
         #endregion
     }
