@@ -52,7 +52,7 @@ namespace Serverside.Core.Extensions
             if (hex.StartsWith("#"))
                 hex = hex.Substring(1);
 
-            if (hex.Length != 8) throw new Exception("Color not valid");
+            if (hex.Length != 8) return new Color(255, 0, 0, 255);
 
             return new Color(
                 int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber),

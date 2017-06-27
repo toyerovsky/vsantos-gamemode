@@ -112,11 +112,11 @@
     <Compile Include="Core\Bus\RPBus.cs" />
     <Compile Include="Core\Description\Description.cs" />
     <Compile Include="Core\Description\RPDescriptions.cs" />
-    <Compile Include="Core\Extenstions\APIExtensions.cs" />
-    <Compile Include="Core\Extenstions\ClientExtension.cs" />
-    <Compile Include="Core\Extenstions\CustomEvents.cs" />
-    <Compile Include="Core\Extenstions\EnumsExtensions.cs" />
-    <Compile Include="Core\Extenstions\NetHandleExtensions.cs" />
+    <Compile Include="Core\Extensions\APIExtensions.cs" />
+    <Compile Include="Core\Extensions\ClientExtension.cs" />
+    <Compile Include="Core\Extensions\CustomEvents.cs" />
+    <Compile Include="Core\Extensions\EnumsExtensions.cs" />
+    <Compile Include="Core\Extensions\NetHandleExtensions.cs" />
     <Compile Include="Core\FullPosition.cs" />
     <Compile Include="Core\Login\RPLogin.cs" />
     <Compile Include="Core\Money\MoneyManager.cs" />
