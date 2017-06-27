@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
-using Serverside.Core.Extenstions;
+using Serverside.Core.Extensions;
 
 namespace Serverside.Core
 {

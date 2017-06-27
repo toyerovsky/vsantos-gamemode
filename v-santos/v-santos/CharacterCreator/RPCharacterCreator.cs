@@ -2,7 +2,6 @@
 using System.Globalization;
 using GTANetworkServer;
 using Serverside.Core.Extensions;
-using Serverside.Core.Extenstions;
 
 namespace Serverside.CharacterCreator
 {

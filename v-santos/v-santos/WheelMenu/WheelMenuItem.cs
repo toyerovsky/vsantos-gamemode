@@ -6,22 +6,22 @@ namespace Serverside.WheelMenu
     public class WheelMenuItem
     {
         public string Name { get; }
-
         private Client Sender { get; }
         private object Target { get; }
-        private Action<Client, object> Action { get; }
+        private Action<Client, object> WheelAction { get; }
 
-        public WheelMenuItem(string name, Client sender, object target, Action<Client, object> action)
+        public WheelMenuItem(string name, Client sender, object target, Action<Client, object> wheelAction)
         {
             Name = name;
             Sender = sender;
             Target = target;
-            Action = action;
+            WheelAction = wheelAction;
+
         }
 
         public void Use()
         {
-            Action.Invoke(Sender, Target);   
+            WheelAction.Invoke(Sender, Target);   
         }
     }
 }

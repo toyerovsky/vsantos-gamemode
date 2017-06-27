@@ -12,6 +12,7 @@ namespace Serverside.Controllers
     public class AccountController
     {
         public static event AccountLoginEventHandler OnPlayerCharacterLogin;
+
         public long AccountId => AccountData.UserId;
         public Account AccountData;
 
@@ -48,7 +49,7 @@ namespace Serverside.Controllers
 
             ContextFactory.Instance.SaveChanges();
             RPEntityManager.AddAccount(AccountId, this);
-            if (OnPlayerCharacterLogin != null) OnPlayerCharacterLogin.Invoke(client, this);
+            OnPlayerCharacterLogin?.Invoke(client, this);
         }
 
         public static AccountController GetAccountControllerFromName(string formatname)

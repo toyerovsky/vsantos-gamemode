@@ -8,7 +8,6 @@ using Serverside.Controllers;
 using Serverside.Core.Login;
 using Serverside.Database;
 using Serverside.Core.Extensions;
-using Serverside.Core.Extenstions;
 using Serverside.Database.Models;
 using Vehicle = GTANetworkServer.Vehicle;
 
@@ -150,8 +149,8 @@ namespace Serverside.Core
                 {
                     UserId = userData.Item1,
                     Name = userData.Item2,
-                    MainGroup = userData.Item3,
-                    OtherGroups = userData.Item4,
+                    ForumGroup = userData.Item3,
+                    OtherForumGroups = userData.Item4,
                     Email = email,
                     SocialClub = sender.name,
                     Ip = sender.address

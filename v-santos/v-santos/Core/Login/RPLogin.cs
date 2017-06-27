@@ -7,7 +7,7 @@ using Serverside.Database;
 using Serverside.Database.Models;
 using Serverside.Core.Extensions;
 using Newtonsoft.Json;
-using Serverside.Core.Extenstions;
+using Serverside.Admin;
 
 namespace Serverside.Core.Login
 {
@@ -75,16 +75,22 @@ namespace Serverside.Core.Login
                 {
                     UserId = userData.Item1,
                     Name = userData.Item2,
-                    MainGroup = userData.Item3,
-                    OtherGroups = userData.Item4,
+                    ForumGroup = userData.Item3,
+                    OtherForumGroups = userData.Item4,
                     Email = email,
                     SocialClub = sender.name,
                     Ip = sender.address,
                 };
 
                 //Sprawdzenie czy konto z danym userid istnieje jak nie dodanie konta do bazy danych i załadowanie go do core.
+                //Dodanie grupy serverowej do konta //toyer
                 if (!AccountController.DoesAccountExist(userData.Item1))
                 {
+                    if (Enum.GetNames(typeof(ServerRank)).Any(e => e == ((ForumGroup)userData.Item3).ToString()))
+                        account.ServerRank = (ServerRank)userData.Item3;
+                    else
+                        account.ServerRank = ServerRank.Uzytkownik;
+
                     AccountController.RegisterAccount(sender, account);
                 }
                 else

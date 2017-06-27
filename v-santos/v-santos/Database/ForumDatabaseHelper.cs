@@ -45,12 +45,12 @@ namespace Serverside.Database
                                     }
                                     else
                                     {
-                                        return Tuple.Create(long.Parse("-1"), "", short.Parse("-1"), "");
+                                        return Tuple.Create(-1L, "", short.Parse("-1"), "");
                                     }
 
                                 }
                             }
-                            return Tuple.Create(long.Parse("-1"), "", short.Parse("-1"), "");
+                            return Tuple.Create(-1L, "", short.Parse("-1"), "");
                         }
                         catch (Exception ex)
                         {
@@ -64,7 +64,7 @@ namespace Serverside.Database
                     }
                 }
             }
-            return Tuple.Create(long.Parse("-1"), "", short.Parse("-1"), "");
+            return Tuple.Create(-1L, "", short.Parse("-1"), "");
             //return 1; DEBUG !
         }
 

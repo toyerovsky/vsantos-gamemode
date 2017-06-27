@@ -51,6 +51,7 @@ namespace Serverside.Core
         #endregion
 
         #region VEHICLE METHODS
+
         public static void Add(VehicleController vc) => Vehicles.Add(vc);
         
         public static void Remove(VehicleController vc) => Vehicles.Remove(vc);
@@ -65,14 +66,16 @@ namespace Serverside.Core
         {
             return cc.Character == null ? new List<VehicleController>() : Vehicles.Where(x => x.VehicleData.Character == cc.Character).ToList();
         }
+
         #endregion
 
         #region GROUP METHODS
+
         public static void Add(GroupController group) => Groups.Add(group);
 
         public static void Remove(GroupController group) => Groups.Remove(group);
 
-        public static GroupController GetGroup(long groupId) => Groups.Find(x => x.GroupId == groupId);
+        public static GroupController GetGroup(long groupId) => Groups.Find(x => x.Id == groupId);
 
         public static GroupController GetGroup(string groupName) => Groups.Single(x => x.Data.Name.StartsWith(groupName.ToLower()));
 
@@ -83,9 +86,11 @@ namespace Serverside.Core
         }
 
         public static List<GroupController> GetGroups() => Groups;
+
         #endregion
 
         #region BUILDING METHODS
+
         public static void Add(BuildingController building) => Buildings.Add(building);
 
         public static void Remove(BuildingController building) => Buildings.Remove(building);

@@ -4,11 +4,11 @@ using System.Linq;
 using GTANetworkServer;
 using GTANetworkShared;
 using Newtonsoft.Json;
+using Serverside.Admin;
 using Serverside.Constant;
 using Serverside.Controllers;
 using Serverside.Core;
 using Serverside.Core.Extensions;
-using Serverside.Core.Extenstions;
 using Serverside.Database;
 
 namespace Serverside.Buildings
@@ -51,8 +51,8 @@ namespace Serverside.Buildings
                 var internalPosition = ConstantItems.DefaultInteriors.First(i => i.Name == (string)arguments[2]).InternalPosition;
                 Vector3 externalPosition = sender.GetData("AdminDoorPosition");
 
-                var building = new BuildingController((string)arguments[0], (string)arguments[3], sender.GetAccountController().AccountId, internalPosition.X,
-                    internalPosition.Y, internalPosition.Z, externalPosition.X, externalPosition.Y, externalPosition.Z, Convert.ToDecimal(arguments[1]), BuildingController.GetNextFreeDimension());
+                var building = new BuildingController((string)arguments[0], (string)arguments[3], sender.GetAccountController().AccountId, internalPosition.X, internalPosition.Y, internalPosition.Z, externalPosition.X, externalPosition.Y, externalPosition.Z, Convert.ToDecimal(arguments[1]), BuildingController.GetNextFreeDimension());
+
                 building.Save();
 
                 sender.Notify("Dodawanie budynku zakończyło się pomyślnie.");
@@ -167,6 +167,12 @@ namespace Serverside.Buildings
         [Command("usundrzwi", "~y~UŻYJ ~w~ /usundrzwi (id)")]
         public void DeleteBuilding(Client sender, long id = -1)
         {
+            if (sender.GetAccountController().AccountData.ServerRank < ServerRank.GameMaster4)
+            {
+                sender.Notify("Nie posiadasz uprawnień do usuwania drzwi.");
+                return;
+            }
+
             if (id == -1 && !sender.hasData("CurrentDoors"))
             {
                 sender.Notify("Aby usunąć budynek musisz podać jego Id, lub...");
@@ -197,6 +203,12 @@ namespace Serverside.Buildings
         [Command("dodajdrzwi")]
         public void CreateBuilding(Client sender)
         {
+            if (sender.GetAccountController().AccountData.ServerRank < ServerRank.GameMaster4)
+            {
+                sender.Notify("Nie posiadasz uprawnień do tworzenia drzwi.");
+                return;
+            }
+
             sender.Notify("Ustaw się w pozycji markera, a następnie wpisz /tu.");
             sender.Notify("...użyj /diag aby poznać swoją obecną pozycję.");
 

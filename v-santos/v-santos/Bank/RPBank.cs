@@ -4,7 +4,6 @@ using GTANetworkShared;
 using Serverside.Bank.Models;
 using Serverside.Core;
 using Serverside.Core.Extensions;
-using Serverside.Core.Extenstions;
 
 namespace Serverside.Bank
 {

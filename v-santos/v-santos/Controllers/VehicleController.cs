@@ -2,8 +2,6 @@
 using GTANetworkServer.Constant;
 using GTANetworkShared;
 using Serverside.Core;
-using Serverside.Core.Extensions;
-using Serverside.Core.Extenstions;
 //using Serverside.Core.Description;
 using Serverside.Database;
 using Serverside.Database.Models;
@@ -12,13 +10,14 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using Serverside.Core.Extensions;
 using Vehicle = Serverside.Database.Models.Vehicle;
 
 namespace Serverside.Controllers
 {
     public class VehicleController : IDisposable
     {
-        public long VehicleId { get; set; }
+        public long VehicleId => VehicleData.Id;
         public GTANetworkServer.Vehicle Vehicle { get; set; }
         public Vehicle VehicleData { get; set; }
         public Core.Description.Description Description;

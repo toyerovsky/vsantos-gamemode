@@ -8,7 +8,6 @@ using MySql.Data.MySqlClient;
 using Serverside.Database.Models;
 using Vehicle = Serverside.Database.Models.Vehicle;
 using Serverside.Core.Extensions;
-using Serverside.Core.Extenstions;
 
 namespace Serverside.Database
 {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Serverside.Admin;
 
 namespace Serverside.Database.Models
 {
@@ -16,8 +17,8 @@ namespace Serverside.Database.Models
         [EmailAddress]
         [StringLength(50)]
         public string Email { get; set; }
-        public long MainGroup { get; set; }
-        public string OtherGroups { get; set; }
+        public long ForumGroup { get; set; }
+        public string OtherForumGroups { get; set; }
         [Index("IX_SocialClub", IsUnique = false)]
         [StringLength(50)]
         public string SocialClub { get; set; }  
@@ -26,6 +27,7 @@ namespace Serverside.Database.Models
         public bool Online { get; set; }
         [DataType(DataType.DateTime)]
         public DateTime LastLogin { get; set; }
+        public ServerRank ServerRank { get; set; }
         public virtual ICollection<Character> Characters { get; set; }
         public virtual ICollection<Ban> Bans { get; set; }
     }

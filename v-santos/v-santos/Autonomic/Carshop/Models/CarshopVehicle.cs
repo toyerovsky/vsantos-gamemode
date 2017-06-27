@@ -1,6 +1,6 @@
 ﻿using System;
 using GTANetworkShared;
-using Serverside.Core.Extenstions;
+using Serverside.Core.Extensions;
 
 namespace Serverside.Autonomic.Carshop.Models
 {

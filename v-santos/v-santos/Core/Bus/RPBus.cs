@@ -6,7 +6,6 @@ using GTANetworkShared;
 using Newtonsoft.Json;
 using Serverside.Core.Bus.Models;
 using Serverside.Core.Extensions;
-using Serverside.Core.Extenstions;
 
 namespace Serverside.Core.Bus
 {

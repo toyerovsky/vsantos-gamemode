@@ -7,7 +7,6 @@ using GTANetworkShared;
 using Serverside.Controllers;
 using Serverside.Core;
 using Serverside.Core.Extensions;
-using Serverside.Core.Extenstions;
 using Serverside.Corners.Models;
 
 namespace Serverside.Corners

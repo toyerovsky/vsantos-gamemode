@@ -3,7 +3,6 @@ using System.Timers;
 using GTANetworkServer;
 using GTANetworkShared;
 using Serverside.Core.Extensions;
-using Serverside.Core.Extenstions;
 
 //using Serverside.Core.Finders;
 
@@ -41,22 +40,19 @@ namespace Serverside.Core
             sender.kick("CK");
         }
 
-        [Command("bw", "~y~UŻYJ: ~w~ /bw [ID]")]
-        public void SetPlayerBw(Client player, int id)
+        [Command("bw", "~y~UŻYJ: ~w~ /bw [id]")]
+        public void SetPlayerBw(Client sender, int id)
         {
-            if (!Validator.IsIdValid(id))
+            if (RPEntityManager.GetAccountByServerId(id) != null)
             {
-                API.sendNotificationToPlayer(player, "Wprowadzono dane w nieprawidłowym formacie.");
-                return;
+                Client getter = RPEntityManager.GetAccountByServerId(id).Client;
+                getter.triggerEvent("ToggleHud", true);
+                getter.ResetData("CharacterBW");
             }
-
-            int getterId = Convert.ToInt32(id);
-
-            Client getter = RPEntityManager.GetAccountByServerId(getterId).Client;
-            
-            if (getter == null) return;
-                API.shared.triggerClientEvent(getter, "ToggleHud", true);
-                getter.ResetData("CharacterBW");               
+            else
+            {
+                sender.Notify("Nie znaleziono gracza o podanym Id.");
+            }
         }
         #endregion
 

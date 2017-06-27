@@ -79,6 +79,8 @@
     <Compile Include="Admin\AdminGroups.cs" />
     <Compile Include="Admin\AdminCore.cs" />
     <Compile Include="Admin\Enums.cs" />
+    <Compile Include="Admin\RPAdminList.cs" />
+    <Compile Include="Admin\Structs\ReportData.cs" />
     <Compile Include="Autonomic\Carshop\Models\CarshopVehicle.cs" />
     <Compile Include="Autonomic\Carshop\RPCarshop.cs" />
     <Compile Include="Autonomic\Market\Market.cs" />
@@ -110,11 +112,11 @@
     <Compile Include="Core\Bus\RPBus.cs" />
     <Compile Include="Core\Description\Description.cs" />
     <Compile Include="Core\Description\RPDescriptions.cs" />
-    <Compile Include="Core\Extenstions\APIExtensions.cs" />
-    <Compile Include="Core\Extenstions\ClientExtension.cs" />
-    <Compile Include="Core\Extenstions\CustomEvents.cs" />
-    <Compile Include="Core\Extenstions\EnumsExtensions.cs" />
-    <Compile Include="Core\Extenstions\NetHandleExtensions.cs" />
+    <Compile Include="Core\Extensions\APIExtensions.cs" />
+    <Compile Include="Core\Extensions\ClientExtension.cs" />
+    <Compile Include="Core\Extensions\CustomEvents.cs" />
+    <Compile Include="Core\Extensions\EnumsExtensions.cs" />
+    <Compile Include="Core\Extensions\NetHandleExtensions.cs" />
     <Compile Include="Core\FullPosition.cs" />
     <Compile Include="Core\Login\RPLogin.cs" />
     <Compile Include="Core\Money\MoneyManager.cs" />
@@ -560,6 +562,7 @@
     <TypeScriptCompile Include="types-gtanetwork\System.d.ts" />
     <TypeScriptCompile Include="types-gtanetwork\System.Drawing.dll.d.ts" />
     <TypeScriptCompile Include="types-gtanetwork\Xilium.CefGlue.dll.d.ts" />
+    <TypeScriptCompile Include="_Clientside\TypeScript\ReportMenu.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />

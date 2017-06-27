@@ -5,7 +5,6 @@ using GTANetworkServer;
 using Serverside.Controllers;
 using Serverside.Core;
 using Serverside.Core.Extensions;
-using Serverside.Core.Extenstions;
 using Serverside.Database.Models;
 using Serverside.Groups;
 
@@ -21,11 +20,9 @@ namespace Serverside.Admin
         [Command("stworzgrupa", GreedyArg = true)]
         public void CreateGroup(Client sender, int bossId, GroupType type, string name, string tag, string hexColor)
         {
-            var player = sender.GetAccountController();
-
-            if (!Validator.IsIdValid(bossId))
+            if (sender.GetAccountController().AccountData.ServerRank < ServerRank.GameMaster2)
             {
-                sender.Notify("Wprowadzono ID w nieprawidłowym formacie.");
+                sender.Notify("Nie posiadasz uprawnień do tworzenia grupy.");
                 return;
             }
 
@@ -76,23 +73,23 @@ namespace Serverside.Admin
             }
             else
             {
-                sender.Notify("Nie znaleziono gracza o podanym Id");
+                sender.Notify("Nie znaleziono gracza o podanym Id.");
             }
         }
 
         [Command("wejdzgrupa", GreedyArg = true)]
         public void JoinGroup(Client sender, long groupId)
         {
-            var player = sender.GetAccountController();
-
-            if (!Validator.IsIdValid(groupId))
+            if (sender.GetAccountController().AccountData.ServerRank < ServerRank.GameMaster)
             {
-                sender.Notify("Wprowadzono ID w nieprawidłowym formacie.");
+                sender.Notify("Nie posiadasz uprawnień do ustawienia wchodzenia do grupy.");
                 return;
             }
 
             if (RPEntityManager.GetGroup(groupId) != null)
             {
+                var player = sender.GetAccountController();
+
                 GroupController group = RPEntityManager.GetGroup(groupId);
 
                 if (group.Data.Workers.Any(p => p.Character == player.CharacterController.Character))
@@ -103,7 +100,7 @@ namespace Serverside.Admin
 
                 if (player.CharacterController.Character.Workers.Count <= 3)
                 {
-                    group.Data.Workers.Add(new Worker()
+                    group.Data.Workers.Add(new Worker
                     {
                         Group = group.Data,
                         Character = sender.GetAccountController().CharacterController.Character,
@@ -124,7 +121,7 @@ namespace Serverside.Admin
             }
             else
             {
-                sender.Notify("Nie istnieje grupa o takim ID.");
+                sender.Notify("Nie znaleziono grupy o podanym Id.");
             }
         }
     }

@@ -12,7 +12,7 @@ namespace Serverside.Controllers
     {
         public Group Data { get; set; }
 
-        public long GroupId { get; set; }
+        public long Id => Data.Id;
 
         public GroupController(Group data)
         {

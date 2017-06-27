@@ -1,7 +1,5 @@
-﻿using System;
-using System.Data.Entity.Core.Common;
-using System.Linq;
-using GTANetworkServer;
+﻿using GTANetworkServer;
+using GTANetworkServer.Constant;
 using GTANetworkShared;
 using Serverside.Core;
 using Serverside.Core.Extensions;
@@ -10,34 +8,69 @@ namespace Serverside.Admin
 {
     public class AdminCore : Script
     {
-        [Command("tpc", "~UŻYJ~ /tpc [x] [y] [z]")]
-        public void TeleportToCords(Client player, float x, float y, float z)
+        [Command("ustawrange", "~y~ UŻYJ ~w~ /ustawrange [id] [nazwa]")]
+        public void SetRank(Client sender, int id, ServerRank rank)
         {
-            player.position = new Vector3(x, y, z);
+            if (sender.GetAccountController().AccountData.ServerRank < ServerRank.Adminadministrator3)
+            {
+                sender.Notify("Nie posiadasz uprawnień do ustawiania rang.");
+                return;
+            }
+
+            var controller = RPEntityManager.GetAccountByServerId(id);
+            if (controller == null)
+            {
+                sender.Notify("Nie znaleziono gracza o podanym Id.");
+                return;
+            }
+
+            controller.AccountData.ServerRank = rank;
+            controller.Save();
+        }
+
+        [Command("tpc", "~y~ UŻYJ ~w~ /tpc [x] [y] [z]")]
+        public void TeleportToCords(Client sender, float x, float y, float z)
+        {
+            if (sender.GetAccountController().AccountData.ServerRank < ServerRank.Support)
+            {
+                sender.Notify("Nie posiadasz uprawnień do teleportu na koordynaty.");
+                return;
+            }
+            sender.position = new Vector3(x, y, z);
         }
 
         [Command("tp", "~y~ UŻYJ ~w~ /tp [id]")]
-        public void TeleportToPlayer(Client player, int id)
+        public void TeleportToPlayer(Client sender, int id)
         {
+            if (sender.GetAccountController().AccountData.ServerRank < ServerRank.Support)
+            {
+                sender.Notify("Nie posiadasz uprawnień do teleportu.");
+                return;
+            }
             var controller = RPEntityManager.GetAccountByServerId(id);
             if (controller == null)
             {
-                player.Notify("Nie znaleziono gracza o podanym Id.");
+                sender.Notify("Nie znaleziono gracza o podanym Id.");
                 return;
             }
-            player.position = new Vector3(controller.Client.position.X - 5f, controller.Client.position.Y, controller.Client.position.Z + 1f);
+            sender.position = new Vector3(controller.Client.position.X - 5f, controller.Client.position.Y, controller.Client.position.Z + 1f);
         }
 
         [Command("spec", "~y~ UŻYJ ~w~ /spec [id]")]
-        public void SpectatePlayer(Client player, int id)
+        public void SpectatePlayer(Client sender, int id)
         {
+            if (sender.GetAccountController().AccountData.ServerRank < ServerRank.Support)
+            {
+                sender.Notify("Nie posiadasz uprawnień do obserwowania.");
+                return;
+            }
             var controller = RPEntityManager.GetAccountByServerId(id);
             if (controller == null)
             {
-                player.Notify("Nie znaleziono gracza o podanym Id.");
+                sender.Notify("Nie znaleziono gracza o podanym Id.");
                 return;
             }
-            API.setPlayerToSpectatePlayer(player, controller.Client);
+            API.setPlayerToSpectatePlayer(sender, controller.Client);
         }
 
         [Command("specoff")]
@@ -47,24 +80,34 @@ namespace Serverside.Admin
         }
 
         [Command("addspec", "~y~ UŻYJ ~w~ /addspec [id]", Description = "Polecenie ustawia wybranemu graczowi specowanie na nas.")]
-        public void AddSpectator(Client player, int id)
+        public void AddSpectator(Client sender, int id)
         {
+            if (sender.GetAccountController().AccountData.ServerRank < ServerRank.Support3)
+            {
+                sender.Notify("Nie posiadasz uprawnień do ustawienia obserwowania.");
+                return;
+            }
             var controller = RPEntityManager.GetAccountByServerId(id);
             if (controller == null)
             {
-                player.Notify("Nie znaleziono gracza o podanym Id.");
+                sender.Notify("Nie znaleziono gracza o podanym Id.");
                 return;
             }
             API.setPlayerToSpectator(controller.Client);
         }
 
         [Command("kick", "~y~ UŻYJ ~w~ /kick [id] (powod)", GreedyArg = true)]
-        public void KickPlayer(Client player, int id, string reason = "")
+        public void KickPlayer(Client sender, int id, string reason = "")
         {
+            if (sender.GetAccountController().AccountData.ServerRank < ServerRank.Support)
+            {
+                sender.Notify("Nie posiadasz uprawnień do ustawienia obserwowania.");
+                return;
+            }
             var controller = RPEntityManager.GetAccountByServerId(id);
             if (controller == null)
             {
-                player.Notify("Nie znaleziono gracza o podanym Id.");
+                sender.Notify("Nie znaleziono gracza o podanym Id.");
                 return;
             }
             API.kickPlayer(controller.Client, reason);
@@ -73,6 +116,11 @@ namespace Serverside.Admin
         [Command("fly")]
         public void StartFying(Client sender)
         {
+            if (sender.GetAccountController().AccountData.ServerRank < ServerRank.Support5)
+            {
+                sender.Notify("Nie posiadasz uprawnień do ustawienia latania.");
+                return;
+            }
             if (sender.HasData("FlyState"))
             {
                 sender.ResetData("FlyState");
@@ -84,17 +132,22 @@ namespace Serverside.Admin
         }
 
         [Command("inv")]
-        public void SetPlayerInvicible(Client player)
+        public void SetPlayerInvicible(Client sender)
         {
-            if (API.getEntityInvincible(player))
+            if (sender.GetAccountController().AccountData.ServerRank < ServerRank.Support5)
             {
-                player.invincible = false;
-                player.Notify("Wyłączono niewidzialność.");
+                sender.Notify("Nie posiadasz uprawnień do ustawienia niewidzialności.");
+                return;
+            }
+            if (API.getEntityInvincible(sender))
+            {
+                sender.invincible = false;
+                sender.Notify("Wyłączono niewidzialność.");
             }
             else
             {
-                player.invincible = true;
-                player.Notify("Włączono niewidzialność.");
+                sender.invincible = true;
+                sender.Notify("Włączono niewidzialność.");
             }
         }
     }

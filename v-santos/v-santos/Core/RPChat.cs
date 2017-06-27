@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using GTANetworkServer;
 using Serverside.Core.Extensions;
-using Serverside.Core.Extenstions;
+using Serverside.Groups;
+using Serverside.Groups.Base;
 
 namespace Serverside.Core
 {
@@ -12,11 +13,12 @@ namespace Serverside.Core
         Quiet = 5,
         Normal = 15,
         PhoneOthers = 16,
-        Me = 20,
-        Do = 21,
-        ServerMe = 25,
+        Me = 24,
+        Do = 25,
+        ServerMe = 26,
         Loud = 30,
-        OOC = 32,
+        OOC = 31,
+        Megaphone = 50,
 
         ServerDo,
         PrivateMessage,
@@ -97,7 +99,7 @@ namespace Serverside.Core
 
 
         [Command("w", "~y~UŻYJ: ~w~ /w [id] [treść]", GreedyArg = true)]
-        public void SendPrivateMessageToPlayer(Client sender, int ID, string message)
+        public void SendPrivateMessageToPlayer(Client sender, int id, string message)
         {
             if (!sender.GetAccountController().CharacterController.CanPM)
             {
@@ -105,13 +107,18 @@ namespace Serverside.Core
                 return;
             }
 
-            if (sender.GetAccountController().ServerId.Equals(ID))
+            if (sender.GetAccountController().ServerId.Equals(id))
             {
                 sender.Notify("Nie możesz wysłać wiadomości samemu sobie.");
                 return;
             }
 
-            Client getter = RPEntityManager.GetAccount(ID).Client;
+            Client getter = RPEntityManager.GetAccount(id).Client;
+            if (getter == null)
+            {
+                sender.Notify("Nie znaleziono gracza o podanym Id.");
+                return;
+            }
             SendMessageToPlayer(getter, message, ChatMessageType.PrivateMessage, sender);
             SendMessageToPlayer(sender, message, ChatMessageType.PrivateMessage, getter);
         }
@@ -146,6 +153,19 @@ namespace Serverside.Core
                     sender.Notify("Nie posiadasz uprawnień do czatu w tej grupie.");
                 }
             }
+        }
+
+        [Command("m", "~y~ UŻYJ ~w~ /m [tekst]", GreedyArg = true)]
+        public void SayThroughTheMegaphone(Client sender, string message)
+        {
+            var group = sender.GetAccountController().CharacterController.OnDutyGroup;
+            if (group == null) return;
+            if (group.Data.GroupType != GroupType.Policja || !((Police)group).CanPlayerUseMegaphone(sender.GetAccountController()))
+            {
+                sender.Notify("Twoja grupa, bądź postać nie posiada uprawnień do używania megafonu.");
+                return;
+            }
+            SendMessageToNearbyPlayers(sender, message, ChatMessageType.Megaphone);
         }
 
         #endregion
@@ -195,12 +215,9 @@ namespace Serverside.Core
                     break;
             }
 
-            var clients = API.shared.getPlayersInRadiusOfPlayer((float)chatMessageType, player);
             //Dla każdego klienta w zasięgu wyświetl wiadomość, zasięg jest pobierany przez rzutowanie enuma do floata
-            foreach (var c in clients)
-            {
-                API.shared.sendChatMessageToPlayer(c, messageColor, message);
-            }
+            API.shared.getPlayersInRadiusOfPlayer((float)chatMessageType, player).ForEach(c => API.shared.sendChatMessageToPlayer(c, messageColor, message));   
+            
         }
 
         public static void SendMessageToPlayer(Client player, string message, ChatMessageType chatMessageType, Client secondPlayer = null)
@@ -261,6 +278,10 @@ namespace Serverside.Core
                 case ChatMessageType.ServerDo:
                     message = $"** {message} **";
                     color = "~#847DB7~";
+                    break;
+                case ChatMessageType.Megaphone:
+                    message = $"{name} \U0001F4E3 {message}";
+                    color = "~#FFDB00~";
                     break;
             }
 

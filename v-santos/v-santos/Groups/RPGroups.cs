@@ -5,7 +5,6 @@ using GTANetworkServer;
 using Serverside.Core;
 using Serverside.Core.Extensions;
 using Serverside.Controllers;
-using Serverside.Core.Extenstions;
 using Serverside.Groups.Base;
 
 namespace Serverside.Groups
@@ -28,6 +27,7 @@ namespace Serverside.Groups
             switch (groupType)
             {
                 case GroupType.Urzad: return new CityHall(editor);
+                case GroupType.Policja: return new Police(editor);
                 default:
                     throw new NotSupportedException($"Nie rozpoznano typu grupy: {groupType}.");
             }
@@ -46,13 +46,14 @@ namespace Serverside.Groups
                 return;
             }
 
-            AccountController getter;
-            if (id != -1 && Validator.IsIdValid(id))
+            AccountController getter = null;
+            float distance;
+            if (id != -1)
             {
                 getter = RPEntityManager.GetAccountByServerId(id);
                 if (getter != null)
                 {
-                    var distance = getter.Client.position.DistanceTo2D(sender.position);
+                    distance = getter.Client.position.DistanceTo2D(sender.position);
                     if (distance > 3 || distance < -3)
                     {
                         sender.Notify("Podany gracz znajduje się za daleko.");
@@ -67,9 +68,18 @@ namespace Serverside.Groups
             }
             else
             {
-                getter = sender.position.GetNearestPlayer().GetAccountController();
+                var ac = sender.position.GetNearestPlayer();
+                if (ac != null)
+                {
+                    distance = ac.position.DistanceTo2D(sender.position);
+                    if (distance < 3 && distance > -3)
+                    {
+                        getter = ac.GetAccountController();
+                    }
+                }
             }
 
+            if (getter == null) return;
             getter.Client.freezePosition = true;
             API.playPedAnimation(getter.Client, false, "mp_arresting", "walk");
         }
@@ -85,13 +95,14 @@ namespace Serverside.Groups
                 return;
             }
 
-            AccountController getter;
-            if (id != -1 && Validator.IsIdValid(id))
+            AccountController getter = null;
+            float distance;
+            if (id != -1)
             {
                 getter = RPEntityManager.GetAccountByServerId(id);
                 if (getter != null)
                 {
-                    var distance = getter.Client.position.DistanceTo2D(sender.position);
+                    distance = getter.Client.position.DistanceTo2D(sender.position);
                     if (distance > 3 || distance < -3)
                     {
                         sender.Notify("Podany gracz znajduje się za daleko.");
@@ -106,19 +117,24 @@ namespace Serverside.Groups
             }
             else
             {
-                getter = sender.position.GetNearestPlayer().GetAccountController();
+                var ac = sender.position.GetNearestPlayer();
+                if (ac != null)
+                {
+                    distance = ac.position.DistanceTo2D(sender.position);
+                    if (distance < 3 && distance > -3)
+                    {
+                        getter = ac.GetAccountController();
+                    }
+                }
             }
 
+            if (getter == null) return;
             getter.Client.freezePosition = true;
             API.playPedAnimation(getter.Client, false, "arrest", "arrest_fallback_high_cop");
             API.playPedAnimation(getter.Client, false, "rcmme_amanda1", "arrest_ama");
         }
 
-        [Command("m", "~y~ UŻYJ ~w~ /m [tekst]", GreedyArg = true)]
-        public void SayThroughTheMegaphone(Client player, string message)
-        {
 
-        }
 
         [Command("gduty")]
         public void EnterDuty(Client sender, short slot)
@@ -141,7 +157,7 @@ namespace Serverside.Groups
             {
                 if (!Validator.IsGroupSlotValid(slot))
                 {
-                    sender.Notify("Wprowadzono dane w nieprawidłowym formacie.");
+                    sender.Notify("Podany slot grupy nie jest poprawny.");
                     return;
                 }
 
@@ -187,7 +203,7 @@ namespace Serverside.Groups
                 sender.Notify("Podano kwotę gotówki w nieprawidłowym formacie.");
             }
 
-            if (sender.TryGetGroupBySlot(Convert.ToInt16(slot), out GroupController group))
+            if (sender.TryGetGroupBySlot(slot, out GroupController group))
             {
                 if (group.CanPlayerTakeMoney(sender.GetAccountController()))
                 {
@@ -223,8 +239,8 @@ namespace Serverside.Groups
             }
 
             var player = sender.GetAccountController();
-            
-            if (sender.TryGetGroupBySlot(Convert.ToInt16(groupSlot), out GroupController group))
+
+            if (sender.TryGetGroupBySlot(groupSlot, out GroupController group))
             {
                 if (sender.HasMoney(safeMoneyCount))
                 {
@@ -243,7 +259,7 @@ namespace Serverside.Groups
                 player.Client.Notify("Nie posiadasz grupy w tym slocie.");
             }
         }
-        
+
         #endregion
     }
 }
