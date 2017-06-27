@@ -26,7 +26,13 @@ namespace Serverside.Core.Extensions
 
         public static string ToGameColor(this Color c) => $"~{c.ToHex()}~";
 
-        public static string ToHex(this Color c) => $"#{c.red:X2}{c.green:X2}{c.blue:X2}";
+        public static string ToHex(this Color c)
+        {
+            if (c.alpha == 0)
+                return $"#{c.red:X2}{c.green:X2}{c.blue:X2}";
+
+            return $"#{c.red:X2}{c.green:X2}{c.blue:X2}{c.alpha:X2}";
+        }
 
         public static string ToRGB(this Color c) => $"RGB({c.red},{c.green},{c.blue})";
 
@@ -52,13 +58,24 @@ namespace Serverside.Core.Extensions
             if (hex.StartsWith("#"))
                 hex = hex.Substring(1);
 
-            if (hex.Length != 8) return new Color(255, 0, 0, 255);
+            if (hex.Length != 6 || hex.Length != 8) return new Color(255, 0, 0);
 
-            return new Color(
-                int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber),
-                int.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber),
-                int.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber),
-                int.Parse(hex.Substring(6, 2), System.Globalization.NumberStyles.HexNumber));
+            if (hex.Length == 6)
+            {
+                return new Color(
+                    int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber),
+                    int.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber),
+                    int.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber),
+                    int.Parse(hex.Substring(6, 2), System.Globalization.NumberStyles.HexNumber));
+            }
+            else
+            {
+                return new Color(
+                    int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber),
+                    int.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber),
+                    int.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber));
+            }
+
         }
 
         private static ConsoleColor _color = ConsoleColor.White;
@@ -139,7 +156,7 @@ namespace Serverside.Core.Extensions
                         //    int tyre = 0;
                         //    do
                         //    {
-                        List<Wheel> wheels = new List<Wheel> {Wheel.FrontLeft, Wheel.FrontRight, Wheel.RearLeft, Wheel.RearRight};
+                        List<Wheel> wheels = new List<Wheel> { Wheel.FrontLeft, Wheel.FrontRight, Wheel.RearLeft, Wheel.RearRight };
                         int r = GetRandomNumber(0, 3);
                         //API.shared.sendChatMessageToPlayer(player, "Random Tyre: " + wheels[r].ToString());
                         bool popped = API.fetchNativeFromPlayer<bool>(player, Hash.IS_VEHICLE_TYRE_BURST, vehicle.handle, (int)wheels[r], true);
