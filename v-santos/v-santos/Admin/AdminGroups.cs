@@ -7,6 +7,7 @@ using Serverside.Core;
 using Serverside.Core.Extensions;
 using Serverside.Database.Models;
 using Serverside.Groups;
+using Serverside.Groups.Base;
 
 namespace Serverside.Admin
 {
@@ -37,21 +38,13 @@ namespace Serverside.Admin
             if (RPEntityManager.GetAccountByServerId(bossId) != null)
             {
                 var boss = RPEntityManager.GetAccountByServerId(bossId);
-
-                Group g = new Group()
-                {
-                    Name = name,
-                    Tag = tag,
-                    Color = new GTANetworkServer.Constant.Color(rgb.R, rgb.G, rgb.B),
-                    GroupType = type
-                };
-
+                
                 if (boss.CharacterController.Character.Workers.Count > 3)
                 {
-                    GroupController group = RPGroups.CreateGroup(g);
-                    group.Data.Workers.Add(new Worker
+                    GroupController group = GroupController.CreateGroup(name, tag, type, hexColor.ToColor());
+                    group.GroupData.Workers.Add(new Worker
                     {
-                        Group = group.Data,
+                        Group = group.GroupData,
                         Character = boss.CharacterController.Character,
                         ChatRight = true,
                         DoorsRight = true,
@@ -92,7 +85,7 @@ namespace Serverside.Admin
 
                 GroupController group = RPEntityManager.GetGroup(groupId);
 
-                if (group.Data.Workers.Any(p => p.Character == player.CharacterController.Character))
+                if (group.GroupData.Workers.Any(p => p.Character == player.CharacterController.Character))
                 {
                     sender.Notify("Jesteś już w tej grupie.");
                     return;
@@ -100,9 +93,9 @@ namespace Serverside.Admin
 
                 if (player.CharacterController.Character.Workers.Count <= 3)
                 {
-                    group.Data.Workers.Add(new Worker
+                    group.GroupData.Workers.Add(new Worker
                     {
-                        Group = group.Data,
+                        Group = group.GroupData,
                         Character = sender.GetAccountController().CharacterController.Character,
                         ChatRight = true,
                         DoorsRight = true,

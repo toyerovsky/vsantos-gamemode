@@ -80,14 +80,14 @@ namespace Serverside.Core
 
         public static void Remove(GroupController group) => Groups.Remove(group);
 
-        public static GroupController GetGroup(long groupId) => Groups.Find(x => x.GroupId == groupId);
+        public static GroupController GetGroup(long groupId) => Groups.Find(x => x.Id == groupId);
 
-        public static GroupController GetGroup(string groupName) => Groups.Single(x => x.Data.Name.StartsWith(groupName.ToLower()));
+        public static GroupController GetGroup(string groupName) => Groups.Single(x => x.GroupData.Name.StartsWith(groupName.ToLower()));
 
         public static List<GroupController> GetPlayerGroups(AccountController controller)
         {
             return Groups.Where(
-                g => g.Data.Workers.Any(x => x.Character.Id == controller.CharacterController.Character.Id)).ToList();
+                g => g.GroupData.Workers.Any(x => x.Character.Id == controller.CharacterController.Character.Id)).ToList();
         }
 
         public static List<GroupController> GetGroups() => Groups;
@@ -133,9 +133,9 @@ namespace Serverside.Core
             return FuelStations.Find(x => x.Id == fs.Id);
         }
 
-        public static FuelStation GetFuelStation(string stationname)
+        public static FuelStation GetFuelStation(string stationName)
         {
-            return FuelStations.Find(x => x.Name.StartsWith(stationname.ToLower()));
+            return FuelStations.Find(x => x.Name.StartsWith(stationName.ToLower()));
         }
 
         public static List<FuelStation> GetFuelStations()

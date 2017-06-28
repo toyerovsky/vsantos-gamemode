@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Timers;
 using GTANetworkServer;
+using Newtonsoft.Json;
 using Serverside.Core;
 using Serverside.Core.Extensions;
 using Serverside.Controllers;
@@ -21,18 +22,6 @@ namespace Serverside.Groups
             APIExtensions.ConsoleOutput("[RPGroups] Uruchomione pomyślnie.", ConsoleColor.DarkMagenta);
         }
 
-        public static GroupController CreateGroup(Database.Models.Group editor)
-        {
-            var groupType = editor.GroupType;
-            switch (groupType)
-            {
-                case GroupType.Urzad: return new CityHall(editor);
-                case GroupType.Policja: return new Police(editor);
-                default:
-                    throw new NotSupportedException($"Nie rozpoznano typu grupy: {groupType}.");
-            }
-        }
-
         #region PLAYER COMMANDS
 
         [Command("prowadz", "~y~ UŻYJ ~w~ /pro(wadz) (id)", Alias = "pro")]
@@ -40,7 +29,7 @@ namespace Serverside.Groups
         {
             var group = sender.GetAccountController().CharacterController.OnDutyGroup;
             if (group == null) return;
-            if (group.Data.GroupType != GroupType.Policja || !((Police)group).CanPlayerDoPolice(sender.GetAccountController()))
+            if (group.GroupData.GroupType != GroupType.Policja || !((Police)group).CanPlayerDoPolice(sender.GetAccountController()))
             {
                 sender.Notify("Twoja grupa, bądź postać nie posiada uprawnień do używania prowadzenia.");
                 return;
@@ -89,7 +78,7 @@ namespace Serverside.Groups
         {
             var group = sender.GetAccountController().CharacterController.OnDutyGroup;
             if (group == null) return;
-            if (group.Data.GroupType != GroupType.Policja || !((Police)group).CanPlayerDoPolice(sender.GetAccountController()))
+            if (group.GroupData.GroupType != GroupType.Policja || !((Police)group).CanPlayerDoPolice(sender.GetAccountController()))
             {
                 sender.Notify("Twoja grupa, bądź postać nie posiada uprawnień do używania kajdanek.");
                 return;
@@ -145,8 +134,9 @@ namespace Serverside.Groups
             if (player.CharacterController.OnDutyGroup != null)
             {
                 sender.Notify(
-                    $"Zszedłeś ze służby grupy: {player.CharacterController.OnDutyGroup.Data.Name}");
+                    $"Zszedłeś ze służby grupy: {player.CharacterController.OnDutyGroup.GetColoredName()}");
 
+                player.CharacterController.OnDutyGroup.PlayersOnDuty.Remove(player);
                 player.CharacterController.OnDutyGroup = null;
                 sender.resetNametagColor();
                 sender.nametag = $"( {player.ServerId} ) {player.CharacterController.FormatName}";
@@ -164,7 +154,7 @@ namespace Serverside.Groups
                 if (sender.TryGetGroupBySlot(Convert.ToInt16(slot), out GroupController group))
                 {
                     var worker =
-                        group.Data.Workers.Single(x => x.Character.Id == player.CharacterController.Character.Id);
+                        group.GroupData.Workers.Single(x => x.Character.Id == player.CharacterController.Character.Id);
 
                     dutyTimer.Start();
 
@@ -174,14 +164,13 @@ namespace Serverside.Groups
                         group.Save();
                     };
 
-                    //var color = ColorConverter.ConvertFromString(group.Data.Color);
-
-                    sender.nametag = $"( {player.ServerId} ) ( {group.Data.Name} ) {sender.name}";
-                    if (group.Data.Color.Equals(null)) sender.nametagColor = group.Data.Color;
+                    sender.nametag = $"( {player.ServerId} ) ( {group.GroupData.Name} ) {sender.name}";
+                    if (group.GroupData.Color.Equals(null)) sender.nametagColor = group.GroupData.Color;
 
                     player.CharacterController.OnDutyGroup = group;
+                    player.CharacterController.OnDutyGroup.PlayersOnDuty.Add(player);
                     sender.Notify(
-                        $"Wszedłeś na służbę grupy: {APIExtensions.GetColoredString(group.Data.Color.ToHex(), group.Data.Name)}");
+                        $"Wszedłeś na służbę grupy: {group.GetColoredName()}");
 
                     API.onPlayerDisconnected += (client, reason) =>
                     {
@@ -212,16 +201,16 @@ namespace Serverside.Groups
                         group.RemoveMoney(safeMoneyCount);
                         sender.AddMoney(safeMoneyCount);
 
-                        sender.Notify($"Wypłacono ${safeMoneyCount} z konta grupy {group.Data.Name}.");
+                        sender.Notify($"Wypłacono ${safeMoneyCount} z konta grupy {group.GetColoredName()}.");
                     }
                     else
                     {
-                        sender.Notify($"Grupa {group.Data.Name}, nie posiada tyle pieniędzy na koncie.");
+                        sender.Notify($"Grupa {group.GetColoredName()}, nie posiada tyle pieniędzy na koncie.");
                     }
                 }
                 else
                 {
-                    sender.Notify($"Nie posiadasz uprawnień do wypłacania gotówki w grupie {group.Data.Name}.");
+                    sender.Notify("Nie posiadasz uprawnień do wypłacania gotówki.");
                 }
             }
             else
@@ -238,8 +227,6 @@ namespace Serverside.Groups
                 sender.Notify("Podano kwotę gotówki w nieprawidłowym formacie.");
             }
 
-            var player = sender.GetAccountController();
-
             if (sender.TryGetGroupBySlot(groupSlot, out GroupController group))
             {
                 if (sender.HasMoney(safeMoneyCount))
@@ -247,11 +234,125 @@ namespace Serverside.Groups
                     sender.RemoveMoney(safeMoneyCount);
                     group.AddMoney(safeMoneyCount);
 
-                    player.Client.Notify($"Wpłacono ${safeMoneyCount} na konto grupy {group.Data.Name}.");
+                    sender.Notify($"Wpłacono ${safeMoneyCount} na konto grupy {group.GetColoredName()}.");
                 }
                 else
                 {
-                    player.Client.Notify("Nie posiadasz tyle gotówki.");
+                    sender.Notify("Nie posiadasz tyle gotówki.");
+                }
+            }
+            else
+            {
+                sender.Notify("Nie posiadasz grupy w tym slocie.");
+            }
+        }
+
+        [Command("g")]
+        public void ShowGroupMenu(Client sender, short slot)
+        {
+            var player = sender.GetAccountController();
+            if (RPEntityManager.GetPlayerGroups(player).Count == 0)
+            {
+                sender.Notify("Nie jesteś członkiem żadnej grupy.");
+                return;
+            }
+
+            if (!Validator.IsGroupSlotValid(slot))
+            {
+                sender.Notify("Podano dane w nieprawidłowym formacie.");
+                return;
+            }
+
+            if (sender.TryGetGroupBySlot(slot, out GroupController group))
+            {
+                sender.triggerEvent("ShowGroupMenu", JsonConvert.SerializeObject(new
+                {
+                    group.GroupData.Name,
+                    group.GroupData.Tag,
+                    group.GroupData.Money,
+                    Color = group.GroupData.Color.ToHex(),
+                    //To jest raczej kosztowne, ale nie widzę innej opcji
+                    PlayerOnLine = JsonConvert.SerializeObject(group.GroupData.Workers.Where(x => x.Character.Online).Select(w => new
+                    {
+                        ServerId = RPEntityManager.GetAccountByCharacterId(w.Character.Id).ServerId,
+                        Name = $"{w.Character.Name} {w.Character.Surname}",
+                        Salary = w.Salary,
+                        DutyTime = w.DutyMinutes,
+                        OnDuty = group.PlayersOnDuty.Contains(RPEntityManager.GetAccountByCharacterId(w.Character.Id))
+                    }))
+                }));
+            }
+            else
+            {
+                sender.Notify("Nie posiadasz grupy w tym slocie.");
+            }
+        }
+
+        [Command("gzapros")]
+        public void InvitePlayerToGroup(Client sender, short groupSlot, int id)
+        {
+            var player = sender.GetAccountController();
+
+            if (sender.TryGetGroupBySlot(groupSlot, out GroupController group))
+            {
+                if (group.CanPlayerManageWorkers(sender.GetAccountController()))
+                {
+                    var getter = RPEntityManager.GetAccountByServerId(id);
+                    if (getter == null)
+                    {
+                        sender.Notify("Nie znaleziono gracza o podanym Id.");
+                        return;
+                    }
+
+                    if (group.ContainsWorker(getter))
+                    {
+                        sender.Notify($"{getter.CharacterController.FormatName} już znajduje się w grupie {group.GetColoredName()}");
+                        return;
+                    }
+                    group.AddWorker(getter);
+                    getter.Client.Notify($"Zostałeś zaproszony do grupy {group.GetColoredName()} przez {sender.name}.");
+                    sender.Notify($"Zaprosiłeś gracza {getter.Client.name} do grupy {group.GetColoredName()}.");
+                }
+                else
+                {
+                    sender.Notify("Nie posiadasz uprawnień do zarządzania pracownikami.");
+                }
+            }
+            else
+            {
+                sender.Notify("Nie posiadasz grupy w tym slocie.");
+            }
+        }
+
+        [Command("gwypros")]
+        public void RemovePlayerFromGroup(Client sender, short groupSlot, int id)
+        {
+            var player = sender.GetAccountController();
+
+            if (sender.TryGetGroupBySlot(groupSlot, out GroupController group))
+            {
+                if (group.CanPlayerManageWorkers(sender.GetAccountController()))
+                {
+                    var getter = RPEntityManager.GetAccountByServerId(id);
+                    if (getter == null)
+                    {
+                        sender.Notify("Nie znaleziono gracza o podanym Id.");
+                        return;
+                    }
+
+                    if (group.ContainsWorker(getter))
+                    {
+                        sender.Notify($"{getter.CharacterController.FormatName} nie należy do grupy {group.GetColoredName()}");
+                        return;
+                    }
+
+                    group.RemoveWorker(getter);
+                    getter.Client.Notify($"Zostałeś wyproszony z grupy {group.GetColoredName()} przez {sender.name}.");
+                    sender.Notify($"Wyprosiłeś gracza {getter.Client.name} z grupy {group.GetColoredName()}.");
+                }
+                else
+                {
+                    player.Client.Notify("Nie posiadasz uprawnień do zarządzania pracownikami.");
                 }
             }
             else

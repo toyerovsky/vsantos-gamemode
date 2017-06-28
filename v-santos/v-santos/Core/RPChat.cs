@@ -144,9 +144,9 @@ namespace Serverside.Core
             {
                 if (groups[groupSlot].CanPlayerWriteOnChat(sender.GetAccountController()))
                 {
-                    var clients = RPEntityManager.GetAccounts().Where(a => groups[groupSlot].Data.Workers
+                    var clients = RPEntityManager.GetAccounts().Where(a => groups[groupSlot].GroupData.Workers
                         .Any(w => w.Character.Id.Equals(a.Value.CharacterController.Character.Id))).Select(c => c.Value.Client).ToList();
-                    SendMessageToSpecifiedPlayers(sender, clients, message, ChatMessageType.GroupOOC, $"~{groups[groupSlot].Data.Color.ToHex()}~");
+                    SendMessageToSpecifiedPlayers(sender, clients, message, ChatMessageType.GroupOOC, $"~{groups[groupSlot].GroupData.Color.ToHex()}~");
                 }
                 else
                 {
@@ -160,7 +160,7 @@ namespace Serverside.Core
         {
             var group = sender.GetAccountController().CharacterController.OnDutyGroup;
             if (group == null) return;
-            if (group.Data.GroupType != GroupType.Policja || !((Police)group).CanPlayerUseMegaphone(sender.GetAccountController()))
+            if (group.GroupData.GroupType != GroupType.Policja || !((Police)group).CanPlayerUseMegaphone(sender.GetAccountController()))
             {
                 sender.Notify("Twoja grupa, bądź postać nie posiada uprawnień do używania megafonu.");
                 return;

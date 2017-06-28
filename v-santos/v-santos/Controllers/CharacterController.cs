@@ -167,8 +167,6 @@ namespace Serverside.Controllers
                 API.shared.setPlayerHealth(accountController.Client, character.HitPoints);
             }
 
-            //API.shared.triggerClientEvent(accountController.Client, "ShowCharacterSelectCef", false);
-
             accountController.CharacterController.CanTalk =  true;
             accountController.CharacterController.CanNarrate = true;
             accountController.CharacterController.CanPM = true;

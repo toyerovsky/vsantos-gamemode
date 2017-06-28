@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GTANetworkServer;
+using Newtonsoft.Json;
 using Serverside.Admin.Structs;
 using Serverside.Controllers;
 using Serverside.Core;
@@ -74,7 +75,7 @@ namespace Serverside.Admin
                 return;
             }
 
-            sender.triggerEvent("ShowAdminReportMenu", CurrentReports.Select(x => new
+            sender.triggerEvent("ShowAdminReportMenu", JsonConvert.SerializeObject(CurrentReports.Select(x => new
             {
                 SenderName = x.Sender.CharacterController.FormatName,
                 SenderId = x.Sender.ServerId.ToString(),
@@ -82,7 +83,7 @@ namespace Serverside.Admin
                 AccusedId = x.Accused?.ServerId.ToString() ?? "",
                 x.Content,
                 ReportType = x.Type.ToString().Replace('_', ' ')
-            }));
+            })));
         }
 
         [Command("report")]
@@ -105,12 +106,12 @@ namespace Serverside.Admin
             if (AdminsOnDuty.Any(a => a.AccountId == player.AccountId))
             {
                 AdminsOnDuty.Remove(player);
-                sender.Notify($"Zszedłeś ze służby ~{APIExtensions.GetRankColor(player.AccountData.ServerRank).ToHex()}~ {player.AccountData.ServerRank.ToString().Where(char.IsLetter)} ~w~ życzymy miłej gry.");
+                API.sendChatMessageToPlayer(sender, $"Zszedłeś ze służby ~{APIExtensions.GetRankColor(player.AccountData.ServerRank).ToHex()}~ {player.AccountData.ServerRank.ToString().Where(char.IsLetter)} ~w~ życzymy miłej gry.");
             }
             else
             {
                 AdminsOnDuty.Add(player);
-                sender.Notify($"Wszedłeś na służbę ~{APIExtensions.GetRankColor(player.AccountData.ServerRank).ToHex()}~ {player.AccountData.ServerRank.ToString().Where(char.IsLetter)} ~w~ życzymy cierpliwości.");
+                API.sendChatMessageToPlayer(sender, $"Wszedłeś na służbę ~{APIExtensions.GetRankColor(player.AccountData.ServerRank).ToHex()}~ {player.AccountData.ServerRank.ToString().Where(char.IsLetter)} ~w~ życzymy cierpliwości.");
             }
 
         }

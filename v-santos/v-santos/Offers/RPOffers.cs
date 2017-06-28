@@ -134,7 +134,7 @@ namespace Serverside.Offers
                 {
                     var group = sender.GetAccountController().CharacterController.OnDutyGroup;
                     if (group == null) return;
-                    if (group.Data.GroupType != GroupType.Urzad || !((CityHall)group).CanPlayerGiveIdCard(sender.GetAccountController()))
+                    if (group.GroupData.GroupType != GroupType.Urzad || !((CityHall)group).CanPlayerGiveIdCard(sender.GetAccountController()))
                     {
                         sender.Notify("Twoja grupa, bądź postać nie posiada uprawnień do wydawania dowodu osobistego.");
                         return;
@@ -145,7 +145,7 @@ namespace Serverside.Offers
                 {
                     var group = sender.GetAccountController().CharacterController.OnDutyGroup;
                     if (group == null) return;
-                    if (group.Data.GroupType != GroupType.Urzad || !((CityHall)group).CanPlayerGiveDrivingLicense(sender.GetAccountController()))
+                    if (group.GroupData.GroupType != GroupType.Urzad || !((CityHall)group).CanPlayerGiveDrivingLicense(sender.GetAccountController()))
                     {
                         sender.Notify("Twoja grupa, bądź postać nie posiada uprawnień do wydawania prawa jazdy.");
                         return;

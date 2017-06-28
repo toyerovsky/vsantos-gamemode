@@ -99,7 +99,7 @@ namespace Serverside.Items
                 var player = sender.GetAccountController();
 
                 if (Convert.ToInt32(args[0]) == 555 && player.CharacterController.OnDutyGroup != null &&
-                    player.CharacterController.OnDutyGroup.Data.GroupType == GroupType.Przestepcza)
+                    player.CharacterController.OnDutyGroup.GroupData.GroupType == GroupType.Przestepcza)
                 {
                     //CrimeGroup group =
                     //    RPGroups.Groups.Single(g => g.Id == player.CharacterController.OnDutyGroupId.Value) as

@@ -18,7 +18,7 @@ let reports: ReportInfo[] = [new ReportInfo("Pomoc", false),
     new ReportInfo("BUG", false),
     new ReportInfo("Naruszenie zasad", true)];
 
-function showReportPanel()
+function showReportMenu()
 {
     reportMenu = createMenu(4);
     let panel: Panel;
@@ -136,7 +136,7 @@ function sendReport(type: string, content: string, id: string = "")
 
 API.onServerEventTrigger.connect((eventName: string, args: System.Array<any>) => {
     if (eventName == "ShowReportMenu") {
-        showReportPanel();
+        showReportMenu();
         API.sendNotification("Wiadomość w zgłoszeniu powinna być krótka i na temat...");
         API.sendNotification("...powielanie raportów wpływa negatywnie na czas rozpatrzenia...");
         API.sendNotification("...i może zakończyć się karą.");

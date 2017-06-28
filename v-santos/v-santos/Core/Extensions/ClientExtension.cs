@@ -22,7 +22,7 @@ namespace Serverside.Core.Extensions
 
         public static bool TryGetGroupBySlot(this Client client, short slot, out GroupController group)
         {
-            if (slot >= 0 && slot <= 3) group = RPEntityManager.GetGroups().Single(g => g.Id == client.GetAccountController().CharacterController.Character.Workers.ElementAt(slot).Group.Id);
+            if (slot > 0 && slot <= 3) group = RPEntityManager.GetGroups().Single(g => g.Id == client.GetAccountController().CharacterController.Character.Workers.ElementAt(slot).Group.Id);
             else group = null;
             return group != null;
         }

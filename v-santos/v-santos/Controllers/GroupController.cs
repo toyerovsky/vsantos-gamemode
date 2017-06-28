@@ -1,22 +1,28 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
 using Serverside.Database;
 using Serverside.Groups;
 using GTANetworkServer.Constant;
 using Serverside.Core;
 using Serverside.Database.Models;
 using System.Linq;
+using Serverside.Core.Extensions;
+using Serverside.Groups.Base;
 
 namespace Serverside.Controllers
 {
     public abstract class GroupController
     {
-        public Group Data { get; set; }
+        public Group GroupData { get; set; }
 
-        public long Id => Data.Id;
+        public long Id => GroupData.Id;
 
-        public GroupController(Group data)
+        public List<AccountController> PlayersOnDuty { get; } = new List<AccountController>();
+
+        protected GroupController(Group groupData)
         {
-            this.Data = data;
+            this.GroupData = groupData;
             RPEntityManager.Add(this);
         }
 
@@ -27,73 +33,126 @@ namespace Serverside.Controllers
         /// <param name="tag">Tag grupy</param>
         /// <param name="type">Typ grupy</param>
         /// <param name="color">Kolor grupy</param>
-        public GroupController(string name, string tag, GroupType type, Color color)
+        protected GroupController(string name, string tag, GroupType type, Color color)
         {
-            this.Data.Name = name;
-            this.Data.Tag = tag;
-            this.Data.GroupType = type;
-            this.Data.Color = color;
-            ContextFactory.Instance.Groups.Add(Data);
+            GroupData = new Group();
+            this.GroupData.Name = name;
+            this.GroupData.Tag = tag;
+            this.GroupData.GroupType = type;
+            this.GroupData.Color = color;
+            ContextFactory.Instance.Groups.Add(GroupData);
             ContextFactory.Instance.SaveChanges();
             RPEntityManager.Add(this);
         }
 
-        public static void LoadGroups()
-        {
-            //foreach (var group in ContextFactory.Instance.Groups)
-            //{
-            //    new GroupController(group);
-            //}
-            //API.shared.consoleOutput("[GM] Załadowano " + ContextFactory.Instance.Groups.Count() + " grup.");
-        }
+        public string GetColoredName() => APIExtensions.GetColoredString(GroupData.Color.ToHex(), GroupData.Name);
 
-        public bool HasMoney(decimal money)
-        {
-            return Data.Money >= money;
-        }
+        public bool HasMoney(decimal money) => GroupData.Money >= money;
 
         public void AddMoney(decimal money)
         {
-            Data.Money += money;
+            GroupData.Money += money;
             Save();
         }
 
         public void RemoveMoney(decimal money)
         {
-            Data.Money -= money;
+            GroupData.Money -= money;
             Save();
         }
 
         public void AddWorker(AccountController account)
         {
-            Data.Workers.Add(new Worker
+            GroupData.Workers.Add(new Worker
             {
-                Group = Data,
-                Character = account.CharacterController.Character
+                Group = GroupData,
+                Character = account.CharacterController.Character,
+                DutyMinutes = 0,
+                ChatRight = false,
+                DoorsRight = false,
+                OfferFromWarehouseRight = false,
+                PaycheckRight = false,
+                RecrutationRight = false,
+                Salary = 0
             });
+            Save();
+        }
+
+        public void RemoveWorker(AccountController account)
+        { 
+            GroupData.Workers.Remove(GroupData.Workers.Single(w => w.Character.Id == account.CharacterController.Character.Id));
             Save();
         }
 
         public bool CanPlayerOffer(AccountController account)
         {
-            return Data.Workers.Single(w => w.Character == account.CharacterController.Character).OfferFromWarehouseRight;
+            return GroupData.Workers.Single(w => w.Character == account.CharacterController.Character).OfferFromWarehouseRight;
+        }
+
+        /// <summary>
+        /// Czy gracz może zapraszać i wypraszać ludzi z grupy
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        public bool CanPlayerManageWorkers(AccountController account)
+        {
+            return GroupData.Workers.Single(w => w.Character == account.CharacterController.Character).RecrutationRight;
         }
 
         public bool CanPlayerTakeMoney(AccountController account)
         {
-            return Data.Workers.Single(w => w.Character == account.CharacterController.Character).PaycheckRight;
+            return GroupData.Workers.Single(w => w.Character == account.CharacterController.Character).PaycheckRight;
         }
 
         public bool CanPlayerWriteOnChat(AccountController account)
         {
-            return Data.Workers.Single(w => w.Character == account.CharacterController.Character).ChatRight;
+            return GroupData.Workers.Single(w => w.Character == account.CharacterController.Character).ChatRight;
+        }
+
+        public bool ContainsWorker(AccountController account)
+        {
+            return GroupData.Workers.Any(w => w.Character.Id == account.CharacterController.Character.Id);
         }
 
         public void Save()
         {
-            ContextFactory.Instance.Groups.Attach(Data);
-            ContextFactory.Instance.Entry(Data).State = EntityState.Modified;
+            ContextFactory.Instance.Groups.Attach(GroupData);
+            ContextFactory.Instance.Entry(GroupData).State = EntityState.Modified;
             ContextFactory.Instance.SaveChanges();
         }
+
+        public static void LoadGroups()
+        {
+            foreach (var group in ContextFactory.Instance.Groups)
+            {
+                CreateGroup(group);
+            }
+        }
+
+        //Tworzenie grupy
+        public static GroupController CreateGroup(string name, string tag, GroupType type, Color color)
+        {
+            switch (type)
+            {
+                case GroupType.Urzad: return new CityHall(name, tag, type, color);
+                case GroupType.Policja: return new Police(name, tag, type, color);
+                default:
+                    throw new NotSupportedException($"Nie rozpoznano typu grupy: {type}.");
+            }
+        }
+
+        //Ładowanie grupy
+        public static GroupController CreateGroup(Group editor)
+        {
+            var groupType = editor.GroupType;
+            switch (groupType)
+            {
+                case GroupType.Urzad: return new CityHall(editor);
+                case GroupType.Policja: return new Police(editor);
+                default:
+                    throw new NotSupportedException($"Nie rozpoznano typu grupy: {groupType}.");
+            }
+        }
+
     }
 }
