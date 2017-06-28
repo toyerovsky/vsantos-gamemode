@@ -46,6 +46,7 @@ namespace Serverside.Core
             //args[0] float X
             //args[1] float Y
             //args[2] float Z
+            //Jak przesyłamy Vector3 to nie działa
             if (eventName == "ChangePosition")
             {
                 sender.position = new Vector3((float)arguments[0], (float)arguments[1], (float)arguments[2]);

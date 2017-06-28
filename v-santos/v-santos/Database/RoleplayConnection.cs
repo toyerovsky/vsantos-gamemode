@@ -72,30 +72,30 @@ namespace Serverside.Database
         }
         public RoleplayConnection Create()
         {
-            if (string.IsNullOrEmpty(_connectionString))
-            {
-                APIExtensions.ConsoleOutput("[RPCore] Brak danych wymaganych do połączenia z bazą danych!", ConsoleColor.DarkRed);
-                API.shared.stopResource("vsantos");
-                //throw new Exception();
-            }
-            try
-            {
-                var conn = new MySqlConnection(_connectionString);
-                conn.Open();
-                conn.Ping();
-                conn.Close();
-            }
-            catch (MySqlException aEx)
-            {
-                APIExtensions.ConsoleOutput("[RPCore] Błąd połączenia z bazą danych, sprawdź konfiguracje!", ConsoleColor.DarkRed);
-                APIExtensions.ConsoleOutput(aEx.Message, ConsoleColor.DarkRed);
-                API.shared.stopResource("v-santos");
-                //APIExtensions.ConsoleOutput(a_ex.ToString(), ConsoleColor.DarkRed);
-                //throw new Exception();
-            }
-            APIExtensions.ConsoleOutput("[RPCore] Połączono z bazą danych!", ConsoleColor.DarkGreen);
-            return new RoleplayConnection(_connectionString);
-            //return new RoleplayConnection("server=v-santos.pl;uid=srv;pwd=WL8oTnufAAEFgoIt;database=rp"); // TYLKO DO GENEROWANIA BAZY DANYCH 
+            //if (string.IsNullOrEmpty(_connectionString))
+            //{
+            //    APIExtensions.ConsoleOutput("[RPCore] Brak danych wymaganych do połączenia z bazą danych!", ConsoleColor.DarkRed);
+            //    API.shared.stopResource("vsantos");
+            //    //throw new Exception();
+            //}
+            //try
+            //{
+            //    var conn = new MySqlConnection(_connectionString);
+            //    conn.Open();
+            //    conn.Ping();
+            //    conn.Close();
+            //}
+            //catch (MySqlException aEx)
+            //{
+            //    APIExtensions.ConsoleOutput("[RPCore] Błąd połączenia z bazą danych, sprawdź konfiguracje!", ConsoleColor.DarkRed);
+            //    APIExtensions.ConsoleOutput(aEx.Message, ConsoleColor.DarkRed);
+            //    API.shared.stopResource("vsantos");
+            //    //APIExtensions.ConsoleOutput(a_ex.ToString(), ConsoleColor.DarkRed);
+            //    //throw new Exception();
+            //}
+            //APIExtensions.ConsoleOutput("[RPCore] Połączono z bazą danych!", ConsoleColor.DarkGreen);
+            //return new RoleplayConnection(_connectionString);
+            return new RoleplayConnection("server=v-santos.pl;uid=srv;pwd=WL8oTnufAAEFgoIt;database=rp"); // TYLKO DO GENEROWANIA BAZY DANYCH 
         }
 
         public static void Destroy()

@@ -9,18 +9,19 @@ namespace Serverside.Autonomic.FuelStation
 {
     class RPFuelStation : Script
     {
-
         private class MapSet
         {
-            public Blip blip { get; set; }
-            public TextLabel tl { get; set; }
-            public ColShape cs { get; set; }
-            public Marker marker { get; set; }
+            public Blip Blip { get; set; }
+            public TextLabel Tl { get; set; }
+            public ColShape Cs { get; set; }
+            public Marker Marker { get; set; }
         }
-        static string DataFile = "";
+
+        static string _dataFile = "";
         //List<FuelStation> Data = new List<FuelStation>();
         List<MapSet> fsMapSets = new List<MapSet>();
         //List<MapSet> distMapSets = new List<MapSet>();
+
         public RPFuelStation()
         {
             API.onResourceStart += API_onResourceStart;
@@ -29,16 +30,16 @@ namespace Serverside.Autonomic.FuelStation
 
         private void API_onResourceStart()
         {
-            string DataDir = Path.Combine(API.getResourceFolder(), "Data");
-            DataFile = Path.Combine(DataDir, "FuelStations.json");
-            if (!Directory.Exists(DataDir))
+            string dataDir = Path.Combine(API.getResourceFolder(), "Data");
+            _dataFile = Path.Combine(dataDir, "FuelStations.json");
+            if (!Directory.Exists(dataDir))
             {
-                Directory.CreateDirectory(DataDir);
+                Directory.CreateDirectory(dataDir);
             }
 
-            if (!File.Exists(DataFile))
+            if (!File.Exists(_dataFile))
             {
-                File.Create(DataFile).Dispose();
+                File.Create(_dataFile).Dispose();
                 //Data = new List<FuelStation>();
                 saveData();
             }
@@ -53,7 +54,7 @@ namespace Serverside.Autonomic.FuelStation
         public void saveData()
         {
             string json = JsonConvert.SerializeObject(RPEntityManager.GetFuelStations(), Formatting.Indented);
-            using (StreamWriter oF = new StreamWriter(DataFile))
+            using (StreamWriter oF = new StreamWriter(_dataFile))
             {
                 oF.WriteLine(json);
                 oF.Close();
@@ -63,7 +64,7 @@ namespace Serverside.Autonomic.FuelStation
         public void loadData()
         {
             //FuelStation s = new FuelStation();
-            using (StreamReader sr = new StreamReader(DataFile))
+            using (StreamReader sr = new StreamReader(_dataFile))
             {
                 List<FuelStation> Data = JsonConvert.DeserializeObject<List<FuelStation>>(sr.ReadToEnd());
                 foreach (FuelStation item in Data)
@@ -74,17 +75,17 @@ namespace Serverside.Autonomic.FuelStation
             }
         }
 
-        public void setFuelStationAvailable(FuelStation fs, bool state)
+        private void setFuelStationAvailable(FuelStation fs, bool state)
         {
             RPEntityManager.GetFuelStation(fs).Enabled = state;
         }
 
-        public void setFuelStationAvailable(int id, bool state)
+        private void setFuelStationAvailable(int id, bool state)
         {
             RPEntityManager.GetFuelStation(id).Enabled = state;
         }
 
-        public void setPoints()
+        private void setPoints()
         {
             foreach (FuelStation fs in RPEntityManager.GetFuelStations())
             {
@@ -92,33 +93,33 @@ namespace Serverside.Autonomic.FuelStation
             }
         }
 
-        public void prepareFuelStationMarkers(FuelStation fs)
+        private void prepareFuelStationMarkers(FuelStation fs)
         {
             MapSet fsMapSet = new MapSet();
-            fsMapSet.blip = API.createBlip(fs.MarkerPostition, 0, 0);
-            API.setBlipSprite(fsMapSet.blip, 11);
-            API.setBlipName(fsMapSet.blip, fs.Name);
+            fsMapSet.Blip = API.createBlip(fs.MarkerPostition, 0, 0);
+            API.setBlipSprite(fsMapSet.Blip, 11);
+            API.setBlipName(fsMapSet.Blip, fs.Name);
 
-            fsMapSet.marker = API.createMarker(2, fs.MarkerPostition - new Vector3(0, 0, 1f), new Vector3(), new Vector3(), new Vector3(1f, 1f, 1f), 30, fs.Color.red, fs.Color.green, fs.Color.blue);
-            fsMapSet.tl = API.createTextLabel("~b~[" + fs.Name + "]", fs.MarkerPostition + new Vector3(0.0f, 0.0f, 0.5f), 10.0f, 0.2f);
-            fsMapSet.cs = API.createCylinderColShape(fs.MarkerPostition, 1f, 5f);
+            fsMapSet.Marker = API.createMarker(2, fs.MarkerPostition - new Vector3(0, 0, 1f), new Vector3(), new Vector3(), new Vector3(1f, 1f, 1f), 30, fs.Color.red, fs.Color.green, fs.Color.blue);
+            fsMapSet.Tl = API.createTextLabel("~b~[" + fs.Name + "]", fs.MarkerPostition + new Vector3(0.0f, 0.0f, 0.5f), 10.0f, 0.2f);
+            fsMapSet.Cs = API.createCylinderColShape(fs.MarkerPostition, 1f, 5f);
 
-            fsMapSet.cs.setData("COL_FS", fs.Id);
+            fsMapSet.Cs.setData("COL_FS", fs.Id);
             fsMapSets.Add(fsMapSet);
 
             foreach (FuelStation.FuelDistributor dist in fs.Distributors)
             {
                 MapSet distMapSet = new MapSet();
-                distMapSet.blip = API.createBlip(dist.MarkerPostition, 0, 0);
-                API.setBlipSprite(distMapSet.blip, 415);
-                API.setBlipName(distMapSet.blip, "");
+                distMapSet.Blip = API.createBlip(dist.MarkerPostition, 0, 0);
+                API.setBlipSprite(distMapSet.Blip, 415);
+                API.setBlipName(distMapSet.Blip, "");
 
-                distMapSet.marker = API.createMarker(23, dist.MarkerPostition - new Vector3(0, 0, 1f), new Vector3(), new Vector3(), new Vector3(3f, 3f, 3f), 30, 255, 255, 255);
+                distMapSet.Marker = API.createMarker(23, dist.MarkerPostition - new Vector3(0, 0, 1f), new Vector3(), new Vector3(), new Vector3(3f, 3f, 3f), 30, 255, 255, 255);
                 //TextLabel textLabel = API.createTextLabel("~b~[" + fs.Name + "]", fs.MarkerPostition + new Vector3(0.0f, 0.0f, 0.5f), 50.0f, 1f);
-                distMapSet.tl = null;
-                distMapSet.cs = API.createCylinderColShape(dist.MarkerPostition, 3f, 5f);
+                distMapSet.Tl = null;
+                distMapSet.Cs = API.createCylinderColShape(dist.MarkerPostition, 3f, 5f);
 
-                distMapSet.cs.setData("COL_DIST", fs.Id);
+                distMapSet.Cs.setData("COL_DIST", fs.Id);
                 fsMapSets.Add(distMapSet);
             }
         }
@@ -127,7 +128,7 @@ namespace Serverside.Autonomic.FuelStation
         {
             foreach (MapSet mapset in fsMapSets)
             {
-                mapset.cs.onEntityEnterColShape += (s, e) =>
+                mapset.Cs.onEntityEnterColShape += (s, e) =>
                 {
                     var idfs = s.getData("COL_FS");
                     var idd = s.getData("COL_DIST");
@@ -142,7 +143,7 @@ namespace Serverside.Autonomic.FuelStation
 
                     if (API.getEntityType(e) == EntityType.Vehicle)
                     {
-                        mapset.marker.color = new GTANetworkServer.Constant.Color(255, 0, 0, 30);
+                        mapset.Marker.color = new GTANetworkServer.Constant.Color(255, 0, 0, 30);
                         if (idd != null)
                         {
                             FuelStation fs = RPEntityManager.GetFuelStation(idd);
@@ -151,7 +152,7 @@ namespace Serverside.Autonomic.FuelStation
                     }
                 };
 
-                mapset.cs.onEntityExitColShape += (s, e) =>
+                mapset.Cs.onEntityExitColShape += (s, e) =>
                 {
                     var idfs = s.getData("COL_FS");
                     var idd = s.getData("COL_DIST");
@@ -166,7 +167,7 @@ namespace Serverside.Autonomic.FuelStation
 
                     if (API.getEntityType(e) == EntityType.Vehicle)
                     {
-                        mapset.marker.color = new GTANetworkServer.Constant.Color(255, 255, 255, 30);
+                        mapset.Marker.color = new GTANetworkServer.Constant.Color(255, 255, 255, 30);
                         if (idd != null)
                         {
                             FuelStation fs = RPEntityManager.GetFuelStation(idd);

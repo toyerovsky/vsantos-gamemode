@@ -4,6 +4,7 @@ using System.Linq;
 using GTANetworkServer;
 using Serverside.Admin.Structs;
 using Serverside.Controllers;
+using Serverside.Core;
 using Serverside.Core.Extensions;
 
 namespace Serverside.Admin
@@ -24,12 +25,21 @@ namespace Serverside.Admin
             /* Arguments
              * args[0] string reportType
              * args[1] string content
-             * args[2] string accusedId = null
+             * args[2] string accusedId = ""
              */
             if (eventName == "OnPlayerSendReport")
             {
-                ReportData r = new ReportData();
-                
+                ReportData data = new ReportData
+                {
+                    Type = (ReportType) Enum.Parse(typeof(ReportType), arguments[0].ToString().Replace(' ', '_')),
+                    Content = arguments[1].ToString(),
+                    Accused = arguments[2].ToString() != ""
+                        ? RPEntityManager.GetAccountByServerId(Convert.ToInt32(arguments[2]))
+                        : null,
+                    Sender = sender.GetAccountController()
+                };
+
+                CurrentReports.Add(data);
             }
         }
 
@@ -55,10 +65,24 @@ namespace Serverside.Admin
             }).OrderBy(x => x.Rank));
         }
 
-        [Command("listreports", Alias = "rl")]
+        [Command("listreports", Alias = "lr")]
         public void ShowCurrentReports(Client sender)
         {
-            
+            if (sender.GetAccountController().AccountData.ServerRank < ServerRank.Support)
+            {
+                sender.Notify("Nie posiadasz uprawnień do przeglądania raportów.");
+                return;
+            }
+
+            sender.triggerEvent("ShowAdminReportMenu", CurrentReports.Select(x => new
+            {
+                SenderName = x.Sender.CharacterController.FormatName,
+                SenderId = x.Sender.ServerId.ToString(),
+                AccusedName = x.Accused?.CharacterController.FormatName ?? "",
+                AccusedId = x.Accused?.ServerId.ToString() ?? "",
+                x.Content,
+                ReportType = x.Type.ToString().Replace('_', ' ')
+            }));
         }
 
         [Command("report")]

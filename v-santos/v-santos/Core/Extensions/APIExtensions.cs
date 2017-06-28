@@ -61,16 +61,11 @@ namespace Serverside.Core.Extensions
                 int.Parse(hex.Substring(6, 2), System.Globalization.NumberStyles.HexNumber));
         }
 
-        private static ConsoleColor _color = ConsoleColor.White;
         public static void ConsoleOutput(string message, ConsoleColor color)
         {
-            if (_color != color)
-            {
-                _color = color;
-                Console.ResetColor();
-                Console.BackgroundColor = _color;
-            }
+            Console.BackgroundColor = color;
             API.shared.consoleOutput(message);
+            Console.ResetColor();
         }
 
         public static string GetColoredString(string color, string text) => $"~{color}~{text}";
