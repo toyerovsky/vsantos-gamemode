@@ -75,7 +75,7 @@ namespace Serverside.Offers
                     var items = sender.GetAccountController().CharacterController.Character.Items.ToList();
 
                     //Tutaj sprawdzamy czy gracz posiada taki numer na liście. Numerujemy od 0 więc items.Count - 1
-                    if (index > items.Count - 1)
+                    if (index > items.Count - 1 || index < 0)
                     {
                         sender.Notify("Nie posiadasz przedmiotu o takim indeksie.");
                         return;
@@ -90,7 +90,6 @@ namespace Serverside.Offers
                     }
 
                     offer = new Offer(sender, getter, item, safeMoneyCount);
-                    getter.SetData("Offer", offer);
                 }
                 else if (type == OfferType.Pojazd)
                 {
@@ -98,7 +97,6 @@ namespace Serverside.Offers
                     if (vehicle == null) return;
 
                     offer = new Offer(sender, getter, vehicle.VehicleData, safeMoneyCount);
-                    getter.SetData("Offer", offer);
                 }
                 else if (type == OfferType.Budynek)
                 {
@@ -126,7 +124,6 @@ namespace Serverside.Offers
                     else
                     {
                         sender.Notify("Aby oferować budynek musisz znajdować się w markerze bądź środku budynku");
-                        
                     }
                 }
                 //Tutaj są oferty wymagające uprawnień grupowych
@@ -139,7 +136,7 @@ namespace Serverside.Offers
                         sender.Notify("Twoja grupa, bądź postać nie posiada uprawnień do wydawania dowodu osobistego.");
                         return;
                     }
-                    offer = new Offer(sender, getter, safeMoneyCount, c => OfferActions.GiveIdCard(getter));
+                    offer = new Offer(sender, getter, safeMoneyCount, c => OfferActions.GiveIdCard(getter), true);
                 }
                 else if (type == OfferType.Prawko)
                 {
@@ -150,7 +147,7 @@ namespace Serverside.Offers
                         sender.Notify("Twoja grupa, bądź postać nie posiada uprawnień do wydawania prawa jazdy.");
                         return;
                     }
-                    offer = new Offer(sender, getter, safeMoneyCount, c => OfferActions.GiveDrivingLicense(getter));
+                    offer = new Offer(sender, getter, safeMoneyCount, c => OfferActions.GiveDrivingLicense(getter), true);
                 }
 
                 if (offer != null) getter.SetData("Offer", offer);

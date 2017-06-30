@@ -173,7 +173,7 @@ namespace Serverside.Items
         {
         }
 
-        //public override string UseInfo => $"Ten przedmiot dodaje {Data.SecondParameter} naboi do broni {Constant.ConstantItems.GunNames.Single(p => p.Key.Equals(Data.FirstParameter)).Value}";
+        public override string UseInfo => $"Ten przedmiot dodaje {Data.SecondParameter} naboi do broni.";
     }
 
     internal class Mask : Item
@@ -222,6 +222,10 @@ namespace Serverside.Items
 
     internal class Drug : Item
     {
+        /// <summary>
+        /// Pierwszy parametr to drugtype
+        /// </summary>
+        /// <param name="item"></param>
         public Drug(Database.Models.Item item) : base(item) { }
     }
 

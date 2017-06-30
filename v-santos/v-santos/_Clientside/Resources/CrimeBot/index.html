@@ -1,388 +1,89 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
-<body onselectstart="return false;">
-<div class="center">
-    <div id="panel">
-        <div id="upper">
-            <div class="TopButtonContainer">
-                <button id="drugsButton"><img src="data:image/png;base64,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" /><br />Narkotyki</button>
-                <hr class="VerticalLine">
-                <button id="gunsButton" autofocus><img src="data:image/png;base64,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" /><br />Broń</button>
-                <hr class="VerticalLine">
-                <button id="ammoButton"><img src="data:image/png;base64,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" /><br />Amunicja</button>
-            </div>
-        </div>
-        <div id="content">
-            <table style="width: 100%;">
+<body>
+<div class="container">
+    <div class="col-sm-12 col-sm-offset-2 main">
+        <div class="col-sm-6">
+            <table id="dataTable" class="Table">
                 <tr>
-                    <td class="TableArrow" id="LeftTableArrow">
-                        <
-                    </td>
-                    <td>
-                        <img src="" id="CurrentItemImage" /><br />
-                        <p id="CurrentItemCost"></p>
-                    </td>
-                    <td>
-                        <input id="CurrentItemCount" type="number" min="0" max="int.Parse(document.getElementById(MaxItemCount').innerHTML)" /><br />
-                        <p id="MaxItemCount"></p>
-                    </td>
-                    <td class="TableArrow" id="RightTableArrow">
-                        >
-                    </td>
+                    <th>Nazwa</th>
+                    <th>Koszt</th>
+                    <th>Ilość</th>
+                    <th>-</th>
                 </tr>
             </table>
-        </div>
-
-        <div class="input-group">
-            <span class="input-group-addon" style="background-color: #eee; background-position: center;"></span>
-            <input type="text" class="input" id="sum" Name="Name" disabled="disabled">
-        </div>
-        <div id="box3d"></div>
-        <div id="lower">
-            <div class="buttons">
-                <button id="cancel">Anuluj</button>
-                <div class="dropdown">
-                    <button id="add">Dodaj</button>
-                    <div class="dropdown-content">
-                        <p onclick="ChangeButton(this)">Wyczyść</p>
-                    </div>
-                </div>
-                <button id="accept">OK</button>
-            </div>
+            <button class="btn btn-half btn-danger" id="cancel">Anuluj</button>
+            <button class="btn btn-half btn-success" id="accept">Kup</button>
         </div>
     </div>
 </div>
-    <script>
+<script>
 
-        var gunsImagesPaths = [
-            { Hash: "-1045183535", Path: "Images/Guns/-1045183535.png" },
-            { Hash: "-1074790547", Path: "Images/Guns/-1074790547.png" },
-            { Hash: "-1076751822", Path: "Images/Guns/-1076751822.png" },
-            { Hash: "-1716589765", Path: "Images/Guns/-1716589765.png" },
-            { Hash: "-2084633992", Path: "Images/Guns/-2084633992.png" },
-            { Hash: "-275439685", Path: "Images/Guns/-275439685.png" },
-            { Hash: "-619010992", Path: "Images/Guns/-619010992.png" },
-            { Hash: "-771403250", Path: "Images/Guns/-771403250.png" },
-            { Hash: "100416529", Path: "Images/Guns/100416529.png" },
-            { Hash: "137902532", Path: "Images/Guns/137902532.png" },
-            { Hash: "1593441988", Path: "Images/Guns/1593441988.png" },
-            { Hash: "1649403952", Path: "Images/Guns/1649403952.png" },
-            { Hash: "2017895192", Path: "Images/Guns/2017895192.png" },
-            { Hash: "324215364", Path: "Images/Guns/324215364.png" },
-            { Hash: "453432689", Path: "Images/Guns/453432689.png" },
-            { Hash: "487013001", Path: "Images/Guns/487013001.png" },
-            { Hash: "-1121678507", Path: "Images/Guns/-1121678507.png" }
-        ];
+    var currentSelect = [];
 
-        var gunsNames = [
-            { Hash: "-1045183535", Name: "Colt Anaconda" },
-            { Hash: "-1074790547", Name: "AK-47" },
-            { Hash: "-1076751822", Name: "Colt Junior 25" },
-            { Hash: "-1716589765", Name: "Colt M45A1" },
-            { Hash: "-2084633992", Name: "Colt M4" },
-            { Hash: "-275439685", Name: "AYA 12g" },
-            { Hash: "-619010992", Name: "TEC-9" },
-            { Hash: "-771403250", Name: "Desert Eagle" },
-            { Hash: "100416529", Name: "Barrett M98B" },
-            { Hash: "137902532", Name: "FN 1922" },
-            { Hash: "1593441988", Name: "Walther P99" },
-            { Hash: "1649403952", Name: "AKMSU" },
-            { Hash: "2017895192", Name: "Mossberg 500" },
-            { Hash: "324215364", Name: "Mini-UZI" },
-            { Hash: "453432689", Name: "Colt M1911" },
-            { Hash: "487013001", Name: "Mossberg 590" },
-            { Hash: "-1121678507", Name: "Skorpion vz 61" }
-        ];
-
-        var botCurrentItems = [];
-
-        var focus;
-
-        var gunsIndex = 0;
-        var drugsIndex = 0;
-        var ammoIndex = 0;
-
-        var gunsCost;
-        var gunsCount;
-        var ammoCost;
-        var ammoCount;
-        var drugsCost;
-        var drugsCount;
-
-        var selectedButton = "Dodaj";
-
-        function IntializeData()
+    class CrimeBotItemData
+    {
+        constructor(name, count, type)
         {
-            gunsCost = JSON.parse(resourceCall("GetGunsCost"));
-            gunsCount = JSON.parse(resourceCall("GetGunsCount"));
-            ammoCost = JSON.parse(resourceCall("GetAmmoCost"));
-            ammoCount = JSON.parse(resourceCall("GetAmmoCount"));
-            drugsCost = JSON.parse(resourceCall("GetDrugsCost"));
-            drugsCount = JSON.parse(resourceCall("GetDrugsCount"));
-
-            var intialized = false;
-
-            if (gunsCount.length == 0)
-            {
-                document.getElementById("gunsButton").disabled = true;
-            }
-            else
-            {
-                if (!intialized) document.getElementById("gunsButton").click();
-            }
-
-            if (ammoCount.length == 0)
-            {
-                document.getElementById("ammoButton").disabled = true;
-            }
-            else
-            {
-                if (!intialized) document.getElementById("ammoButton").click();
-            }
-
-            if (drugsCount.length == 0)
-            {
-                document.getElementById("drugsButton").disabled = true;
-            }
-            else
-            {
-                if (!intialized) document.getElementById("drugsButton").click();
-            }
-            document.getElementById("RightTableArrow").click();
+            this.Name = name;
+            this.Count = count;
+            this.type = type;
         }
 
-        document.addEventListener("DOMContentLoaded", function (event)
-        {
-            IntializeData();            
-        });
+    }
 
-        var buy;
+    document.addEventListener("DOMContentLoaded", function (event)
+    {
+        PrepareData();
+    });
 
-        function AddItemToBuy() 
-        {
-            var key;
-            
-            if (focus == document.getElementById("gunsButton")) 
+    function PrepareData()
+    {
+        var ds = JSON.parse(resourceCall("GetCrimeBotItems"));
+        var table = document.getElementById("dataTable");
+        for (var i = 0; i < ds.length; i++) {
+            currentSelect.push(new CrimeBotItemData(ds[i].Name, 0, ds[i].Type));
+
+            var row = table.insertRow();
+            var name = row.insertCell();
+            var cost = row.insertCell();
+            var count = row.insertCell();
+            var wantedNumber = row.InsertCell();
+
+            name.innerHTML = ds[i].Name.toString();
+            cost.innerHTML = `$${ds[i].Cost}`;
+            count.innerHTML = ds[i].Count;
+
+            var x = document.createElement("INPUT");
+            x.setAttribute("type", "number");
+            x.setAttribute("min", "1");
+            x.setAttribute("dsIndex", i.toString());
+            x.addEventListener("change", () =>
             {
-                key = gunsCount[gunsIndex]["Key"];
-                buy = 0;
-            }
-            else if (focus == document.getElementById("ammoButton"))
-            {
-                key = gunsCount[ammoIndex]["Key"];
-                buy = 1;
-            }
-            else if (focus == document.getElementById("drugsButton"))
-            {
-                key = gunsCount[drugsIndex]["Key"];
-                buy = 2;
-            }
-            else 
-            {
-                return;
-            }
-            var count = parseInt(document.getElementById("CurrentItemCount").value);
-
-            var item = {
-                Type: buy,
-                Key: key,
-                Count: count
-            };
-
-            if (botCurrentItems.find(FindCollision))
-            {
-                var collisionIndex = botCurrentItems.findIndex(FindCollision);
-
-                if (botCurrentItems[collisionIndex].Count + item.Count <= pareInt(gunsCount[gunsIndex]["Value"]))
-                {
-                    botCurrentItems[collisionIndex].Count += item.Count;
-                    return;
-                }
-                else
-                {
-                    return;
-                }
-
-            }
-            botCurrentItems.push(item);
+                var input = Object.assign({}, x);
+                if (isNaN(input.value)) return;
+                currentSelect[input.getAttribute("dsIndex")].Count = input.value;
+            });
+            wantedNumber.appendChild(x);
         }
+    }
 
-        function FindCollision(key)
-        {
-            if (buy == 0)
-            {
-                return gunsCost[gunsIndex]["Key"] == key;
-            }
-            else if (buy == 1)
-            {
-                return gunsCost[ammoIndex]["Key"] == key;
-            }
-            else if (buy == 2)
-            {
-                return gunsCost[drugsIndex]["Key"] == key;
-            }
-            else
-            {
-                return false;
-            }
-        }
+    document.getElementById("accept").onclick = function () 
+    {
+        var itemsToSend = JSON.stringify(currentSelect);
+        resourceCall("CrimeBotBuy", itemsToSend);
+    }
 
-        function GetNextItem(index)
-        {
-            if (focus == document.getElementById("gunsButton"))
-            {
-                return {
-                    Cost: gunsCost[index]["Value"],
-                    Count: gunsCount[index]["Value"],
-                    ImagePath: PrepareGunImagePath(gunsCost[index]["Key"]),
-                    //Name: PrepareGunName(gunsCost[index]["Key"])
-                };
-            }
-            else if (focus == document.getElementById("ammoButton"))
-            {
-                return {
-                    Cost: ammoCost[index]["Value"],
-                    Count: ammoCount[index]["Value"],
-                    ImagePath: PrepareAmmoImagePath(gunsCost[index]["Key"]),
-                };
-            }
-            else if (focus == document.getElementById("drugsButton"))
-            {
-                return {
-                    Cost: drugsCost[index]["Value"],
-                    Count: drugsCount[index]["Value"],
-                    ImagePath: PrepareDrugsImagePath(gunsCost[index]["Key"]),                };
-            }
-            return null;
-        }
+    document.getElementById("cancel").onclick = function ()
+    {
+        resourceCall("CloseCef");
+    }
 
-        function PrepareGunImagePath(hash)
-        {
-            for (var i = 0; i < 17; i++)
-            {
-                if (hash == gunsImagesPaths[i].Hash)
-                {
-                    return gunsImagesPaths[i]["Path"].toString();
-                }
-            }
-            return "";
-        }
-
-        function ChangeButton(button)
-        {
-            selectedButton = button.innerHTML;
-            button.innerHTML = document.getElementById("add").textContent;
-            document.getElementById("add").textContent = selectedButton;
-        }
-
-        document.getElementById("gunsButton").onclick = function ()
-        {
-            
-            focus = document.getElementById("gunsButton");
-        };
-
-        document.getElementById("ammoButton").onclick = function ()
-        {
-            
-            focus = document.getElementById("ammoButton");
-        };
-
-        document.getElementById("drugsButton").onclick = function ()
-        {
-            
-            focus = document.getElementById("drugsButton");
-        };
-
-        document.getElementById("LeftTableArrow").onclick = function ()
-        {
-            
-            if (gunsIndex > 0 && focus == document.getElementById("gunsButton"))
-            {
-                document.getElementById("CurrentItemCount").value = 0;
-                var gun = GetNextItem(--gunsIndex);
-                document.getElementById("CurrentItemCost").innerHTML = "$" + gun.Cost;
-                document.getElementById("MaxItemCount").innerHTML = "Pozostało: " + gun.Count;
-                document.getElementById("CurrentItemImage").src = gun.ImagePath;
-            }
-            else if (ammoIndex > 0 && focus == document.getElementById("ammoButton"))
-            {
-                document.getElementById("CurrentItemCount").value = 0;
-                var ammo = GetNextItem(--ammoIndex);
-                document.getElementById("CurrentItemCost").innerHTML = "$" + ammo.Cost;
-                document.getElementById("MaxItemCount").innerHTML = "Pozostało: " + ammo.Count;
-                document.getElementById("CurrentItemImage").src = ammo.ImagePath;
-            }
-            else if (drugsIndex > 0 && focus == document.getElementById("drugsButton"))
-            {
-                document.getElementById("CurrentItemCount").value = 0;
-                var drug = GetNextItem(--drugsIndex);
-                document.getElementById("CurrentItemCost").innerHTML = "$" + drug.Cost;
-                document.getElementById("MaxItemCount").innerHTML = "Pozostało: " + drug.Count;
-                document.getElementById("CurrentItemImage").src = drug.ImagePath;
-            }
-        };
-
-        document.getElementById("RightTableArrow").onclick = function () 
-        {
-            
-            document.getElementById("CurrentItemCount").value = 0;
-            if (gunsIndex < gunsCost.length && focus == document.getElementById("gunsButton"))
-            {
-                var gun = GetNextItem(++gunsIndex);
-                document.getElementById("CurrentItemCost").innerHTML = "$" + gun.Cost;
-                document.getElementById("MaxItemCount").innerHTML = "Pozostało: " + gun.Count;
-                document.getElementById("CurrentItemImage").src = gun.ImagePath;
-            }
-            else if (ammoIndex < ammoCost.length && focus == document.getElementById("ammoButton"))
-            {
-                var ammo = GetNextItem(++ammoIndex);
-                document.getElementById("CurrentItemCost").innerHTML = "$" + ammo.Cost;
-                document.getElementById("MaxItemCount").innerHTML = "Pozostało: " + ammo.Count;
-                document.getElementById("CurrentItemImage").src = ammo.ImagePath;
-            }
-            else if (drugsIndex < drugsCost.length && focus == document.getElementById("drugsButton"))
-            {
-                var drug = GetNextItem(++drugsIndex);
-                document.getElementById("CurrentItemCost").innerHTML = "$" + drug.Cost;
-                document.getElementById("MaxItemCount").innerHTML = "Pozostało: " + drug.Count;
-                document.getElementById("CurrentItemImage").src = drug.ImagePath;
-            }
-        };
-
-        document.getElementById("cancel").onclick = function ()
-        {
-            resourceCall("CloseCef");
-        }
-
-        document.getElementById("add").onclick = function () 
-        {
-            
-            //if (selectedButton == "Dodaj") 
-            //{
-            
-                AddItemToBuy();
-            //}
-            //else
-            //{
-            //    botCurrentItems = [];
-            //    gunsIndex = -1;
-            //    ammoIndex = -1;
-            //    drugsIndex = -1;
-            //    document.getElementById("gunsButton").click();
-            //    document.getElementById("RightTableArrow").click();
-            //}
-        }
-
-        document.getElementById("accept").onclick = function () 
-        {
-            if (botCurrentItems.length == 0) return;
-            var itemsToSend = JSON.stringify(botCurrentItems);
-            resourceCall("CrimeBotBuy", itemsToSend);
-        }
-    </script>
+</script>
 </body>
 </html>

@@ -54,21 +54,12 @@ class WebBrowser {
 
 let CEF = new WebBrowser(true);
 
-var charactersList;
 var offer;
 var descriptions;
 
-//CrimeBot
-var gunsCost;
-var gunsCount;
-var ammoCost;
-var ammoCount;
-var drugsCost;
-var drugsCount;
-
-
 let wheelMenuDataSource = null;
 let busMenuDataSource = null;
+let crimeBotMenuDataSource = null;
 
 API.onResourceStart.connect(function () {
     CEF.show();
@@ -90,15 +81,8 @@ API.onServerEventTrigger.connect(function (eventName, args) {
         CEF.load("_Clientside/Resources/Descriptions/index.html");
     }
     else if (eventName == "ShowCrimeBotCef") {
-        gunsCost = args[0];
-        gunsCount = args[1];
 
-        ammoCost = args[2];
-        ammoCount = args[3];
-
-        drugsCost = args[4];
-        drugsCount = args[5];
-
+        crimeBotMenuDataSource = args[0];
         CEF.load("_Clientside/Resources/CrimeBot/index.html");
     }
     else if (eventName == "ShowWheelMenu") {
@@ -111,14 +95,6 @@ API.onServerEventTrigger.connect(function (eventName, args) {
     }
 });
 
-
-function GetPlayerCharacters() {
-    CEF.call("LoadCharacters", charactersList);
-}
-
-function SelectCharacter(uid) {
-    API.triggerServerEvent("OnPlayerSelectedCharacter", uid);
-}
 
 function GetOffer() {
     return offer;
@@ -152,28 +128,8 @@ function SetDescription(description) {
     API.triggerServerEvent("OnPlayerSetDescription", description);
 }
 
-function GetGunsCost() {
-    return gunsCost;
-}
-
-function GetGunsCount() {
-    return gunsCount;
-}
-
-function GetAmmoCost() {
-    return ammoCost;
-}
-
-function GetAmmoCount() {
-    return ammoCount;
-}
-
-function GetDrugsCost() {
-    return drugsCost;
-}
-
-function GetDrugsCount() {
-    return drugsCount;
+function GetCrimeBotItems() {
+    return crimeBotMenuDataSource;
 }
 
 function CrimeBotBuy(i) {

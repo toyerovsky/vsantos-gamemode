@@ -17,7 +17,6 @@ namespace Serverside.Database.Models
         public string NumberPlate { get; set; }
 
         public int NumberPlateStyle { get; set; }
-
         public virtual VehicleHash VehicleHash { get; set; }
 
         //public Vector3 SpawnPosition { get; set; }

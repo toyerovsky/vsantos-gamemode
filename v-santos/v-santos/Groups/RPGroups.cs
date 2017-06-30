@@ -280,7 +280,7 @@ namespace Serverside.Groups
                         DutyTime = w.DutyMinutes,
                         OnDuty = group.PlayersOnDuty.Contains(RPEntityManager.GetAccountByCharacterId(w.Character.Id))
                     }))
-                }));
+                }), group.CanPlayerManageWorkers(player));
             }
             else
             {

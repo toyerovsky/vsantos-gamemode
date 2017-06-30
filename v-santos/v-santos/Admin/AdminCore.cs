@@ -121,10 +121,12 @@ namespace Serverside.Admin
                 sender.Notify("Nie posiadasz uprawnień do ustawienia latania.");
                 return;
             }
+
             if (sender.HasData("FlyState"))
             {
                 sender.ResetData("FlyState");
                 API.triggerClientEvent(sender, "FreeCamStop");
+                return;
             }
 
             sender.SetData("FlyState", true);

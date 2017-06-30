@@ -127,6 +127,7 @@
     <Compile Include="Core\RPChat.cs" />
     <Compile Include="Core\RPCore.cs" />
     <Compile Include="Core\RPEntityManager.cs" />
+    <Compile Include="Core\RPMiscCommands.cs" />
     <Compile Include="Core\RPScoreBoard.cs" />
     <Compile Include="Core\Telephone\Booth\RPTelephoneBooth.cs" />
     <Compile Include="Core\Telephone\Booth\TelephoneBooth.cs" />
@@ -145,6 +146,10 @@
     <Compile Include="Corners\Models\CornerModel.cs" />
     <Compile Include="Corners\RPCornerBots.cs" />
     <Compile Include="Corners\RPCorners.cs" />
+    <Compile Include="CrimeBot\CrimeBot.cs" />
+    <Compile Include="CrimeBot\Models\CrimeBotItem.cs" />
+    <Compile Include="CrimeBot\Models\CrimeBotPosition.cs" />
+    <Compile Include="CrimeBot\RPCrimeBot.cs" />
     <Compile Include="Database\ForumDatabaseHelper.cs" />
     <Compile Include="Database\Models\Account.cs" />
     <Compile Include="Database\Models\Ban.cs" />
@@ -162,12 +167,12 @@
     <Compile Include="Employer\EmployerBot.cs" />
     <Compile Include="Employer\RPEmployer.cs" />
     <Compile Include="Groups\Base\CityHall.cs" />
+    <Compile Include="Groups\Base\CrimeGroup.cs" />
     <Compile Include="Groups\Base\Police.cs" />
     <Compile Include="Groups\Enums.cs" />
     <Compile Include="Groups\RPGroups.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\RPItems.cs" />
-    <Compile Include="Items\ServerItem.cs" />
     <Compile Include="Jobs\Dustman\Dustman.cs" />
     <Compile Include="Jobs\Dustman\DustmanVehicle.cs" />
     <Compile Include="Jobs\Dustman\DustmanWorker.cs" />
@@ -472,27 +477,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="_Clientside\Resources\WheelMenu\raphael.min.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="_Clientside\Resources\Characters\Images\credit-card.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="_Clientside\Resources\Characters\Images\id-card.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="_Clientside\Resources\Characters\Images\money-card.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="_Clientside\Resources\Characters\Images\name-card.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="_Clientside\Resources\Characters\Images\surname-card.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="_Clientside\Resources\Characters\index.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="_Clientside\Resources\Characters\style.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="_Clientside\Resources\WheelMenu\style.css">

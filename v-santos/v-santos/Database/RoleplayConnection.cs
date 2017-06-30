@@ -34,7 +34,7 @@ namespace Serverside.Database
         public virtual DbSet<Group> Groups { get; set; }
         public virtual DbSet<Item> Items { get; set; }
         public virtual DbSet<Building> Buildings { get; set; }
-        public virtual DbSet<CrimeBot> CrimeBots { get; set; }
+        public virtual DbSet<Models.CrimeBot> CrimeBots { get; set; }
         public virtual DbSet<Description> Descriptions { get; set; }
         public virtual DbSet<TelephoneContact> TelephoneContacts { get; set; }
         public virtual DbSet<TelephoneMessage> TelephoneMessages { get; set; }

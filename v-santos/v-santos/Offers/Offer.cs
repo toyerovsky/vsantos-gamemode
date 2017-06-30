@@ -56,15 +56,18 @@ namespace Serverside.Offers
         }
 
         //Oferta bez niczego, np. taxi, naprawa, itp.
-        public Offer(Client sender, Client getter, decimal moneyCount, Action<Client> action)
+        public Offer(Client sender, Client getter, decimal moneyCount, Action<Client> action, bool moneyToGroup)
         {
             _action = action;
             Money = moneyCount;
             Sender = sender;
             Getter = getter;
+            _moneyToGroup = moneyToGroup;
         }
 
         private Action<Client> _action;
+        //Determinuje czy gotówka ma iść do kieszeni gracza czy do grupy
+        private bool _moneyToGroup;
 
         public void Trade()
         {
@@ -96,10 +99,18 @@ namespace Serverside.Offers
                     ContextFactory.Instance.SaveChanges();
                 }
 
-                _action?.Invoke(Getter);
+                if (_moneyToGroup)
+                {
+                    Sender.GetAccountController().CharacterController.OnDutyGroup.AddMoney(Money);
+                }
+                else
+                {
+                    Sender.AddMoney(Money, Bank);
+                }
 
-                Sender.AddMoney(Money, Bank);
                 Getter.RemoveMoney(Money, Bank);
+
+                _action?.Invoke(Getter);
             }
             else
             {
