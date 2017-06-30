@@ -219,6 +219,10 @@
     <Compile Include="Migrations\201706271004381_New.Designer.cs">
       <DependentUpon>201706271004381_New.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201706301216122_CrimeBot.cs" />
+    <Compile Include="Migrations\201706301216122_CrimeBot.Designer.cs">
+      <DependentUpon>201706301216122_CrimeBot.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Offers\Enums.cs" />
     <Compile Include="Offers\Offer.cs" />
@@ -542,6 +546,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201706271004381_New.resx">
       <DependentUpon>201706271004381_New.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706301216122_CrimeBot.resx">
+      <DependentUpon>201706301216122_CrimeBot.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
