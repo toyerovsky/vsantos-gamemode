@@ -7,5 +7,6 @@ namespace Serverside.Bank.Models
     public class AtmModel
     {
         public FullPosition Position { get; set; }
+        public string CreatorForumName { get; set; }
     }
 }

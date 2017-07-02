@@ -9,6 +9,8 @@ using Serverside.Database.Models;
 using Serverside.Groups;
 //using Serverside.Groups.CrimeBots;
 using Serverside.Core.Extensions;
+using Serverside.CrimeBot.Models;
+using Serverside.Groups.Base;
 
 namespace Serverside.Items
 {
@@ -98,19 +100,15 @@ namespace Serverside.Items
             {
                 var player = sender.GetAccountController();
 
-                if (Convert.ToInt32(args[0]) == 555 && player.CharacterController.OnDutyGroup != null &&
-                    player.CharacterController.OnDutyGroup.GroupData.GroupType == GroupType.Przestepcza)
+                if (Convert.ToInt32(args[0]) == 555 && player.CharacterController.OnDutyGroup is CrimeGroup)
                 {
-                    //CrimeGroup group =
-                    //    RPGroups.Groups.Single(g => g.Id == player.CharacterController.OnDutyGroupId.Value) as
-                    //        CrimeGroup;
-                    //if (group != null && group.Data.GroupType == GroupType.CrimeGroup &&
-                    //    group.CanPlayerCallCrimeBot(sender.GetAccountController()))
-                    //{
-                    //    List<string> names = CrimeBotHelper.GetPositions().Select(n => n.Name).ToList();
-                    //    API.shared.triggerClientEvent(sender, "OnPlayerCalledCrimeBot", names);
-                    //    return;
-                    //}
+                    var group = (CrimeGroup)player.CharacterController.OnDutyGroup;
+                    if (group.CanPlayerCallCrimeBot(player))
+                    {
+                        List<string> names = XmlHelper.GetXmlObjects<CrimeBotPosition>($@"{Constant.ConstantAssemblyInfo.XmlDirectory}CrimeBotPositions\").Select(n => n.Name).ToList();
+                        API.shared.triggerClientEvent(sender, "OnPlayerCalledCrimeBot", names);
+                        return;
+                    }
                 }
 
                 if (sender.GetAccountController().CharacterController.CellphoneController.CurrentlyTalking)
@@ -122,20 +120,20 @@ namespace Serverside.Items
                 //API.shared.playPlayerAnimation(senderPlayer.Client, (int)(AnimationFlags.AllowPlayerControl | AnimationFlags.Loop),
                 //    "cellphone@first_person", "cellphone_call_listen_base");
 
-                if (API.getAllPlayers().Any(p => p.GetAccountController().CharacterController.CellphoneController.Number == (int)args[0]))
+                var number = Convert.ToInt32(args[0]);
+                if (RPEntityManager.GetAccounts().Any(p => p.Value.CharacterController.CellphoneController.Number == number))
                 {
-                    var getter = API.getAllPlayers()
-                        .Single(x => x.GetAccountController().CharacterController.CellphoneController.Number ==
-                                     (int) args[0]);
+                    var getter = RPEntityManager.GetAccounts()
+                        .Single(p => p.Value.CharacterController.CellphoneController.Number == number).Value;
 
-                    if (getter.GetAccountController().CharacterController.CellphoneController.CurrentlyTalking)
+                    if (getter.CharacterController.CellphoneController.CurrentlyTalking)
                     {
                         API.shared.sendChatMessageToPlayer(sender, "~#ffdb00~",
                             "Wybrany abonent prowadzi obecnie rozmowę, spróbuj później.");
                         return;
                     }
 
-                    var call = new TelephoneCall(sender, getter);
+                    var call = new TelephoneCall(sender, getter.Client);
                     sender.GetAccountController().CharacterController.CellphoneController.CurrentCall = call;
 
                     call.Timer.Elapsed += (o, eventArgs) =>
@@ -156,7 +154,7 @@ namespace Serverside.Items
                 var call = sender.GetAccountController().CharacterController.CellphoneController.CurrentCall;
                 call?.Dispose();
 
-                //TODO Wyłączanie telefonu
+                //TODO: Wyłączanie telefonu
 
             }
             //Rządanie otworzenia okienka telefonu
@@ -237,7 +235,10 @@ namespace Serverside.Items
         [Command("p")]
         public void ShowItemsList(Client sender)
         {
-            API.triggerClientEvent(sender, "ShowItems", JsonConvert.SerializeObject(sender.GetAccountController().CharacterController.Character.Items.ToList()));
+            API.triggerClientEvent(sender, "ShowItems", JsonConvert.SerializeObject(sender.GetAccountController().CharacterController.Character.Items.ToList().Select(x => new
+            {
+                x.Name
+            })));
         }
         #endregion
     }

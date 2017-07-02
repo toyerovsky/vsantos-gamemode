@@ -15,5 +15,6 @@ namespace Serverside.Corners.Models
         public string Greeting { get; set; }
         public string GoodFarewell { get; set; }
         public string BadFarewell { get; set; }
+        public string CreatorForumName { get; set; }
     }
 }

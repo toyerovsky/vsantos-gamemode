@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using GTANetworkServer;
 using GTANetworkShared;
+using Newtonsoft.Json;
 using Serverside.Bank.Models;
 using Serverside.Core.Extensions;
 
@@ -26,16 +27,21 @@ namespace Serverside.Bank
 
             AtmShape.onEntityEnterColShape += (shape, entity) =>
             {
-                if (shape == AtmShape && API.shared.getEntityType(entity) == EntityType.Player)
+                if (Api.getEntityType(entity) == EntityType.Player)
                 {
                     var player = Api.getPlayerFromHandle(entity).GetAccountController();
-                    Api.triggerClientEvent(player.Client, "OnPlayerEnteredAtm", player.CharacterController.FormatName, player.CharacterController.Character.BankMoney.ToString(CultureInfo.CurrentCulture), player.CharacterController.Character.BankAccountNumber.ToString());
+                    Api.triggerClientEvent(player.Client, "OnPlayerEnteredAtm", JsonConvert.SerializeObject(new
+                    {
+                        FormatName = player.CharacterController.FormatName,
+                        BankMoney = player.CharacterController.Character.BankMoney.ToString(CultureInfo.CurrentCulture),
+                        AccountNumber = player.CharacterController.Character.BankAccountNumber.ToString()
+                    }));
                 }
             };
 
             AtmShape.onEntityExitColShape += (shape, entity) =>
             {
-                if (shape == AtmShape && API.shared.getEntityType(entity) == EntityType.Player)
+                if (Api.getEntityType(entity) == EntityType.Player)
                 {
                     var player = Api.getPlayerFromHandle(entity).GetAccountController();
                     Api.triggerClientEvent(player.Client, "OnPlayerExitAtm");

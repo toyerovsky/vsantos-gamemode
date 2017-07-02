@@ -10,5 +10,6 @@ namespace Serverside.Corners.Models
         public List<CornerBotModel> CornerBots { get; set; }
         public FullPosition Position { get; set; }
         public List<FullPosition> BotPositions { get; set; }
+        public string CreatorForumName { get; set; }
     }
 }

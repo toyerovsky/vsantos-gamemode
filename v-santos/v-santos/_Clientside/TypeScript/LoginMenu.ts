@@ -17,7 +17,7 @@ let selectFlag: boolean = false;
 
 function menuLoginPanel()
 {
-    loginMenu = createMenu(2);
+    loginMenu = createMenu(4);
     let panel: Panel;
     let textElement: TextElement;
 
@@ -26,12 +26,11 @@ function menuLoginPanel()
     panel = loginMenu.createPanel(0, 12, 3, 8, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
     panel.Header = true;
-    textElement = panel.addText("Logowanie");
+    textElement = panel.addText("V-Santos.pl - Logowanie");
     textElement.Color(255, 255, 255, 255);
     textElement.Centered = true;
     textElement.VerticalCentered = true;
     textElement.FontScale = 0.6;
-    textElement.Offset = 18;
 
     // Second Page Input Panel Example / Image
     panel = loginMenu.createPanel(0, 12, 4, 8, 2);
@@ -44,25 +43,37 @@ function menuLoginPanel()
     panel.MainBackgroundColor(0, 0, 0, 160);
     textElement = panel.addText("Twój e-mail:");
     textElement.Color(255, 255, 255, 255);
+    textElement.FontScale = 0.5;
     panel.addText("");
     textElement = panel.addText("Twoje hasło:");
     textElement.Color(255, 255, 255, 255);
+    textElement.FontScale = 0.5;
     loginUsername = panel.addInput(0, 1, 8, 1);
     loginPassword = panel.addInput(0, 3, 8, 1);
     loginPassword.Protected = true;
 
     //Podpowiedź odnośnie nie posiadania konta
+    //Guzik rejestracja
+    panel = loginMenu.createPanel(0, 12, 13, 4, 1);
+    panel.MainBackgroundColor(0, 0, 0, 160);
+    panel.HoverBackgroundColor(25, 25, 25, 160);
+    panel.Hoverable = true;
+    panel.Function = () => loginMenu.Page = 2;
+    textElement = panel.addText("Rejestracja");
+    textElement.Color(255, 255, 255, 255);
+    textElement.HoverColor(75, 109, 35, 255);
+    textElement.Centered = true;
+    textElement.VerticalCentered = true;
 
     //Guzik logowania
-    panel = loginMenu.createPanel(0, 12, 13, 8, 1);
+    panel = loginMenu.createPanel(0, 16, 13, 4, 1);
     panel.MainBackgroundColor(0, 0, 0, 160);
     panel.HoverBackgroundColor(25, 25, 25, 160);
     panel.Hoverable = true;
     panel.Function = attemptLogin;
-    panel.Tooltip = "Zaloguj się";
     textElement = panel.addText("Login");
     textElement.Color(255, 255, 255, 255);
-    textElement.HoverColor(0, 180, 255, 255);
+    textElement.HoverColor(75, 109, 35, 255);
     textElement.Centered = true;
     textElement.VerticalCentered = true;
 
@@ -76,7 +87,6 @@ function menuLoginPanel()
     textElement.Centered = true;
     textElement.VerticalCentered = true;
     textElement.FontScale = 0.6;
-    textElement.Offset = 18;
 
     //Strzałka w lewo
     panel = loginMenu.createPanel(1, 12, 4, 1, 1);
@@ -91,7 +101,7 @@ function menuLoginPanel()
     textElement.Centered = true;
     textElement.VerticalCentered = true;
     textElement.FontScale = 0.6;
-    textElement.HoverColor(0, 180, 255, 255);
+    textElement.HoverColor(75, 109, 35, 255);
 
     //Strzałka w prawo
     panel = loginMenu.createPanel(1, 19, 4, 1, 1);
@@ -106,7 +116,7 @@ function menuLoginPanel()
     textElement.Centered = true;
     textElement.VerticalCentered = true;
     textElement.FontScale = 0.6;
-    textElement.HoverColor(0, 180, 255, 255);
+    textElement.HoverColor(75, 109, 35, 255);
 
     //Wyświetlanie obecnej postaci
     panel = loginMenu.createPanel(1, 12, 5, 8, 7);
@@ -131,7 +141,60 @@ function menuLoginPanel()
     panel.Tooltip = "Wybierz postać jaką chcesz grać";
     textElement = panel.addText("Wybierz postać");
     textElement.Color(255, 255, 255, 255);
-    textElement.HoverColor(0, 180, 255, 255);
+    textElement.HoverColor(75, 109, 35, 255);
+    textElement.Centered = true;
+    textElement.VerticalCentered = true;
+
+    //Strona 2
+    //Rejestracja
+    panel = loginMenu.createPanel(2, 12, 4, 1, 1);
+    panel.MainBackgroundColor(0, 0, 0, 175);
+    panel.Tooltip = "Wróć";
+    panel.Function = () => loginMenu.Page = 0;
+    panel.HoverBackgroundColor(25, 25, 25, 160);
+    panel.Hoverable = true;
+    panel.Header = true;
+    textElement = panel.addText("<");
+    textElement.Color(255, 255, 255, 255);
+    textElement.Centered = true;
+    textElement.VerticalCentered = true;
+    textElement.FontScale = 0.6;
+    textElement.HoverColor(75, 109, 35, 255);
+
+    panel = loginMenu.createPanel(2, 13, 4, 7, 1);
+    panel.MainBackgroundColor(0, 0, 0, 175);
+    panel.Header = true;
+    textElement = panel.addText("V-Santos.pl - Rejestracja");
+    textElement.Color(255, 255, 255, 255);
+    textElement.Centered = true;
+    textElement.VerticalCentered = true;
+    textElement.FontScale = 0.6;
+
+    panel = loginMenu.createPanel(2, 12, 5, 8, 4);
+    panel.MainBackgroundColor(0, 0, 0, 160);
+    textElement = panel.addText("Aby rozpocząć rozgrywkę dokonaj rejestracji na naszym forum. https://forum.v-santos.pl Następnie załóż swoją postać w panelu użytkownika. https://cp.v-santos.pl");
+    textElement.Color(255, 255, 255, 255);
+    textElement.FontScale = 0.5;
+    textElement.Centered = true;
+    textElement.VerticalCentered = true;
+
+    //Strona 3
+    //Brak postaci
+    
+    panel = loginMenu.createPanel(3, 12, 3, 8, 8);
+    panel.MainBackgroundColor(0, 0, 0, 175);
+    panel.Header = true;
+    textElement = panel.addText("V-Santos.pl - Brak postaci");
+    textElement.Color(255, 255, 255, 255);
+    textElement.Centered = true;
+    textElement.VerticalCentered = true;
+    textElement.FontScale = 0.6;
+
+    panel = loginMenu.createPanel(3, 12, 6, 8, 4);
+    panel.MainBackgroundColor(0, 0, 0, 160);
+    textElement = panel.addText("Nie mogliśmy odnaleźć żadnych postaci powiązanych z Twoim kontem. https://cp.v-santos.pl Aby rozpocząć rozgrywkę załóż postać w naszym panelu użytkownika. Jeżeli już to zrobiłeś a mimo to widzisz ten komunikat, skontaktuj się z administratorem.");
+    textElement.Color(255, 255, 255, 255);
+    textElement.FontScale = 0.5;
     textElement.Centered = true;
     textElement.VerticalCentered = true;
 
@@ -177,8 +240,13 @@ API.onServerEventTrigger.connect((eventName: string, args: System.Array<any>) =>
     else if (eventName == "ShowCharacterSelectMenu")
     {
         //args[0] json postaci
-        createNotification(0, "Używaj strzałek, aby przewijać swoje postacie.", 3000);
         characters = JSON.parse(args[0].toString());
+
+        if (characters == null && characters.length == 0) {
+            loginMenu.Page = 3;
+            return;
+        }
+        createNotification(0, "Używaj strzałek, aby przewijać swoje postacie.", 3000);
         fillCharacterSelect();
         loginMenu.nextPage();
         selectFlag = true;

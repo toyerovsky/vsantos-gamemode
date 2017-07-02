@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Reflection;
 using System.Timers;
 using GTANetworkServer;
+using GTANetworkServer.Constant;
 using GTANetworkShared;
 using Newtonsoft.Json;
 using Serverside.Constant;
@@ -27,7 +29,7 @@ namespace Serverside.CrimeBot
 
         private ColShape BotShape { get; set; }
         private AccountController Player { get; }
-        private Vehicle Vehicle { get; set; }
+        private VehicleController Vehicle { get; set; }
         private FullPosition VehiclePosition { get; }
 
         public CrimeBot(AccountController player, CrimeGroup group, FullPosition vehiclePosition, API api, string name, PedHash hash, FullPosition position) : base(api, name, hash, position)
@@ -37,58 +39,35 @@ namespace Serverside.CrimeBot
             Group = group;
             VehiclePosition = vehiclePosition;
 
-            decimal tempCost = Decimal.MinValue;
-            int tempDefaultCount = Int32.MinValue;
-            int tempCount = Int32.MinValue;
-
             CrimeBotData = ContextFactory.Instance.CrimeBots.Single(c => c.Group.Id == group.Id);
 
-            //Dorzucamy tutaj string żeby sposób z dzieleniem przez 3 miał sens
-            var fields = typeof(Database.Models.CrimeBot).GetFields().Where(f => f.FieldType == typeof(int?) || f.FieldType == typeof(decimal?) || f.FieldType == typeof(string)).ToList();
+            var properties = new List<PropertyInfo> {null};
+            properties.AddRange(typeof(Database.Models.CrimeBot).GetProperties()
+                .Where(f => f.GetValue(CrimeBotData) != null && (f.PropertyType == typeof(int?) || f.PropertyType == typeof(decimal?))));
 
-            for (int i = 0; i < fields.Count; i++)
+            if (properties.Count % 3 != 1)
             {
-                if (fields[i].GetValue(CrimeBotData) != null && fields[i].Name.Contains("Cost"))
-                {
-                    tempCost = ((decimal?)fields[i].GetValue(CrimeBotData)).Value;
-                }
-                else if (fields[i].GetValue(null) != null && fields[i].Name.Contains("Default"))
-                {
-                    tempDefaultCount = ((int?)fields[i].GetValue(CrimeBotData)).Value;
-                }
-                else if (fields[i].GetValue(null) != null && fields[i].Name.Contains("Count"))
-                {
-                    tempCount = ((int?)fields[i].GetValue(CrimeBotData)).Value;
-                }
-
-                if (i % 3 == 0 && (tempCost == Decimal.MinValue || tempDefaultCount == Int32.MinValue || tempCount == Int32.MinValue))
-                {
-                    tempCost = Decimal.MinValue;
-                    tempDefaultCount = Int32.MinValue;
-                    tempCount = Int32.MinValue;
-                    continue;
-                }
-
-                if (tempCost != Decimal.MinValue && tempDefaultCount != Int32.MinValue && tempCount != Int32.MinValue)
-                {
-                    var info = ConstantItems.GetCrimeBotItemName(fields[i].Name);
-                    Items.Add(new CrimeBotItem(info.Item1, tempCost, tempCount, tempDefaultCount, info.Item2, fields[i].Name.Replace("Default", "")));
-                    tempCost = Decimal.MinValue;
-                    tempDefaultCount = Int32.MinValue;
-                    tempCount = Int32.MinValue;
-                }
+                player.Client.Notify($"Konfiguracja bota grupy {Group.GetColoredName()} jest nieporawna, skontaktuj się z administratorem.");
+                return;
             }
+
+            for (int i = 0; i < properties.Count; i += 3)
+            {
+                if (i == 0) continue;
+
+                var info = ConstantItems.GetCrimeBotItemName(properties[i - 2].Name);
+                Items.Add(new CrimeBotItem(info.Item1, ((decimal?)properties[i - 2].GetValue(CrimeBotData)).Value, ((int?)properties[i - 1].GetValue(CrimeBotData)).Value, ((int?)properties[i].GetValue(CrimeBotData)).Value, info.Item2, properties[i - 1].Name));
+                
+            }
+            Items.ForEach(x => API.shared.sendChatMessageToPlayer(Player.Client, $"Nazwa {x.Name} Koszt {x.Cost}, Ilość {x.Count}, Pole {x.DatabaseField}"));
         }
 
         public override void Intialize()
         {
             base.Intialize();
-            //Rozwiązanie pomocnicze
-            Vehicle = Api.createVehicle(CrimeBotData.Vehicle, VehiclePosition.Position, VehiclePosition.Rotation, 0, 0);
-            Vehicle.invincible = true;
-            Vehicle.engineStatus = false;
-            Vehicle.openDoor(5);
 
+            Vehicle = new VehicleController(VehiclePosition, CrimeBotData.Vehicle, CrimeBotData.Name, 0, 0, new Color(0, 0, 0), new Color(0, 0, 0));
+            Vehicle.Vehicle.openDoor(5);
             BotHandle.playScenario("WORLD_HUMAN_SMOKING");
 
             BotShape = Api.createCylinderColShape(BotHandle.position, 3f, 3f);
@@ -109,12 +88,12 @@ namespace Serverside.CrimeBot
             //args 0 to string JSON z js który mówi co gracz kupił
             if (eventName == "OnCrimeBotBought")
             {
-                List<CrimeBotItem> items = JsonConvert.DeserializeObject<List<CrimeBotItem>>(arguments[0].ToString());
+                List<CrimeBotItem> items = JsonConvert.DeserializeObject<List<CrimeBotItem>>(arguments[0].ToString()).Where(item => item.Count > 0).ToList();
 
                 decimal sum = 0;
                 foreach (var item in items)
                 {
-                    if (item.Cost != null) sum += item.Cost.Value;
+                    if (item.Count != 0) sum += item.Cost * item.Count;
                 }
 
                 if (!sender.HasMoney(sum))
@@ -124,9 +103,9 @@ namespace Serverside.CrimeBot
                 }
 
                 //Sprawdzamy czy gracz nie chce kupić więcej niż ma bot
-                foreach (var crimeBotItem in items)
+                if (items.Any(crimeBotItem => Items.First(x => x.Name == crimeBotItem.Name).Count < crimeBotItem.Count))
                 {
-                    if (Items.First(x => x.Name == crimeBotItem.Name).Count < crimeBotItem.Count) return;
+                    return;
                 }
 
                 foreach (var i in items)
@@ -161,13 +140,17 @@ namespace Serverside.CrimeBot
                         item.Character = sender.GetAccountController().CharacterController.Character;
                         item.CreatorId = 0;
                         item.Name = i.Name;
-                        item.ItemType = (int)i.Type;
-                        item.FirstParameter = (int)Enum.Parse(typeof(DrugType), i.Name);
+                        item.ItemType = (int) i.Type;
+                        item.FirstParameter = (int) Enum.Parse(typeof(DrugType), i.Name);
+                    }
+                    else
+                    {
+                        return;
                     }
 
                     //Ja sobie zdaję sprawę że to karygodne
-                    var field = typeof(Database.Models.CrimeBot).GetFields().Single(f => f.Name == i.DatabaseField);
-                    field.SetValue(CrimeBotData, ((int)field.GetValue(CrimeBotData) - 1));
+                    var field = typeof(Database.Models.CrimeBot).GetProperties().Single(f => f.Name == i.DatabaseField);
+                    field.SetValue(CrimeBotData, (int)field.GetValue(CrimeBotData) - i.Count);
                     ContextFactory.Instance.Items.Add(item);
                 }
 
@@ -186,7 +169,7 @@ namespace Serverside.CrimeBot
         {
             if (Api.getEntityType(entity) == EntityType.Player && entity == Player.Client)
             {
-                Api.triggerClientEvent(Player.Client, "OnPlayerEnteredCrimeBot", JsonConvert.SerializeObject(Items));
+                Api.triggerClientEvent(Player.Client, "ShowCrimeBotCef", JsonConvert.SerializeObject(Items.OrderBy(x => x.Type)));
             }
             else if (Api.getEntityType(entity) == EntityType.Player)
             {
@@ -213,17 +196,7 @@ namespace Serverside.CrimeBot
         private void EndTransaction()
         {
             SendMessageToNerbyPlayers("Interesy z Tobą to przyjemność", ChatMessageType.Normal);
-            Vehicle.closeDoor(5);
-            BotHandle.movePosition(Vehicle.position, 3000);
-
-            while (BotHandle.position != Vehicle.position)
-            {
-                NameLabel.position = BotHandle.position;
-            }
-
-            //(Ped ped, Vehicle vehicle, int seatIndex)
-            Api.sendNativeToPlayersInRange(BotHandle.position, 30f, Hash.SET_PED_INTO_VEHICLE, BotHandle, Vehicle, -1);
-            Api.setVehicleLocked(Vehicle, true);
+            Vehicle.Vehicle.closeDoor(5);
         }
     }
 }

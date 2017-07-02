@@ -40,14 +40,14 @@ API.onServerEventTrigger.connect(function (eventName, args)
     else if (eventName === "DisposeCrimeBotComponents")
     {
         API.deleteEntity(crimeBotBlip);
-        resource.Cef.CloseBot();
+        resource.Cef.CloseCef();
     }
     else if (eventName === "DrawAddingCrimeBotComponents") {
         addingCrimeBotMarker = API.createMarker(1,
             args[0],
             new Vector3(),
             new Vector3(),
-            new Vector3(2, 2, 2),
+            new Vector3(1, 1, 1),
             255,
             0,
             0,

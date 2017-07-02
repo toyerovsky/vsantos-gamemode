@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GTANetworkServer;
 using GTANetworkShared;
+using Newtonsoft.Json;
 using Serverside.Controllers;
 using Serverside.Core.Login;
 using Serverside.Database;
@@ -51,6 +52,15 @@ namespace Serverside.Core
             {
                 sender.position = new Vector3((float)arguments[0], (float)arguments[1], (float)arguments[2]);
             }
+            //To zdarzenie musi mieć tylko jedną subskrypcę
+            else if (eventName == "InvokeWaypointVector")
+            {
+                if (sender.HasData("WaypointVectorHandler"))
+                {
+                    var waypointAction = (Action<Vector3>) sender.GetData("WaypointPositionHandler");
+                    waypointAction.Invoke(new Vector3((float)arguments[0], (float)arguments[1], (float)arguments[2]));
+                }
+            }
         }
 
         private void API_onResourceStart()
@@ -66,7 +76,7 @@ namespace Serverside.Core
         {
             Task dbStop = Task.Run(() =>
             {
-                foreach (KeyValuePair<long, AccountController> p in RPEntityManager.GetAccounts().Where(x => x.Value != null))
+                foreach (KeyValuePair<long, AccountController> p in RPEntityManager.GetAccounts().Where(x => x.Value?.CharacterController != null))
                 {
                     AccountController ac = p.Value;
                     //Zmiana postaci pola Online w postaci po wyłączeniu serwera dla graczy którzy byli online

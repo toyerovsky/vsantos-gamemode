@@ -84,10 +84,12 @@ namespace Serverside.Core
 
         public static GroupController GetGroup(string groupName) => Groups.Single(x => x.GroupData.Name.StartsWith(groupName.ToLower()));
 
+        //Sztuczka żeby sloty były od 1 do 3
         public static List<GroupController> GetPlayerGroups(AccountController controller)
         {
             return Groups.Where(
-                g => g.GroupData.Workers.Any(x => x.Character.Id == controller.CharacterController.Character.Id)).ToList();
+                    g => g.GroupData.Workers.Any(x => x.Character.Id == controller.CharacterController.Character.Id))
+                .ToList();
         }
 
         public static List<GroupController> GetGroups() => Groups;

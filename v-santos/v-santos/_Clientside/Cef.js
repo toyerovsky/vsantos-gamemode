@@ -132,8 +132,8 @@ function GetCrimeBotItems() {
     return crimeBotMenuDataSource;
 }
 
-function CrimeBotBuy(i) {
-    API.triggerServerEvent("OnCrimeBotBought", i.toString());
+function CrimeBotBuy(list) {
+    API.triggerServerEvent("OnCrimeBotBought", list);
 }
 
 function GetBusStops() {
@@ -156,4 +156,12 @@ function WheelMenuUseItem(name) {
 
 function CloseCef() {
     CEF.hide();
+}
+
+function debug(string) {
+    API.sendChatMessage(string);
+}
+
+function SendNotification(string) {
+    API.sendNotification(string);
 }

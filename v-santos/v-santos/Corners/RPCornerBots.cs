@@ -22,6 +22,7 @@ namespace Serverside.Corners
             {
                 CornerBotModel bot = new CornerBotModel
                 {
+                    CreatorForumName = sender.GetAccountController().AccountData.Name,
                     BotId = XmlHelper.GetXmlObjects<CornerBotModel>(Constant.ConstantAssemblyInfo.XmlDirectory + @"CornerBots\").Count + 1,
                     Name = Convert.ToString(arguments[0]),
                     PedHash = (PedHash) arguments[1],

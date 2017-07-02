@@ -2,7 +2,6 @@
 using GTANetworkServer.Constant;
 using GTANetworkShared;
 using Serverside.Core;
-//using Serverside.Core.Description;
 using Serverside.Database;
 using Serverside.Database.Models;
 using Serverside.Items;
@@ -56,7 +55,7 @@ namespace Serverside.Controllers
                 }
             }
 
-            //Te metody działają tak, że ujemny mnożnik zmniejsza 0 to normalnie a dodatni poprawia
+            //Te metody działają tak, że ujemny mnożnik zmniejsza | 0 to normalnie | a dodatni poprawia
             //Pola są potrzebne, ponieważ w salonie będą dostępne 3 wersje pojazdu
             //TODO: tańsza o 10% zmniejszone osiągi o -5f
             //TODO: normalna
@@ -74,7 +73,7 @@ namespace Serverside.Controllers
 
         //Dodawanie pojazdu
         public VehicleController(FullPosition spawnPosition, VehicleHash hash, string numberplate, int numberplatestyle, int creatorId, Color primaryColor,
-            Color secondaryColor, float enginePowerMultiplier = 0f, float engineTorqueMultiplier = 0f, Character character = null, Database.Models.Group group = null)
+            Color secondaryColor, float enginePowerMultiplier = 0f, float engineTorqueMultiplier = 0f, Character character = null, Group group = null)
         {
             VehicleData = new Vehicle
             {
@@ -109,67 +108,23 @@ namespace Serverside.Controllers
             API.shared.setEntitySyncedData(Vehicle.handle, "_milage", VehicleData.Milage);
             this.VehicleData.IsSpawned = true;
 
-            ContextFactory.Instance.Vehicles.Add(VehicleData);
-            ContextFactory.Instance.SaveChanges();
+            if (character == null && group == null) _nonDbVehicle = true;
+
+            if (!_nonDbVehicle)
+            {
+                ContextFactory.Instance.Vehicles.Add(VehicleData);
+                ContextFactory.Instance.SaveChanges();
+            }
 
             Vehicle.setData("VehicleController", this);
             RPEntityManager.Add(this);
-        }
-
-        /// <summary>
-        /// Konstruktor do dodawania pojazdów bez obsługi bazy danych
-        /// </summary>
-        /// <param name="spawnPosition"></param>
-        /// <param name="hash"></param>
-        /// <param name="numberplate"></param>
-        /// <param name="numberplatestyle"></param>
-        /// <param name="creatorId"></param>
-        /// <param name="primaryColor"></param>
-        /// <param name="secondaryColor"></param>
-        /// <param name="enginePowerMultiplier"></param>
-        /// <param name="engineTorqueMultiplier"></param>
-        protected VehicleController(FullPosition spawnPosition, VehicleHash hash, string numberplate, int numberplatestyle, int creatorId, Color primaryColor,
-            Color secondaryColor, float enginePowerMultiplier = 0f, float engineTorqueMultiplier = 0f)
-        {
-            this._nonDbVehicle = true;
-
-            VehicleData = new Vehicle
-            {
-                VehicleHash = hash,
-                NumberPlate = numberplate,
-                NumberPlateStyle = numberplatestyle,
-                CreatorId = creatorId,
-                SpawnPositionX = spawnPosition.Position.X,
-                SpawnPositionY = spawnPosition.Position.Y,
-                SpawnPositionZ = spawnPosition.Position.Z,
-                SpawnRotationX = spawnPosition.Rotation.X,
-                SpawnRotationY = spawnPosition.Rotation.Y,
-                SpawnRotationZ = spawnPosition.Rotation.Z,
-                PrimaryColor = primaryColor.ToHex(),
-                SecondaryColor = secondaryColor.ToHex(),
-                EnginePowerMultipler = enginePowerMultiplier,
-                EngineTorqueMultipler = engineTorqueMultiplier,
-                Tunings = new List<Database.Models.Item>(),
-            };
-
-            Initialize();
-
-            this.VehicleData.FuelTank = GetFuelTankSize((VehicleClass)Vehicle.Class);
-            API.shared.setEntitySyncedData(Vehicle.handle, "_maxfuel", VehicleData.Fuel);
-            this.VehicleData.Fuel = VehicleData.FuelTank * 0.2f;
-            API.shared.setEntitySyncedData(Vehicle.handle, "_fuel", VehicleData.Fuel);
-            this.VehicleData.FuelConsumption = Vehicle.maxAcceleration / 0.2f;
-            API.shared.setEntitySyncedData(Vehicle.handle, "_fuelConsumption", VehicleData.FuelConsumption);
-            this.VehicleData.Milage = 0.0f;
-            API.shared.setEntitySyncedData(Vehicle.handle, "_milage", VehicleData.Milage);
-            this.VehicleData.IsSpawned = true;
         }
 
         private void Initialize()
         {
             Vehicle = API.shared.createVehicle(VehicleData.VehicleHash,
                 new Vector3(VehicleData.SpawnPositionX, VehicleData.SpawnPositionY, VehicleData.SpawnPositionZ),
-                new Vector3(VehicleData.SpawnRotationX, VehicleData.SpawnRotationY, VehicleData.SpawnPositionZ), 0, 0);
+                new Vector3(VehicleData.SpawnRotationX, VehicleData.SpawnRotationY, VehicleData.SpawnRotationZ), 0, 0);
             API.shared.setVehicleNumberPlate(Vehicle.handle, VehicleData.NumberPlate);
             API.shared.setVehicleNumberPlateStyle(Vehicle.handle, VehicleData.NumberPlateStyle);
             Color primary = VehicleData.PrimaryColor.ToColor();

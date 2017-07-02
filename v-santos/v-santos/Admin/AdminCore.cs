@@ -1,5 +1,7 @@
-﻿using GTANetworkServer;
-using GTANetworkServer.Constant;
+﻿using System;
+using System.IO;
+using System.Linq;
+using GTANetworkServer;
 using GTANetworkShared;
 using Serverside.Core;
 using Serverside.Core.Extensions;
@@ -38,6 +40,22 @@ namespace Serverside.Admin
             }
             sender.position = new Vector3(x, y, z);
         }
+
+        [Command("tpmap", "~y~ UŻYJ ~w~ /tpmap")]
+        public void TeleportToWaypoint(Client sender)
+        {
+            if (sender.GetAccountController().AccountData.ServerRank < ServerRank.Support)
+            {
+                sender.Notify("Nie posiadasz uprawnień do teleportu na waypoint.");
+                return;
+            }
+            sender.triggerEvent("GetWaypointPosition");
+
+            Action<Vector3> teleportAction = position => sender.position = position;
+
+            sender.SetData("WaypointVectorHandler", teleportAction);
+        }
+        
 
         [Command("tp", "~y~ UŻYJ ~w~ /tp [id]")]
         public void TeleportToPlayer(Client sender, int id)
@@ -151,6 +169,30 @@ namespace Serverside.Admin
                 sender.invincible = true;
                 sender.Notify("Włączono niewidzialność.");
             }
+        }
+
+        [Command("savepos")]
+        public void SaveCustomPosition(Client sender, string name)
+        {
+            if (sender.GetAccountController().AccountData.ServerRank < ServerRank.Support)
+            {
+                return;
+            }
+
+            string path = $@"{Constant.ConstantAssemblyInfo.WorkingDirectory}\Files\CustomPositions.txt";
+        
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+
+                APIExtensions.ConsoleOutput($@"[File] Utworzono ścieżkę {path}", ConsoleColor.Blue);
+            }
+
+            var data = File.ReadAllLines(path).ToList();
+            
+            data.Add($"[{DateTime.Now}] {name} Pos: {sender.position} Rot: {sender.rotation} Autor: {sender.GetAccountController().AccountData.Name}");
+
+            File.WriteAllLines(path, data);
         }
     }
 }

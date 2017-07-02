@@ -9,5 +9,6 @@ namespace Serverside.CrimeBot.Models
         public string Name { get; set; }
         public FullPosition BotPosition { get; set; }
         public FullPosition VehiclePosition { get; set; }
+        public string CreatorForumName { get; set; }
     }
 }

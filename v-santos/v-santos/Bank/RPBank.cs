@@ -19,9 +19,9 @@ namespace Serverside.Bank
         {
             APIExtensions.ConsoleOutput("[RPBank] Uruchomione pomyslnie.", ConsoleColor.DarkMagenta);
 
-            foreach (var atm in XmlHelper.GetXmlObjects<AtmModel>(Constant.ConstantAssemblyInfo.XmlDirectory + @"Atms\"))
+            foreach (var atm in XmlHelper.GetXmlObjects<AtmModel>($@"{Constant.ConstantAssemblyInfo.XmlDirectory}Atms\"))
             {
-                new Atm(API, atm); //Nowa instancja bankomatu spawnuje go w świecie gry
+                new Atm(API, atm);
             }
         }
 
@@ -32,7 +32,7 @@ namespace Serverside.Bank
                 if (decimal.TryParse(arguments[0].ToString(), out decimal money))
                 {
                     RPChat.SendMessageToNearbyPlayers(sender,
-                        $"wkłada {(money > 3000 ? "gruby" : "chudy")} plik gotówki do bankomatu i po przetworzeniu operacji zabiera kartę.", ChatMessageType.ServerMe);
+                        $"wkłada {(money >= 3000 ? "gruby" : "chudy")} plik gotówki do bankomatu i po przetworzeniu operacji zabiera kartę.", ChatMessageType.ServerMe);
                     BankHelper.TakeMoneyToBank(sender, money);
                 }
             }
@@ -41,7 +41,7 @@ namespace Serverside.Bank
                 if (decimal.TryParse(arguments[0].ToString(), out decimal money))
                 {
                     RPChat.SendMessageToNearbyPlayers(sender,
-                        $"wyciąga z bankomatu {(money > 3000 ? "gruby" : "chudy")} plik gotówki, oraz kartę.", ChatMessageType.ServerMe);
+                        $"wyciąga z bankomatu {(money >= 3000 ? "gruby" : "chudy")} plik gotówki, oraz kartę.", ChatMessageType.ServerMe);
                     BankHelper.GiveMoneyFromBank(sender, money);
                 }
             }
@@ -52,6 +52,12 @@ namespace Serverside.Bank
         [Command("dodajbankomat")]
         public void CreateAtm(Client sender)
         {
+            //if (sender.GetAccountController().AccountData.ServerRank < ServerRank.GameMaster)
+            //{
+            //    sender.Notify("Nie posiadasz uprawnień do tworzenia grupy.");
+            //    return;
+            //}
+
             sender.Notify("Ustaw się w wybranej pozycji, a następnie wpisz /tu.");
             sender.Notify("...użyj /diag aby poznać swoją obecną pozycję.");
 
@@ -63,24 +69,25 @@ namespace Serverside.Bank
                 {
                     AtmModel atm = new AtmModel
                     {
+                        CreatorForumName = o.GetAccountController().AccountData.Name,
                         Position = new FullPosition
                         {
                             Position = new Vector3
                             {
-                                X = sender.position.X,
-                                Y = sender.position.Y,
-                                Z = sender.position.Z
+                                X = o.position.X,
+                                Y = o.position.Y,
+                                Z = o.position.Z
                             },
 
                             Rotation = new Vector3
                             {
-                                X = sender.rotation.X,
-                                Y = sender.rotation.Y,
-                                Z = sender.rotation.Z
+                                X = o.rotation.X,
+                                Y = o.rotation.Y,
+                                Z = o.rotation.Z
                             }
                         }
                     };
-                    XmlHelper.AddXmlObject(atm, Constant.ConstantAssemblyInfo.XmlDirectory + @"Atms\");
+                    XmlHelper.AddXmlObject(atm, $@"{Constant.ConstantAssemblyInfo.XmlDirectory}Atms\");
                     new Atm(API, atm); //Nowa instancja bankomatu spawnuje go w świecie gry
                     sender.Notify("Dodawanie bankomatu zakończyło się pomyślnie.");
                     API.onChatCommand -= Handler;

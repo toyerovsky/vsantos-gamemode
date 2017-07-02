@@ -107,6 +107,7 @@ namespace Serverside.Core.Telephone.Booth
                 {
                     TelephoneBoothModel booth = new TelephoneBoothModel
                     {
+                        CreatorForumName = o.GetAccountController().AccountData.Name,
                         Position = new FullPosition
                         {
                             Position = new Vector3

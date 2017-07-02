@@ -1,13 +1,14 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using GTANetworkServer;
+using GTANetworkServer.Constant;
 using GTANetworkShared;
+using Serverside.Controllers;
 using Serverside.Core;
 using Serverside.Core.Extensions;
 using Serverside.CrimeBot.Models;
 using Serverside.Database;
-using Serverside.Groups;
 using Serverside.Groups.Base;
-using Vehicle = GTANetworkServer.Vehicle;
 
 namespace Serverside.CrimeBot
 {
@@ -21,13 +22,17 @@ namespace Serverside.CrimeBot
         [Command("dodajbotp")]
         public void AddCrimeBot(Client sender, string name)
         {
+            //if (sender.GetAccountController().AccountData.ServerRank < ServerRank.GameMaster)
+            //{
+            //    sender.Notify("Nie posiadasz uprawnień do tworzenia grupy.");
+            //    return;
+            //}
+
             sender.Notify("Ustaw się w wybranej pozycji, a następnie wpisz /tu.");
             sender.Notify("...użyj /diag aby poznać swoją obecną pozycję.");
 
             FullPosition botPosition = null;
-            Vehicle botVehicle = API.shared.createVehicle(VehicleHash.Sentinel,
-                        new Vector3(sender.position.X + 2, sender.position.Y + 2, sender.position.Z),
-                sender.rotation, 0, 0, 2137);
+            VehicleController botVehicle = null;
 
             API.onChatCommand += Handler;
 
@@ -35,6 +40,7 @@ namespace Serverside.CrimeBot
             {
                 if (o == sender && command == "/tu" && botPosition == null)
                 {
+                    cancel.Cancel = true;
                     botPosition = new FullPosition
                     {
                         Position = new Vector3
@@ -49,46 +55,55 @@ namespace Serverside.CrimeBot
                             X = sender.rotation.X,
                             Y = sender.rotation.Y,
                             Z = sender.rotation.Z
-                        }
+                        },
+
+                        Direction = new Vector3(0f, 0f, 0f)
                     };
 
-                    API.shared.triggerClientEvent(sender, "DrawAddingCrimeBotComponents", botPosition.Position);
+                    API.shared.triggerClientEvent(sender, "DrawAddingCrimeBotComponents", new Vector3(botPosition.Position.X, botPosition.Position.Y, botPosition.Position.Z - 1));
                     sender.Notify("Ustaw pojazd w wybranej pozycji następnie wpisz /tu.");
-                    botVehicle.dimension = 0;
-                    API.shared.setPlayerIntoVehicle(sender, botVehicle, -1);
+
+                    botVehicle = new VehicleController(new FullPosition(new Vector3(sender.position.X + 2, sender.position.Y + 2, sender.position.Z), sender.rotation), VehicleHash.Sentinel, "Admin", 0, 0, new Color(0, 0, 0), new Color(0, 0, 0));
+
+                    API.shared.setPlayerIntoVehicle(sender, botVehicle.Vehicle, -1);
 
                 }
-                else if (o == sender && command == "/tu" && botPosition != null)
+                else if (o == sender && command == "/tu" && botPosition != null && botVehicle != null)
                 {
+                    cancel.Cancel = true;
+
                     var botVehiclePosition = new FullPosition
                     {
                         Position = new Vector3
                         {
-                            X = botVehicle.position.X,
-                            Y = botVehicle.position.Y,
-                            Z = botVehicle.position.Z
+                            X = botVehicle.Vehicle.position.X,
+                            Y = botVehicle.Vehicle.position.Y,
+                            Z = botVehicle.Vehicle.position.Z
                         },
 
                         Rotation = new Vector3
                         {
-                            X = botVehicle.rotation.X,
-                            Y = botVehicle.rotation.Y,
-                            Z = botVehicle.rotation.Z
-                        }
+                            X = botVehicle.Vehicle.rotation.X,
+                            Y = botVehicle.Vehicle.rotation.Y,
+                            Z = botVehicle.Vehicle.rotation.Z
+                        },
+
+                        Direction = new Vector3(0f, 0f, 0f)
                     };
 
                     API.shared.triggerClientEvent(sender, "DisposeAddingCrimeBotComponents");
 
                     XmlHelper.AddXmlObject(new CrimeBotPosition
                     {
+                        CreatorForumName = o.GetAccountController().AccountData.Name,
                         Name = name,
                         BotPosition = botPosition,
                         VehiclePosition = botVehiclePosition
-                    }, Constant.ConstantAssemblyInfo.XmlDirectory + @"CrimeBotPositions\");
+                    }, $@"{Constant.ConstantAssemblyInfo.XmlDirectory}CrimeBotPositions\");
 
-                    sender.Notify("Dodawanie bota zakończyło się pomyślnie!");
+                    sender.Notify("Dodawanie pozycji bota zakończyło się pomyślnie!");
                     API.shared.warpPlayerOutOfVehicle(sender);
-                    API.shared.deleteEntity(botVehicle);
+                    botVehicle.Dispose();
                     API.onChatCommand -= Handler;
                 }
             };
@@ -111,7 +126,7 @@ namespace Serverside.CrimeBot
                     }
 
                     var crimeBotData = ContextFactory.Instance.CrimeBots.Single(b => b.Group.Id == group.Id);
-                    var position = XmlHelper.GetXmlObjects<CrimeBotPosition>(@"CrimeBotPositions\")[(int)arguments[0]];
+                    var position = XmlHelper.GetXmlObjects<CrimeBotPosition>($@"{Constant.ConstantAssemblyInfo.XmlDirectory}CrimeBotPositions\")[Convert.ToInt32(arguments[0])];
 
                     group.CrimeBot = new CrimeBot(player, group, position.VehiclePosition, API, crimeBotData.Name, crimeBotData.Model, position.BotPosition);
                     group.CrimeBot.Intialize();

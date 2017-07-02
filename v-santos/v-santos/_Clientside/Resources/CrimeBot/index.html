@@ -6,84 +6,98 @@
     <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 <body>
-<div class="container">
-    <div class="col-sm-12 col-sm-offset-2 main">
-        <div class="col-sm-6">
-            <table id="dataTable" class="Table">
-                <tr>
-                    <th>Nazwa</th>
-                    <th>Koszt</th>
-                    <th>Ilość</th>
-                    <th>-</th>
-                </tr>
-            </table>
-            <button class="btn btn-half btn-danger" id="cancel">Anuluj</button>
-            <button class="btn btn-half btn-success" id="accept">Kup</button>
+    <div class="container">
+        <div class="col-sm-12 col-sm-offset-2 main">
+            <div class="col-sm-6">
+                <table id="dataTable" class="Table">
+                    <tr>
+                        <th>Nazwa</th>
+                        <th>Koszt</th>
+                        <th>Ilość</th>
+                        <th>Wybór</th>
+                    </tr>
+                </table>
+                <button class="btn btn-half btn-danger" id="cancel">Anuluj</button>
+                <button class="btn btn-half btn-success" id="accept">Kup</button>
+            </div>
         </div>
     </div>
-</div>
-<script>
+    <script>
 
-    var currentSelect = [];
+        var inputs = [];
+        var currentSelect = [];
 
-    class CrimeBotItemData
-    {
-        constructor(name, count, type)
+        class CrimeBotItemData {
+            constructor(name, count, type, databaseField) {
+                this.Name = name;
+                this.Count = count;
+                this.Type = type;
+                this.DatabaseField = databaseField;
+            }
+
+        }
+
+        document.addEventListener("DOMContentLoaded", function (event) {
+            PrepareData();
+        });
+
+        function PrepareData() {
+            var ds = JSON.parse(resourceCall("GetCrimeBotItems"));
+            var table = document.getElementById("dataTable");
+            for (var i = 0; i < ds.length; i++) {
+                currentSelect.push(new CrimeBotItemData(ds[i].Name, 0, ds[i].Type, ds[i].DatabaseField));
+
+                var row = table.insertRow();
+                var name = row.insertCell();
+                var cost = row.insertCell();
+                var count = row.insertCell();
+                var wantedNumber = row.insertCell();
+
+                name.innerHTML = ds[i].Name.toString();
+                cost.innerHTML = `$${ds[i].Cost}`;
+                count.innerHTML = ds[i].Count;
+
+                var x = document.createElement("INPUT");
+                x.setAttribute("type", "text");
+                x.setAttribute("dsIndex", i.toString());
+                x.setAttribute("class", "CustomInput");
+                wantedNumber.appendChild(x);
+                inputs.push(x);
+            }
+        }
+
+        document.getElementById("accept").onclick = function ()
         {
-            this.Name = name;
-            this.Count = count;
-            this.type = type;
+            if (TryReadData()) {
+                var itemsToSend = JSON.stringify(currentSelect);
+                resourceCall("CrimeBotBuy", itemsToSend);
+            }
         }
 
-    }
+        document.getElementById("cancel").onclick = function () {
+            resourceCall("CloseCef");
+        }
 
-    document.addEventListener("DOMContentLoaded", function (event)
-    {
-        PrepareData();
-    });
-
-    function PrepareData()
-    {
-        var ds = JSON.parse(resourceCall("GetCrimeBotItems"));
-        var table = document.getElementById("dataTable");
-        for (var i = 0; i < ds.length; i++) {
-            currentSelect.push(new CrimeBotItemData(ds[i].Name, 0, ds[i].Type));
-
-            var row = table.insertRow();
-            var name = row.insertCell();
-            var cost = row.insertCell();
-            var count = row.insertCell();
-            var wantedNumber = row.InsertCell();
-
-            name.innerHTML = ds[i].Name.toString();
-            cost.innerHTML = `$${ds[i].Cost}`;
-            count.innerHTML = ds[i].Count;
-
-            var x = document.createElement("INPUT");
-            x.setAttribute("type", "number");
-            x.setAttribute("min", "1");
-            x.setAttribute("dsIndex", i.toString());
-            x.addEventListener("change", () =>
+        function TryReadData()
+        {
+            for (var i = 0; i < inputs.length; i++)
             {
-                var input = Object.assign({}, x);
-                if (isNaN(input.value)) return;
-                currentSelect[input.getAttribute("dsIndex")].Count = input.value;
-            });
-            wantedNumber.appendChild(x);
+                if (inputs[i].value == "")
+                    continue;
+
+                if (!isNaN(parseInt(inputs[i].value)))
+                {
+                    currentSelect[inputs[i].getAttribute("dsIndex")].Count = inputs[i].value;
+                }
+                else
+                {
+                    resourceCall("SendNotification", "Podano dane w nieprawidłowym formacie.");
+                    return false;
+                }
+            }
+            return true;
         }
-    }
 
-    document.getElementById("accept").onclick = function () 
-    {
-        var itemsToSend = JSON.stringify(currentSelect);
-        resourceCall("CrimeBotBuy", itemsToSend);
-    }
-
-    document.getElementById("cancel").onclick = function ()
-    {
-        resourceCall("CloseCef");
-    }
-
-</script>
+    </script>
 </body>
 </html>

@@ -18,7 +18,17 @@ namespace Serverside.Controllers
 
         public Client Client { get; private set; }
         public CharacterController CharacterController;
-        public int ServerId => RPEntityManager.CalculateServerId(this);
+
+        private int _serverId;
+        public int ServerId
+        {
+            get
+            {
+                var id = RPEntityManager.CalculateServerId(this);
+                this.Client.nametag = $"({id}) {CharacterController.FormatName}";
+                return id;
+            }
+        }
 
         public AccountController(Account accountdata, Client client)
         {

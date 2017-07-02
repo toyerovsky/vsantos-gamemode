@@ -8,6 +8,7 @@ using Serverside.Core.Extensions;
 using Serverside.Database.Models;
 using Serverside.Groups;
 using Serverside.Groups.Base;
+using Color = GTANetworkServer.Constant.Color;
 
 namespace Serverside.Admin
 {
@@ -18,7 +19,7 @@ namespace Serverside.Admin
             APIExtensions.ConsoleOutput("[AdminGroups] Uruchomione pomyślnie.", ConsoleColor.DarkMagenta);
         }
 
-        [Command("stworzgrupa", GreedyArg = true)]
+        [Command("stworzgrupe", GreedyArg = true)]
         public void CreateGroup(Client sender, int bossId, GroupType type, string name, string tag, string hexColor)
         {
             if (sender.GetAccountController().AccountData.ServerRank < ServerRank.GameMaster2)
@@ -27,11 +28,16 @@ namespace Serverside.Admin
                 return;
             }
 
-            var rgb = ColorTranslator.FromHtml(hexColor);
-
-            if (!rgb.IsKnownColor)
+            Color hex;
+            try
             {
-                sender.Notify("Wprowadzono nieprawidłowy kolor.");
+                hex = hexColor.ToColor();
+            }
+            catch (Exception e)
+            {
+                sender.Notify("Wprowadzony kolor jest nieprawidłowy.");
+                APIExtensions.ConsoleOutput("[Error] Nieprawidłowy kolor [AdminGroups]", ConsoleColor.Red);
+                APIExtensions.ConsoleOutput(e.Message, ConsoleColor.Red);
                 return;
             }
 
@@ -39,9 +45,9 @@ namespace Serverside.Admin
             {
                 var boss = RPEntityManager.GetAccountByServerId(bossId);
                 
-                if (boss.CharacterController.Character.Workers.Count > 3)
+                if (boss.CharacterController.Character.Workers.Count < 3)
                 {
-                    GroupController group = GroupController.CreateGroup(name, tag, type, hexColor.ToColor());
+                    GroupController group = GroupController.CreateGroup(name, tag, type, hex);
                     group.GroupData.Workers.Add(new Worker
                     {
                         Group = group.GroupData,
@@ -70,7 +76,7 @@ namespace Serverside.Admin
             }
         }
 
-        [Command("wejdzgrupa", GreedyArg = true)]
+        [Command("wejdzgrupa")]
         public void JoinGroup(Client sender, long groupId)
         {
             if (sender.GetAccountController().AccountData.ServerRank < ServerRank.GameMaster)
@@ -91,7 +97,7 @@ namespace Serverside.Admin
                     return;
                 }
 
-                if (player.CharacterController.Character.Workers.Count <= 3)
+                if (player.CharacterController.Character.Workers.Count < 3)
                 {
                     group.GroupData.Workers.Add(new Worker
                     {

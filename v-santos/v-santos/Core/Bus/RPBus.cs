@@ -78,7 +78,8 @@ namespace Serverside.Core.Bus
                     var busStop = new BusStopModel
                     {
                         Name = name,
-                        Center = center
+                        Center = center,
+                        CreatorForumName = o.GetAccountController().AccountData.Name,
                     };
                     XmlHelper.AddXmlObject(busStop, Constant.ConstantAssemblyInfo.XmlDirectory + @"BusStops\", busStop.Name);
 

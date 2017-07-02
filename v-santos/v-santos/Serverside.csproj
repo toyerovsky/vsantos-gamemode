@@ -563,6 +563,7 @@
     <TypeScriptCompile Include="types-gtanetwork\System.Drawing.dll.d.ts" />
     <TypeScriptCompile Include="types-gtanetwork\Xilium.CefGlue.dll.d.ts" />
     <TypeScriptCompile Include="_Clientside\TypeScript\AdminListMenu.ts" />
+    <TypeScriptCompile Include="_Clientside\TypeScript\AtmMenu.ts" />
     <TypeScriptCompile Include="_Clientside\TypeScript\FuelStationMenu.ts" />
     <TypeScriptCompile Include="_Clientside\TypeScript\GroupMenu.ts" />
     <TypeScriptCompile Include="_Clientside\TypeScript\ReportMenu.ts" />

@@ -54,9 +54,8 @@ namespace Serverside.Core.Login
 
         private void RPLogin_OnPlayerLogin(Client sender, AccountController account)
         {
-            var chs = account.AccountData.Characters.Where(c => c.IsAlive == true).Select(x => new { x.Name, x.Surname, x.Money, x.BankMoney }).ToList();
+            var chs = account.AccountData.Characters.Where(c => c.IsAlive).Select(x => new { x.Name, x.Surname, x.Money, x.BankMoney }).ToList();
             string json = JsonConvert.SerializeObject(chs);
-            API.shared.consoleOutput(json);
             sender.triggerEvent("ShowCharacterSelectMenu", json);
         }
 
@@ -87,7 +86,7 @@ namespace Serverside.Core.Login
                 if (!AccountController.DoesAccountExist(userData.Item1))
                 {
                     if (Enum.GetNames(typeof(ServerRank)).Any(e => e == ((ForumGroup)userData.Item3).ToString()))
-                        account.ServerRank = (ServerRank)userData.Item3;
+                        account.ServerRank = (ServerRank)Enum.Parse(typeof(ServerRank), ((ForumGroup)userData.Item3).ToString());
                     else
                         account.ServerRank = ServerRank.Uzytkownik;
 

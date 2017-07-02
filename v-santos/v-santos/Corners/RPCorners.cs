@@ -26,7 +26,7 @@ namespace Serverside.Corners
             }
         }
 
-        #region Komendy administracji
+        #region ADMIN COMMANDS
         [Command("dodajrog", "~y~UŻYJ: ~w~ /dodajrog [id npc np: 1, 2, 8, 4, 5]", GreedyArg = true)]
         public void AddCorner(Client sender, string ids)
         {
@@ -101,6 +101,7 @@ namespace Serverside.Corners
                 {
                     CornerModel corner = new CornerModel
                     {
+                        CreatorForumName = o.GetAccountController().AccountData.Name,
                         Position = position,
                         CornerBots = XmlHelper.GetXmlObjects<CornerBotModel>(Constant.ConstantAssemblyInfo.XmlDirectory + @"CornerBots\").Where(e => correctBotIds.Contains(e.BotId)).ToList(),
                         BotPositions = botPositions

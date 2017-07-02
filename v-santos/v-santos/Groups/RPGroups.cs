@@ -151,7 +151,7 @@ namespace Serverside.Groups
                     return;
                 }
 
-                if (sender.TryGetGroupBySlot(Convert.ToInt16(slot), out GroupController group))
+                if (sender.TryGetGroupByUnsafeSlot(Convert.ToInt16(slot), out GroupController group))
                 {
                     var worker =
                         group.GroupData.Workers.Single(x => x.Character.Id == player.CharacterController.Character.Id);
@@ -192,7 +192,7 @@ namespace Serverside.Groups
                 sender.Notify("Podano kwotę gotówki w nieprawidłowym formacie.");
             }
 
-            if (sender.TryGetGroupBySlot(slot, out GroupController group))
+            if (sender.TryGetGroupByUnsafeSlot(slot, out GroupController group))
             {
                 if (group.CanPlayerTakeMoney(sender.GetAccountController()))
                 {
@@ -227,7 +227,7 @@ namespace Serverside.Groups
                 sender.Notify("Podano kwotę gotówki w nieprawidłowym formacie.");
             }
 
-            if (sender.TryGetGroupBySlot(groupSlot, out GroupController group))
+            if (sender.TryGetGroupByUnsafeSlot(groupSlot, out GroupController group))
             {
                 if (sender.HasMoney(safeMoneyCount))
                 {
@@ -263,7 +263,7 @@ namespace Serverside.Groups
                 return;
             }
 
-            if (sender.TryGetGroupBySlot(slot, out GroupController group))
+            if (sender.TryGetGroupByUnsafeSlot(slot, out GroupController group))
             {
                 sender.triggerEvent("ShowGroupMenu", JsonConvert.SerializeObject(new
                 {
@@ -293,7 +293,7 @@ namespace Serverside.Groups
         {
             var player = sender.GetAccountController();
 
-            if (sender.TryGetGroupBySlot(groupSlot, out GroupController group))
+            if (sender.TryGetGroupByUnsafeSlot(groupSlot, out GroupController group))
             {
                 if (group.CanPlayerManageWorkers(sender.GetAccountController()))
                 {
@@ -329,7 +329,7 @@ namespace Serverside.Groups
         {
             var player = sender.GetAccountController();
 
-            if (sender.TryGetGroupBySlot(groupSlot, out GroupController group))
+            if (sender.TryGetGroupByUnsafeSlot(groupSlot, out GroupController group))
             {
                 if (group.CanPlayerManageWorkers(sender.GetAccountController()))
                 {

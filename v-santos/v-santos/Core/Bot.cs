@@ -4,7 +4,7 @@ using GTANetworkShared;
 
 namespace Serverside.Core
 {
-    public abstract class Bot : IDisposable
+    public class Bot : IDisposable
     {
         public string Name { get; set; }
         public PedHash PedHash { get; set; }
@@ -37,8 +37,8 @@ namespace Serverside.Core
         {
             BotHandle = Api.createPed(PedHash, SpawnPosition.Position, 1f);
             Api.setEntityRotation(BotHandle, SpawnPosition.Rotation);
-            Api.setEntityInvincible(BotHandle, true);
-            BotHandle.freezePosition = false;
+            //Api.setEntityInvincible(BotHandle, true);
+            //BotHandle.freezePosition = false;
             NameLabel = Api.createTextLabel(Name,
                 new Vector3(SpawnPosition.Position.X, SpawnPosition.Position.Y, SpawnPosition.Position.Z + 1), 10f, 0.7f, true);
             NameLabel.attachTo(BotHandle, "SKEL_Head", new Vector3(0f, 0f, 1f), BotHandle.rotation);

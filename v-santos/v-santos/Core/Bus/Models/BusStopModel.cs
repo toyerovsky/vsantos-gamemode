@@ -8,7 +8,6 @@ namespace Serverside.Core.Bus.Models
     {
         public string Name { get; set; }
         public Vector3 Center { get; set; }
-
-        public BusStopModel() { }
+        public string CreatorForumName { get; set; }
     }
 }

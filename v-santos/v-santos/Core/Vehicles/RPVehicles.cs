@@ -41,51 +41,30 @@ namespace Serverside.Core.Vehicles
             else if (eventName == "OnPlayerSpawnVehicle")
             {
                 AccountController ac = sender.GetAccountController();
-                API.sendChatMessageToPlayer(sender, (long)sender.GetData("SelectedVehicleID")+"");
+
                 VehicleController userVehicleController = RPEntityManager.GetVehicle((long)sender.GetData("SelectedVehicleID"));
                 if (userVehicleController != null)
                 {
                     //unspawn
-                    //userVehicleController.Save(); // w Dispose jest Save ......
                     userVehicleController.Dispose();
-                    Api.sendNotificationToPlayer(sender, "Pojazd został schowany w garażu!");
+                    sender.Notify("Pojazd został schowany w garażu!");
                 }
                 else
                 {
                     var userVehicle = VehicleController.GetVehicleData(ac.CharacterController, (long)sender.GetData("SelectedVehicleID"));
                     VehicleController controller = new VehicleController(userVehicle);
 
-                    //float engineMultipier = 0f;
-                    //float torqueMultipier = 0f;
+                    int blip = 225;
+                    if (controller.Vehicle.Class == (int) VehicleClass.Motorcycles) blip = 226;
+                    if (controller.Vehicle.Class == (int) VehicleClass.Utility ||
+                        controller.Vehicle.Class == (int) VehicleClass.Service ||
+                        controller.Vehicle.Class == (int) VehicleClass.Industrial) blip = 447;
+                    if (controller.Vehicle.Class == (int) VehicleClass.Heli) blip = 481;
+                    if (controller.Vehicle.Class == (int) VehicleClass.Planes) blip = 307;
 
-                    //foreach (var tuning in controller.VehicleData.Tuning)
-                    //{
-                    //    if ((ItemType)tuning.ItemType == ItemType.Tuning)
-                    //    {
-                    //        if (tuning.FirstParameter != null && (TuningType)tuning.FirstParameter == TuningType.Speed)
-                    //        {
-                    //            if (tuning.SecondParameter != null) engineMultipier += (float)tuning.SecondParameter;
-                    //            if (tuning.ThirdParameter != null) torqueMultipier += (float)tuning.ThirdParameter;
-                    //        }
-                    //    }
-                    //}
+                    sender.triggerEvent("DrawVehicleComponents", controller.Vehicle.position, blip, 24);
 
-                    //Api.setVehicleEnginePowerMultiplier(controller.Vehicle, engineMultipier);
-                    //Api.setVehicleEngineTorqueMultiplier(controller.Vehicle, torqueMultipier);
-
-                    //var primaryColor = userVehicle.PrimaryColor.ToColor();
-                    //Api.setVehicleCustomPrimaryColor(controller.Vehicle, primaryColor.red, primaryColor.green, primaryColor.blue);
-
-                    //var secondaryColor = userVehicle.SecondaryColor.ToColor();
-                    //Api.setVehicleCustomSecondaryColor(controller.Vehicle, secondaryColor.red, secondaryColor.green, secondaryColor.blue);
-
-                    //Api.setVehicleHealth(controller.Vehicle, (float)userVehicle.Health);
-                    //Api.setVehicleWheelType(controller.Vehicle, userVehicle.WheelType);
-                    //Api.setVehicleWheelColor(controller.Vehicle, userVehicle.WheelColor);
-
-                    //new VehicleController(ac.CharacterController.Character.Vehicle.Where(x => x.Id == userVehicle.Id).First());
-
-                    Api.sendNotificationToPlayer(sender, "Pojazd został wyprowadzony z garażu!");
+                    sender.Notify("Pojazd został wyprowadzony z garażu!");
                 }
                 sender.ResetData("SelectedVehicleID");
             }
@@ -149,12 +128,13 @@ namespace Serverside.Core.Vehicles
                 if (vc.VehicleData.Character == account.CharacterController.Character)
                 {
                     API.sendNotificationToPlayer(player, "Wsiadłeś do swojego pojazdu.");
+                    player.triggerEvent("DisposeVehicleComponents");
                 }
             }
             //API.triggerClientEvent(player, "show_vehicle_hud"); // sprawdzanie po stronie klienta
         }
 
-        private void API_onPlayerExitVehicle(Client player, NetHandle vehicle)
+        private void API_onPlayerExitVehicle(Client sender, NetHandle vehicle)
         {
             //API.triggerClientEvent(player, "hide_vehicle_hud"); // sprawdzanie po stronie klienta
         }

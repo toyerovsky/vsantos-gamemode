@@ -35,7 +35,7 @@ namespace Serverside.Controllers
         /// <param name="color">Kolor grupy</param>
         protected GroupController(string name, string tag, GroupType type, Color color)
         {
-            GroupData = new Group();
+            GroupData = new Group {Workers = new List<Worker>()};
             this.GroupData.Name = name;
             this.GroupData.Tag = tag;
             this.GroupData.GroupType = type;
@@ -134,6 +134,7 @@ namespace Serverside.Controllers
         {
             switch (type)
             {
+                case GroupType.Przestepcza: return new CrimeGroup(name, tag, type, color);
                 case GroupType.Urzad: return new CityHall(name, tag, type, color);
                 case GroupType.Policja: return new Police(name, tag, type, color);
                 default:
@@ -147,6 +148,7 @@ namespace Serverside.Controllers
             var groupType = editor.GroupType;
             switch (groupType)
             {
+                case GroupType.Przestepcza: return new CrimeGroup(editor);
                 case GroupType.Urzad: return new CityHall(editor);
                 case GroupType.Policja: return new Police(editor);
                 default:

@@ -11,6 +11,7 @@ namespace Serverside.Autonomic.Carshop.Models
         public VehicleHash Hash { get; set; }
         public VehicleClass Category { get; set; }
         public decimal Cost { get; set; }
+        public string CreatorForumName { get; set; }
 
         public CarshopVehicle(string name, VehicleHash hash, VehicleClass category, decimal cost)
         {

@@ -12,5 +12,6 @@ namespace Serverside.Autonomic.Market.Models
         public Vector3 Center { get; set; }
         public float Radius { get; set; }
         public List<MarketItem> Items { get; set; }
+        public string CreatorForumName { get; set; }
     }
 }

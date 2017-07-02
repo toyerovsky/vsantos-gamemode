@@ -14,16 +14,21 @@ namespace Serverside.Core.Extensions
             return client.GetData("RP_ACCOUNT") as AccountController;
         }
 
-
         public static void Notify(this Client client, string message, bool flashing = false)
         {
             API.shared.sendNotificationToPlayer(client, message, flashing);
         }
 
-        public static bool TryGetGroupBySlot(this Client client, short slot, out GroupController group)
+        //slot-- żeby numerowanie dla graczy było od 1 do 3
+        public static bool TryGetGroupByUnsafeSlot(this Client client, short slot, out GroupController group)
         {
-            if (slot > 0 && slot <= 3) group = RPEntityManager.GetGroups().Single(g => g.Id == client.GetAccountController().CharacterController.Character.Workers.ElementAt(slot).Group.Id);
-            else group = null;
+            group = null;
+            if (slot > 0 || slot <= 3)
+            {
+                slot--;
+                var groups = RPEntityManager.GetPlayerGroups(client.GetAccountController());
+                group = (slot < groups.Count) ? groups[slot] : null;
+            }
             return group != null;
         }
 

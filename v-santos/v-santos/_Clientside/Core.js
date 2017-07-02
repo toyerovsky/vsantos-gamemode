@@ -32,6 +32,12 @@ API.onServerEventTrigger.connect(function (eventName, args)
     else if (eventName === "ResetCamera") {
         API.setActiveCamera(null);
     }
+    else if (eventName === "GetWaypointVector") {
+        if (API.isWaypointSet()) {
+            var pos = API.getWaypointPosition();
+            API.triggerServerEvent("InvokeWaypointVector", pos.X, pos.Y, API.getGroundHeight(pos));
+        } 
+    }
 });
 
 API.onUpdate.connect(() =>
