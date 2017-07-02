@@ -12,6 +12,8 @@ namespace Serverside.Corners
 {
     public sealed class RPCorners : Script
     {
+        private List<Corner> Corners { get; set; } = new List<Corner>();
+
         public RPCorners()
         {
             API.onResourceStart += OnResourceStartHandler;
@@ -22,7 +24,7 @@ namespace Serverside.Corners
             APIExtensions.ConsoleOutput("[RPCorners] uruchomione pomyślnie!", ConsoleColor.DarkMagenta);
             foreach (var corner in XmlHelper.GetXmlObjects<CornerModel>(Constant.ConstantAssemblyInfo.XmlDirectory + @"Corners\"))
             {
-                new Corner(corner);
+                Corners.Add(new Corner(corner));
             }
         }
 
@@ -108,7 +110,7 @@ namespace Serverside.Corners
                     };
                     //Dodajemy nowy plik .xml
                     XmlHelper.AddXmlObject(corner, Constant.ConstantAssemblyInfo.XmlDirectory + @"Corners\");
-                    new Corner(corner);
+                    Corners.Add(new Corner(corner));
 
                     sender.Notify("Dodawanie rogu zakończyło się pomyślnie.");
                     API.onChatCommand -= Handler;
@@ -125,6 +127,22 @@ namespace Serverside.Corners
                     sender.Notify("...użyj /diag aby poznać swoją obecną pozycję.");
                 }
             };
+        }
+
+        [Command("usunrog")]
+        public void DeleteCorner(Client sender)
+        {
+            var corner = Corners.OrderBy(a => a.Data.Position.Position.DistanceTo(sender.position)).First();
+            if (XmlHelper.TryDeleteXmlObject(corner.Data.FilePath))
+            {
+                sender.Notify("Usuwanie rogu zakończyło się pomyślnie.");
+                Corners.Remove(corner);
+                corner.Dispose();
+            }
+            else
+            {
+                sender.Notify("Usuwanie rogu zakończyło się niepomyślnie.");
+            }
         }
         #endregion
     }

@@ -1,10 +1,11 @@
-﻿using GTANetworkServer;
+﻿using System;
+using GTANetworkServer;
 using GTANetworkShared;
 using Serverside.Core.Telephone.Booth.Models;
 
 namespace Serverside.Core.Telephone.Booth
 {
-    public class TelephoneBooth
+    public class TelephoneBooth : IDisposable
     {
         public TelephoneCall CurrentCall { get; set; }
         public Client CurrentClient { get; set; }
@@ -53,6 +54,13 @@ namespace Serverside.Core.Telephone.Booth
                     CurrentCall?.Dispose();
                 }
             };
+        }
+
+        public void Dispose()
+        {
+            CurrentCall?.Dispose();
+            Api.deleteColShape(ColShape);
+            Api.deleteEntity(Marker);
         }
     }
 }

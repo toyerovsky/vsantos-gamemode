@@ -171,6 +171,7 @@
     <Compile Include="Groups\Base\Police.cs" />
     <Compile Include="Groups\Enums.cs" />
     <Compile Include="Groups\RPGroups.cs" />
+    <Compile Include="Interfaces\IXmlObject.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\RPItems.cs" />
     <Compile Include="Jobs\Dustman\Dustman.cs" />

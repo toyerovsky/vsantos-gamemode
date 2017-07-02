@@ -1,11 +1,7 @@
-﻿using System;
-using GTANetworkServer;
-using GTANetworkShared;
-using Serverside.Items;
+﻿using Serverside.Items;
 
 namespace Serverside.CrimeBot.Models
 {
-    [Serializable]
     public class CrimeBotItem
     {
         public string Name { get; set; }

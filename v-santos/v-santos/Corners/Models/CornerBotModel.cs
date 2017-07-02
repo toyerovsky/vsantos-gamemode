@@ -1,11 +1,13 @@
 ﻿using System;
 using GTANetworkServer;
+using Serverside.Core;
+using Serverside.Interfaces;
 using Serverside.Items;
 
 namespace Serverside.Corners.Models
 {
     [Serializable]
-    public class CornerBotModel
+    public class CornerBotModel : IXmlObject
     {
         public int BotId { get; set; }
         public string Name { get; set; }
@@ -16,5 +18,6 @@ namespace Serverside.Corners.Models
         public string GoodFarewell { get; set; }
         public string BadFarewell { get; set; }
         public string CreatorForumName { get; set; }
+        public string FilePath { get; set; }
     }
 }

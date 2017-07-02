@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using GTANetworkServer;
 using GTANetworkShared;
 using Serverside.Core.Telephone.Booth.Models;
@@ -9,6 +11,8 @@ namespace Serverside.Core.Telephone.Booth
 {
     public class RPTelephoneBooth : Script
     {
+        private List<TelephoneBooth> Booths { get; set; } = new List<TelephoneBooth>();
+
         public RPTelephoneBooth()
         {
             API.onClientEventTrigger += API_onClientEventTrigger;
@@ -21,7 +25,7 @@ namespace Serverside.Core.Telephone.Booth
             foreach (var booth in XmlHelper.GetXmlObjects<TelephoneBoothModel>(Constant.ConstantAssemblyInfo.XmlDirectory + @"Booths\"))
             {
                 //W konstruktorze spawnujemy budkę telefoniczną do gry
-                new TelephoneBooth(API, booth);
+                Booths.Add(new TelephoneBooth(API, booth));
             }
         }
 
@@ -129,11 +133,33 @@ namespace Serverside.Core.Telephone.Booth
                     };
 
                     XmlHelper.AddXmlObject(booth, Constant.ConstantAssemblyInfo.XmlDirectory + @"Booths\");
-                    new TelephoneBooth(API, booth);
+                    Booths.Add(new TelephoneBooth(API, booth));
                     sender.Notify("Dodawanie budki zakończyło się pomyślnie.");
                     API.onChatCommand -= Handler;
                 }
             }
+        }
+
+        [Command("usunbudke")]
+        public void DeleteBusStop(Client sender)
+        {
+            //if (sender.GetAccountController().AccountData.ServerRank < ServerRank.GameMaster)
+            //{
+            //    sender.Notify("Nie posiadasz uprawnień do usuwania bankomatu.");
+            //    return;
+            //}
+
+            var telephoneBooth = Booths.OrderBy(a => a.Data.Position.Position.DistanceTo(sender.position)).First();
+            if (XmlHelper.TryDeleteXmlObject(telephoneBooth.Data.FilePath))
+            {
+                sender.Notify("Usuwanie budki telefonicznej zakończyło się pomyślnie.");
+                Booths.Remove(telephoneBooth);
+                telephoneBooth.Dispose();
+            }
+            else
+            {
+                sender.Notify("Usuwanie budki telefonicznej zakończyło się niepomyślnie.");
+            }          
         }
         #endregion
     }

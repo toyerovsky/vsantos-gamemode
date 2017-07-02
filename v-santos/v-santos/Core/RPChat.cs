@@ -21,7 +21,6 @@ namespace Serverside.Core
         Megaphone = 50,
 
         ServerDo,
-        PrivateMessage,
         ServerInfo,
         Phone,
         GroupOOC,
@@ -119,8 +118,9 @@ namespace Serverside.Core
                 sender.Notify("Nie znaleziono gracza o podanym Id.");
                 return;
             }
-            SendMessageToPlayer(getter, message, ChatMessageType.PrivateMessage, sender);
-            SendMessageToPlayer(sender, message, ChatMessageType.PrivateMessage, getter);
+
+            API.sendChatMessageToPlayer(sender, $"~o~ [{getter.GetAccountController().ServerId}] {getter.name}: {message}");
+            API.sendChatMessageToPlayer(getter, $"~o~ [{sender.GetAccountController().ServerId}] {sender.name}: {message}");
         }
 
         [Command("b", GreedyArg = true)]
@@ -216,19 +216,15 @@ namespace Serverside.Core
             }
 
             //Dla każdego klienta w zasięgu wyświetl wiadomość, zasięg jest pobierany przez rzutowanie enuma do floata
-            API.shared.getPlayersInRadiusOfPlayer((float)chatMessageType, player).ForEach(c => API.shared.sendChatMessageToPlayer(c, messageColor, message));   
-            
+            API.shared.getPlayersInRadiusOfPlayer((float) chatMessageType, player)
+                .ForEach(c => API.shared.sendChatMessageToPlayer(c, messageColor, message));
         }
 
-        public static void SendMessageToPlayer(Client player, string message, ChatMessageType chatMessageType, Client secondPlayer = null)
+        public static void SendMessageToPlayer(Client player, string message, ChatMessageType chatMessageType)
         {
             message = PrepareMessage(player.name, message, chatMessageType, out string color);
 
-            if (chatMessageType == ChatMessageType.PrivateMessage && secondPlayer != null)
-            {
-                message = $"~o~ [{secondPlayer.GetAccountController().ServerId}] {secondPlayer.name}: {message}";
-            }
-            else if (chatMessageType == ChatMessageType.Phone)
+            if (chatMessageType == ChatMessageType.Phone)
             {
                 color = "~#FFDB00~";
                 message = player.GetAccountController().CharacterController.Character.Gender
@@ -241,6 +237,12 @@ namespace Serverside.Core
         private static string PrepareMessage(string name, string message, ChatMessageType chatMessageType, out string color)
         {
             color = string.Empty;
+
+            if (char.IsLower(message.First()))
+            {
+                message = $"{char.ToUpper(message[0])}{message.Substring(1)}";
+            }
+
             switch (chatMessageType)
             {
                 case ChatMessageType.Normal:
@@ -285,15 +287,11 @@ namespace Serverside.Core
                     break;
             }
 
-            if (char.IsLower(message.First()))
-            {
-                message = char.ToUpper(message.First()) + message.Substring(1);
-            }
-
             if (message.Last() != '.' && message.Last() != '!' && message.Last() != '?')
             {
-                message += ".";
+                message = $"{message}.";
             }
+
             return message;
         }
     }

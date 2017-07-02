@@ -6,6 +6,7 @@ using GTANetworkShared;
 using Serverside.Controllers;
 using Serverside.Core;
 using Serverside.Core.Extensions;
+using Serverside.Corners.Models;
 using Serverside.CrimeBot.Models;
 using Serverside.Database;
 using Serverside.Groups.Base;
@@ -107,6 +108,35 @@ namespace Serverside.CrimeBot
                     API.onChatCommand -= Handler;
                 }
             };
+        }
+
+        [Command("usunbotp", "~y~ UŻYJ ~w~ /usunbotp (nazwa)", GreedyArg = true)]
+        public void DeleteCrimeBotPosition(Client sender, string name = "")
+        {
+            CrimeBotPosition position = null;
+            var positions = XmlHelper
+                .GetXmlObjects<CrimeBotPosition>($@"{Constant.ConstantAssemblyInfo.XmlDirectory}CrimeBotPositions\");
+
+            if (name != "")
+            {
+                position = positions.OrderBy(a => a.BotPosition.Position.DistanceTo(sender.position)).First();
+            }
+            else
+            {
+                if (positions.Any(f => f.Name == name))
+                {
+                    position = positions.First(x => x.Name == name);
+                }
+            }
+            
+            if (position != null && XmlHelper.TryDeleteXmlObject(position.FilePath))
+            {
+                sender.Notify("Usuwanie pozycji bota zakończyło się pomyślnie.");
+            }
+            else
+            {
+                sender.Notify("Usuwanie pozycji bota zakończyło się niepomyślnie.");
+            }
         }
 
         private void API_onClientEventTrigger(Client sender, string eventName, params object[] arguments)

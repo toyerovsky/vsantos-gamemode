@@ -1,4 +1,5 @@
-﻿using GTANetworkServer;
+﻿using System;
+using GTANetworkServer;
 using GTANetworkShared;
 using Serverside.Core.Bus.Models;
 using System.Timers;
@@ -6,7 +7,7 @@ using Serverside.Core.Extensions;
 
 namespace Serverside.Core.Bus
 {
-    public class BusStop
+    public class BusStop : IDisposable
     {
         public BusStopModel Data { get; set; }
         public SphereColShape Shape { get; set; }
@@ -90,6 +91,13 @@ namespace Serverside.Core.Bus
             //    player.triggerEvent("BWTimerTick",
             //        $"{(arrivalTime - DateTime.Now).Minutes}:{secondsToShow}");
             //};
+        }
+
+        public void Dispose()
+        {
+            Shape.onEntityEnterColShape -= OnEntityEnterColshapeHandler;
+            Shape.onEntityExitColShape -= OnEntityExitColshapeHandler;
+            Api.deleteColShape(Shape);
         }
     }
 }

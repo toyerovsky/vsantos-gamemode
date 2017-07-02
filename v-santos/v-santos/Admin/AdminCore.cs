@@ -154,7 +154,7 @@ namespace Serverside.Admin
         [Command("inv")]
         public void SetPlayerInvicible(Client sender)
         {
-            if (sender.GetAccountController().AccountData.ServerRank < ServerRank.Support5)
+            if (sender.GetAccountController().AccountData.ServerRank < ServerRank.Support)
             {
                 sender.Notify("Nie posiadasz uprawnień do ustawienia niewidzialności.");
                 return;
@@ -171,7 +171,7 @@ namespace Serverside.Admin
             }
         }
 
-        [Command("savepos")]
+        [Command("savepos", "~y~ UŻYJ ~w~ /savepos [nazwa]", GreedyArg = true)]
         public void SaveCustomPosition(Client sender, string name)
         {
             if (sender.GetAccountController().AccountData.ServerRank < ServerRank.Support)
@@ -180,12 +180,20 @@ namespace Serverside.Admin
             }
 
             string path = $@"{Constant.ConstantAssemblyInfo.WorkingDirectory}\Files\CustomPositions.txt";
-        
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
 
-                APIExtensions.ConsoleOutput($@"[File] Utworzono ścieżkę {path}", ConsoleColor.Blue);
+
+            if (!Directory.Exists($@"{Constant.ConstantAssemblyInfo.WorkingDirectory}\Files\"))
+            {
+                Directory.CreateDirectory($@"{Constant.ConstantAssemblyInfo.WorkingDirectory}\Files\");
+
+                APIExtensions.ConsoleOutput($@"[File] Utworzono ścieżkę {Constant.ConstantAssemblyInfo.WorkingDirectory}\Files\", ConsoleColor.Blue);
+            }
+
+            if (!File.Exists(path))
+            {
+                File.Create(path);
+
+                APIExtensions.ConsoleOutput($@"[File] Utworzono plik {path}", ConsoleColor.Blue);
             }
 
             var data = File.ReadAllLines(path).ToList();

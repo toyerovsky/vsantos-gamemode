@@ -21,7 +21,7 @@ namespace Serverside.Core.Animations
             //args[2] Nazwa animacji z GTA:N
             if (eventName == "OnPlayerAddAnim")
             {
-                XmlHelper.AddXmlObject(new Animation()
+                XmlHelper.AddXmlObject(new Animation
                 {
                     Name = arguments[0].ToString(),
                     AnimDictionary = arguments[1].ToString(),

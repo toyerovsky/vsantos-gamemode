@@ -55,7 +55,7 @@ namespace Serverside.Autonomic.Market
                     if (market != null)
                     {
                         market.MarketData.Items.Add(item);
-                        XmlHelper.AddXmlObject(market, $@"{Constant.ConstantAssemblyInfo.XmlDirectory}\Markets\", market.MarketData.Name);
+                        XmlHelper.AddXmlObject(market.MarketData, $@"{Constant.ConstantAssemblyInfo.XmlDirectory}\Markets\", market.MarketData.Name);
                     }
                 }
             }
@@ -153,5 +153,7 @@ namespace Serverside.Autonomic.Market
                 }
             }
         }
+
+
     }
 }

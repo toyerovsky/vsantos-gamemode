@@ -90,5 +90,27 @@ namespace Serverside.Core.Bus
                 }
             }
         }
+
+        [Command("usunbus")]
+        public void DeleteBusStop(Client sender)
+        {
+            //if (sender.GetAccountController().AccountData.ServerRank < ServerRank.GameMaster)
+            //{
+            //    sender.Notify("Nie posiadasz uprawnień do usuwania bankomatu.");
+            //    return;
+            //}
+
+            var busStop = _busStops.OrderBy(a => a.Data.Center.DistanceTo(sender.position)).First();
+            if (XmlHelper.TryDeleteXmlObject(busStop.Data.FilePath))
+            {
+                sender.Notify("Usuwanie przystanku autobusowego zakończyło się pomyślnie.");
+                _busStops.Remove(busStop);
+                busStop.Dispose();
+            }
+            else
+            {
+                sender.Notify("Usuwanie przystanku autobusowego zakończyło się niepomyślnie.");
+            }
+        }
     }
 }

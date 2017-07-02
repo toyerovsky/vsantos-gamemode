@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 using GTANetworkServer;
 using GTANetworkShared;
 using Serverside.Controllers;
-using Serverside.Core;
 using Serverside.Core.Extensions;
 using Serverside.Corners.Models;
 
@@ -13,9 +11,7 @@ namespace Serverside.Corners
 {
     public class Corner : IDisposable
     {
-        public List<CornerBotModel> CornerBots { get; set; }
-        public FullPosition Position { get; set; }
-        public List<FullPosition> BotPositions { get; set; }
+        public CornerModel Data { get; set; }
 
         public Marker Marker { get; set; }
         public ColShape Shape { get; set; }
@@ -26,15 +22,13 @@ namespace Serverside.Corners
 
         public Corner(CornerModel corner)
         {
-            CornerBots = corner.CornerBots;
-            Position = corner.Position;
-            BotPositions = corner.BotPositions;
+            Data = corner;
 
-            Marker = Api.createMarker(1, Position.Position, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), new Vector3(1f, 1f, 1f), 100,
+            Marker = Api.createMarker(1, Data.Position.Position, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), new Vector3(1f, 1f, 1f), 100,
                 100, 100, 100);
             Marker.invincible = true;
 
-            Shape = Api.createCylinderColShape(Position.Position, 1f, 2f);
+            Shape = Api.createCylinderColShape(Data.Position.Position, 1f, 2f);
 
             Shape.onEntityEnterColShape += OnEntityEnterColShapeHandler;
         }
@@ -70,10 +64,10 @@ namespace Serverside.Corners
             {
                 timer.Stop();
 
-                var random = new Random().Next(CornerBots.Count);
+                var random = new Random().Next(Data.CornerBots.Count);
 
                 CurrentBot = new CornerBot(
-                    new API(), CornerBots[random].Name, CornerBots[random].PedHash, BotPositions[0], BotPositions.Where(x => x != BotPositions[0]).ToList(), CornerBots[random].DrugType, CornerBots[random].MoneyCount, CornerBots[random].Greeting, CornerBots[random].GoodFarewell, CornerBots[random].BadFarewell, Player, CornerBots[random].BotId);
+                    new API(), Data.CornerBots[random].Name, Data.CornerBots[random].PedHash, Data.BotPositions[0], Data.BotPositions.Where(x => x != Data.BotPositions[0]).ToList(), Data.CornerBots[random].DrugType, Data.CornerBots[random].MoneyCount, Data.CornerBots[random].Greeting, Data.CornerBots[random].GoodFarewell, Data.CornerBots[random].BadFarewell, Player, Data.CornerBots[random].BotId);
 
                 CurrentBot.Intialize();
                 CurrentBot.OnTransactionEnd += (o, eventArgs) =>
@@ -109,6 +103,8 @@ namespace Serverside.Corners
         public void Dispose()
         {
             Shape.onEntityEnterColShape -= OnEntityEnterColShapeHandler;
+            Api.deleteColShape(Shape);
+            Api.deleteEntity(Marker);
         }
     }
 }

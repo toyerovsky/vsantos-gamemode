@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using GTANetworkServer;
 using GTANetworkShared;
 using Newtonsoft.Json;
@@ -7,7 +8,7 @@ using Serverside.Core.Extensions;
 
 namespace Serverside.Bank
 {
-    public class Atm
+    public class Atm : IDisposable
     {
         public Marker AtmMarker { get; }
         public CylinderColShape AtmShape { get; }
@@ -21,7 +22,6 @@ namespace Serverside.Bank
             Data = data;
 
             AtmMarker = Api.createMarker(1, Data.Position.Position, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), new Vector3(1f, 1f, 1f), 100, 100, 100, 100);
-            AtmMarker.invincible = true;
 
             AtmShape = Api.createCylinderColShape(Data.Position.Position, 1f, 2f);
 
@@ -47,6 +47,12 @@ namespace Serverside.Bank
                     Api.triggerClientEvent(player.Client, "OnPlayerExitAtm");
                 }
             };
+        }
+
+        public void Dispose()
+        {
+            Api.deleteEntity(AtmMarker);
+            Api.deleteColShape(AtmShape);
         }
     }
 }

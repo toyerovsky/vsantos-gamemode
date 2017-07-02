@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using GTANetworkServer;
 using GTANetworkShared;
 using Serverside.Bank.Models;
@@ -9,6 +12,8 @@ namespace Serverside.Bank
 {
     public sealed class RPBank : Script
     {
+        private List<Atm> Atms { get; set; } = new List<Atm>();
+
         public RPBank()
         {
             API.onResourceStart += API_onResourceStart;
@@ -21,7 +26,7 @@ namespace Serverside.Bank
 
             foreach (var atm in XmlHelper.GetXmlObjects<AtmModel>($@"{Constant.ConstantAssemblyInfo.XmlDirectory}Atms\"))
             {
-                new Atm(API, atm);
+                Atms.Add(new Atm(API, atm));
             }
         }
 
@@ -88,10 +93,32 @@ namespace Serverside.Bank
                         }
                     };
                     XmlHelper.AddXmlObject(atm, $@"{Constant.ConstantAssemblyInfo.XmlDirectory}Atms\");
-                    new Atm(API, atm); //Nowa instancja bankomatu spawnuje go w świecie gry
+                    Atms.Add(new Atm(API, atm)); //Nowa instancja bankomatu spawnuje go w świecie gry
                     sender.Notify("Dodawanie bankomatu zakończyło się pomyślnie.");
                     API.onChatCommand -= Handler;
                 }
+            }
+        }
+
+        [Command("usunbankomat")]
+        public void DeleteAtm(Client sender)
+        {
+            //if (sender.GetAccountController().AccountData.ServerRank < ServerRank.GameMaster)
+            //{
+            //    sender.Notify("Nie posiadasz uprawnień do usuwania bankomatu.");
+            //    return;
+            //}
+
+            var atm = Atms.OrderBy(a => a.Data.Position.Position.DistanceTo(sender.position)).First();
+            if (XmlHelper.TryDeleteXmlObject(atm.Data.FilePath))
+            {
+                sender.Notify("Usuwanie bankomatu zakończyło się pomyślnie.");
+                Atms.Remove(atm);
+                atm.Dispose();
+            }
+            else
+            {
+                sender.Notify("Usuwanie bankomatu zakończyło się niepomyślnie.");
             }
         }
         #endregion
