@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using GTANetworkShared;
+using GrandTheftMultiplayer.Shared;
+
 
 namespace Serverside.Database.Models
 {

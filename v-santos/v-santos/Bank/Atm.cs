@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Globalization;
-using GTANetworkServer;
-using GTANetworkShared;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Elements;
+using GrandTheftMultiplayer.Server.Managers;
+using GrandTheftMultiplayer.Shared;
+using GrandTheftMultiplayer.Shared.Math;
 using Newtonsoft.Json;
 using Serverside.Bank.Models;
 using Serverside.Core.Extensions;
@@ -30,11 +33,18 @@ namespace Serverside.Bank
                 if (Api.getEntityType(entity) == EntityType.Player)
                 {
                     var player = Api.getPlayerFromHandle(entity).GetAccountController();
+
+                    if (player.CharacterController.Character.BankAccountNumber == null)
+                    {
+                        player.Client.Notify("Nie posiadasz karty bankomatowej, udaj się do banku, aby założyć konto.");
+                        return;
+                    }
+
                     Api.triggerClientEvent(player.Client, "OnPlayerEnteredAtm", JsonConvert.SerializeObject(new
                     {
                         FormatName = player.CharacterController.FormatName,
                         BankMoney = player.CharacterController.Character.BankMoney.ToString(CultureInfo.CurrentCulture),
-                        AccountNumber = player.CharacterController.Character.BankAccountNumber.ToString()
+                        BankAccountNumber = player.CharacterController.Character.BankAccountNumber.ToString()
                     }));
                 }
             };
@@ -43,8 +53,8 @@ namespace Serverside.Bank
             {
                 if (Api.getEntityType(entity) == EntityType.Player)
                 {
-                    var player = Api.getPlayerFromHandle(entity).GetAccountController();
-                    Api.triggerClientEvent(player.Client, "OnPlayerExitAtm");
+                    var player = Api.getPlayerFromHandle(entity);
+                    Api.triggerClientEvent(player, "OnPlayerExitAtm");
                 }
             };
         }

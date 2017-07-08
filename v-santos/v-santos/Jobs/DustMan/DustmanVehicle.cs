@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using GTANetworkServer;
-using GTANetworkShared;
-using Serverside.Controllers;
-using Serverside.Core.Extensions;
-
-namespace Serverside.Jobs.DustMan
+﻿namespace Serverside.Jobs.DustMan
 {
     //internal class DustmanVehicle : VehicleController
     //{

@@ -1,23 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using GTANetworkServer;
-using GTANetworkShared;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Elements;
+using GrandTheftMultiplayer.Server.Managers;
+using GrandTheftMultiplayer.Shared.Math;
 using Newtonsoft.Json;
 using Serverside.Autonomic.Market.Models;
 using Serverside.Core;
-using Serverside.Core.Bus;
-using Serverside.Core.Bus.Models;
 using Serverside.Core.Extensions;
-using Serverside.Database.Models;
 using Serverside.Items;
 
 namespace Serverside.Autonomic.Market
 {
     public sealed class RPMarket : Script
     {
-        private List<Market> Markets { get; set; }
+        private List<Market> Markets { get; set; } = new List<Market>();
 
         public RPMarket()
         {
@@ -93,7 +91,7 @@ namespace Serverside.Autonomic.Market
             
                 APIExtensions.ConsoleOutput("[RPMarket] Uruchomione pomyślnie.", ConsoleColor.DarkMagenta);
                 XmlHelper.GetXmlObjects<Models.Market>($@"{Constant.ConstantAssemblyInfo.XmlDirectory}\Markets\")
-                    .ForEach(x => Markets.Add(new Market(x)));          
+                    .ForEach(x => Markets.Add(new Market(API, x)));          
         }
 
         [Command("dodajprzedmiotsklep")]
@@ -120,8 +118,7 @@ namespace Serverside.Autonomic.Market
         [Command("dodajsklep", "~y~UŻYJ ~w~ /dodajsklep [nazwa]")]
         public void AddMarket(Client sender, string name)
         {
-            sender.Notify("Ustaw się na środku sklepu aby stworzyć sferyczną strefę o wybranym promeniu.");
-            sender.Notify("Ustaw się w wybranej pozycji, a następnie wpisz /tu.");
+            sender.Notify("Ustaw się w pozycji NPC, a następnie wpisz /tu.");
             sender.Notify("...użyj /diag aby poznać swoją obecną pozycję.");
 
             Vector3 center = null;
@@ -135,7 +132,7 @@ namespace Serverside.Autonomic.Market
                 {
                     cancel.Cancel = true;
                     center = o.position;
-                    sender.Notify("Przejdź do pozycji końca promienia i wpisz /tu.");
+                    sender.Notify("Przejdź do pozycji końca promienia zasięgu i wpisz /tu.");
                 }
                 else if (center != null && radius.Equals(float.MinValue) && o == sender && command == "/tu")
                 {
@@ -148,7 +145,7 @@ namespace Serverside.Autonomic.Market
                         Radius = radius
                     };
                     XmlHelper.AddXmlObject(market, Constant.ConstantAssemblyInfo.XmlDirectory + @"Markets\", market.Name);
-                    Markets.Add(new Market(market));
+                    Markets.Add(new Market(API, market));
                     API.onChatCommand -= Handler;
                 }
             }

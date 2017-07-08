@@ -1,7 +1,7 @@
-﻿/// <reference path="../../types-gtanetwork/index.d.ts" />
+﻿/// <reference path="../../types-gt-mp/index.d.ts" />
 
-var screenX = API.getScreenResolutionMantainRatio().Width;
-var screenY = API.getScreenResolutionMantainRatio().Height;
+var screenX = API.getScreenResolutionMaintainRatio().Width;
+var screenY = API.getScreenResolutionMaintainRatio().Height;
 var panelMinX = (screenX / 32);
 var panelMinY = (screenY / 18);
 var button: any = null;
@@ -13,6 +13,7 @@ var textnotification: any = null;
 var textnotifications: any[] = [];
 var padding = 10;
 var selectedInput: InputPanel = null;
+let drawCursor = false;
 
 // Menu Properties
 var tabIndex: any[] = [];
@@ -36,9 +37,9 @@ API.onUpdate.connect(() => {
     }
 
     for (var i = 0; i < menuElements[currentPage].length; i++) {
-        if (!isReady) {
-            break;
-        }
+        //if (!isReady) {
+        //    break;
+        //}
         menuElements[currentPage][i].draw();
         menuElements[currentPage][i].isHovered();
         menuElements[currentPage][i].isClicked();
@@ -117,12 +118,15 @@ class Menu {
             API.setChatVisible(false);
             API.setCanOpenChat(false);
             API.showCursor(true);
+            drawCursor = true;
             return;
         }
         API.setHudVisible(true);
         API.setChatVisible(true);
         API.setCanOpenChat(true);
         API.showCursor(false);
+        drawCursor = false;
+
     }
 
     /**
@@ -183,7 +187,7 @@ class PlayerTextNotification {
 
     constructor(text: string) {
         let playerPos = API.getEntityPosition(API.getLocalPlayer()).Add(new Vector3(0, 0, 1));
-        let point = API.worldToScreenMantainRatio(playerPos);
+        let point = API.worldToScreenMaintainRatio(playerPos);
         this._xPos = Point.Round(point).X;
         this._yPos = Point.Round(point).Y;
         this._drawing = true;
@@ -795,6 +799,7 @@ class Panel {
         this._hoverable = false;
         this._line = 0;
     }
+
     /**
      * Do not call this. It's specifically used for the menu builder file.
      */
@@ -1127,7 +1132,7 @@ class Panel {
             return;
         }
 
-        let cursorPos = API.getCursorPositionMantainRatio();
+        let cursorPos = API.getCursorPositionMaintainRatio();
         if (cursorPos.X > this._xPos && cursorPos.X < (this._xPos + Math.round(this._width)) && cursorPos.Y > this._yPos && cursorPos.Y < this._yPos + this._height) {
             if (!this._hovered) {
                 this._hovered = true;
@@ -1169,8 +1174,8 @@ class Panel {
         }
 
         // Are they even left clicking?
-        if (API.isControlJustPressed(Enums.Controls.CursorAccept)) {
-            let cursorPos = API.getCursorPositionMantainRatio();
+        if (API.isControlJustPressed(237)) {
+            let cursorPos = API.getCursorPositionMaintainRatio();
             if (cursorPos.X > this._xPos && cursorPos.X < (this._xPos + Math.round(this._width)) && cursorPos.Y > this._yPos && cursorPos.Y < this._yPos + this._height) {
                 if (new Date().getTime() < clickDelay + 200) {
                     return;
@@ -1519,7 +1524,7 @@ class InputPanel {
         if (this._protected) {
             if (this._input.length < 1) {
                 return;
-            }
+            }   
             API.drawText("*".repeat(this._input.length), this._xPos + (Math.round(this._width) / 2), this._yPos + (this._height / 2) - 14, this._inputTextScale, this._inputTextR, this._inputTextG, this._inputTextB, this._inputTextAlpha, 4, 1, false, false, (panelMinX * Math.round(this._width)));
         } else {
             API.drawText(this._input, this._xPos + (Math.round(this._width) / 2), this._yPos + (this._height / 2) - 14, this._inputTextScale, this._inputTextR, this._inputTextG, this._inputTextB, this._inputTextAlpha, 4, 1, false, false, (panelMinX * Math.round(this._width)));
@@ -1562,7 +1567,7 @@ class InputPanel {
             return;
         }
 
-        let cursorPos = API.getCursorPositionMantainRatio();
+        let cursorPos = API.getCursorPositionMaintainRatio();
         if (cursorPos.X > this._xPos && cursorPos.X < (this._xPos + Math.round(this._width)) && cursorPos.Y > this._yPos && cursorPos.Y < (this._yPos + this._height)) {
             if (this._selected) {
                 this._hovered = false;
@@ -1575,11 +1580,11 @@ class InputPanel {
     }
 
     private isClicked() {
-        if (API.isControlJustPressed(Enums.Controls.CursorAccept)) {
+        if (API.isControlJustPressed(237)) {
             if (new Date().getTime() < clickDelay + 200) {
                 return;
             }
-            let cursorPos = API.getCursorPositionMantainRatio();
+            let cursorPos = API.getCursorPositionMaintainRatio();
             if (cursorPos.X > this._xPos && cursorPos.X < (this._xPos + Math.round(this._width)) && cursorPos.Y > this._yPos && cursorPos.Y < (this._yPos + this._height)) {
                 if (!this._selected) {
                     API.playSoundFrontEnd(this._inputAudioLib, this._inputAudioName);

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Timers;
-using GTANetworkServer;
-using GTANetworkShared;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Constant;
+using GrandTheftMultiplayer.Server.Elements;
+using GrandTheftMultiplayer.Server.Managers;
+using GrandTheftMultiplayer.Shared;
 using Serverside.Core.Extensions;
 
 //using Serverside.Core.Finders;
@@ -87,7 +90,7 @@ namespace Serverside.Core
 
             API.onPlayerDisconnected += (client, s) =>
             {
-                if (player.Client == client) timer.Dispose();
+                if (sender == client) timer.Dispose();
             };
 
             timer.Elapsed += (s, e) =>

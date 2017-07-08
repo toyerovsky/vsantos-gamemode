@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GTANetworkServer;
-using GTANetworkShared;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Elements;
+using GrandTheftMultiplayer.Server.Managers;
+using GrandTheftMultiplayer.Shared.Math;
 using Newtonsoft.Json;
 using Serverside.Core.Bus.Models;
 using Serverside.Core.Extensions;

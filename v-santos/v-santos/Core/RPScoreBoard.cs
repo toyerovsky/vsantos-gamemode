@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using GTANetworkServer;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Elements;
 using Serverside.Controllers;
 
 namespace Serverside.Core
@@ -37,6 +38,7 @@ namespace Serverside.Core
                 var dic = new Dictionary<string, object>
                 {
                     {"socialClubName", ply.Value.Client.socialClubName},
+                    {"serverId", ply.Value.ServerId},
                     {"name", ply.Value.Client.name},
                     {"ping", ply.Value.Client.ping}
                 };
@@ -57,6 +59,7 @@ namespace Serverside.Core
                     var dic = new Dictionary<string, object>
                     {
                         {"socialClubName", ply.Value.Client.socialClubName},
+                        {"serverId", ply.Value.ServerId},
                         {"ping", ply.Value.Client.ping}
                     };
                     list.Add(API.toJson(dic));

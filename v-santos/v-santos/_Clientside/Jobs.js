@@ -4,8 +4,8 @@ var jobMarker;
 var drawJobText = false;
 var jobTextString;
 
-var resX = API.getScreenResolutionMantainRatio().Width;
-var resY = API.getScreenResolutionMantainRatio().Height;
+var resX = API.getScreenResolutionMaintainRatio().Width;
+var resY = API.getScreenResolutionMaintainRatio().Height;
 
 API.onServerEventTrigger.connect(function (eventName, args)
 {

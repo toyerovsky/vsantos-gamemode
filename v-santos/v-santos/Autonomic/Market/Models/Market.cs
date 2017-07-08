@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using GTANetworkShared;
+using GrandTheftMultiplayer.Shared.Math;
 using Serverside.Interfaces;
 
 namespace Serverside.Autonomic.Market.Models

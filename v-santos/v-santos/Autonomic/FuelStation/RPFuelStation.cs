@@ -1,8 +1,14 @@
-﻿using GTANetworkServer;
+﻿
 using System.IO;
 using System.Collections.Generic;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Constant;
+using GrandTheftMultiplayer.Server.Elements;
+using GrandTheftMultiplayer.Server.Managers;
+using GrandTheftMultiplayer.Shared;
+using GrandTheftMultiplayer.Shared.Math;
 using Newtonsoft.Json;
-using GTANetworkShared;
+
 using Serverside.Core;
 
 namespace Serverside.Autonomic.FuelStation
@@ -143,7 +149,7 @@ namespace Serverside.Autonomic.FuelStation
 
                     if (API.getEntityType(e) == EntityType.Vehicle)
                     {
-                        mapset.Marker.color = new GTANetworkServer.Constant.Color(255, 0, 0, 30);
+                        mapset.Marker.color = new Color(255, 0, 0, 30);
                         if (idd != null)
                         {
                             FuelStation fs = RPEntityManager.GetFuelStation(idd);
@@ -167,7 +173,7 @@ namespace Serverside.Autonomic.FuelStation
 
                     if (API.getEntityType(e) == EntityType.Vehicle)
                     {
-                        mapset.Marker.color = new GTANetworkServer.Constant.Color(255, 255, 255, 30);
+                        mapset.Marker.color = new Color(255, 255, 255, 30);
                         if (idd != null)
                         {
                             FuelStation fs = RPEntityManager.GetFuelStation(idd);
@@ -194,7 +200,7 @@ namespace Serverside.Autonomic.FuelStation
                 Id = RPEntityManager.GetFuelStations().Count == 0 ? 0 : RPEntityManager.GetFuelStations().Count + 1,
                 Name = name,
                 MarkerPostition = new Vector3(sender.position.X, sender.position.Y, sender.position.Z + 1),
-                Color = new GTANetworkServer.Constant.Color(255, 0, 0, 255),
+                Color = new Color(255, 0, 0, 255),
                 Distributors = new List<FuelStation.FuelDistributor>(),
                 Enabled = true
             };

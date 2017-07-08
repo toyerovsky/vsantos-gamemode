@@ -1,17 +1,21 @@
 ﻿using System;
 using System.Linq;
-using GTANetworkServer;
-using GTANetworkShared;
+
+
 using Newtonsoft.Json;
 using Serverside.Controllers;
 using Serverside.Core.Extensions;
 using System.Collections.Generic;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Elements;
+using GrandTheftMultiplayer.Server.Managers;
+using GrandTheftMultiplayer.Shared;
 
 namespace Serverside.Core.Vehicles
 {
     public sealed class RPVehicles : Script
     {
-        private API Api => API.shared;
+        private ServerAPI Api => API.shared;
 
         public RPVehicles()
         {
@@ -83,7 +87,7 @@ namespace Serverside.Core.Vehicles
 
                 if (player.CharacterController.Character.Vehicles.Any(v => v.Id == sender.GetData("SelectedVehicleID")))
                 {
-                    ShowVehiclesInformation(player.Client, player.CharacterController.Character.Vehicles.Single(v => v.Id == sender.GetData("SelectedVehicleID")));
+                    ShowVehiclesInformation(sender, player.CharacterController.Character.Vehicles.Single(v => v.Id == sender.GetData("SelectedVehicleID")));
                 }
 
             }

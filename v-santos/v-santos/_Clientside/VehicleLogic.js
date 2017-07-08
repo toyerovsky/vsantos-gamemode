@@ -4,7 +4,7 @@ var currentSpeed = null;
 var currentMilage = null;
 var currentFuel = null;
 var maxFuel = null;
-var res = API.getScreenResolutionMantainRatio();
+var res = API.getScreenResolutionMaintainRatio();
 var dtime = 0;
 var lastUpdate = API.getGameTime();
 var currentConsumption = 0;
@@ -16,13 +16,12 @@ API.onUpdate.connect(function (sender, args) {
     var player = API.getLocalPlayer();
     var inVeh = API.isPlayerInAnyVehicle(player);
     
-    //Rysowanie rzeczy w pojeŸdzie
+    //Rysowanie rzeczy w pojeï¿½dzie
     if (inVeh)
     {
         var gameTime = API.getGameTime(); // m/s
         var updateDelta = gameTime - lastUpdate;
         lastUpdate = gameTime;
-        //updateDelta IMPORTANT!
 
         var veh = API.getPlayerVehicle(player);
 
@@ -43,7 +42,7 @@ API.onUpdate.connect(function (sender, args) {
         }
 
         var health = API.getVehicleHealth(veh);
-        var maxhealth = API.returnNative("GET_ENTITY_MAX_HEALTH", 0, veh);
+        var maxhealth = 4000;
         var currentHealth = Math.trunc((health / maxhealth) * 100);
 
         var v = API.getEntityVelocity(veh);
@@ -64,21 +63,22 @@ API.onUpdate.connect(function (sender, args) {
         currentConsumption = ((currentRpm * consumptionMultiplier) / 100000) * updateDelta;
         currentFuel = Math.max(0, currentFuel - currentConsumption);
 
-        if (currentFuel <= 0 && maxFuel != 0 && API.getVehicleEngineStatus(veh)) {
-            //API.callNative("2741540918328977952", veh, 0.5, 0, false); // nie dzia³a
-            API.setVehicleEngineStatus(veh, false);
-        }
+        //if (currentFuel <= 0 && maxFuel != 0 && API.getVehicleEngineStatus(veh)) {
+        //    //API.callNative("2741540918328977952", veh, 0.5, 0, false); // nie dziaï¿½a
+        //    API.setVehicleEngineStatus(veh, false);
+        //}
 
         if (drawVehicleHUD) {
             //PRZEBIEG
             var cMR = Math.trunc(currentMilage)+"";
             var currentMilageR = "~c~" + pad(Math.trunc(cMR / 1000), 6) + "~m~." + pad(cMR.substring(cMR.length - 3, cMR.length - 2), 1) + "~w~";
             API.drawText(`${currentMilageR}km`, (16 * res.Width) / 100, res.Height - 45, 0.5, 255, 255, 255, 255, 7, 0, false, true, 0);
-            //PRÊDKOŒC
+            
+            //PRÄ˜DKOÅšÄ†
             API.drawText(`${Math.trunc(currentSpeed)}`, (16 * res.Width) / 100 + 95, res.Height - 110, 1, 255, 255, 255, 255, 4, 2, false, true, 0);
             if (Math.trunc(currentSpeed) < 60) {
                 API.drawText(`km/h`, (16 * res.Width) / 100 + 95, res.Height - 95, 0.7, 255, 255, 255, 255, 4, 0, false, true, 0);
-            } else if (Math.trunc(currentSpeed) < 140) {
+            } else if (Math.trunc(currentSpeed) < 120) {
                 API.drawText(`~y~km/h`, (16 * res.Width) / 100 + 95, res.Height - 95, 0.7, 255, 255, 255, 255, 4, 0, false, true, 0);
             } else {
                 API.drawText(`~r~km/h`, (16 * res.Width) / 100 + 95, res.Height - 95, 0.7, 255, 255, 255, 255, 4, 0, false, true, 0);
@@ -103,33 +103,33 @@ API.onUpdate.connect(function (sender, args) {
                 API.drawText(`Pojazd: ${currentHealthR}%`, (16 * res.Width) / 100, res.Height - 155, 0.5, 255, 255, 255, 255, 4, 0, false, true, 0);
             }
 
-            if (maxFuel != 0) {
-                //PALIWO
-                var currentFuelR = Math.round(currentFuel * 100) / 100;
-                if (currentFuelR < 10) {
-                    API.drawText(`Paliwo: ~r~${currentFuelR}~s~/${maxFuel}L`, (16 * res.Width) / 100, res.Height - 185, 0.5, 255, 255, 255, 255, 4, 0, false, true, 0);
-                } else if (currentFuelR < 30) {
-                    API.drawText(`Paliwo: ~y~${currentFuelR}~s~/${maxFuel}L`, (16 * res.Width) / 100, res.Height - 185, 0.5, 255, 255, 255, 255, 4, 0, false, true, 0);
-                } else {
-                    API.drawText(`Paliwo: ${currentFuelR}~s~/${maxFuel}L`, (16 * res.Width) / 100, res.Height - 185, 0.5, 255, 255, 255, 255, 4, 0, false, true, 0);
-                }
-                //API.drawText(`Spalanie:`, (20 * res.Width) / 100, res.Height - 215, 0.5, 255, 255, 255, 255, 4, 2, false, true, 0);
-                //var currentConsumptionR = Math.round(currentConsumption * 10000000) / 100;
-                //API.drawText(`${currentConsumptionR}L/KM`, (20 * res.Width) / 100, res.Height - 215, 0.5, 255, 255, 255, 255, 4, 0, false, true, 0);
-                //if (currentConsumptionR < 60) {
-                //    //API.drawText(`${currentConsumptionR}L`, (20 * res.Width) / 100, res.Height - 215, 0.5, 219, 122, 46, 255, 4, 0, false, true, 0);
-                //}
-                //if (currentConsumptionR < 30) {
-                //    //API.drawText(`${currentConsumptionR}L`, (20 * res.Width) / 100, res.Height - 215, 0.5, 219, 46, 46, 255, 4, 0, false, true, 0);
-                //}
-            }
+            //if (maxFuel != 0) {
+            //    // //PALIWO
+            //    // var currentFuelR = Math.round(currentFuel * 100) / 100;
+            //    // if (currentFuelR < 10) {
+            //    //     API.drawText(`Paliwo: ~r~${currentFuelR}~s~/${maxFuel}L`, (16 * res.Width) / 100, res.Height - 185, 0.5, 255, 255, 255, 255, 4, 0, false, true, 0);
+            //    // } else if (currentFuelR < 30) {
+            //    //     API.drawText(`Paliwo: ~y~${currentFuelR}~s~/${maxFuel}L`, (16 * res.Width) / 100, res.Height - 185, 0.5, 255, 255, 255, 255, 4, 0, false, true, 0);
+            //    // } else {
+            //    //     API.drawText(`Paliwo: ${currentFuelR}~s~/${maxFuel}L`, (16 * res.Width) / 100, res.Height - 185, 0.5, 255, 255, 255, 255, 4, 0, false, true, 0);
+            //    // }
+            //    //API.drawText(`Spalanie:`, (20 * res.Width) / 100, res.Height - 215, 0.5, 255, 255, 255, 255, 4, 2, false, true, 0);
+            //    //var currentConsumptionR = Math.round(currentConsumption * 10000000) / 100;
+            //    //API.drawText(`${currentConsumptionR}L/KM`, (20 * res.Width) / 100, res.Height - 215, 0.5, 255, 255, 255, 255, 4, 0, false, true, 0);
+            //    //if (currentConsumptionR < 60) {
+            //    //    //API.drawText(`${currentConsumptionR}L`, (20 * res.Width) / 100, res.Height - 215, 0.5, 219, 122, 46, 255, 4, 0, false, true, 0);
+            //    //}
+            //    //if (currentConsumptionR < 30) {
+            //    //    //API.drawText(`${currentConsumptionR}L`, (20 * res.Width) / 100, res.Height - 215, 0.5, 219, 46, 46, 255, 4, 0, false, true, 0);
+            //    //}
+            //}
         }
     }
 });
 
-API.onPlayerEnterVehicle.connect(function (veh) {
+//API.onPlayerEnterVehicle.connect(function (veh) {
 
-});
+//});
 
 API.onPlayerExitVehicle.connect(function (veh) {
     currentMilage = null;

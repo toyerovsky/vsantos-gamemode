@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Drawing;
 using System.Linq;
-using GTANetworkServer;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Constant;
+using GrandTheftMultiplayer.Server.Elements;
+using GrandTheftMultiplayer.Server.Managers;
 using Serverside.Controllers;
 using Serverside.Core;
 using Serverside.Core.Extensions;
 using Serverside.Database.Models;
 using Serverside.Groups;
-using Serverside.Groups.Base;
-using Color = GTANetworkServer.Constant.Color;
 
 namespace Serverside.Admin
 {
@@ -48,7 +48,7 @@ namespace Serverside.Admin
                 if (boss.CharacterController.Character.Workers.Count < 3)
                 {
                     GroupController group = GroupController.CreateGroup(name, tag, type, hex);
-                    group.GroupData.Workers.Add(new Worker
+                    group.GetWorkers().Add(new Worker
                     {
                         Group = group.GroupData,
                         Character = boss.CharacterController.Character,
@@ -91,7 +91,7 @@ namespace Serverside.Admin
 
                 GroupController group = RPEntityManager.GetGroup(groupId);
 
-                if (group.GroupData.Workers.Any(p => p.Character == player.CharacterController.Character))
+                if (group.GetWorkers().Any(p => p.Character == player.CharacterController.Character))
                 {
                     sender.Notify("Jesteś już w tej grupie.");
                     return;
@@ -99,7 +99,7 @@ namespace Serverside.Admin
 
                 if (player.CharacterController.Character.Workers.Count < 3)
                 {
-                    group.GroupData.Workers.Add(new Worker
+                    group.GetWorkers().Add(new Worker
                     {
                         Group = group.GroupData,
                         Character = sender.GetAccountController().CharacterController.Character,

@@ -1,5 +1,6 @@
-﻿using GTANetworkServer;
-using GTANetworkShared;
+﻿using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Elements;
+using GrandTheftMultiplayer.Shared.Math;
 
 namespace Serverside.Core.Vehicles
 {

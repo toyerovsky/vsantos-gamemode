@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Timers;
-using GTANetworkServer;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Elements;
+using GrandTheftMultiplayer.Server.Managers;
 using Newtonsoft.Json;
 using Serverside.Core;
 using Serverside.Core.Extensions;
@@ -154,7 +156,7 @@ namespace Serverside.Groups
                 if (sender.TryGetGroupByUnsafeSlot(Convert.ToInt16(slot), out GroupController group))
                 {
                     var worker =
-                        group.GroupData.Workers.Single(x => x.Character.Id == player.CharacterController.Character.Id);
+                        group.GetWorkers().Single(x => x.Character.Id == player.CharacterController.Character.Id);
 
                     dutyTimer.Start();
 
@@ -165,7 +167,7 @@ namespace Serverside.Groups
                     };
 
                     sender.nametag = $"( {player.ServerId} ) ( {group.GroupData.Name} ) {sender.name}";
-                    if (group.GroupData.Color.Equals(null)) sender.nametagColor = group.GroupData.Color;
+                    sender.nametagColor = group.GroupData.Color.ToColor();
 
                     player.CharacterController.OnDutyGroup = group;
                     player.CharacterController.OnDutyGroup.PlayersOnDuty.Add(player);
@@ -270,9 +272,9 @@ namespace Serverside.Groups
                     group.GroupData.Name,
                     group.GroupData.Tag,
                     group.GroupData.Money,
-                    Color = group.GroupData.Color.ToHex(),
+                    Color = group.GroupData.Color,
                     //To jest raczej kosztowne, ale nie widzę innej opcji
-                    PlayerOnLine = JsonConvert.SerializeObject(group.GroupData.Workers.Where(x => x.Character.Online).Select(w => new
+                    PlayerOnLine = JsonConvert.SerializeObject(group.GetWorkers().Where(x => x.Character.Online).Select(w => new
                     {
                         ServerId = RPEntityManager.GetAccountByCharacterId(w.Character.Id).ServerId,
                         Name = $"{w.Character.Name} {w.Character.Surname}",
@@ -352,12 +354,12 @@ namespace Serverside.Groups
                 }
                 else
                 {
-                    player.Client.Notify("Nie posiadasz uprawnień do zarządzania pracownikami.");
+                    sender.Notify("Nie posiadasz uprawnień do zarządzania pracownikami.");
                 }
             }
             else
             {
-                player.Client.Notify("Nie posiadasz grupy w tym slocie.");
+                sender.Notify("Nie posiadasz grupy w tym slocie.");
             }
         }
 

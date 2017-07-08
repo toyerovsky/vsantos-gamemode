@@ -1,5 +1,5 @@
 ﻿using System;
-using GTANetworkShared;
+using GrandTheftMultiplayer.Shared;
 using Serverside.Core.Extensions;
 
 namespace Serverside.Autonomic.Carshop.Models

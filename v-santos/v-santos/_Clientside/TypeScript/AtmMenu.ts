@@ -20,45 +20,39 @@ function showAtmMenu(info: AtmInfo) {
     let panel: Panel;
     let textElement: TextElement;
 
-    for (var i = 0; i < 2; i++) {
+    for (var i = 0; i < 3; i++) {
         panel = atmMenu.createPanel(i, 12, 4, 3, 1);
         panel.MainBackgroundColor(0, 0, 0, 175);
-        panel.Header = true;
-        panel.HoverBackgroundColor(150, 25, 25, 160);
+        panel.HoverBackgroundColor(25, 25, 25, 160);
         panel.Hoverable = true;
+        panel.Header = true;
         panel.Function = () => atmMenu.Page = 0;
         textElement = panel.addText("Informacje");
         textElement.Color(255, 255, 255, 255);
         textElement.Centered = true;
         textElement.FontScale = 0.6;
-        textElement.Offset = 18;
 
-        panel = atmMenu.createPanel(i, 15, 4, 3, 1);
+        panel = atmMenu.createPanel(i, 15, 4, 2, 1);
         panel.MainBackgroundColor(0, 0, 0, 175);
-        panel.Header = true;
-        panel.HoverBackgroundColor(150, 25, 25, 160);
+        panel.HoverBackgroundColor(25, 25, 25, 160);
         panel.Hoverable = true;
-        panel.Function = () => atmMenu.Page = 2;
+        panel.Header = true;
+        panel.Function = () => atmMenu.Page = 1;
         textElement = panel.addText("Wpłata");
         textElement.Color(255, 255, 255, 255);
         textElement.Centered = true;
         textElement.FontScale = 0.6;
-        textElement.Offset = 18;
 
-        panel = atmMenu.createPanel(i, 18, 4, 3, 1);
+        panel = atmMenu.createPanel(i, 17, 4, 2, 1);
         panel.MainBackgroundColor(0, 0, 0, 175);
         panel.Header = true;
-        panel.HoverBackgroundColor(150, 25, 25, 160);
+        panel.HoverBackgroundColor(25, 25, 25, 160);
         panel.Hoverable = true;
-        panel.Function = () => {
-
-            atmMenu.Page = 1;
-        };
+        panel.Function = () => atmMenu.Page = 2;
         textElement = panel.addText("Wypłata");
         textElement.Color(255, 255, 255, 255);
         textElement.Centered = true;
         textElement.FontScale = 0.6;
-        textElement.Offset = 18;
 
 
         panel = atmMenu.createPanel(i, 19, 4, 1, 1);
@@ -76,29 +70,29 @@ function showAtmMenu(info: AtmInfo) {
 
     //Strona 0
     //Informacje
-    panel = atmMenu.createPanel(0, 12, 5, 8, 10);
+    panel = atmMenu.createPanel(0, 12, 5, 8, 3);
     panel.MainBackgroundColor(0, 0, 0, 160);
+    panel.Header = true;
     textElement = panel.addText(`Właściciel konta: ${info.name}`);
     textElement.Color(255, 255, 255, 255);
     textElement.FontScale = 0.5;
-    panel.addText("");
+    textElement.Centered = true;
 
     textElement = panel.addText(`Numer konta: ${info.accountNumber}`);
     textElement.Color(255, 255, 255, 255);
     textElement.FontScale = 0.5;
-    panel.addText("");
+    textElement.Centered = true;
 
-    textElement = panel.addText(`Środki: ${info.money.toString()}`);
+    textElement = panel.addText(`Środki: $${info.money.toString()}`);
     textElement.Color(255, 255, 255, 255);
     textElement.FontScale = 0.5;
-    panel.addText("");
+    textElement.Centered = true;
 
     //Strona 1
     //Wpłata
-    panel = atmMenu.createPanel(1, 15, 4, 3, 1);
+    panel = atmMenu.createPanel(1, 12, 5, 8, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
-    panel.Header = true;
-    panel.HoverBackgroundColor(150, 25, 25, 160);
+    panel.HoverBackgroundColor(25, 25, 25, 160);
     panel.Hoverable = true;
     panel.Function = () => {
         API.triggerServerEvent("OnPlayerAtmGive", 50);
@@ -108,12 +102,10 @@ function showAtmMenu(info: AtmInfo) {
     textElement.Color(255, 255, 255, 255);
     textElement.Centered = true;
     textElement.FontScale = 0.6;
-    textElement.Offset = 18;
 
-    panel = atmMenu.createPanel(1, 15, 5, 3, 1);
+    panel = atmMenu.createPanel(1, 12, 6, 8, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
-    panel.Header = true;
-    panel.HoverBackgroundColor(150, 25, 25, 160);
+    panel.HoverBackgroundColor(25, 25, 25, 160);
     panel.Hoverable = true;
     panel.Function = () => {
         API.triggerServerEvent("OnPlayerAtmGive", 100);
@@ -123,12 +115,10 @@ function showAtmMenu(info: AtmInfo) {
     textElement.Color(255, 255, 255, 255);
     textElement.Centered = true;
     textElement.FontScale = 0.6;
-    textElement.Offset = 18;
 
-    panel = atmMenu.createPanel(1, 15, 6, 3, 1);
+    panel = atmMenu.createPanel(1, 12, 7, 8, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
-    panel.Header = true;
-    panel.HoverBackgroundColor(150, 25, 25, 160);
+    panel.HoverBackgroundColor(25, 25, 25, 160);
     panel.Hoverable = true;
     panel.Function = () => {
         API.triggerServerEvent("OnPlayerAtmGive", 500);
@@ -138,13 +128,12 @@ function showAtmMenu(info: AtmInfo) {
     textElement.Color(255, 255, 255, 255);
     textElement.Centered = true;
     textElement.FontScale = 0.6;
-    textElement.Offset = 18;
 
-    panel = atmMenu.createPanel(1, 15, 7, 3, 1);
+    panel = atmMenu.createPanel(1, 12, 8, 8, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
-    panel.Header = true;
-    panel.HoverBackgroundColor(150, 25, 25, 160);
+    panel.HoverBackgroundColor(25, 25, 25, 160);
     panel.Hoverable = true;
+    panel.Header = true;
     panel.Function = () => {
         prevPage = 2;
         atmMenu.Page = 3;
@@ -153,14 +142,12 @@ function showAtmMenu(info: AtmInfo) {
     textElement.Color(255, 255, 255, 255);
     textElement.Centered = true;
     textElement.FontScale = 0.6;
-    textElement.Offset = 18;
 
     //Strona 2
     //Wypłata
-    panel = atmMenu.createPanel(2, 15, 4, 3, 1);
+    panel = atmMenu.createPanel(2, 12, 5, 8, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
-    panel.Header = true;
-    panel.HoverBackgroundColor(150, 25, 25, 160);
+    panel.HoverBackgroundColor(25, 25, 25, 160);
     panel.Hoverable = true;
     panel.Function = () => {
         API.triggerServerEvent("OnPlayerAtmTake", 50);
@@ -170,12 +157,10 @@ function showAtmMenu(info: AtmInfo) {
     textElement.Color(255, 255, 255, 255);
     textElement.Centered = true;
     textElement.FontScale = 0.6;
-    textElement.Offset = 18;
 
-    panel = atmMenu.createPanel(2, 15, 5, 3, 1);
+    panel = atmMenu.createPanel(2, 12, 6, 8, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
-    panel.Header = true;
-    panel.HoverBackgroundColor(150, 25, 25, 160);
+    panel.HoverBackgroundColor(25, 25, 25, 160);
     panel.Hoverable = true;
     panel.Function = () => {
         API.triggerServerEvent("OnPlayerAtmTake", 100);
@@ -185,12 +170,10 @@ function showAtmMenu(info: AtmInfo) {
     textElement.Color(255, 255, 255, 255);
     textElement.Centered = true;
     textElement.FontScale = 0.6;
-    textElement.Offset = 18;
 
-    panel = atmMenu.createPanel(2, 15, 6, 3, 1);
+    panel = atmMenu.createPanel(2, 12, 7, 8, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
-    panel.Header = true;
-    panel.HoverBackgroundColor(150, 25, 25, 160);
+    panel.HoverBackgroundColor(25, 25, 25, 160);
     panel.Hoverable = true;
     panel.Function = () => {
         API.triggerServerEvent("OnPlayerAtmTake", 500);
@@ -200,13 +183,12 @@ function showAtmMenu(info: AtmInfo) {
     textElement.Color(255, 255, 255, 255);
     textElement.Centered = true;
     textElement.FontScale = 0.6;
-    textElement.Offset = 18;
 
-    panel = atmMenu.createPanel(2, 15, 7, 3, 1);
+    panel = atmMenu.createPanel(2, 12, 8, 8, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
-    panel.Header = true;
-    panel.HoverBackgroundColor(150, 25, 25, 160);
+    panel.HoverBackgroundColor(25, 25, 25, 160);
     panel.Hoverable = true;
+    panel.Header = true;
     panel.Function = () => {
         prevPage = 2;
         atmMenu.Page = 3;
@@ -215,14 +197,13 @@ function showAtmMenu(info: AtmInfo) {
     textElement.Color(255, 255, 255, 255);
     textElement.Centered = true;
     textElement.FontScale = 0.6;
-    textElement.Offset = 18;
 
     //Strona 3
     //Custom kwota
-    panel = atmMenu.createPanel(3, 12, 4, 1, 1);
+    panel = atmMenu.createPanel(3, 13, 5, 1, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
     panel.Header = true;
-    panel.HoverBackgroundColor(150, 25, 25, 160);
+    panel.HoverBackgroundColor(25, 25, 25, 160);
     panel.Hoverable = true;
     panel.Function = () => {
         atmMenu.Page = prevPage;
@@ -233,7 +214,7 @@ function showAtmMenu(info: AtmInfo) {
     textElement.VerticalCentered = true;
     textElement.FontScale = 0.6;
 
-    panel = atmMenu.createPanel(3, 13, 4, 7, 1);
+    panel = atmMenu.createPanel(3, 14, 5, 7, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
     panel.Header = true;
     textElement = panel.addText("Inne kwoty");
@@ -242,20 +223,20 @@ function showAtmMenu(info: AtmInfo) {
     textElement.VerticalCentered = true;
     textElement.FontScale = 0.6;
 
-    panel = atmMenu.createPanel(3, 14, 5, 8, 3);
+    panel = atmMenu.createPanel(3, 13, 6, 8, 2);
     panel.MainBackgroundColor(0, 0, 0, 175);
     textElement = panel.addText("Kwota:");
     textElement.Color(255, 255, 255, 255);
     textElement.FontScale = 0.6;
     textElement = panel.addText("");
 
-    customMoneyInput = panel.addInput(0, 5, 8, 1);
+    customMoneyInput = panel.addInput(0, 1, 8, 1);
     customMoneyInput.NumericOnly = true;
 
-    panel = atmMenu.createPanel(3, 15, 8, 3, 1);
+    panel = atmMenu.createPanel(3, 13, 8, 8, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
     panel.Header = true;
-    panel.HoverBackgroundColor(150, 25, 25, 160);
+    panel.HoverBackgroundColor(25, 25, 25, 160);
     panel.Hoverable = true;
     panel.Function = () => {
         if (isNaN(parseInt(customMoneyInput.Input))) {
@@ -283,7 +264,6 @@ function showAtmMenu(info: AtmInfo) {
     textElement.Color(255, 255, 255, 255);
     textElement.Centered = true;
     textElement.FontScale = 0.6;
-    textElement.Offset = 18;
 
     atmMenu.DisableOverlays(true);
     atmMenu.Ready = true;

@@ -1,4 +1,4 @@
-﻿/// <reference path="../../types-gtanetwork/index.d.ts" />
+﻿/// <reference path="../../types-gt-mp/index.d.ts" />
 
 class PlayerInfo {
     socialClubName: string = "";
@@ -6,7 +6,7 @@ class PlayerInfo {
     ping: number = 0;
     color: number[] = [255, 255, 255];
 }
-//
+
 var gCurrentState = 0;
 var gCurrentPage = 0;
 var gStateSet = 0;
@@ -110,7 +110,7 @@ API.onUpdate.connect(() => {
 
     if (gCurrentState == 1) {
         // Get list data
-        var resolution = API.getScreenResolutionMantainRatio();
+        var resolution = API.getScreenResolutionMaintainRatio();
 
         var listPadding = 4;
         var listLine = 28;

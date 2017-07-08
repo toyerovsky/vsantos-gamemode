@@ -1,5 +1,5 @@
 ﻿using System;
-using GTANetworkShared;
+using GrandTheftMultiplayer.Shared.Math;
 using Serverside.Interfaces;
 
 namespace Serverside.Core.Bus.Models

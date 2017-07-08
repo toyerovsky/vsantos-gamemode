@@ -1,16 +1,18 @@
-﻿using GTANetworkShared;
+﻿
 using Serverside.Controllers;
 using Serverside.Database;
 using System.Collections.Generic;
 using System.Linq;
-using GTANetworkServer;
+using GrandTheftMultiplayer.Server.Elements;
+using GrandTheftMultiplayer.Shared;
 using Serverside.Autonomic.FuelStation;
+using Serverside.Exceptions;
 
 namespace Serverside.Core
 {
     public static class RPEntityManager
     {
-        private static readonly SortedList<long, AccountController> Accounts = new SortedList<long, AccountController>();
+        private static readonly Dictionary<long, AccountController> Accounts = new Dictionary<long, AccountController>();
         private static readonly List<VehicleController> Vehicles = new List<VehicleController>();
         private static readonly List<GroupController> Groups = new List<GroupController>();
         private static readonly List<BuildingController> Buildings = new List<BuildingController>();
@@ -43,9 +45,14 @@ namespace Serverside.Core
             return characterId > -1 ? Accounts.Values.Single(ch => ch.CharacterController.Character.Id == characterId) : null;
         }
 
-        public static SortedList<long, AccountController> GetAccounts() => Accounts;
+        public static Dictionary<long, AccountController> GetAccounts() => Accounts;
 
-        public static int CalculateServerId(AccountController account) => Accounts.IndexOfValue(account);
+        public static int CalculateServerId(AccountController account)
+        {
+            if (!Accounts.ContainsValue(account)) throw new AccountNotLoggedException("Próbowano uzyskać ID dla gracza który nie jest zalogowany.");
+            return Accounts.Values.ToList().IndexOf(account);
+
+        }
 
         public static void Save(bool resourceStop = false)
         {
@@ -84,12 +91,15 @@ namespace Serverside.Core
 
         public static GroupController GetGroup(string groupName) => Groups.Single(x => x.GroupData.Name.StartsWith(groupName.ToLower()));
 
-        //Sztuczka żeby sloty były od 1 do 3
         public static List<GroupController> GetPlayerGroups(AccountController controller)
         {
-            return Groups.Where(
-                    g => g.GroupData.Workers.Any(x => x.Character.Id == controller.CharacterController.Character.Id))
+            if (Groups.Any(g => g.GroupData.Workers.Any(x => x.Character.Id == controller.CharacterController.Character.Id)))
+            {
+                return Groups.Where(
+                    g => g.GroupData.Workers.Any(x => x.Character?.Id == controller.CharacterController.Character.Id))
                 .ToList();
+            }
+            return null;
         }
 
         public static List<GroupController> GetGroups() => Groups;

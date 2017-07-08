@@ -4,8 +4,8 @@ var activeCameraBlips = [];
 var activeCameraMarkers = [];
 var directorMode = false;
 var defaultSpeed = 5000; // Used for general Camera Speed when Interopolating.
-var resX = API.getScreenResolutionMantainRatio().Width;
-var resY = API.getScreenResolutionMantainRatio().Height;
+var resX = API.getScreenResolutionMaintainRatio().Width;
+var resY = API.getScreenResolutionMaintainRatio().Height;
 var currentCamera = null;
 var markersHidden = false;
 var directorModeToggle = false;
@@ -14,7 +14,6 @@ API.onClientEventTrigger.connect(function (eventName, args)
 {
     if (eventName == "ToggleHud") directorMode = !directorMode;
 });
-
 
 API.onKeyDown.connect(function (player, e)
 {
@@ -95,8 +94,8 @@ API.onKeyDown.connect(function (player, e)
 	
 	// Setup a new Camera = Tab
 	if (e.KeyCode == Keys.Tab) {
-		var player = API.getLocalPlayer();
-		cameraSetup(API.getEntityPosition(player), API.getEntityRotation(player));
+	    player = API.getLocalPlayer();
+	    cameraSetup(API.getEntityPosition(player), API.getEntityRotation(player));
 		return;
 	}
 	
@@ -210,16 +209,15 @@ API.onKeyDown.connect(function (player, e)
 		
 		// Point at Player Position = {
 		if (e.KeyCode == Keys.OemOpenBrackets) {
-			var player = API.getLocalPlayer();
-			API.pointCameraAtPosition(API.getActiveCamera(), API.getEntityPosition(player));
+		    player = API.getLocalPlayer();
+		    API.pointCameraAtPosition(API.getActiveCamera(), API.getEntityPosition(player));
 			return;
 		}
 		
 		// Point at Player Vehicle = }
 		if (e.KeyCode == Keys.OemCloseBrackets) {
-			var player = API.getLocalPlayer();
-			
-			if (API.isPlayerInAnyVehicle(player) == false) {
+		    player = API.getLocalPlayer();
+		    if (API.isPlayerInAnyVehicle(player) == false) {
 				return;
 			}
 			

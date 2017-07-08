@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using GTANetworkServer;
-using GTANetworkShared;
+using GrandTheftMultiplayer.Server.Constant;
+using GrandTheftMultiplayer.Shared;
+
 
 namespace Serverside.Database.Models
 {

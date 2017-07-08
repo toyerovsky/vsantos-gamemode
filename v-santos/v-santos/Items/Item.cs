@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Data.Entity;
-using GTANetworkServer;
-using GTANetworkShared;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Elements;
+using GrandTheftMultiplayer.Shared;
 using Serverside.Controllers;
 using Serverside.Database;
 using Serverside.Core.Extensions;
@@ -48,7 +49,7 @@ namespace Serverside.Items
 
     internal abstract class Item
     {
-        protected API Api = API.shared;
+        protected API Api = new API();
 
         protected Database.Models.Item Data { get; }
 
@@ -153,7 +154,7 @@ namespace Serverside.Items
             if (Data.ItemType == (int)ItemType.Weapon)
             {
                 if (Data.FirstParameter.HasValue)
-                    Data.SecondParameter = Api.getPlayerWeaponAmmo(player.Client, (WeaponHash)Data.FirstParameter);
+                    Data.SecondParameter = Api.getPlayerWeaponAmmo(sender, (WeaponHash)Data.FirstParameter);
                 Save();
             }
             Api.onPlayerDisconnected -= API_onPlayerDisconnected;
@@ -239,10 +240,9 @@ namespace Serverside.Items
 
         public override void UseItem(AccountController player)
         {
-            Random random = new Random();
             if (Data.FirstParameter != null)
                 RPChat.SendMessageToNearbyPlayers(player.Client,
-                    $"wyrzucił {random.Next(1, Data.FirstParameter.Value)} oczek z {Data.FirstParameter} możliwych",
+                    $"wyrzucił {new Random().Next(1, Data.FirstParameter.Value)} oczek z {Data.FirstParameter} możliwych",
             ChatMessageType.ServerMe);
         }
 

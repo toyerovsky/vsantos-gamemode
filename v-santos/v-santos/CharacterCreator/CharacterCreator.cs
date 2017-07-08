@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using GTANetworkServer;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Constant;
 using Serverside.Controllers;
 
 namespace Serverside.CharacterCreator

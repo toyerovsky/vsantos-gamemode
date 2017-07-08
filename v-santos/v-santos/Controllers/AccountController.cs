@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Data.Entity;
 using System.Linq;
-using GTANetworkServer;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Constant;
+using GrandTheftMultiplayer.Server.Elements;
+using Serverside.Controllers.EventArgs;
 using Serverside.Core;
 using Serverside.Database;
 using Serverside.Database.Models;
@@ -11,7 +14,8 @@ namespace Serverside.Controllers
 {
     public class AccountController
     {
-        public static event AccountLoginEventHandler OnPlayerCharacterLogin;
+        public static event AccountLoginEventHandler CharacterLoggedIn;
+        public static event EventHandler<ServerIdChangeEventArgs> ServerIdChanged;
 
         public long AccountId => AccountData.UserId;
         public Account AccountData;
@@ -19,13 +23,14 @@ namespace Serverside.Controllers
         public Client Client { get; private set; }
         public CharacterController CharacterController;
 
+        private int _serverId = -1;
         public int ServerId
         {
             get
             {
                 var id = RPEntityManager.CalculateServerId(this);
-                Client.nametag = $"({id}) {CharacterController.FormatName}";
-                return id;
+                ServerIdChanged?.Invoke(this, new ServerIdChangeEventArgs(_serverId, id));
+                return _serverId = id;
             }
         }
 
@@ -58,7 +63,7 @@ namespace Serverside.Controllers
 
             ContextFactory.Instance.SaveChanges();
             RPEntityManager.AddAccount(AccountId, this);
-            OnPlayerCharacterLogin?.Invoke(client, this);
+            CharacterLoggedIn?.Invoke(client, this);
         }
 
         public static AccountController GetAccountControllerFromName(string formatname)
@@ -109,10 +114,11 @@ namespace Serverside.Controllers
         {
             var ipban = ContextFactory.Instance.Bans.FirstOrDefault(ban => ban.Active && ban.Ip == player.address);
             if (ipban != null) return true;
-            var socialclub = ContextFactory.Instance.Bans.FirstOrDefault(ban => ban.Active && ban.IsSocialClubBanned && ban.SocialClub == player.socialClubName);
+            var socialclub = ContextFactory.Instance.Bans.FirstOrDefault(ban => 
+                ban.Active && ban.IsSocialClubBanned && ban.SocialClub == player.socialClubName);
             return socialclub != null;
         }
-
+            
         public static bool IsAccountBanned(Account account)
         {
             return ContextFactory.Instance.Bans.FirstOrDefault(ban => ban.Active && ban.AccountId == account.Id) != null;

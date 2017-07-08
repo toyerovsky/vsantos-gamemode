@@ -5,8 +5,8 @@ var drawMoneyInfo = false;
 var moneyInfo = "";
 var color = null;
 
-var resX = API.getScreenResolutionMantainRatio().Width;
-var resY = API.getScreenResolutionMantainRatio().Height;
+var resX = API.getScreenResolutionMaintainRatio().Width;
+var resY = API.getScreenResolutionMaintainRatio().Height;
 
 var lastMoney;
 var currentMoney;

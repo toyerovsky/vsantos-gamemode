@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GTANetworkServer;
-using GTANetworkServer.Constant;
-using GTANetworkShared;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Elements;
+using GrandTheftMultiplayer.Server.Managers;
+using GrandTheftMultiplayer.Shared;
+using GrandTheftMultiplayer.Shared.Math;
 using Newtonsoft.Json;
 using Serverside.Autonomic.Carshop.Models;
 using Serverside.Controllers;

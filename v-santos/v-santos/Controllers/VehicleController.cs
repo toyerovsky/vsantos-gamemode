@@ -1,6 +1,4 @@
-﻿using GTANetworkServer;
-using GTANetworkServer.Constant;
-using GTANetworkShared;
+﻿
 using Serverside.Core;
 using Serverside.Database;
 using Serverside.Database.Models;
@@ -9,15 +7,18 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Constant;
+using GrandTheftMultiplayer.Shared;
+using GrandTheftMultiplayer.Shared.Math;
 using Serverside.Core.Extensions;
-using Vehicle = Serverside.Database.Models.Vehicle;
 
 namespace Serverside.Controllers
 {
     public class VehicleController : IDisposable
     {
         public long VehicleId => VehicleData.Id;
-        public GTANetworkServer.Vehicle Vehicle { get; set; }
+        public GrandTheftMultiplayer.Server.Elements.Vehicle Vehicle { get; set; }
         public Vehicle VehicleData { get; set; }
         public Core.Description.Description Description;
 

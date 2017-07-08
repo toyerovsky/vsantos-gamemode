@@ -1,6 +1,8 @@
 ﻿using System;
-using GTANetworkServer;
-using GTANetworkShared;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Constant;
+using GrandTheftMultiplayer.Server.Elements;
+using GrandTheftMultiplayer.Shared.Math;
 using Serverside.Core;
 using Serverside.Core.Extensions;
 
@@ -9,8 +11,6 @@ namespace Serverside.Employer
 {
     public class RPEmployer : Script
     {
-        private API Api { get; }
-
         private FullPosition EmployerPosition => new FullPosition(new Vector3(1750f, -1580f, 113f), new Vector3(1f, 1f, 1f));
         private EmployerBot Employer { get; }
 
@@ -18,9 +18,7 @@ namespace Serverside.Employer
         {
             API.onClientEventTrigger += API_onClientEventTrigger;
             API.onResourceStart += API_onResourceStart;
-
-            Api = API.shared;
-            Employer = new EmployerBot(Api, "Pracodawca", PedHash.Business01AMM, EmployerPosition);
+            Employer = new EmployerBot(API, "Pracodawca", PedHash.Business01AMM, EmployerPosition);
             Employer.Intialize();
         }
         
@@ -54,7 +52,7 @@ namespace Serverside.Employer
                         sender.Notify("Podjąłeś się pracy: Złodziej. Udaj się do portu i wsiądź do jednej z ciężarówek.");
                         break;
                     case 3:
-                        sender.Notify("Podjąłeś się pracy: Magazynier. Udaj się do magazynu, jest on oznaczony na mapie ikoną TU WPISAC.");
+                        sender.Notify("Podjąłeś się pracy: Magazynier. Udaj się do magazynu, jest on oznaczony na mAPIe ikoną TU WPISAC.");
                         break;
                 }
             }

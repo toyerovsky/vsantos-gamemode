@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Linq;
-using GTANetworkServer;
-using GTANetworkShared;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Elements;
+using GrandTheftMultiplayer.Shared.Math;
 using Serverside.Controllers;
 using Serverside.Database;
 using Serverside.Database.Models;
@@ -20,7 +21,7 @@ namespace Serverside.Core.Login
             API.onResourceStart += API_onResourceStart;
             API.onClientEventTrigger += API_onClientEventTrigger;
             API.onPlayerBeginConnect += API_onPlayerBeginConnect;
-            AccountController.OnPlayerCharacterLogin += RPLogin_OnPlayerLogin;
+            AccountController.CharacterLoggedIn += RPLogin_OnPlayerLogin;
             FDb = new ForumDatabaseHelper();
         }
 

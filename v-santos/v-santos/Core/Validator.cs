@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Serverside.Core
+﻿namespace Serverside.Core
 {
     public static class Validator
     {

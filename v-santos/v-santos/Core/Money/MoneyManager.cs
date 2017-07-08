@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
-using GTANetworkServer;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Elements;
 using Serverside.Core.Extensions;
 
 namespace Serverside.Core.Money

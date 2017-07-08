@@ -1,4 +1,5 @@
-﻿using GTANetworkServer;
+﻿
+using GrandTheftMultiplayer.Server.Elements;
 using Serverside.Core.Extensions;
 
 namespace Serverside.Bank

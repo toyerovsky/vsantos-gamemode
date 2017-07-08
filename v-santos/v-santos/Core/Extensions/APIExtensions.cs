@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GTANetworkServer;
-using GTANetworkServer.Constant;
-using GTANetworkShared;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Constant;
+using GrandTheftMultiplayer.Server.Elements;
+using GrandTheftMultiplayer.Shared.Math;
+
+
 using Serverside.Admin;
 
 namespace Serverside.Core.Extensions
@@ -47,6 +50,34 @@ namespace Serverside.Core.Extensions
             return new Color(255, 255, 255);
         }
 
+        private static Dictionary<string, string> RocstarColors = new Dictionary<string, string>()
+        {
+            {"~r~", "DE3232"},
+            {"~g~", "71CA71"},
+            {"~b~", "5CB4EB"},
+            {"~y~", "EEC650"},
+            {"~p~", "AD65E5"},
+            {"~q~", "EB4F80"},
+            {"~o~", "FE8455"},
+            {"~m~", "636378"},
+            {"~u~", "252525"}
+        };
+
+        public static string ToRocstar(this Color color)
+        {
+            foreach (var c in RocstarColors)
+            {
+                //ConsoleOutput(c.Key.Substring(1, 2).ToString(), ConsoleColor.Red);
+                //ConsoleOutput((Convert.ToInt32(c.Key.Substring(1, 2)) < 20).ToString(), ConsoleColor.Green);
+                //ConsoleOutput((Math.Abs(color.red - Convert.ToInt32(c.Key.Substring(1, 2))) < 20).ToString(), ConsoleColor.Blue);
+                if (Math.Abs(color.red - int.Parse(c.Value.Substring(0, 2), System.Globalization.NumberStyles.HexNumber)) < 20 ||
+                    Math.Abs(color.green - int.Parse(c.Value.Substring(2, 2), System.Globalization.NumberStyles.HexNumber)) < 20 ||
+                    Math.Abs(color.red - int.Parse(c.Value.Substring(4, 2), System.Globalization.NumberStyles.HexNumber)) < 20)
+                    return c.Key;
+            }
+            return "~w~";
+        }
+
         public static Color GetRandomColor()
         {
             Random r = new Random();
@@ -55,6 +86,7 @@ namespace Serverside.Core.Extensions
 
         public static Color ToColor(this string hex)
         {
+            if (hex == null) return new Color(255, 255, 255);
             if (hex.StartsWith("#"))
                 hex = hex.Substring(1);
 
@@ -108,7 +140,7 @@ namespace Serverside.Core.Extensions
             {
                 player = GetNearestPlayer(vehicle.position);
             }
-            bool vehhastyres = API.fetchNativeFromPlayer<bool>(player, Hash.GET_VEHICLE_TYRES_CAN_BURST, vehicle.handle);
+            bool vehhastyres = API.shared.fetchNativeFromPlayer<bool>(player, Hash.GET_VEHICLE_TYRES_CAN_BURST, vehicle.handle);
 
             if (vehhastyres)
             {
@@ -154,7 +186,7 @@ namespace Serverside.Core.Extensions
                         List<Wheel> wheels = new List<Wheel> { Wheel.FrontLeft, Wheel.FrontRight, Wheel.RearLeft, Wheel.RearRight };
                         int r = GetRandomNumber(0, 3);
                         //API.shared.sendChatMessageToPlayer(player, "Random Tyre: " + wheels[r].ToString());
-                        bool popped = API.fetchNativeFromPlayer<bool>(player, Hash.IS_VEHICLE_TYRE_BURST, vehicle.handle, (int)wheels[r], true);
+                        bool popped = API.shared.fetchNativeFromPlayer<bool>(player, Hash.IS_VEHICLE_TYRE_BURST, vehicle.handle, (int)wheels[r], true);
                         if (popped)
                         {
                             //API.shared.sendChatMessageToPlayer(player, "Is Popped: " + wheels[r].ToString());

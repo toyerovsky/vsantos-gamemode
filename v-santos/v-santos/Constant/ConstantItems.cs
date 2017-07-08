@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GTANetworkShared;
+using GrandTheftMultiplayer.Shared;
+using GrandTheftMultiplayer.Shared.Math;
 using Serverside.Constant.Structs;
-using Serverside.CrimeBot.Models;
 using Serverside.Items;
 
 namespace Serverside.Constant
@@ -161,6 +161,15 @@ namespace Serverside.Constant
                 return new Tuple<WeaponHash, int?>(WeaponHash.MiniSMG, 20);
             return new Tuple<WeaponHash, int?>(WeaponHash.Battleaxe, null);
         }
+
+        //public static readonly Dictionary<string, PedHash> ConstantNames = new Dictionary<string, PedHash>();
+        //{
+        //    {"John Doe",}
+        //    {"John Galante",}
+        //    {"Lawrance Cagiano",}
+        //    {"Randall Salvaggio",}
+        //    {"Cade Smith", PedHash.}
+        //};
 
         public static readonly List<BuildingData> DefaultInteriors = new List<BuildingData>
         {

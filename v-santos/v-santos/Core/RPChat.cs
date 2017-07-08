@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GTANetworkServer;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Elements;
+using GrandTheftMultiplayer.Server.Managers;
+using Serverside.Controllers;
 using Serverside.Core.Extensions;
 using Serverside.Groups;
 using Serverside.Groups.Base;
@@ -130,23 +133,24 @@ namespace Serverside.Core
         }
 
         [Command("go", "~y~UŻYJ: ~w~ /go [slot] [treść]", GreedyArg = true)]
-        public void SendMessageOnGroupChat(Client sender, short groupSlot, string message)
+        public void SendMessageOnGroupChat(Client sender, string message)
         {
-            if (Validator.IsGroupSlotValid(groupSlot))
+            var slot = message.Split(' ')[0];
+            short groupSlot = slot.All(char.IsDigit) ? Convert.ToInt16(slot) : (short)-1;
+            if (groupSlot != -1 && Validator.IsGroupSlotValid(groupSlot))
             {
                 sender.Notify("Podany slot grupy jest nieprawidłowy.");
                 return;
             }
-
-            var groups = RPEntityManager.GetPlayerGroups(sender.GetAccountController());
-
-            if (groups.Count - 1 >= groupSlot && groups[groupSlot] != null)
+            
+            if (sender.TryGetGroupByUnsafeSlot(groupSlot, out GroupController group) && group != null)
             {
-                if (groups[groupSlot].CanPlayerWriteOnChat(sender.GetAccountController()))
+                if (group.CanPlayerWriteOnChat(sender.GetAccountController()))
                 {
-                    var clients = RPEntityManager.GetAccounts().Where(a => groups[groupSlot].GroupData.Workers
+                    var m = string.Join(" ", message);
+                    var clients = RPEntityManager.GetAccounts().Where(a => group.GroupData.Workers
                         .Any(w => w.Character.Id.Equals(a.Value.CharacterController.Character.Id))).Select(c => c.Value.Client).ToList();
-                    SendMessageToSpecifiedPlayers(sender, clients, message, ChatMessageType.GroupOOC, $"~{groups[groupSlot].GroupData.Color.ToHex()}~");
+                    SendMessageToSpecifiedPlayers(sender, clients, m, ChatMessageType.GroupOOC, $"~{group.GroupData.Color}~");
                 }
                 else
                 {

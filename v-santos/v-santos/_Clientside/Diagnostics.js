@@ -1,7 +1,7 @@
 var drawCords = false;
 
-var resX = API.getScreenResolutionMantainRatio().Width;
-var resY = API.getScreenResolutionMantainRatio().Height;
+var resX = API.getScreenResolutionMaintainRatio().Width;
+var resY = API.getScreenResolutionMaintainRatio().Height;
 
 API.onServerEventTrigger.connect(function (eventName, args) {
     //args[0] czy schowac czy pokazac

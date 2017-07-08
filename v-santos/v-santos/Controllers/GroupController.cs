@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using Serverside.Database;
 using Serverside.Groups;
-using GTANetworkServer.Constant;
+
 using Serverside.Core;
 using Serverside.Database.Models;
 using System.Linq;
+using GrandTheftMultiplayer.Server.Constant;
 using Serverside.Core.Extensions;
 using Serverside.Groups.Base;
 
@@ -39,13 +40,13 @@ namespace Serverside.Controllers
             this.GroupData.Name = name;
             this.GroupData.Tag = tag;
             this.GroupData.GroupType = type;
-            this.GroupData.Color = color;
+            this.GroupData.Color = color.ToHex();
             ContextFactory.Instance.Groups.Add(GroupData);
             ContextFactory.Instance.SaveChanges();
             RPEntityManager.Add(this);
         }
 
-        public string GetColoredName() => APIExtensions.GetColoredString(GroupData.Color.ToHex(), GroupData.Name);
+        public string GetColoredName() => $"{GroupData.Color.ToColor().ToRocstar()} ~h~ {GroupData.Name} ~w~";
 
         public bool HasMoney(decimal money) => GroupData.Money >= money;
 
@@ -82,6 +83,11 @@ namespace Serverside.Controllers
         { 
             GroupData.Workers.Remove(GroupData.Workers.Single(w => w.Character.Id == account.CharacterController.Character.Id));
             Save();
+        }
+
+        public List<Worker> GetWorkers()
+        {
+            return GroupData.Workers.Where(w => w.Character != null).ToList();
         }
 
         public bool CanPlayerOffer(AccountController account)

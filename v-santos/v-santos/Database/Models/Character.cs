@@ -34,7 +34,7 @@ namespace Serverside.Database.Models
         public virtual ICollection<Worker> Workers { get; set; }
 
         public decimal Money { get; set; }
-        public long BankAccountNumber { get; set; }
+        public int? BankAccountNumber { get; set; }
         public decimal BankMoney { get; set; }
         public bool Gender { get; set; }
         public short Weight { get; set; }
@@ -59,7 +59,6 @@ namespace Serverside.Database.Models
         public int BWState { get; set; }
         public bool? IsCreated { get; set; }
         public bool Freemode { get; set; }
-        public int? Skin { get; set; }
         public int Job { get; set; }
         public decimal? MoneyJob { get; set; }
         public decimal? JobLimit { get; set; }

@@ -1,5 +1,5 @@
 ﻿using System;
-using GTANetworkServer;
+using GrandTheftMultiplayer.Server.Elements;
 using Serverside.Controllers;
 
 namespace Serverside.Core.Extensions

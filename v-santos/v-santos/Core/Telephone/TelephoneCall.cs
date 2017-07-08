@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Timers;
-using GTANetworkServer;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Elements;
 using Serverside.Core.Extensions;
 
 namespace Serverside.Core.Telephone

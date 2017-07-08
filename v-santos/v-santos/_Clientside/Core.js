@@ -1,6 +1,6 @@
 var drawStreetHUD = false;
 let player = API.getLocalPlayer();
-let res = API.getScreenResolutionMantainRatio();
+let res = API.getScreenResolutionMaintainRatio();
 
 API.onKeyDown.connect(function (sender, e)
 {

@@ -21,7 +21,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>C:\gtansrv\resources\vsantos\</OutputPath>
+    <OutputPath>..\..\..\..\..\..\..\gt-mp-server\resources\vsantos\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -44,11 +44,11 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="GTANetworkServer, Version=0.1.517.602, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\gtanetwork.api.0.1.517.602\lib\GTANetworkServer.exe</HintPath>
+    <Reference Include="GrandTheftMultiplayer.Server, Version=0.1.513.481, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\grandtheftmultiplayer.api.0.1.513.481\lib\net452\GrandTheftMultiplayer.Server.exe</HintPath>
     </Reference>
-    <Reference Include="GTANetworkShared, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\gtanetwork.api.0.1.517.602\lib\GTANetworkShared.dll</HintPath>
+    <Reference Include="GrandTheftMultiplayer.Shared, Version=0.1.489.410, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\grandtheftmultiplayer.api.0.1.513.481\lib\net452\GrandTheftMultiplayer.Shared.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
@@ -59,7 +59,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.4.11\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -104,6 +107,7 @@
     <Compile Include="Controllers\BuildingController.cs" />
     <Compile Include="Controllers\CellphoneController.cs" />
     <Compile Include="Controllers\CharacterController.cs" />
+    <Compile Include="Controllers\EventArgs\ServerIdChangeEventArgs.cs" />
     <Compile Include="Controllers\GroupController.cs" />
     <Compile Include="Controllers\VehicleController.cs" />
     <Compile Include="Core\Animations\Models\Animation.cs" />
@@ -166,6 +170,7 @@
     <Compile Include="Database\RoleplayConnection.cs" />
     <Compile Include="Employer\EmployerBot.cs" />
     <Compile Include="Employer\RPEmployer.cs" />
+    <Compile Include="Exceptions\AccountNotLoggedException.cs" />
     <Compile Include="Groups\Base\CityHall.cs" />
     <Compile Include="Groups\Base\CrimeGroup.cs" />
     <Compile Include="Groups\Base\Police.cs" />
@@ -224,6 +229,10 @@
     <Compile Include="Migrations\201706301216122_CrimeBot.Designer.cs">
       <DependentUpon>201706301216122_CrimeBot.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201707051552463_q.cs" />
+    <Compile Include="Migrations\201707051552463_q.Designer.cs">
+      <DependentUpon>201707051552463_q.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Offers\Enums.cs" />
     <Compile Include="Offers\Offer.cs" />
@@ -269,9 +278,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="_Clientside\Animations.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="_Clientside\Atm.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="_Clientside\BwGui.js">
@@ -551,21 +557,40 @@
     <EmbeddedResource Include="Migrations\201706301216122_CrimeBot.resx">
       <DependentUpon>201706301216122_CrimeBot.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707051552463_q.resx">
+      <DependentUpon>201707051552463_q.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="types-gtanetwork\Declarations.d.ts" />
-    <TypeScriptCompile Include="types-gtanetwork\Enums.ts" />
-    <TypeScriptCompile Include="types-gtanetwork\GTANetwork.dll.d.ts" />
-    <TypeScriptCompile Include="types-gtanetwork\GTANetworkShared.dll.d.ts" />
-    <TypeScriptCompile Include="types-gtanetwork\index.d.ts" />
-    <TypeScriptCompile Include="types-gtanetwork\NativeUI.dll.d.ts" />
-    <TypeScriptCompile Include="types-gtanetwork\ScriptHookVDotNet.dll.d.ts" />
-    <TypeScriptCompile Include="types-gtanetwork\System.d.ts" />
-    <TypeScriptCompile Include="types-gtanetwork\System.Drawing.dll.d.ts" />
-    <TypeScriptCompile Include="types-gtanetwork\Xilium.CefGlue.dll.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Declarations.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\GrandTheftMultiplayer.Client.GUI.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\GrandTheftMultiplayer.Client.Javascript.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\GrandTheftMultiplayer.Client.Javascript.ScriptContext.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\GrandTheftMultiplayer.Client.Misc.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\GrandTheftMultiplayer.Client.Sound.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\GrandTheftMultiplayer.Client.Streamer.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\GrandTheftMultiplayer.Client.Sync.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\GrandTheftMultiplayer.Client.Util.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\GrandTheftMultiplayer.Shared.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\GrandTheftMultiplayer.Shared.Math.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\GTA.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\GTA.Math.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\GTA.Native.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\GTA.NaturalMotion.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\GTA.UI.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\index.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Microsoft.ClearScript.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\NativeUI.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\NativeUI.UIMenu.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\NativeUI.UIMenuItem.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\NativeUI.UIResText.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\System.Collections.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\System.Collections.Generic.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\System.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\System.Drawing.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\System.Windows.Forms.d.ts" />
     <TypeScriptCompile Include="_Clientside\TypeScript\AdminListMenu.ts" />
     <TypeScriptCompile Include="_Clientside\TypeScript\AtmMenu.ts" />
-    <TypeScriptCompile Include="_Clientside\TypeScript\FuelStationMenu.ts" />
     <TypeScriptCompile Include="_Clientside\TypeScript\GroupMenu.ts" />
     <TypeScriptCompile Include="_Clientside\TypeScript\ReportMenu.ts" />
   </ItemGroup>

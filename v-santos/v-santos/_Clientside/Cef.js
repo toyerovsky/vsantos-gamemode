@@ -5,13 +5,11 @@ class WebBrowser {
         this.browser = API.createCefBrowser(resolution.Width, resolution.Height, local)
         API.waitUntilCefBrowserInit(this.browser)
         API.setCefBrowserPosition(this.browser, 0, 0)
-
-        API.setCefDrawState(false);
     }
 
     load(path, local = true, chatstate = false, cursorstate = true) {
         if (!API.isCefDrawEnabled()) {
-            API.setCefDrawState(true);
+            API.setCefBrowserHeadless(false)
         }
         this.path = path
         API.loadPageCefBrowser(this.browser, this.path)
@@ -22,7 +20,7 @@ class WebBrowser {
 
     show(chatstate = false) {
         if (API.isCefDrawEnabled()) {
-            API.setCefDrawState(false)
+            API.setCefBrowserHeadless(true)
             API.setCanOpenChat(chatstate)
             API.showCursor(true)
         }
@@ -30,7 +28,7 @@ class WebBrowser {
 
     hide() {
         if (API.isCefDrawEnabled()) {
-            API.setCefDrawState(false)
+            API.setCefBrowserHeadless(true)
             API.setCanOpenChat(true)
             API.showCursor(false)
         }

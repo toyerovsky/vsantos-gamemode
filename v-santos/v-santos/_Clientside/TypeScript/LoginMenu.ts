@@ -23,7 +23,7 @@ function menuLoginPanel()
 
     //Login Screen - Strona 0
     //Login Header
-    panel = loginMenu.createPanel(0, 12, 3, 8, 1);
+    panel = loginMenu.createPanel(0, 12, 5, 8, 1);
     panel.MainBackgroundColor(0, 0, 0, 175);
     panel.Header = true;
     textElement = panel.addText("V-Santos.pl - Logowanie");
@@ -31,12 +31,6 @@ function menuLoginPanel()
     textElement.Centered = true;
     textElement.VerticalCentered = true;
     textElement.FontScale = 0.6;
-
-    // Second Page Input Panel Example / Image
-    panel = loginMenu.createPanel(0, 12, 4, 8, 2);
-    panel.MainBackgroundColor(0, 0, 0, 255);
-    panel.MainBackgroundImagePadding = 5;
-    panel.MainBackgroundImage = "_Clientside/TypeScript/Resources/Images/logo.png";
 
     //Formatka logowania
     panel = loginMenu.createPanel(0, 12, 6, 8, 7);

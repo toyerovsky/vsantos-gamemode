@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using GTANetworkServer;
-using GTANetworkShared;
-using Serverside.Controllers;
+using GrandTheftMultiplayer.Server.API;
 using Serverside.Core.Extensions;
 
 namespace Serverside.Jobs

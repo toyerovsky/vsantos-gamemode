@@ -1,4 +1,6 @@
-﻿using GTANetworkShared;
+﻿
+
+using GrandTheftMultiplayer.Shared.Math;
 
 namespace Serverside.Constant.Structs
 {

@@ -1,7 +1,9 @@
 ﻿using System;
-using GTANetworkServer;
-using GTANetworkServer.Constant;
-using GTANetworkShared;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Constant;
+using GrandTheftMultiplayer.Server.Elements;
+using GrandTheftMultiplayer.Shared;
+using GrandTheftMultiplayer.Shared.Math;
 using Serverside.Controllers;
 
 namespace Serverside.Core.Description
@@ -10,7 +12,8 @@ namespace Serverside.Core.Description
     {
         private TextLabel DescriptionLabel { get; }
         private TextLabelProperties Properties { get; set; }
-        private API Api { get; set; }
+        private ServerAPI Api { get; set; }
+
 
         public Description(AccountController player)
         {

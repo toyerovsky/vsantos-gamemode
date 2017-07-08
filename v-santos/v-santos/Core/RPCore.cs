@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GTANetworkServer;
-using GTANetworkShared;
-using Newtonsoft.Json;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Elements;
+using GrandTheftMultiplayer.Server.Managers;
+using GrandTheftMultiplayer.Shared.Math;
 using Serverside.Controllers;
 using Serverside.Core.Login;
 using Serverside.Database;
 using Serverside.Core.Extensions;
 using Serverside.Database.Models;
-using Vehicle = GTANetworkServer.Vehicle;
 
 namespace Serverside.Core
 {
@@ -199,7 +199,7 @@ namespace Serverside.Core
                 List<Database.Models.Vehicle> v = sender.GetAccountController().CharacterController.Character.Vehicles.ToList();
                 foreach (Database.Models.Vehicle veh in v)
                 {
-                    API.shared.consoleOutput(GTANetworkServer.Constant.LogCat.Debug, veh.VehicleHash.ToString() + " | " + veh.NumberPlate + " | " + veh.Milage.ToString());
+                    API.shared.consoleOutput(veh.VehicleHash.ToString() + " | " + veh.NumberPlate + " | " + veh.Milage.ToString());
                 }
             }
             else
@@ -208,7 +208,7 @@ namespace Serverside.Core
                 List<Database.Models.Vehicle> v = ContextFactory.Instance.Vehicles.Where(x => x.Character == ch).ToList();
                 foreach (Database.Models.Vehicle veh in v)
                 {
-                    API.shared.consoleOutput(GTANetworkServer.Constant.LogCat.Debug, veh.VehicleHash.ToString() + " | " + veh.NumberPlate + " | " + veh.Milage.ToString());
+                    API.shared.consoleOutput(veh.VehicleHash.ToString() + " | " + veh.NumberPlate + " | " + veh.Milage.ToString());
                 }
             }
         }
@@ -241,7 +241,7 @@ namespace Serverside.Core
         public static void DelVehicle(Client sender)
         {
             AccountController ac = sender.GetAccountController();
-            Vehicle veh = API.shared.getEntityFromHandle<Vehicle>(API.shared.getPlayerVehicle(sender));
+            var veh = API.shared.getEntityFromHandle<GrandTheftMultiplayer.Server.Elements.Vehicle>(API.shared.getPlayerVehicle(sender));
             VehicleController vc = veh.getData("VehicleController");
             if (vc != null && vc.VehicleData == ac.CharacterController.Character.Vehicles)
                 vc.Dispose();
