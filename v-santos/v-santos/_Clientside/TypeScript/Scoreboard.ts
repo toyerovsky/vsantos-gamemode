@@ -82,7 +82,7 @@ API.onServerEventTrigger.connect((name, args) => {
 
 API.onUpdate.connect(() => {
     // MultiplayerInfo
-    if (!API.isChatOpen() && API.isControlJustPressed(Enums.Controls.MultiplayerInfo)) {
+    if (!API.isChatOpen() && API.isControlJustPressed(20)) {
         gCurrentState++;
         gStateSet = API.getGameTime();
 
@@ -120,12 +120,12 @@ API.onUpdate.connect(() => {
 
         // Page navigation is here for now because the onKeyDown method doesn't work
         if (listPages > 1) {
-            if (API.isControlJustPressed(Enums.Controls.PhoneUp)) {
+            if (API.isControlJustPressed(172)) {
                 gStateSet = API.getGameTime();
                 if (--gCurrentPage < 0) {
                     gCurrentPage = listPages - 1;
                 }
-            } else if (API.isControlJustPressed(Enums.Controls.PhoneDown)) {
+            } else if (API.isControlJustPressed(173)) {
                 gStateSet = API.getGameTime();
                 if (++gCurrentPage >= listPages) {
                     gCurrentPage = 0;

@@ -42,7 +42,7 @@ function getBuilding(name: string): BuildingInfo
     return null;
 }
 
-API.onServerEventTrigger.connect((eventName: string, args: System.Array<any>) =>
+API.onServerEventTrigger.connect((eventName: string, args: any[]) =>
 {
     if (eventName == "DrawBuildingComponents") {
         resource.Core.drawStreetHUD = false;
@@ -173,7 +173,7 @@ API.onUpdate.connect(() =>
     }
 });
 
-function showBuildingPanel(buildingInfo: System.Array<string>)
+function showBuildingPanel(buildingInfo: string[])
 {
     buildingMenu = createMenu(1);
     let panel: Panel;

@@ -188,8 +188,8 @@ class PlayerTextNotification {
     constructor(text: string) {
         let playerPos = API.getEntityPosition(API.getLocalPlayer()).Add(new Vector3(0, 0, 1));
         let point = API.worldToScreenMaintainRatio(playerPos);
-        this._xPos = Point.Round(point).X;
-        this._yPos = Point.Round(point).Y;
+        this._xPos = Math.round(point.X);
+        this._yPos = Math.round(point.Y);
         this._drawing = true;
         this._alpha = 255;
         this._text = text;

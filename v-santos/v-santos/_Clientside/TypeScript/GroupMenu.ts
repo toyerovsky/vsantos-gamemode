@@ -265,7 +265,7 @@ function showGroupMenu(info: GroupInfo, manager: boolean) {
     groupMenu.Ready = true;
 }
 
-API.onServerEventTrigger.connect((eventName: string, args: System.Array<any>) => {
+API.onServerEventTrigger.connect((eventName: string, args: any[]) => {
     if (eventName == "ShowGroupMenu") {
 
         var group = JSON.parse(args[0]);

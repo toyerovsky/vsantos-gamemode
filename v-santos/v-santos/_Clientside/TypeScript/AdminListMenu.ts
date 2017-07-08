@@ -55,7 +55,7 @@ function showAdminListMenu(admins: AdminInfo[]) {
     adminListMenu.Ready = true;
 }
 
-API.onServerEventTrigger.connect((eventName: string, args: System.Array<any>) => {
+API.onServerEventTrigger.connect((eventName: string, args: any[]) => {
     if (eventName == "ShowAdminsOnDuty") {
 
         var list = args[0];

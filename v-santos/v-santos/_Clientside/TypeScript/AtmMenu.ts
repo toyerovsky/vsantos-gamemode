@@ -269,7 +269,7 @@ function showAtmMenu(info: AtmInfo) {
     atmMenu.Ready = true;
 }
 
-API.onServerEventTrigger.connect((eventName: string, args: System.Array<any>) => {
+API.onServerEventTrigger.connect((eventName: string, args: any[]) => {
     if (eventName == "OnPlayerEnteredAtm") {
 
         var info = JSON.parse(args[0]);

@@ -220,7 +220,7 @@ function attemptLogin()
     }
 }
 
-API.onServerEventTrigger.connect((eventName: string, args: System.Array<any>) => {
+API.onServerEventTrigger.connect((eventName: string, args: any[]) => {
     if (eventName == "ShowLoginMenu")
     {
         var loginCamera = API.createCamera(new Vector3(-1650, -1030, 50), new Vector3(0, 0, 180));

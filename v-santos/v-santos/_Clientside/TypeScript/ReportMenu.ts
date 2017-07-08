@@ -134,7 +134,7 @@ function sendReport(type: string, content: string, id: string = "")
     API.triggerServerEvent("OnPlayerSendReport", content, id);
 }
 
-API.onServerEventTrigger.connect((eventName: string, args: System.Array<any>) => {
+API.onServerEventTrigger.connect((eventName: string, args: any[]) => {
     if (eventName == "ShowReportMenu") {
         showReportMenu();
         API.sendNotification("Wiadomość w zgłoszeniu powinna być krótka i na temat...");
