@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using GrandTheftMultiplayer.Server.Constant;
 using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
 using Serverside.Constant.Structs;
@@ -176,14 +177,17 @@ namespace Serverside.Constant
 
         };
 
-        //public static readonly Dictionary<string, PedHash> ConstantNames = new Dictionary<string, PedHash>();
-        //{
-        //    {"John Doe",}
-        //    {"John Galante",}
-        //    {"Lawrance Cagiano",}
-        //    {"Randall Salvaggio",}
-        //    {"Cade Smith", PedHash.}
-        //};
+        public static readonly Dictionary<string, PedHash> ConstantNames = new Dictionary<string, PedHash>()
+        {
+            {"John Galante", PedHash.Baygor},
+            {"Lawrance Cagiano", PedHash.Epsilon01AFY},
+            {"Randall Salvaggio", PedHash.Fatlatin01AMM},
+            {"Cade Smith", PedHash.Cntrybar01SMM},
+            {"Maxwell Savona", PedHash.BikeHire01},
+            {"Emily Royer", PedHash.Eastsa03AFY},
+            {"Daniel Berter", PedHash.Epsilon02AMY},
+            {"Jonathan Becker", PedHash.FosRepCutscene},
+        };
 
         public static readonly List<BuildingData> DefaultInteriors = new List<BuildingData>
         {

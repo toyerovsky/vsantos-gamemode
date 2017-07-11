@@ -113,7 +113,7 @@ namespace Serverside.Core.Extensions
 
         public static void ConsoleOutput(string message, ConsoleColor color)
         {
-            Console.BackgroundColor = color;
+            Console.ForegroundColor = color;
             API.shared.consoleOutput(message);
             Console.ResetColor();
         }

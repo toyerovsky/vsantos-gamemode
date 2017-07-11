@@ -1,4 +1,6 @@
 ﻿
+using System;
+using System.Linq;
 using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Managers;
 using GrandTheftMultiplayer.Shared;
@@ -14,14 +16,18 @@ namespace Serverside.Autonomic.Market
 
         private ColShape MarketColshape { get; set; }
         private API Api { get; set; }
-        private Bot MarkerNpc { get; set; }
+        private Bot MarketNpc { get; set; }
 
         public Market(API api, Models.Market data)
         {
             Api = api;
             MarketData = data;
 
-            //MarkerNpc = new Bot(api, );
+            var botInfo =
+                Constant.ConstantItems.ConstantNames.OrderBy(x => new Random().Next(Constant.ConstantItems.ConstantNames
+                    .Count)).ElementAt(0);
+
+            MarketNpc = new Bot(Api, botInfo.Key, botInfo.Value, MarketData.Center);
 
             MarketColshape = Api.createCylinderColShape(data.Center, data.Radius, 5f);
 

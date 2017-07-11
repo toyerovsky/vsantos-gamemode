@@ -12,12 +12,13 @@ namespace Serverside.Core
         public string Name { get; set; }
         public PedHash PedHash { get; set; }
         private API Api { get; }
+
         protected TextLabel NameLabel { get; set; }
         //Jest to tylko i wyłącznie pozycja spawnu, potem korzystamy z BotHandle.position
         protected FullPosition SpawnPosition { get; set; }
         protected Ped BotHandle { get; set; }
 
-        protected Bot(API api, string name, PedHash pedHash, FullPosition spawnPosition)
+        public Bot(API api, string name, PedHash pedHash, FullPosition spawnPosition)
         {
             Api = api;
             Name = name;

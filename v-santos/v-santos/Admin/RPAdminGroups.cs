@@ -62,6 +62,7 @@ namespace Serverside.Admin
                         Salary = 0
                     });
                     group.Save();
+                    sender.Notify($"Stworzyłeś grupę {group.GetColoredName()}.");
                 }
                 else
                 {
@@ -113,6 +114,8 @@ namespace Serverside.Admin
                         Salary = 0
                     });
                     group.Save();
+
+                    sender.Notify($"Wszedłeś do grupy {group.GetColoredName()}.");
                 }
                 else
                 {
