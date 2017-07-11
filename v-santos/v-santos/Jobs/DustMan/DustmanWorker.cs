@@ -6,63 +6,72 @@ using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
 using Serverside.Controllers;
 using Serverside.Core.Extensions;
+using Serverside.Jobs.Base;
+using Serverside.Jobs.Dustman.Models;
 
-namespace Serverside.Jobs.DustMan
+namespace Serverside.Jobs.Dustman
 {
-    public class DustmanWorker : IDisposable
+    public class DustmanWorker : JobWorker
     {
-        public AccountController Player { get; }
-        private List<Vector3> NonVisitedPoints { get; set; }
+        private List<GarbageModel> NonVisitedPoints { get; set; }
         private bool InProgress { get; set; }
-        private Random Random { get; set; }
         private int Count { get; set; }
 
-        private NetHandle Vehicle { get; }
+        private DateTime NextUpdate { get; set; }
 
-        private ColShape CurrentShape { get; set; }
+        private CylinderColShape CurrentShape { get; set; }
 
-        public DustmanWorker(AccountController player, NetHandle vehicle)
+        public DustmanWorker(API api, AccountController player, JobVehicleController vehicle) : base (api, player, vehicle)
         {
+
+            Api.onUpdate += OnUpdate;
             Player = player;
             InProgress = true;
-            //NonVisitedPoints = GarbageCollectorHelper.GarbagePositions;
-            Random = new Random();
-            Vehicle = vehicle;
+            NonVisitedPoints = RPJobs.Garbages;
+            JobVehicle = vehicle;
         }
 
-        public void Dispose()
+        private void OnUpdate()
+        {
+            if (!Player.Client.isInVehicle && DateTime.Now >= NextUpdate && Player.Client.position.DistanceTo2D(JobVehicle.Vehicle.position) > 25)
+            {
+                Player.Client.Notify("Oddaliłeś się od swojego pojazdu. Praca została przerwana.");
+                Stop();
+                JobVehicle.Respawn();
+            }
+        }
+
+        public override void Start()
+        {
+            var v = NonVisitedPoints[new Random().Next(NonVisitedPoints.Count)];
+            NonVisitedPoints.Remove(v);
+
+            API.shared.triggerClientEvent(Player.Client, "DrawJobComponents", v, 318);
+            CurrentShape = API.shared.createCylinderColShape(v.Position, 2f, 3f);
+            CurrentShape.onEntityEnterColShape += CurrentShapeOnEntityEnterColShape;
+        }
+
+        public override void Stop()
         {
             InProgress = false;
             NonVisitedPoints = null;
-            Random = null;
             API.shared.deleteColShape(CurrentShape);
             CurrentShape = null;
             API.shared.triggerClientEvent(Player.Client, "DisposeJobComponents");
         }
 
-        public void Start()
-        {
-            var v = NonVisitedPoints[Random.Next(NonVisitedPoints.Count)];
-            NonVisitedPoints.Remove(v);
-
-            API.shared.triggerClientEvent(Player.Client, "DrawJobComponents", v, 318);
-            CurrentShape = API.shared.createCylinderColShape(v, 2f, 3f);
-            CurrentShape.setData("Position", v);
-            CurrentShape.onEntityEnterColShape += CurrentShapeOnEntityEnterColShape;
-        }
-
         private void CurrentShapeOnEntityEnterColShape(ColShape shape, NetHandle entity)
         {
-            if (API.shared.getEntityPosition(entity).DistanceTo2D(API.shared.getEntityPosition(Vehicle)) < 25 && API.shared.getEntityType(entity) == EntityType.Player && API.shared.getPlayerVehicle(API.shared.getPlayerFromHandle(entity)).IsNull && Count < 10)
+            if (entity == Player.Client && Player.Client.position.DistanceTo2D(JobVehicle.Vehicle.position) <= 25 && !Player.Client.isInVehicle && Count < 10)
             {
                 //Dodać animację
                 Count++;
-                Player.Client.Notify(String.Format("Pomyślnie rozładowano kontener. Zapełnienie: {0}/10.", Count));
+                Player.Client.Notify($"Pomyślnie rozładowano kontener. Zapełnienie: {Count}/10.");
                 API.shared.deleteColShape(shape);
                 API.shared.playSoundFrontEnd(API.shared.getPlayerFromHandle(entity), "CHECKPOINT_NORMAL", "HUD_MINI_GAME_SOUNDSET");
                 DrawNextPoint(false);
             }
-            else if (API.shared.getEntityPosition(entity).DistanceTo2D(API.shared.getEntityPosition(Vehicle)) < 25 && API.shared.getEntityType(entity) == EntityType.Player && API.shared.getPlayerVehicle(API.shared.getPlayerFromHandle(entity)).IsNull && Count == 10)
+            else if (entity == Player.Client && Player.Client.position.DistanceTo2D(JobVehicle.Vehicle.position) <= 25 && !Player.Client.isInVehicle && Count == 10)
             {
                 Player.Client.Notify("Śmieciarka została zapełniona udaj się na wysypisko, aby ją rozładować.");
                 API.shared.playSoundFrontEnd(API.shared.getPlayerFromHandle(entity), "CHECKPOINT_NORMAL", "HUD_MINI_GAME_SOUNDSET");
@@ -91,34 +100,30 @@ namespace Serverside.Jobs.DustMan
             API.shared.triggerClientEvent(Player.Client, "DisposeJobComponents");
             if (end)
             {
-                //API.shared.triggerClientEvent(Player.Client, "DrawJobComponents", GarbageCollectorHelper.DestinationPosition, 318);
-                //CurrentShape = API.shared.createCylinderColShape(GarbageCollectorHelper.DestinationPosition, 2f, 3f);
-                //CurrentShape.setData("Position", GarbageCollectorHelper.DestinationPosition);
-                //CurrentShape.onEntityEnterColShape += CurrentShapeOnEntityEnterColShape;
+                API.shared.triggerClientEvent(Player.Client, "DrawJobComponents", RPJobs.GetRandomGarbage().Position, 318);
+                CurrentShape = API.shared.createCylinderColShape(RPJobs.GetRandomGarbage().Position, 2f, 3f);
+                CurrentShape.onEntityEnterColShape += CurrentShapeOnEntityEnterColShape;
                 return;
             }
 
-            var v = NonVisitedPoints[Random.Next(NonVisitedPoints.Count)];
+            var v = NonVisitedPoints[new Random().Next(NonVisitedPoints.Count)];
             NonVisitedPoints.Remove(v);
 
             API.shared.triggerClientEvent(Player.Client, "DrawJobComponents", v, 318);
-            CurrentShape = API.shared.createCylinderColShape(v, 2f, 3f);
-            CurrentShape.setData("Position", v);
+            CurrentShape = API.shared.createCylinderColShape(v.Position, 2f, 3f);
+
             CurrentShape.onEntityEnterColShape += CurrentShapeOnEntityEnterColShape;
         }
 
         public void Redraw(Vector3 lastPosition)
         {
             CurrentShape = API.shared.createCylinderColShape(lastPosition, 2f, 3f);
-            CurrentShape.setData("Position", lastPosition);
             CurrentShape.onEntityEnterColShape += CurrentShapeOnEntityEnterColShape;
 
             API.shared.triggerClientEvent(Player.Client, "DrawJobComponents", lastPosition, 318);
         }
 
-        public Vector3 GetLastPoint()
-        {
-            return (Vector3)CurrentShape.getData("Position");
-        }
+        public Vector3 GetLastPoint() => CurrentShape.Center;
+
     }
 }

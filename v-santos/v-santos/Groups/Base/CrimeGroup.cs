@@ -3,6 +3,7 @@ using GrandTheftMultiplayer.Server.Constant;
 using Serverside.Controllers;
 using Serverside.Database;
 using Serverside.Database.Models;
+using Serverside.Groups.Enums;
 
 namespace Serverside.Groups.Base
 {

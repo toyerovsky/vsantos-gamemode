@@ -21,6 +21,7 @@ namespace Serverside.Database.Models
         public DateTime? CreateTime { get; set; }
         public DateTime? LastLoginTime { get; set; }
         public DateTime? TodayPlayedTime { get; set; }
+        public DateTime? PlayedTime { get; set; }
 
         public string Name { get; set; }
         public string Surname { get; set; }
@@ -62,6 +63,7 @@ namespace Serverside.Database.Models
         public int Job { get; set; }
         public decimal? MoneyJob { get; set; }
         public decimal? JobLimit { get; set; }
+        public DateTime JobReleaseDate { get; set; }
         //Kreator postaci
         public int? AccessoryId { get; set; }
         public int? AccessoryTexture { get; set; }

@@ -9,8 +9,7 @@
         this.rank = rank;
     }
 }
-
-
+    
 let adminListMenu: Menu;
 
 function showAdminListMenu(admins: AdminInfo[]) {

@@ -1,4 +1,4 @@
-﻿namespace Serverside.Admin
+﻿namespace Serverside.Admin.Enums
 {
     public enum ForumGroup
     {

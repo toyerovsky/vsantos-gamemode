@@ -18,7 +18,13 @@ namespace Serverside.Core
     {
         public RPCore()
         {
-            API.onResourceStart += API_onResourceStart;
+            //Robię to żeby można było używać bazy w OnResourceStart innych resources Toyer
+            APIExtensions.ConsoleOutput("[RPCore] Uruchomione pomyslnie!", ConsoleColor.DarkMagenta);
+            //API.getSetting<string>("database_server"), API.getSetting<string>("database_user"), API.getSetting<string>("database_password"), API.getSetting<string>("database_database")
+            ContextFactory.SetConnectionParameters("v-santos.pl", "srv", "WL8oTnufAAEFgoIt", "rp"); // NIE WYMAGANE
+            RPEntityManager.Init();
+            ContextFactory.Instance.SaveChanges();
+
             API.onResourceStop += API_onResourceStop;
             API.onPlayerBeginConnect += API_onPlayerBeginConnect;
             API.onPlayerConnected += API_onPlayerConnectedHandler;
@@ -57,19 +63,14 @@ namespace Serverside.Core
             {
                 if (sender.HasData("WaypointVectorHandler"))
                 {
-                    var waypointAction = (Action<Vector3>) sender.GetData("WaypointPositionHandler");
-                    waypointAction.Invoke(new Vector3((float)arguments[0], (float)arguments[1], (float)arguments[2]));
+                    float x = (float) arguments[0];
+                    float y = (float) arguments[1];
+                    float z = (float) arguments[2];
+                    sender.Notify($"Teleport na koordynaty X: {x} Y: {y} Z: {z}");
+                    var waypointAction = (Action<Vector3>) sender.GetData("WaypointVectorHandler");
+                    waypointAction.Invoke(new Vector3(x, y, z));
                 }
             }
-        }
-
-        private void API_onResourceStart()
-        {
-            APIExtensions.ConsoleOutput("[RPCore] Uruchomione pomyslnie!", ConsoleColor.DarkMagenta);
-            //API.getSetting<string>("database_server"), API.getSetting<string>("database_user"), API.getSetting<string>("database_password"), API.getSetting<string>("database_database")
-            ContextFactory.SetConnectionParameters("v-santos.pl", "srv", "WL8oTnufAAEFgoIt", "rp"); // NIE WYMAGANE
-            RPEntityManager.Init();
-            ContextFactory.Instance.SaveChanges();
         }
 
         private void API_onResourceStop()

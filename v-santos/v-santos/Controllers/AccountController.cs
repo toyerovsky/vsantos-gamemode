@@ -14,7 +14,7 @@ namespace Serverside.Controllers
 {
     public class AccountController
     {
-        public static event AccountLoginEventHandler CharacterLoggedIn;
+        public static event AccountLoginEventHandler AccountLoggedIn;
         public static event EventHandler<ServerIdChangeEventArgs> ServerIdChanged;
 
         public long AccountId => AccountData.UserId;
@@ -63,7 +63,7 @@ namespace Serverside.Controllers
 
             ContextFactory.Instance.SaveChanges();
             RPEntityManager.AddAccount(AccountId, this);
-            CharacterLoggedIn?.Invoke(client, this);
+            AccountLoggedIn?.Invoke(client, this);
         }
 
         public static AccountController GetAccountControllerFromName(string formatname)

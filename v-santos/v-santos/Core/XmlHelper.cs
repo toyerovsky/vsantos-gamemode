@@ -51,13 +51,9 @@ namespace Serverside.Core
                     var writerSerializer = new XmlSerializer(typeof(T));
                     writerSerializer.Serialize(xmlStream, xmlObject);
                 }
-                catch (Exception ex)
+                catch (InvalidOperationException ex)
                 {
-                    throw new Exception(ex.Message);                    
-                }
-                finally
-                {
-                    xmlStream.Close();
+                    APIExtensions.ConsoleOutput($"[XmlHelper Error] Serializacja nieudana. {ex.Message}", ConsoleColor.Red);
                 }
             }
         }

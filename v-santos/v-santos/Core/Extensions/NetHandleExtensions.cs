@@ -1,12 +1,17 @@
-﻿namespace Serverside.Core.Extensions
+﻿using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Elements;
+using GrandTheftMultiplayer.Shared;
+using Serverside.Controllers;
+
+namespace Serverside.Core.Extensions
 {
-    public static class NetHandleExtensions
+    public static class VehicleExtensions
     {
-        //public static VehicleController GetVehicleController(this NetHandle handle)
-        //{
-        //    if (API.shared.getEntityType(handle) != EntityType.Vehicle)
-        //        return null;
-        //    return API.shared.getEntityData(handle, "VehicleController");
-        //}
+        public static VehicleController GetVehicleController(this Vehicle handle)
+        {
+            if (!handle.hasData("VehicleController"))
+                return null;
+            return API.shared.getEntityData(handle, "VehicleController");
+        }
     }
 }

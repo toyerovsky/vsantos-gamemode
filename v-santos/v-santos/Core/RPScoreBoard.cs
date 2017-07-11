@@ -17,7 +17,7 @@ namespace Serverside.Core
             API.onPlayerFinishedDownload += API_onPlayerFinishedDownload;
             API.onClientEventTrigger += API_onClientEventTrigger;
             API.onUpdate += API_onUpdate;
-            CharacterController.OnPlayerCharacterLogin += RPLogin_OnPlayerLogin;
+            CharacterController.CharacterLoggedIn += RPLogin_OnPlayerLogin;
         }
 
         private void RPLogin_OnPlayerLogin(Client sender, CharacterController character)

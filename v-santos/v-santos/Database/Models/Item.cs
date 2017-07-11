@@ -13,8 +13,7 @@ namespace Serverside.Database.Models
         public Character Character { get; set; }
         public Building Building { get; set; }
         public Vehicle Vehicle { get; set; }
-        //Typ właściciela przedmiotu 0 leży na ziemi 1 gracz 2 grupa 3 budynek(sejf)
-        //public int OwnerType { get; set; } // lepiej sprawdzać czy characterid lub BuildingId == null
+        public Group Group { get; set; }
 
         //Zamysł: Przy tworzeniu przedmiotu będzie zapisywane kto go stworzył, a jak stworzy go serwer to 0
         public long CreatorId { get; set; }

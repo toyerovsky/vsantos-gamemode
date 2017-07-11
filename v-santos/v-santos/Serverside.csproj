@@ -21,7 +21,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\..\..\gt-mp-server\resources\vsantos\</OutputPath>
+    <OutputPath>..\..\..\..\..\..\..\gtmpsrv\resources\vsantos\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -79,10 +79,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Admin\AdminGroups.cs" />
-    <Compile Include="Admin\AdminCore.cs" />
-    <Compile Include="Admin\Enums.cs" />
+    <Compile Include="Admin\RPAdminGroups.cs" />
+    <Compile Include="Admin\RPAdminCore.cs" />
+    <Compile Include="Admin\Enums\Enums.cs" />
     <Compile Include="Admin\RPAdminList.cs" />
+    <Compile Include="Admin\RPAdminVehicles.cs" />
     <Compile Include="Admin\Structs\ReportData.cs" />
     <Compile Include="Autonomic\Carshop\Models\CarshopVehicle.cs" />
     <Compile Include="Autonomic\Carshop\RPCarshop.cs" />
@@ -103,6 +104,7 @@
     <Compile Include="Constant\ConstantItems.cs" />
     <Compile Include="Constant\ConstantMessages.cs" />
     <Compile Include="Constant\Structs\BuildingData.cs" />
+    <Compile Include="Constant\VehicleInfo.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BuildingController.cs" />
     <Compile Include="Controllers\CellphoneController.cs" />
@@ -133,6 +135,8 @@
     <Compile Include="Core\RPEntityManager.cs" />
     <Compile Include="Core\RPMiscCommands.cs" />
     <Compile Include="Core\RPScoreBoard.cs" />
+    <Compile Include="Core\ServerInfo\Models\ServerInfoData.cs" />
+    <Compile Include="Core\ServerInfo\ServerInfo.cs" />
     <Compile Include="Core\Telephone\Booth\RPTelephoneBooth.cs" />
     <Compile Include="Core\Telephone\Booth\TelephoneBooth.cs" />
     <Compile Include="Core\Telephone\Booth\Models\TelephoneBoothModel.cs" />
@@ -154,6 +158,7 @@
     <Compile Include="CrimeBot\Models\CrimeBotItem.cs" />
     <Compile Include="CrimeBot\Models\CrimeBotPosition.cs" />
     <Compile Include="CrimeBot\RPCrimeBot.cs" />
+    <Compile Include="Database\Exceptions\RoleplayConnectionException.cs" />
     <Compile Include="Database\ForumDatabaseHelper.cs" />
     <Compile Include="Database\Models\Account.cs" />
     <Compile Include="Database\Models\Ban.cs" />
@@ -162,6 +167,8 @@
     <Compile Include="Database\Models\CrimeBot.cs" />
     <Compile Include="Database\Models\Description.cs" />
     <Compile Include="Database\Models\Group.cs" />
+    <Compile Include="Database\Models\GroupWarehouseItem.cs" />
+    <Compile Include="Database\Models\GroupWarehouseOrder.cs" />
     <Compile Include="Database\Models\Item.cs" />
     <Compile Include="Database\Models\TelephoneContact.cs" />
     <Compile Include="Database\Models\TelephoneMessage.cs" />
@@ -174,16 +181,27 @@
     <Compile Include="Groups\Base\CityHall.cs" />
     <Compile Include="Groups\Base\CrimeGroup.cs" />
     <Compile Include="Groups\Base\Police.cs" />
-    <Compile Include="Groups\Enums.cs" />
+    <Compile Include="Groups\Enums\Enums.cs" />
     <Compile Include="Groups\RPGroups.cs" />
+    <Compile Include="Groups\RPGroupWarehouse.cs" />
+    <Compile Include="Groups\Stucts\WarehouseItemInfo.cs" />
     <Compile Include="Interfaces\IXmlObject.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\RPItems.cs" />
-    <Compile Include="Jobs\Dustman\Dustman.cs" />
+    <Compile Include="Jobs\Base\JobWorker.cs" />
+    <Compile Include="Jobs\Courier\CourierJob.cs" />
+    <Compile Include="Jobs\Courier\CourierVehicle.cs" />
+    <Compile Include="Jobs\Courier\CourierWorker.cs" />
+    <Compile Include="Jobs\Dustman\DustmanJob.cs" />
     <Compile Include="Jobs\Dustman\DustmanVehicle.cs" />
     <Compile Include="Jobs\Dustman\DustmanWorker.cs" />
-    <Compile Include="Jobs\Greenkeeper.cs" />
-    <Compile Include="Jobs\JobVehicle.cs" />
+    <Compile Include="Jobs\Greenkeeper\GreenkeeperJob.cs" />
+    <Compile Include="Jobs\Greenkeeper\GreenkeeperWorker.cs" />
+    <Compile Include="Jobs\Base\JobController.cs" />
+    <Compile Include="Jobs\Enums\Enums.cs" />
+    <Compile Include="Jobs\Greenkeeper\GreenkeeperVehicle.cs" />
+    <Compile Include="Jobs\Base\JobVehicleController.cs" />
+    <Compile Include="Jobs\Dustman\Models\Garbage.cs" />
     <Compile Include="Jobs\RPJobs.cs" />
     <Compile Include="Migrations\201706042235471_InitialCreate.cs" />
     <Compile Include="Migrations\201706042235471_InitialCreate.Designer.cs">
@@ -233,6 +251,10 @@
     <Compile Include="Migrations\201707051552463_q.Designer.cs">
       <DependentUpon>201707051552463_q.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201707101649456_New1.cs" />
+    <Compile Include="Migrations\201707101649456_New1.Designer.cs">
+      <DependentUpon>201707101649456_New1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Offers\Enums.cs" />
     <Compile Include="Offers\Offer.cs" />
@@ -266,11 +288,14 @@
     <None Include="_Clientside\Resources\fonts\FontAwesome.otf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="_Clientside\TypeScript\tsconfig.json" />
+    <None Include="_Clientside\TypeScript\tsconfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Constant\Files\dict.txt" />
     <Content Include="Groups\Base\ReadMe.txt" />
+    <Content Include="_Clientside\GroupWarehouseAdminMenu.js" />
     <Content Include="_Clientside\MarketMenu.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -560,6 +585,9 @@
     <EmbeddedResource Include="Migrations\201707051552463_q.resx">
       <DependentUpon>201707051552463_q.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707101649456_New1.resx">
+      <DependentUpon>201707101649456_New1.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="types-gt-mp\Declarations.d.ts" />
@@ -589,14 +617,16 @@
     <TypeScriptCompile Include="types-gt-mp\System.d.ts" />
     <TypeScriptCompile Include="types-gt-mp\System.Drawing.d.ts" />
     <TypeScriptCompile Include="types-gt-mp\System.Windows.Forms.d.ts" />
-    <TypeScriptCompile Include="_Clientside\TypeScript\AdminListMenu.ts" />
-    <TypeScriptCompile Include="_Clientside\TypeScript\AtmMenu.ts" />
-    <TypeScriptCompile Include="_Clientside\TypeScript\GroupMenu.ts" />
-    <TypeScriptCompile Include="_Clientside\TypeScript\ReportMenu.ts" />
+    <Content Include="_Clientside\TypeScript\AdminListMenu.ts" />
+    <Content Include="_Clientside\TypeScript\AtmMenu.ts" />
+    <Content Include="_Clientside\TypeScript\GroupMenu.ts" />
+    <Content Include="_Clientside\TypeScript\ReportMenu.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Jobs\Interfaces\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

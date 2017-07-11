@@ -8,6 +8,7 @@ using GrandTheftMultiplayer.Shared.Math;
 
 
 using Serverside.Admin;
+using Serverside.Admin.Enums;
 
 namespace Serverside.Core.Extensions
 {
@@ -78,7 +79,7 @@ namespace Serverside.Core.Extensions
             return "~w~";
         }
 
-        public static Color GetRandomColor()
+        public static Color GetRandomColor(this Color color)
         {
             Random r = new Random();
             return new Color(r.Next(256), r.Next(256), r.Next(256), r.Next(256));
@@ -156,9 +157,7 @@ namespace Serverside.Core.Extensions
                         //    int tyre = 6;
                         //    do
                         //    {
-                        List<Wheel> wheels = new List<Wheel>();
-                        wheels.Add(Wheel.BikeFront);
-                        wheels.Add(Wheel.BikeRear);
+                        List<Wheel> wheels = new List<Wheel> {Wheel.BikeFront, Wheel.BikeRear};
                         int r = GetRandomNumber(0, 1);
                         if (API.shared.isVehicleTyrePopped(vehicle, (int)wheels[r]))
                         {

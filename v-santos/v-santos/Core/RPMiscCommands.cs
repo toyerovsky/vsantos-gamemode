@@ -26,10 +26,23 @@ namespace Serverside.Core
             APIExtensions.ConsoleOutput("[RPMiscCommands] uruchomione pomyślnie.", ConsoleColor.DarkMagenta);
         }
 
-        [Command("stats")]
-        public void ShowStats(Client sender)
+        [Command("id", "~y~UŻYJ ~w~ /id [nazwa]", GreedyArg = true)]
+        public void ShowPlayersWithSimilarName(Client sender, string name)
         {
-            
+            if (!RPEntityManager.GetAccounts().Any(x => x.Value.CharacterController.FormatName.ToLower().StartsWith(name)))
+            {
+                sender.Notify("Nie znaleziono gracza o podanej nazwie.");
+                return;
+            }
+
+            var accounts = RPEntityManager.GetAccounts()
+                .Where(x => x.Value.CharacterController.FormatName.ToLower().StartsWith(name));
+
+            RPChat.SendMessageToPlayer(sender, "Znalezieni gracze: ", ChatMessageType.ServerInfo);
+            foreach (var account in accounts)
+            {
+                RPChat.SendMessageToPlayer(sender, $"({account.Value.ServerId}) {account.Value.CharacterController.FormatName}", ChatMessageType.ServerInfo);
+            }
         }
 
         [Command("pokaz", "~y~ UŻYJ ~w~ /pokaz [typ] [id]")]

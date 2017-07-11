@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Serverside.Admin;
+using Serverside.Admin.Enums;
 
 namespace Serverside.Database.Models
 {

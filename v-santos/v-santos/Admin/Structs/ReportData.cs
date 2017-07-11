@@ -1,4 +1,5 @@
-﻿using Serverside.Controllers;
+﻿using Serverside.Admin.Enums;
+using Serverside.Controllers;
 
 namespace Serverside.Admin.Structs
 {

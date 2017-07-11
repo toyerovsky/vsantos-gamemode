@@ -9,6 +9,7 @@ using Serverside.Database.Models;
 using Serverside.Core.Extensions;
 using Newtonsoft.Json;
 using Serverside.Admin;
+using Serverside.Admin.Enums;
 
 namespace Serverside.Core.Login
 {
@@ -21,7 +22,7 @@ namespace Serverside.Core.Login
             API.onResourceStart += API_onResourceStart;
             API.onClientEventTrigger += API_onClientEventTrigger;
             API.onPlayerBeginConnect += API_onPlayerBeginConnect;
-            AccountController.CharacterLoggedIn += RPLogin_OnPlayerLogin;
+            AccountController.AccountLoggedIn += RPLogin_OnPlayerLogin;
             FDb = new ForumDatabaseHelper();
         }
 

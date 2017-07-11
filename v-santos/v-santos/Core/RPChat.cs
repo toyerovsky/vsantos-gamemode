@@ -8,6 +8,7 @@ using Serverside.Controllers;
 using Serverside.Core.Extensions;
 using Serverside.Groups;
 using Serverside.Groups.Base;
+using Serverside.Groups.Enums;
 
 namespace Serverside.Core
 {

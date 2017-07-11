@@ -8,9 +8,10 @@ class WebBrowser {
     }
 
     load(path, local = true, chatstate = false, cursorstate = true) {
-        if (!API.isCefDrawEnabled()) {
+        if (API.isCefBrowserInitialized(this.browser)) {
             API.setCefBrowserHeadless(false)
         }
+
         this.path = path
         API.loadPageCefBrowser(this.browser, this.path)
         API.setCanOpenChat(chatstate)
@@ -19,7 +20,7 @@ class WebBrowser {
     }
 
     show(chatstate = false) {
-        if (API.isCefDrawEnabled()) {
+        if (API.isCefBrowserInitialized(this.browser)) {
             API.setCefBrowserHeadless(true)
             API.setCanOpenChat(chatstate)
             API.showCursor(true)
@@ -27,7 +28,7 @@ class WebBrowser {
     }
 
     hide() {
-        if (API.isCefDrawEnabled()) {
+        if (API.isCefBrowserInitialized(this.browser)) {
             API.setCefBrowserHeadless(true)
             API.setCanOpenChat(true)
             API.showCursor(false)
@@ -64,8 +65,7 @@ API.onResourceStart.connect(function () {
 });
 
 API.onServerEventTrigger.connect(function (eventName, args) {
-    if (eventName == "ShowOfferCef")
-    {
+    if (eventName == "ShowOfferCef") {
         if (args[0]) {
             offer = args[1];
             CEF.load("_Clientside/Resources/Offer/index.html");

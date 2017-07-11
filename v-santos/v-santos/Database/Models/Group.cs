@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Serverside.Groups;
+using Serverside.Groups.Enums;
 
 namespace Serverside.Database.Models
 {

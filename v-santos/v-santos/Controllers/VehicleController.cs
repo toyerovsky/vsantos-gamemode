@@ -1,12 +1,10 @@
-﻿
-using Serverside.Core;
+﻿using Serverside.Core;
 using Serverside.Database;
 using Serverside.Database.Models;
 using Serverside.Items;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
 using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Constant;
 using GrandTheftMultiplayer.Shared;
@@ -30,7 +28,6 @@ namespace Serverside.Controllers
             
             Initialize();
 
-            //Tylko tak da się nadawać zniszczenia?
             API.shared.breakVehicleDoor(Vehicle, 1, VehicleData.Door1Damage);
             API.shared.breakVehicleDoor(Vehicle, 2, VehicleData.Door2Damage);
             API.shared.breakVehicleDoor(Vehicle, 3, VehicleData.Door3Damage);
@@ -141,21 +138,6 @@ namespace Serverside.Controllers
             API.shared.setVehicleLocked(Vehicle, true);
         }
 
-        public static Vehicle GetVehicleData(long id)
-        {
-            return ContextFactory.Instance.Vehicles.Single(x => x.Id == id);
-        }
-
-        public static Vehicle GetVehicleData(CharacterController cc, long id)
-        {
-            return cc?.Character.Vehicles.Single(x => x.Id == id);
-        }
-
-        public static List<Vehicle> GetVehiclesData(CharacterController cc)
-        {
-            return cc.Character.Vehicles.ToList();
-        }
-
         //Pojazdy z prac nie są trzymane w bazie danych
         private bool _nonDbVehicle;
         public void Save()
@@ -202,6 +184,16 @@ namespace Serverside.Controllers
             Save();
         }
 
+        public void ChangeColor(Color primary, Color secondary)
+        {
+            Vehicle.customPrimaryColor = primary;
+            Vehicle.customSecondaryColor = secondary;
+            if (_nonDbVehicle) return;
+            VehicleData.PrimaryColor = primary.ToHex();
+            VehicleData.SecondaryColor = secondary.ToHex();
+            Save();
+        }
+
         public void Repair()
         {
             Vehicle.repair();
@@ -218,7 +210,7 @@ namespace Serverside.Controllers
             Save();
         }
 
-        private static float GetFuelTankSize(VehicleClass vc)
+        protected static float GetFuelTankSize(VehicleClass vc)
         {
             switch (vc)
             {

@@ -2,10 +2,10 @@
   "compilerOptions": {
     "noImplicitAny": true,
     "noEmitOnError": true,
-    "removeComments": false,
-    "sourceMap": true,
+    "removeComments": true,
+    "sourceMap": false,
     "target": "es6",
-    "outFile": "C:\\gtansrv\\resources\\vsantos\\_Clientside\\compiled.js"
+    "outFile": "C:\\gtmpsrv\\resources\\vsantos\\_Clientside\\Compiled.js"
   },
   "compileOnSave": true
 }

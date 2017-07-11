@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Constant;
 using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Server.Managers;
 using GrandTheftMultiplayer.Shared;
@@ -128,9 +129,9 @@ namespace Serverside.Autonomic.Carshop
                 if (sender.HasMoney(vehicle.Cost))
                 {
                     sender.RemoveMoney(vehicle.Cost);
-                    Random r = new Random();
+                    
                     new VehicleController(new FullPosition(new Vector3(-50, -1680, 29.5), new Vector3(0, 0, 0)),
-                        vehicleHash, "", 0, 0, APIExtensions.GetRandomColor(), APIExtensions.GetRandomColor(), 0f, 0f, sender.GetAccountController().CharacterController.Character);
+                        vehicleHash, "", 0, 0, new Color().GetRandomColor(), new Color().GetRandomColor(), 0f, 0f, sender.GetAccountController().CharacterController.Character);
                 }
                 else
                 {

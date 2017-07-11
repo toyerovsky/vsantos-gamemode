@@ -4,17 +4,18 @@ using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Constant;
 using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Server.Managers;
+using Serverside.Admin.Enums;
 using Serverside.Controllers;
 using Serverside.Core;
 using Serverside.Core.Extensions;
 using Serverside.Database.Models;
-using Serverside.Groups;
+using Serverside.Groups.Enums;
 
 namespace Serverside.Admin
 {
-    public class AdminGroups : Script
+    public class RPAdminGroups : Script
     {
-        public AdminGroups()
+        public RPAdminGroups()
         {
             APIExtensions.ConsoleOutput("[AdminGroups] Uruchomione pomyślnie.", ConsoleColor.DarkMagenta);
         }
@@ -36,7 +37,7 @@ namespace Serverside.Admin
             catch (Exception e)
             {
                 sender.Notify("Wprowadzony kolor jest nieprawidłowy.");
-                APIExtensions.ConsoleOutput("[Error] Nieprawidłowy kolor [AdminGroups]", ConsoleColor.Red);
+                APIExtensions.ConsoleOutput("[Error] Nieprawidłowy kolor [RPAdminGroups]", ConsoleColor.Red);
                 APIExtensions.ConsoleOutput(e.Message, ConsoleColor.Red);
                 return;
             }

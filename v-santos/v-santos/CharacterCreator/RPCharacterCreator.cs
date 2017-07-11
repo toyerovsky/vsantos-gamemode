@@ -333,7 +333,7 @@ namespace Serverside.CharacterCreator
 
             var player = sender.GetAccountController().CharacterController.Character;
 
-            API.triggerClientEvent(sender, "OnPlayerCreateCharacter", CharacterCreator.Mens, CharacterCreator.Womans,
+            sender.triggerEvent("OnPlayerCreateCharacter", CharacterCreator.Mens, CharacterCreator.Womans,
                 player.Gender ? CharacterCreator.MensHairId : CharacterCreator.WomansHairId, player.Gender ? CharacterCreator.MenFeet : CharacterCreator.WomanFeets,
                 player.Gender ? CharacterCreator.MenLegs : CharacterCreator.WomanLegs, player.Gender ? CharacterCreator.MenLegs : CharacterCreator.WomanLegs,
                 player.Gender ? CharacterCreator.MenHats : CharacterCreator.WomanHats, player.Gender ? CharacterCreator.MenGlasses : CharacterCreator.WomanGlasses,

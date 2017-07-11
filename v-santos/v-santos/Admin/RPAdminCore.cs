@@ -5,12 +5,13 @@ using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Server.Managers;
 using GrandTheftMultiplayer.Shared.Math;
+using Serverside.Admin.Enums;
 using Serverside.Core;
 using Serverside.Core.Extensions;
 
 namespace Serverside.Admin
 {
-    public class AdminCore : Script
+    public class RPAdminCore : Script
     {
         [Command("ustawrange", "~y~ UŻYJ ~w~ /ustawrange [id] [nazwa]")]
         public void SetRank(Client sender, int id, ServerRank rank)
@@ -30,6 +31,7 @@ namespace Serverside.Admin
 
             controller.AccountData.ServerRank = rank;
             controller.Save();
+            sender.Notify($"Nadałeś {controller.CharacterController.FormatName} ({controller.AccountData.Name}) rangę {controller.AccountData.ServerRank.ToString()}");
         }
 
         [Command("tpc", "~y~ UŻYJ ~w~ /tpc [x] [y] [z]")]
@@ -41,6 +43,7 @@ namespace Serverside.Admin
                 return;
             }
             sender.position = new Vector3(x, y, z);
+            sender.Notify($"Teleportowałeś się na X:{x} Y:{y} Z:{z}");
         }
 
         [Command("tpmap", "~y~ UŻYJ ~w~ /tpmap")]
@@ -91,12 +94,14 @@ namespace Serverside.Admin
                 return;
             }
             API.setPlayerToSpectatePlayer(sender, controller.Client);
+            sender.Notify($"Włączono obserwowanie na gracza {controller.CharacterController.FormatName}");
         }
 
         [Command("specoff")]
-        public void TurnOffSpectating(Client player)
+        public void TurnOffSpectating(Client sender)
         {
-            player.triggerEvent("ResetCamera");
+            API.setPlayerToSpectator(sender);
+            sender.Notify("~r~ ~h~Wyłączono ~w~obserwowanie.");
         }
 
         [Command("addspec", "~y~ UŻYJ ~w~ /addspec [id]", Description = "Polecenie ustawia wybranemu graczowi specowanie na nas.")]
@@ -114,6 +119,7 @@ namespace Serverside.Admin
                 return;
             }
             API.setPlayerToSpectator(controller.Client);
+            sender.Notify("~g~ ~h~Włączono ~w~obserwowanie.");
         }
 
         [Command("kick", "~y~ UŻYJ ~w~ /kick [id] (powod)", GreedyArg = true)]
@@ -146,30 +152,52 @@ namespace Serverside.Admin
             {
                 sender.ResetData("FlyState");
                 API.triggerClientEvent(sender, "FreeCamStop");
+                sender.Notify("~r~ ~h~Wyłączono ~w~latanie.");
                 return;
             }
 
             sender.SetData("FlyState", true);
             API.triggerClientEvent(sender, "FreeCamStart", API.getEntityPosition(sender));
+            sender.Notify("~g~ ~h~Włączono ~w~latanie.");
+        }
+
+        [Command("god")]
+        public void SetPlayerInvicible(Client sender)
+        {
+            if (sender.GetAccountController().AccountData.ServerRank < ServerRank.Support)
+            {
+                sender.Notify("Nie posiadasz uprawnień do ustawienia nieśmiertelności.");
+                return;
+            }
+            if (API.getEntityInvincible(sender))
+            {
+                sender.invincible = false;
+                sender.Notify("~r~Wyłączono ~w~nieśmiertelność.");
+            }
+            else
+            {
+                sender.invincible = true;
+                sender.Notify("~g~~h~Włączono ~w~nieśmiertelność.");
+            }
         }
 
         [Command("inv")]
-        public void SetPlayerInvicible(Client sender)
+        public void SetPlayerInvisible(Client sender)
         {
             if (sender.GetAccountController().AccountData.ServerRank < ServerRank.Support)
             {
                 sender.Notify("Nie posiadasz uprawnień do ustawienia niewidzialności.");
                 return;
             }
-            if (API.getEntityInvincible(sender))
+            if (sender.transparency == 0)
             {
-                sender.invincible = false;
-                sender.Notify("Wyłączono niewidzialność.");
-            }
+                sender.transparency = 1;
+                sender.Notify("~r~Wyłączono ~w~niewidzialności.");
+            }   
             else
             {
-                sender.invincible = true;
-                sender.Notify("Włączono niewidzialność.");
+                sender.transparency = 0;
+                sender.Notify("~g~~h~Włączono ~w~niewidzialności.");
             }
         }
 
@@ -203,6 +231,7 @@ namespace Serverside.Admin
             data.Add($"[{DateTime.Now}] {name} Pos: {sender.position} Rot: {sender.rotation} Autor: {sender.GetAccountController().AccountData.Name}");
 
             File.WriteAllLines(path, data);
+            sender.Notify($"Zapisano pozycję: {name}");
         }
     }
 }

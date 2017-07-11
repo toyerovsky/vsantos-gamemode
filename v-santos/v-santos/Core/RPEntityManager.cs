@@ -74,7 +74,10 @@ namespace Serverside.Core
 
         public static VehicleController GetVehicle(NetHandle vehicle) => Vehicles.Find(x => x.Vehicle.handle == vehicle);
 
-        public static VehicleController GetVehicle(long id) => Vehicles.Find(x => x.VehicleData.Id == id);
+        public static VehicleController GetVehicle(long id)
+        {
+            return id > -1 ? Vehicles.Find(x => x.VehicleData.Id == id) : null;
+        }
 
         public static List<VehicleController> GetCharacterVehicles(CharacterController cc)
         {
@@ -87,7 +90,10 @@ namespace Serverside.Core
 
         public static void Remove(GroupController group) => Groups.Remove(group);
 
-        public static GroupController GetGroup(long groupId) => Groups.Find(x => x.Id == groupId);
+        public static GroupController GetGroup(long groupId)
+        {
+            return groupId > -1 ? Groups.Find(x => x.Id == groupId) : null;
+        }
 
         public static GroupController GetGroup(string groupName) => Groups.Single(x => x.GroupData.Name.StartsWith(groupName.ToLower()));
 
@@ -112,7 +118,10 @@ namespace Serverside.Core
 
         public static void Remove(BuildingController building) => Buildings.Remove(building);
 
-        public static BuildingController GetBuilding(long buildingId) => Buildings.Find(x => x.BuildingId == buildingId);
+        public static BuildingController GetBuilding(long buildingId)
+        {
+            return buildingId > -1 ? Buildings.Find(x => x.BuildingId == buildingId) : null;
+        }
 
         public static BuildingController GetBuilding(string buildingName)
         {
@@ -137,7 +146,7 @@ namespace Serverside.Core
 
         public static FuelStation GetFuelStation(long id)
         {
-            return FuelStations.Find(x => x.Id == id);
+            return id > -1 ? FuelStations.Find(x => x.Id == id) : null;
         }
 
         public static FuelStation GetFuelStation(FuelStation fs)

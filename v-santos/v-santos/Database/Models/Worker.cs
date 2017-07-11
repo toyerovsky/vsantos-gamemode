@@ -30,6 +30,9 @@ namespace Serverside.Database.Models
         //Oferowanie z magazynu grupy   
         public bool OfferFromWarehouseRight { get; set; }
 
+        //Zamawianie przedmiotów z magazynu grupowego
+        public bool OrderFromWarehouseRight { get; set; }
+
         //Te będą się różniły zależnie od rodzaju grupy, np Taxi może mieć przejazd jako pierwsze prawo
         //a gastronomia coś innego
         public bool? FirstRight { get; set; }

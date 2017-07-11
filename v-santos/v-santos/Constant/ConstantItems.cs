@@ -162,6 +162,20 @@ namespace Serverside.Constant
             return new Tuple<WeaponHash, int?>(WeaponHash.Battleaxe, null);
         }
 
+        public static readonly List<VehicleInfo> VehicleInfo = new List<VehicleInfo>()
+        {
+            new VehicleInfo(VehicleHash.Adder, 50, 5.0f),
+            new VehicleInfo(VehicleHash.Sultan, 30, 1.0f),
+
+        };
+
+        public static readonly List<Tuple<string, float>> TuningInfo = new List<Tuple<string, float>>()
+        {
+            new Tuple<string, float>("ECU", 5.0f),
+            new Tuple<string, float>("twoja stara", 5.0f),
+
+        };
+
         //public static readonly Dictionary<string, PedHash> ConstantNames = new Dictionary<string, PedHash>();
         //{
         //    {"John Doe",}

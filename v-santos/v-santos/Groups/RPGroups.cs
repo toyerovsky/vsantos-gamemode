@@ -9,6 +9,7 @@ using Serverside.Core;
 using Serverside.Core.Extensions;
 using Serverside.Controllers;
 using Serverside.Groups.Base;
+using Serverside.Groups.Enums;
 
 namespace Serverside.Groups
 {

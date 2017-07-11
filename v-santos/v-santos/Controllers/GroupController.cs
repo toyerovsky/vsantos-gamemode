@@ -10,6 +10,7 @@ using System.Linq;
 using GrandTheftMultiplayer.Server.Constant;
 using Serverside.Core.Extensions;
 using Serverside.Groups.Base;
+using Serverside.Groups.Enums;
 
 namespace Serverside.Controllers
 {
@@ -113,6 +114,11 @@ namespace Serverside.Controllers
         public bool CanPlayerWriteOnChat(AccountController account)
         {
             return GroupData.Workers.Single(w => w.Character == account.CharacterController.Character).ChatRight;
+        }
+
+        public bool CanPlayerBuyInWarehouse(AccountController account)
+        {
+            return GroupData.Workers.Single(w => w.Character == account.CharacterController.Character).OrderFromWarehouseRight;
         }
 
         public bool ContainsWorker(AccountController account)

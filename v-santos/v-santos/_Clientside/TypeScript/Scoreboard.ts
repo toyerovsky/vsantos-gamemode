@@ -1,5 +1,7 @@
 ﻿/// <reference path="../../types-gt-mp/index.d.ts" />
 
+var drawScoreboard = false;
+
 class PlayerInfo {
     socialClubName: string = "";
     name: string = "";
@@ -36,7 +38,12 @@ API.onServerEventTrigger.connect((name, args) => {
             gPlayers.push(newPlayer);
         }
 
-    } else if (name == "playerlist_join") {
+    }
+    else if (name == "ToogleHud")
+    {
+        drawScoreboard = args[0];
+    }
+    else if (name == "playerlist_join") {
         // This can happen in certain situations, so we handle this as an update
         var existingPlayer = getPlayer(args[0]);
         if (existingPlayer != null) {
@@ -82,7 +89,7 @@ API.onServerEventTrigger.connect((name, args) => {
 
 API.onUpdate.connect(() => {
     // MultiplayerInfo
-    if (!API.isChatOpen() && API.isControlJustPressed(20)) {
+    if (drawScoreboard && !API.isChatOpen() && API.isControlJustPressed(20)) {
         gCurrentState++;
         gStateSet = API.getGameTime();
 
@@ -103,12 +110,12 @@ API.onUpdate.connect(() => {
         }
     }
 
-    if (gCurrentState > 0 && API.getGameTime() - gStateSet > 3000) {
+    if (drawScoreboard && gCurrentState > 0 && API.getGameTime() - gStateSet > 3000) {
         gCurrentState = 0;
         API.callNative("_SET_RADAR_BIGMAP_ENABLED", false, false);
     }
 
-    if (gCurrentState == 1) {
+    if (drawScoreboard && gCurrentState == 1) {
         // Get list data
         var resolution = API.getScreenResolutionMaintainRatio();
 

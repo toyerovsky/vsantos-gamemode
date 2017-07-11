@@ -28,7 +28,7 @@ namespace Serverside.Controllers
         public long Id => Character.Id;
 
         public event DimensionChangeEventHandler OnPlayerDimensionChanged;
-        public static event CharacterLoginEventHandler OnPlayerCharacterLogin;
+        public static event CharacterLoginEventHandler CharacterLoggedIn;
 
         //Pola determinujące co gracz może robić w danym momencie
         //Np żeby kiedy jest nieprzytomny nie mógł mówić
@@ -179,7 +179,7 @@ namespace Serverside.Controllers
             accountController.Client.triggerEvent("MoneyChanged", character.Money.ToString(CultureInfo.InvariantCulture));
             accountController.Client.triggerEvent("ToggleHud", true);
             accountController.Client.triggerEvent("ShowNotification", $"Witaj, twoja postać {accountController.CharacterController.FormatName} została pomyślnie załadowana, życzymy miłej gry!", 5000);
-            OnPlayerCharacterLogin?.Invoke(AccountController.Client, this);
+            if (CharacterLoggedIn != null) CharacterLoggedIn.Invoke(AccountController.Client, this);
         }
 
         #region DimensionManager

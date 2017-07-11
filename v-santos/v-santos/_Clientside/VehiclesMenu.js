@@ -23,13 +23,11 @@ API.onServerEventTrigger.connect(function (eventName, args)
             vehiclesMenu.AddItem(vehicleMenuItem);
             vehiclesMenu.BindMenuToItem(vehicleInfoMenu, vehicleMenuItem);
         }
-        //
+        
         var spawnMenuItem = API.createMenuItem("Spawn/Unspawn", "");
         vehicleInfoMenu.AddItem(spawnMenuItem);
         var infoVehicleMenuItem = API.createMenuItem("Informacje", "");
         vehicleInfoMenu.AddItem(infoVehicleMenuItem);
-        var findVehicleMenuItem = API.createMenuItem("Namierz", "");
-        vehicleInfoMenu.AddItem(findVehicleMenuItem);
 
         menuPool.Add(vehiclesMenu);
         menuPool.Add(vehicleInfoMenu);
@@ -50,10 +48,6 @@ API.onServerEventTrigger.connect(function (eventName, args)
             else if (index == 1)
             {
                 API.triggerServerEvent("OnPlayerInformationsVehicle");
-            }
-            else if (index == 2)
-            {
-                API.triggerServerEvent("OnPlayerFindVehicle");
             }
             vehicleInfoMenu.Visible = false;
          });

@@ -2,12 +2,12 @@
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.ModelConfiguration.Conventions;
-using GrandTheftMultiplayer.Server.API;
 using MySql.Data.Entity;
 using MySql.Data.MySqlClient;
 using Serverside.Database.Models;
 using Vehicle = Serverside.Database.Models.Vehicle;
 using Serverside.Core.Extensions;
+using Serverside.Database.Exceptions;
 
 namespace Serverside.Database
 {
@@ -39,6 +39,8 @@ namespace Serverside.Database
         public virtual DbSet<TelephoneContact> TelephoneContacts { get; set; }
         public virtual DbSet<TelephoneMessage> TelephoneMessages { get; set; }
         public virtual DbSet<Worker> Workers { get; set; }
+        public virtual DbSet<GroupWarehouseItem> GroupWarehouseItems { get; set; }
+        public virtual DbSet<GroupWarehouseOrder> GroupWarehouseOrders { get; set; }
     }
 
     public class ContextFactory : IDbContextFactory<RoleplayConnection>
@@ -53,7 +55,10 @@ namespace Serverside.Database
                 UserID = username,
                 Password = password,
                 Database = database,
-                Port = port
+                Port = port,
+                ConvertZeroDateTime = true,
+                AllowZeroDateTime = true
+
             };
 
             _connectionString = connectionStringBuilder.ToString();
@@ -74,10 +79,9 @@ namespace Serverside.Database
         {
             if (string.IsNullOrEmpty(_connectionString))
             {
-                APIExtensions.ConsoleOutput("[RPCore] Brak danych wymaganych do połączenia z bazą danych!", ConsoleColor.DarkRed);
-                API.shared.stopResource("vsantos");
-                //throw new Exception();
+                throw new RoleplayConnectionException("Podano pusty connection string.");
             }
+
             try
             {
                 var conn = new MySqlConnection(_connectionString);
@@ -85,13 +89,9 @@ namespace Serverside.Database
                 conn.Ping();
                 conn.Close();
             }
-            catch (MySqlException aEx)
+            catch (MySqlException e)
             {
-                APIExtensions.ConsoleOutput("[RPCore] Błąd połączenia z bazą danych, sprawdź konfiguracje!", ConsoleColor.DarkRed);
-                APIExtensions.ConsoleOutput(aEx.Message, ConsoleColor.DarkRed);
-                API.shared.stopResource("vsantos");
-                //APIExtensions.ConsoleOutput(a_ex.ToString(), ConsoleColor.DarkRed);
-                //throw new Exception();
+                throw new RoleplayConnectionException(e.Message);
             }
             APIExtensions.ConsoleOutput("[RPCore] Połączono z bazą danych!", ConsoleColor.DarkGreen);
             return new RoleplayConnection(_connectionString);
