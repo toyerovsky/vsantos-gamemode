@@ -118,10 +118,10 @@ namespace Serverside.Groups
         {
             APIExtensions.ConsoleOutput("[RPGroupWarehouse] Uruchomione pomyślnie.", ConsoleColor.DarkMagenta);
 
-            foreach (var order in ContextFactory.Instance.GroupWarehouseOrders)
-            {
-                CurrentOrders.Add(order);
-            }
+            //foreach (var order in ContextFactory.Instance.GroupWarehouseOrders)
+            //{
+            //    CurrentOrders.Add(order);
+            //}
         }
 
         [Command("dodajprzedmiotmag")]

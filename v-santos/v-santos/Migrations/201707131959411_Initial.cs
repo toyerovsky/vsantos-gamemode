@@ -1,15 +1,15 @@
-﻿namespace Serverside.Migrations
+namespace Serverside.Migrations
 {
     using System;
     using System.Data.Entity.Migrations;
-
+    
     public partial class Initial : DbMigration
     {
         public override void Up()
         {
             CreateTable(
-                    "dbo.Account",
-                    c => new
+                "dbo.Account",
+                c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
                         Name = c.String(maxLength: 50, storeType: "nvarchar"),
@@ -26,10 +26,10 @@
                 .PrimaryKey(t => t.Id)
                 .Index(t => t.UserId, unique: true)
                 .Index(t => t.SocialClub);
-
+            
             CreateTable(
-                    "dbo.Ban",
-                    c => new
+                "dbo.Ban",
+                c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
                         Active = c.Boolean(nullable: false),
@@ -45,16 +45,17 @@
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Account", t => t.AccountId, cascadeDelete: true)
                 .Index(t => t.AccountId);
-
+            
             CreateTable(
-                    "dbo.Character",
-                    c => new
+                "dbo.Character",
+                c => new
                     {
                         Id = c.Long(nullable: false, identity: true),
                         Online = c.Boolean(nullable: false),
                         CreateTime = c.DateTime(precision: 0),
                         LastLoginTime = c.DateTime(precision: 0),
                         TodayPlayedTime = c.DateTime(precision: 0),
+                        PlayedTime = c.DateTime(precision: 0),
                         Name = c.String(unicode: false),
                         Surname = c.String(unicode: false),
                         Model = c.Int(nullable: false),
@@ -88,6 +89,7 @@
                         Job = c.Int(nullable: false),
                         MoneyJob = c.Decimal(precision: 18, scale: 2),
                         JobLimit = c.Decimal(precision: 18, scale: 2),
+                        JobReleaseDate = c.DateTime(nullable: false, precision: 0),
                         AccessoryId = c.Int(),
                         AccessoryTexture = c.Int(),
                         EarsId = c.Int(),
@@ -126,10 +128,10 @@
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Account", t => t.Account_Id)
                 .Index(t => t.Account_Id);
-
+            
             CreateTable(
-                    "dbo.Building",
-                    c => new
+                "dbo.Building",
+                c => new
                     {
                         Id = c.Long(nullable: false, identity: true),
                         Name = c.String(unicode: false),
@@ -157,10 +159,10 @@
                 .ForeignKey("dbo.Group", t => t.Group_Id)
                 .Index(t => t.Character_Id)
                 .Index(t => t.Group_Id);
-
+            
             CreateTable(
-                    "dbo.Group",
-                    c => new
+                "dbo.Group",
+                c => new
                     {
                         Id = c.Long(nullable: false, identity: true),
                         BossId = c.Long(nullable: false),
@@ -173,10 +175,10 @@
                         Color = c.String(unicode: false),
                     })
                 .PrimaryKey(t => t.Id);
-
+            
             CreateTable(
-                    "dbo.Worker",
-                    c => new
+                "dbo.Worker",
+                c => new
                     {
                         Id = c.Long(nullable: false, identity: true),
                         Salary = c.Int(nullable: false),
@@ -186,6 +188,7 @@
                         RecrutationRight = c.Boolean(nullable: false),
                         ChatRight = c.Boolean(nullable: false),
                         OfferFromWarehouseRight = c.Boolean(nullable: false),
+                        OrderFromWarehouseRight = c.Boolean(nullable: false),
                         FirstRight = c.Boolean(),
                         SecondRight = c.Boolean(),
                         ThirdRight = c.Boolean(),
@@ -202,10 +205,10 @@
                 .ForeignKey("dbo.Group", t => t.Group_Id)
                 .Index(t => t.Character_Id)
                 .Index(t => t.Group_Id);
-
+            
             CreateTable(
-                    "dbo.Item",
-                    c => new
+                "dbo.Item",
+                c => new
                     {
                         Id = c.Long(nullable: false, identity: true),
                         Name = c.String(unicode: false),
@@ -220,19 +223,22 @@
                         CurrentlyInUse = c.Boolean(),
                         Building_Id = c.Long(),
                         Character_Id = c.Long(),
+                        Group_Id = c.Long(),
                         Vehicle_Id = c.Long(),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Building", t => t.Building_Id)
                 .ForeignKey("dbo.Character", t => t.Character_Id)
+                .ForeignKey("dbo.Group", t => t.Group_Id)
                 .ForeignKey("dbo.Vehicle", t => t.Vehicle_Id)
                 .Index(t => t.Building_Id)
                 .Index(t => t.Character_Id)
+                .Index(t => t.Group_Id)
                 .Index(t => t.Vehicle_Id);
-
+            
             CreateTable(
-                    "dbo.Vehicle",
-                    c => new
+                "dbo.Vehicle",
+                c => new
                     {
                         Id = c.Long(nullable: false, identity: true),
                         CreatorId = c.Long(nullable: false),
@@ -273,10 +279,10 @@
                 .ForeignKey("dbo.Group", t => t.Group_Id)
                 .Index(t => t.Character_Id)
                 .Index(t => t.Group_Id);
-
+            
             CreateTable(
-                    "dbo.Description",
-                    c => new
+                "dbo.Description",
+                c => new
                     {
                         Id = c.Long(nullable: false, identity: true),
                         Title = c.String(unicode: false),
@@ -286,10 +292,10 @@
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Character", t => t.Character_Id)
                 .Index(t => t.Character_Id);
-
+            
             CreateTable(
-                    "dbo.CrimeBot",
-                    c => new
+                "dbo.CrimeBot",
+                c => new
                     {
                         Id = c.Long(nullable: false, identity: true),
                         Name = c.String(unicode: false),
@@ -429,10 +435,39 @@
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Group", t => t.Group_Id)
                 .Index(t => t.Group_Id);
-
+            
             CreateTable(
-                    "dbo.TelephoneContact",
-                    c => new
+                "dbo.GroupWarehouseItem",
+                c => new
+                    {
+                        Id = c.Long(nullable: false, identity: true),
+                        Cost = c.Decimal(nullable: false, precision: 18, scale: 2),
+                        MinimalCost = c.Decimal(precision: 18, scale: 2),
+                        Count = c.Int(nullable: false),
+                        ResetCount = c.Int(nullable: false),
+                        GroupType = c.Int(nullable: false),
+                        Item_Id = c.Long(),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Item", t => t.Item_Id)
+                .Index(t => t.Item_Id);
+            
+            CreateTable(
+                "dbo.GroupWarehouseOrder",
+                c => new
+                    {
+                        Id = c.Long(nullable: false, identity: true),
+                        OrderJson = c.String(unicode: false),
+                        ShipmentLog = c.String(unicode: false),
+                        Getter_Id = c.Long(),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Group", t => t.Getter_Id)
+                .Index(t => t.Getter_Id);
+            
+            CreateTable(
+                "dbo.TelephoneContact",
+                c => new
                     {
                         Id = c.Long(nullable: false, identity: true),
                         PhoneNumber = c.Int(nullable: false),
@@ -440,10 +475,10 @@
                         Number = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id);
-
+            
             CreateTable(
-                    "dbo.TelephoneMessage",
-                    c => new
+                "dbo.TelephoneMessage",
+                c => new
                     {
                         Id = c.Long(nullable: false, identity: true),
                         PhoneNumber = c.Int(nullable: false),
@@ -451,16 +486,19 @@
                         SenderNumber = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id);
-
+            
         }
-
+        
         public override void Down()
         {
+            DropForeignKey("dbo.GroupWarehouseOrder", "Getter_Id", "dbo.Group");
+            DropForeignKey("dbo.GroupWarehouseItem", "Item_Id", "dbo.Item");
             DropForeignKey("dbo.CrimeBot", "Group_Id", "dbo.Group");
             DropForeignKey("dbo.Description", "Character_Id", "dbo.Character");
             DropForeignKey("dbo.Item", "Vehicle_Id", "dbo.Vehicle");
             DropForeignKey("dbo.Vehicle", "Group_Id", "dbo.Group");
             DropForeignKey("dbo.Vehicle", "Character_Id", "dbo.Character");
+            DropForeignKey("dbo.Item", "Group_Id", "dbo.Group");
             DropForeignKey("dbo.Item", "Character_Id", "dbo.Character");
             DropForeignKey("dbo.Item", "Building_Id", "dbo.Building");
             DropForeignKey("dbo.Building", "Group_Id", "dbo.Group");
@@ -469,11 +507,14 @@
             DropForeignKey("dbo.Building", "Character_Id", "dbo.Character");
             DropForeignKey("dbo.Character", "Account_Id", "dbo.Account");
             DropForeignKey("dbo.Ban", "AccountId", "dbo.Account");
+            DropIndex("dbo.GroupWarehouseOrder", new[] { "Getter_Id" });
+            DropIndex("dbo.GroupWarehouseItem", new[] { "Item_Id" });
             DropIndex("dbo.CrimeBot", new[] { "Group_Id" });
             DropIndex("dbo.Description", new[] { "Character_Id" });
             DropIndex("dbo.Vehicle", new[] { "Group_Id" });
             DropIndex("dbo.Vehicle", new[] { "Character_Id" });
             DropIndex("dbo.Item", new[] { "Vehicle_Id" });
+            DropIndex("dbo.Item", new[] { "Group_Id" });
             DropIndex("dbo.Item", new[] { "Character_Id" });
             DropIndex("dbo.Item", new[] { "Building_Id" });
             DropIndex("dbo.Worker", new[] { "Group_Id" });
@@ -486,6 +527,8 @@
             DropIndex("dbo.Account", new[] { "UserId" });
             DropTable("dbo.TelephoneMessage");
             DropTable("dbo.TelephoneContact");
+            DropTable("dbo.GroupWarehouseOrder");
+            DropTable("dbo.GroupWarehouseItem");
             DropTable("dbo.CrimeBot");
             DropTable("dbo.Description");
             DropTable("dbo.Vehicle");

@@ -4,6 +4,6 @@
     {
         Smieciarz = 1,
         Ogrodnik,
-        Tirowiec
+        Kurier
     }
 }

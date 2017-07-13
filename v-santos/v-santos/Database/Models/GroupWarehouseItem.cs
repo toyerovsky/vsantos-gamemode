@@ -1,4 +1,5 @@
-﻿using Serverside.Groups;
+﻿using System.ComponentModel.DataAnnotations;
+using Serverside.Groups;
 using Serverside.Groups.Enums;
 
 namespace Serverside.Database.Models
@@ -6,6 +7,7 @@ namespace Serverside.Database.Models
     //Tabela do trzymania rpzedmiotów bazowych w magazynie
     public class GroupWarehouseItem
     {
+        [Key]
         public long Id { get; set; }
         public Item Item { get; set; }
         public decimal Cost { get; set; }

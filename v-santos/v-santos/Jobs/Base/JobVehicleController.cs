@@ -1,14 +1,18 @@
-﻿using GrandTheftMultiplayer.Server.Constant;
+﻿using System;
+using GrandTheftMultiplayer.Server.Constant;
 using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
 using Serverside.Controllers;
 using Serverside.Core;
 using Serverside.Core.Extensions;
 using Serverside.Database.Models;
+using Serverside.Interfaces;
+using Serverside.Jobs.Enums;
 
 namespace Serverside.Jobs.Base
 {
-    public abstract class JobVehicleController : VehicleController
+    [Serializable]
+    public abstract class JobVehicleController : VehicleController, IXmlObject
     {
         protected JobVehicleController(Vehicle data) : base(data)
         {
@@ -27,5 +31,8 @@ namespace Serverside.Jobs.Base
             Vehicle.rotation = new Vector3(VehicleData.SpawnRotationX, VehicleData.SpawnRotationY, 
                 VehicleData.SpawnRotationZ);
         }
+
+        public string FilePath { get; set; }
+        public string CreatorForumName { get; set; }
     }
 }

@@ -31,6 +31,14 @@ namespace Serverside.Constant
             }
         }
 
+        /// <summary>
+        /// Ścieżka z \ na końcu
+        /// </summary>
         public static string XmlDirectory => WorkingDirectory + @"\Xml\";
+
+        /// <summary>
+        /// Ścieżka z \ na końcu
+        /// </summary>
+        public static string JsonDirectory => WorkingDirectory + @"\Json\";
     }
 }

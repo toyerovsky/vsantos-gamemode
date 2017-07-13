@@ -5,14 +5,14 @@ using Serverside.Core.Extensions;
 
 namespace Serverside.Jobs.Base
 {
-    public abstract class JobWorker
+    public abstract class JobWorkerController
     {
         public AccountController Player { get; set; }
         public JobVehicleController JobVehicle { get; set; }
 
         protected API Api { get; set; }
 
-        protected JobWorker(API api, AccountController player, JobVehicleController jobVehicle)
+        protected JobWorkerController(API api, AccountController player, JobVehicleController jobVehicle)
         {
             Api = api;
             Player = player;

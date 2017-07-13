@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using GrandTheftMultiplayer.Shared;
 
-
 namespace Serverside.Database.Models
 {
     public class Vehicle

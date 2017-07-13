@@ -8,13 +8,18 @@ using Serverside.Core.Extensions;
 using Serverside.Database.Models;
 using Serverside.Jobs.Base;
 using Serverside.Jobs.Enums;
+using Vehicle = Serverside.Database.Models.Vehicle;
 
 namespace Serverside.Jobs.Greenkeeper
 {
-    internal class GreenkeeperVehicle : JobVehicleController
+    public class GreenkeeperVehicle : JobVehicleController
     {
         private GreenkeeperWorker WorkerInVehicle { get; set; }
         private API Api { get; set; }
+
+        public GreenkeeperVehicle(Vehicle data) : base(data)
+        {
+        }
 
         public GreenkeeperVehicle(API api, FullPosition spawnPosition, VehicleHash hash, string numberplate, int numberplatestyle, int creatorId, Color primaryColor, Color secondaryColor, float enginePowerMultiplier = 0, float engineTorqueMultiplier = 0, Character character = null, Group @group = null) : base(spawnPosition, hash, numberplate, numberplatestyle, creatorId, primaryColor, secondaryColor, enginePowerMultiplier, engineTorqueMultiplier, character, @group)
         {

@@ -82,7 +82,7 @@ namespace Serverside.Core
 
             RPChat.SendMessageToPlayer(sender, "Zostałeś brutalnie zraniony, aby uśmiercić swoją postać wpisz: /akceptujsmierc", ChatMessageType.ServerInfo);
 
-            sender.setData("CanTalk", false);
+            player.CharacterController.CanTalk = false;
             sender.setData("CharacterBW", GetTimeToRespawn(weapon));
 
             Timer timer = new Timer(1000);

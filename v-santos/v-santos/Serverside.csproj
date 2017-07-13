@@ -126,6 +126,7 @@
     <Compile Include="Core\Extensions\EnumsExtensions.cs" />
     <Compile Include="Core\Extensions\NetHandleExtensions.cs" />
     <Compile Include="Core\FullPosition.cs" />
+    <Compile Include="Core\JsonHelper.cs" />
     <Compile Include="Core\Login\RPLogin.cs" />
     <Compile Include="Core\Money\MoneyManager.cs" />
     <Compile Include="Core\Money\RPMoney.cs" />
@@ -188,9 +189,10 @@
     <Compile Include="Interfaces\IXmlObject.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\RPItems.cs" />
-    <Compile Include="Jobs\Base\JobWorker.cs" />
+    <Compile Include="Jobs\Base\JobWorkerController.cs" />
     <Compile Include="Jobs\Courier\CourierJob.cs" />
     <Compile Include="Jobs\Courier\CourierVehicle.cs" />
+    <Compile Include="Jobs\Courier\CourierWarehouse\Models\CourierWarehouseModel.cs" />
     <Compile Include="Jobs\Courier\CourierWorker.cs" />
     <Compile Include="Jobs\Dustman\DustmanJob.cs" />
     <Compile Include="Jobs\Dustman\DustmanVehicle.cs" />
@@ -203,8 +205,11 @@
     <Compile Include="Jobs\Base\JobVehicleController.cs" />
     <Compile Include="Jobs\Dustman\Models\Garbage.cs" />
     <Compile Include="Jobs\RPJobs.cs" />
+    <Compile Include="Migrations\201707131959411_Initial.cs" />
+    <Compile Include="Migrations\201707131959411_Initial.Designer.cs">
+      <DependentUpon>201707131959411_Initial.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Migrations\Initial.cs" />
     <Compile Include="Offers\Enums.cs" />
     <Compile Include="Offers\Offer.cs" />
     <Compile Include="Offers\OfferActions.cs" />
@@ -534,7 +539,9 @@
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Jobs\Interfaces\" />
+    <EmbeddedResource Include="Migrations\201707131959411_Initial.resx">
+      <DependentUpon>201707131959411_Initial.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

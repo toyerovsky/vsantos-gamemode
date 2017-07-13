@@ -9,7 +9,7 @@ using Serverside.Jobs.Base;
 
 namespace Serverside.Jobs.Greenkeeper
 {
-    public class GreenkeeperWorker : JobWorker
+    public class GreenkeeperWorker : JobWorkerController
     {
 
         private bool InProgress { get; set; }

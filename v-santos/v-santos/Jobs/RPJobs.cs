@@ -4,28 +4,42 @@ using System.Linq;
 using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Server.Managers;
+using GrandTheftMultiplayer.Shared;
 using Serverside.Admin.Enums;
+using Serverside.Controllers;
 using Serverside.Core.Extensions;
 using Serverside.Database;
 using Serverside.Jobs.Dustman;
 using Serverside.Jobs.Greenkeeper;
 using Serverside.Core;
 using Serverside.Jobs.Base;
+using Serverside.Jobs.Courier;
 using Serverside.Jobs.Dustman.Models;
+using Serverside.Jobs.Enums;
 
 namespace Serverside.Jobs
 {
     public class RPJobs : Script
     {
-        public static List<JobController> Jobs { get; set; } = new List<JobController>();
-        public  static List<GarbageModel> Garbages { get; set; } = new List<GarbageModel>();
+        public static List<JobController> Jobs { get; set; }
+        public static List<GarbageModel> Garbages { get; set; } = new List<GarbageModel>();
 
-        private bool _resetFlag = true;
+        //private bool _resetFlag = true;
 
         public RPJobs()
         {
-            Jobs.Add(new DustmanJob(API, "Śmieciarz", 500));
-            Jobs.Add(new GreenkeeperJob(API, "Ogrodnik", 400));
+            string jsonDir = Constant.ConstantAssemblyInfo.JsonDirectory;
+
+            var dustmanJob = new DustmanJob(API, "Śmieciarz", 500, $"{jsonDir}DustmanVehicles\\");
+
+            var greenkeeperJob = new GreenkeeperJob(API, "Ogrodnik", 400, $"{jsonDir}GreenkeeperVehicles\\");
+
+            var courierJob = new CourierJob(API, "Kurier", 500, $"{jsonDir}CourierVehicles\\");
+
+            Jobs = new List<JobController>
+            {
+                dustmanJob, greenkeeperJob, courierJob
+            };
 
             API.onResourceStart += API_onResourceStart;
             //API.onUpdate += OnUpdate;   
@@ -34,7 +48,7 @@ namespace Serverside.Jobs
         private void API_onResourceStart()
         {
             APIExtensions.ConsoleOutput("[RPJobs] Uruchomione pomyślnie.", ConsoleColor.DarkMagenta);
-            Garbages = XmlHelper.GetXmlObjects<GarbageModel>($"{Constant.ConstantAssemblyInfo.XmlDirectory}\\JobGarbages\\");
+            Garbages = XmlHelper.GetXmlObjects<GarbageModel>($"{Constant.ConstantAssemblyInfo.XmlDirectory}JobGarbages\\");
 
             foreach (var garbage in Garbages)
             {
@@ -130,9 +144,65 @@ namespace Serverside.Jobs
                     API.onChatCommand -= Handler;
                 }
             }
-
         }
 
+        [Command("dodajautopraca", "~y~ UŻYJ ~w~ /dodajautopraca [typ]")]
+        public void AddVehicleToJob(Client sender, JobType type)
+        {
+            //if (sender.GetAccountController().AccountData.ServerRank < ServerRank.GameMaster)
+            //{
+            //    sender.Notify("Nie posiadasz uprawnień do dodawania auta do pracy.");
+            //    return;
+            //}
+
+            sender.Notify("Wsiądź do pojazdu a następnie wpisz /ok.");
+
+            API.onChatCommand += Handler;
+
+            void Handler(Client o, string command, CancelEventArgs cancel)
+            {
+                if (o == sender && command == "/ok")
+                {
+                    if (!o.isInVehicle || o.vehicle.GetVehicleController() == null)
+                    {
+                        o.Notify("Musisz znajdować się w pojeździe.");
+                        o.Notify("Dodawanie auta do pracy zakończyło się ~h~ ~r~niepomyślnie.");
+                        return;
+                    }
+
+                    var vehicle = o.vehicle.GetVehicleController();
+                    AddVehicleToJob(vehicle.VehicleData, type);
+
+
+                    o.Notify("Dodawanie auta do pracy zakończyło się ~h~ ~g~pomyślnie.");
+                    API.onChatCommand -= Handler;
+                }
+            }
+        }
+
+        private void AddVehicleToJob(Database.Models.Vehicle data, JobType type)
+        {
+            if (type == JobType.Smieciarz)
+            {
+                var vehicle = new DustmanVehicle(data);
+                var job = (DustmanJob)Jobs.First(x => x.GetType() == typeof(DustmanJob));
+                job.Vehicles.Add(vehicle);
+                JsonHelper.AddJsonObject(vehicle.VehicleData, job.jsonDirectory);
+            }
+            else if (type == JobType.Ogrodnik)
+            {
+                var vehicle = new GreenkeeperVehicle(data);
+                var job = (GreenkeeperJob)Jobs.First(x => x.GetType() == typeof(GreenkeeperJob));
+                job.Vehicles.Add(vehicle);
+                JsonHelper.AddJsonObject(vehicle.VehicleData, job.jsonDirectory);
+            }
+            else if (type == JobType.Kurier)
+            {
+                var vehicle = new CourierVehicle(data);
+                var job = ((CourierJob)Jobs.First(x => x.GetType() == typeof(CourierJob)));
+                JsonHelper.AddJsonObject(vehicle.VehicleData, jobController.XmlDirectory);
+            }
+        }
         #endregion
     }
 }

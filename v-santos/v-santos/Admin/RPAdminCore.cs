@@ -189,6 +189,7 @@ namespace Serverside.Admin
                 sender.Notify("Nie posiadasz uprawnień do ustawienia niewidzialności.");
                 return;
             }
+
             if (sender.transparency == 0)
             {
                 sender.transparency = 1;

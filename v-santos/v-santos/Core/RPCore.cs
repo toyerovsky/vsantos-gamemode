@@ -67,7 +67,6 @@ namespace Serverside.Core
         {
             APIExtensions.ConsoleOutput("[RPCore] Uruchomione pomyslnie!", ConsoleColor.DarkMagenta);
             //API.getSetting<string>("database_server"), API.getSetting<string>("database_user"), API.getSetting<string>("database_password"), API.getSetting<string>("database_database")
-            ContextFactory.SetConnectionParameters("137.74.4.8", "chat", "%$*!H#%NFK{!EFjmcr903umn1CM[4RJX913RY8V1[M!$!vASFFG35215", "rpchat"); // NIE WYMAGANE
             RPEntityManager.Init();
             ContextFactory.Instance.SaveChanges();
         }
@@ -135,12 +134,6 @@ namespace Serverside.Core
             AccountController account = e.Player.GetAccountController();
             account.CharacterController.Character.CurrentDimension = e.CurrentDimension;
             account.CharacterController.Save();
-        }
-
-        [Command("q")]
-        public static void Quit(Client player)
-        {
-            API.shared.kickPlayer(player);
         }
 
         #region DEBUG COMMANDS

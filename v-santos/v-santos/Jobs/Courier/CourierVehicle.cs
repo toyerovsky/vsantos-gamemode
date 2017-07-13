@@ -8,6 +8,7 @@ namespace Serverside.Jobs.Courier
 {
     public class CourierVehicle : JobVehicleController
     {
+
         public CourierVehicle(Vehicle data) : base(data)
         {
         }

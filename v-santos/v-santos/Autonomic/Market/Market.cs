@@ -4,7 +4,7 @@ using System.Linq;
 using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Managers;
 using GrandTheftMultiplayer.Shared;
-
+using GrandTheftMultiplayer.Shared.Math;
 using Serverside.Core;
 using Serverside.Core.Extensions;
 
@@ -27,7 +27,7 @@ namespace Serverside.Autonomic.Market
                 Constant.ConstantItems.ConstantNames.OrderBy(x => new Random().Next(Constant.ConstantItems.ConstantNames
                     .Count)).ElementAt(0);
 
-            MarketNpc = new Bot(Api, botInfo.Key, botInfo.Value, MarketData.Center);
+            MarketNpc = new Bot(Api, botInfo.Key, botInfo.Value, new FullPosition(MarketData.Center, new Vector3(1f, 1f, 1f)));
 
             MarketColshape = Api.createCylinderColShape(data.Center, data.Radius, 5f);
 

@@ -11,7 +11,7 @@ using Serverside.Jobs.Dustman.Models;
 
 namespace Serverside.Jobs.Dustman
 {
-    public class DustmanWorker : JobWorker
+    public class DustmanWorker : JobWorkerController
     {
         private List<GarbageModel> NonVisitedPoints { get; set; }
         private bool InProgress { get; set; }

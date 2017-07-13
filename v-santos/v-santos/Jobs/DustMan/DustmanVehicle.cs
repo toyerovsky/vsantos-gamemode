@@ -8,13 +8,18 @@ using Serverside.Core.Extensions;
 using Serverside.Database.Models;
 using Serverside.Jobs.Base;
 using Serverside.Jobs.Enums;
+using Vehicle = Serverside.Database.Models.Vehicle;
 
 namespace Serverside.Jobs.Dustman
 {
-    internal class DustmanVehicle : JobVehicleController
+    public class DustmanVehicle : JobVehicleController
     {
         private DustmanWorker WorkerInVehicle { get; set; }
         private API Api { get; set; }
+
+        public DustmanVehicle(Vehicle data) : base(data)
+        {
+        }
 
         public DustmanVehicle(API api, FullPosition spawnPosition, VehicleHash hash, string numberplate, int numberplatestyle, int creatorId, Color primaryColor, Color secondaryColor, float enginePowerMultiplier = 0, float engineTorqueMultiplier = 0, Character character = null, Group group = null) : base(spawnPosition, hash, numberplate, numberplatestyle, creatorId, primaryColor, secondaryColor, enginePowerMultiplier, engineTorqueMultiplier, character, @group)
         {

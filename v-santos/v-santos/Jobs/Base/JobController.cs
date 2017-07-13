@@ -2,25 +2,25 @@
 using System.Collections.Generic;
 using GrandTheftMultiplayer.Server.API;
 using Serverside.Core.Extensions;
-using Serverside.Jobs.Interfaces;
 
 namespace Serverside.Jobs.Base
 {
     public abstract class JobController
     {
-        public List<IWorker> Workers { get; set; } = new List<IWorker>();
-        public List<JobVehicleController> Vehicles { get; set; } = new List<JobVehicleController>();
+        public List<JobWorkerController> Workers { get; set; } = new List<JobWorkerController>();
 
         public string JobName { get; set; }
         public decimal MoneyLimit { get; set; }
+        public string XmlDirectory { get; set; }
 
         private API Api { get; set; }
 
-        public JobController(API api, string jobName, decimal moneyLimit)
+        protected JobController(API api, string jobName, decimal moneyLimit, string xmlDirectory)
         {
             Api = api;
             JobName = jobName;
             MoneyLimit = moneyLimit;
+            XmlDirectory = xmlDirectory;
         }
     }
 }

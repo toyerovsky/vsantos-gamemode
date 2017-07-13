@@ -45,25 +45,6 @@ namespace Serverside.Database
 
     public class ContextFactory : IDbContextFactory<RoleplayConnection>
     {
-        private static string _connectionString;
-
-        public static void SetConnectionParameters(string serverAddress, string username, string password, string database, uint port = 3306)
-        {
-            var connectionStringBuilder = new MySqlConnectionStringBuilder()
-            {
-                Server = serverAddress,
-                UserID = username,
-                Password = password,
-                Database = database,
-                Port = port,
-                ConvertZeroDateTime = true,
-                AllowZeroDateTime = true
-
-            };
-
-            _connectionString = connectionStringBuilder.ToString();
-        }
-
         private static RoleplayConnection _instance;
 
         public static RoleplayConnection Instance
@@ -77,14 +58,27 @@ namespace Serverside.Database
         }
         public RoleplayConnection Create()
         {
-            if (string.IsNullOrEmpty(_connectionString))
+            var connectionStringBuilder = new MySqlConnectionStringBuilder()
+            {
+                Server = "137.74.4.8",
+                UserID = "chat",
+                Password = "%$*!H#%NFK{!EFjmcr903umn1CM[4RJX913RY8V1[M!$!vASFFG35215",
+                Database = "rpchat",
+                Port = 3306,
+                ConvertZeroDateTime = true,
+                AllowZeroDateTime = true
+            };
+
+            string connectionString = connectionStringBuilder.ToString();
+
+            if (string.IsNullOrEmpty(connectionString))
             {
                 throw new RoleplayConnectionException("Podano pusty connection string.");
             }
 
             try
             {
-                var conn = new MySqlConnection(_connectionString);
+                var conn = new MySqlConnection(connectionString);
                 conn.Open();
                 conn.Ping();
                 conn.Close();
@@ -94,8 +88,7 @@ namespace Serverside.Database
                 throw new RoleplayConnectionException(e.Message);
             }
             APIExtensions.ConsoleOutput("[RPCore] Połączono z bazą danych!", ConsoleColor.DarkGreen);
-            return new RoleplayConnection(_connectionString);
-            //return new RoleplayConnection("server=v-santos.pl;uid=srv;pwd=WL8oTnufAAEFgoIt;database=rp"); // TYLKO DO GENEROWANIA BAZY DANYCH 
+            return new RoleplayConnection(connectionString);
         }
 
         public static void Destroy()
