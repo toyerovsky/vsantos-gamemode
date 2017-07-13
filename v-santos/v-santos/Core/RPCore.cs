@@ -18,13 +18,7 @@ namespace Serverside.Core
     {
         public RPCore()
         {
-            //Robię to żeby można było używać bazy w OnResourceStart innych resources Toyer
-            APIExtensions.ConsoleOutput("[RPCore] Uruchomione pomyslnie!", ConsoleColor.DarkMagenta);
-            //API.getSetting<string>("database_server"), API.getSetting<string>("database_user"), API.getSetting<string>("database_password"), API.getSetting<string>("database_database")
-            ContextFactory.SetConnectionParameters("v-santos.pl", "srv", "WL8oTnufAAEFgoIt", "rp"); // NIE WYMAGANE
-            RPEntityManager.Init();
-            ContextFactory.Instance.SaveChanges();
-
+            API.onResourceStart += API_onResourceStart;
             API.onResourceStop += API_onResourceStop;
             API.onPlayerBeginConnect += API_onPlayerBeginConnect;
             API.onPlayerConnected += API_onPlayerConnectedHandler;
@@ -63,14 +57,19 @@ namespace Serverside.Core
             {
                 if (sender.HasData("WaypointVectorHandler"))
                 {
-                    float x = (float) arguments[0];
-                    float y = (float) arguments[1];
-                    float z = (float) arguments[2];
-                    sender.Notify($"Teleport na koordynaty X: {x} Y: {y} Z: {z}");
-                    var waypointAction = (Action<Vector3>) sender.GetData("WaypointVectorHandler");
-                    waypointAction.Invoke(new Vector3(x, y, z));
+                    var waypointAction = (Action<Vector3>)sender.GetData("WaypointPositionHandler");
+                    waypointAction.Invoke(new Vector3((float)arguments[0], (float)arguments[1], (float)arguments[2]));
                 }
             }
+        }
+
+        private void API_onResourceStart()
+        {
+            APIExtensions.ConsoleOutput("[RPCore] Uruchomione pomyslnie!", ConsoleColor.DarkMagenta);
+            //API.getSetting<string>("database_server"), API.getSetting<string>("database_user"), API.getSetting<string>("database_password"), API.getSetting<string>("database_database")
+            ContextFactory.SetConnectionParameters("137.74.4.8", "chat", "%$*!H#%NFK{!EFjmcr903umn1CM[4RJX913RY8V1[M!$!vASFFG35215", "rpchat"); // NIE WYMAGANE
+            RPEntityManager.Init();
+            ContextFactory.Instance.SaveChanges();
         }
 
         private void API_onResourceStop()
@@ -100,7 +99,7 @@ namespace Serverside.Core
 
         private void API_onPlayerBeginConnect(Client player, CancelEventArgs cancelConnection)
         {
-            APIExtensions.ConsoleOutput("PlayerBeginConnect: " + player.socialClubName, ConsoleColor.Blue);
+            APIExtensions.ConsoleOutput($"PlayerBeginConnect: {player.socialClubName}", ConsoleColor.Blue);
             if (!player.isCEFenabled)
             {
                 cancelConnection.Reason = "Aby połączyć się z serwerem musisz włączyć obsługe przeglądarki CEF.";
@@ -110,7 +109,7 @@ namespace Serverside.Core
 
         private void API_onPlayerConnectedHandler(Client player)
         {
-            APIExtensions.ConsoleOutput("PlayerConnected: " + player.socialClubName, ConsoleColor.Blue);
+            APIExtensions.ConsoleOutput($"PlayerConnected: {player.socialClubName}", ConsoleColor.Blue);
             if (AccountController.IsAccountBanned(player))
             {
                 player.kick("~r~Jesteś zbanowany. Życzymy miłego dnia! :)");
@@ -119,13 +118,13 @@ namespace Serverside.Core
 
         private void API_onPlayerFinishedDownload(Client player)
         {
-            APIExtensions.ConsoleOutput("PlayerFinishedDownload: " + player.socialClubName, ConsoleColor.Blue);
+            APIExtensions.ConsoleOutput($"PlayerFinishedDownload: {player.socialClubName}", ConsoleColor.Blue);
             RPLogin.LoginMenu(player);
         }
 
         private void API_onPlayerDisconnectedHandler(Client player, string reason)
         {
-            APIExtensions.ConsoleOutput("PlayerDisconnected: " + player.socialClubName, ConsoleColor.Blue);
+            APIExtensions.ConsoleOutput($"PlayerDisconnected: {player.socialClubName}", ConsoleColor.Blue);
             AccountController account = player.GetAccountController();
             if (account == null) return;
             RPLogin.LogOut(account);

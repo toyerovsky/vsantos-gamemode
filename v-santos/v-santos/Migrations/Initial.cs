@@ -1,29 +1,35 @@
-namespace Serverside.Migrations
+﻿namespace Serverside.Migrations
 {
+    using System;
     using System.Data.Entity.Migrations;
-    
-    public partial class InitialCreate : DbMigration
+
+    public partial class Initial : DbMigration
     {
         public override void Up()
         {
             CreateTable(
-                "dbo.Account",
-                c => new
+                    "dbo.Account",
+                    c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
+                        Name = c.String(maxLength: 50, storeType: "nvarchar"),
                         UserId = c.Long(nullable: false),
                         Email = c.String(maxLength: 50, storeType: "nvarchar"),
+                        ForumGroup = c.Long(nullable: false),
+                        OtherForumGroups = c.String(unicode: false),
                         SocialClub = c.String(maxLength: 50, storeType: "nvarchar"),
                         Ip = c.String(maxLength: 16, storeType: "nvarchar"),
                         Online = c.Boolean(nullable: false),
                         LastLogin = c.DateTime(nullable: false, precision: 0),
+                        ServerRank = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
+                .Index(t => t.UserId, unique: true)
                 .Index(t => t.SocialClub);
-            
+
             CreateTable(
-                "dbo.Ban",
-                c => new
+                    "dbo.Ban",
+                    c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
                         Active = c.Boolean(nullable: false),
@@ -39,14 +45,14 @@ namespace Serverside.Migrations
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Account", t => t.AccountId, cascadeDelete: true)
                 .Index(t => t.AccountId);
-            
+
             CreateTable(
-                "dbo.Character",
-                c => new
+                    "dbo.Character",
+                    c => new
                     {
                         Id = c.Long(nullable: false, identity: true),
                         Online = c.Boolean(nullable: false),
-                        CreateAccountTime = c.DateTime(precision: 0),
+                        CreateTime = c.DateTime(precision: 0),
                         LastLoginTime = c.DateTime(precision: 0),
                         TodayPlayedTime = c.DateTime(precision: 0),
                         Name = c.String(unicode: false),
@@ -54,7 +60,7 @@ namespace Serverside.Migrations
                         Model = c.Int(nullable: false),
                         ModelName = c.String(unicode: false),
                         Money = c.Decimal(nullable: false, precision: 18, scale: 2),
-                        BankAccountNumber = c.Long(nullable: false),
+                        BankAccountNumber = c.Int(),
                         BankMoney = c.Decimal(nullable: false, precision: 18, scale: 2),
                         Gender = c.Boolean(nullable: false),
                         Weight = c.Short(nullable: false),
@@ -79,23 +85,55 @@ namespace Serverside.Migrations
                         BWState = c.Int(nullable: false),
                         IsCreated = c.Boolean(),
                         Freemode = c.Boolean(nullable: false),
-                        Skin = c.Int(),
                         Job = c.Int(nullable: false),
                         MoneyJob = c.Decimal(precision: 18, scale: 2),
                         JobLimit = c.Decimal(precision: 18, scale: 2),
+                        AccessoryId = c.Int(),
+                        AccessoryTexture = c.Int(),
+                        EarsId = c.Int(),
+                        EarsTexture = c.Int(),
+                        EyebrowsId = c.Int(),
+                        EyeBrowsOpacity = c.Single(),
+                        FatherId = c.Int(),
+                        ShoesId = c.Int(),
+                        ShoesTexture = c.Int(),
+                        FirstEyebrowsColor = c.Int(),
+                        FirstLipstickColor = c.Int(),
+                        FirstMakeupColor = c.Int(),
+                        GlassesId = c.Int(),
+                        GlassesTexture = c.Int(),
+                        HairId = c.Int(),
+                        HairTexture = c.Int(),
+                        HairColor = c.Int(),
+                        HatId = c.Int(),
+                        HatTexture = c.Int(),
+                        LegsId = c.Int(),
+                        LegsTexture = c.Int(),
+                        LipstickOpacity = c.Single(),
+                        MakeupId = c.Int(),
+                        MakeupOpacity = c.Single(),
+                        MotherId = c.Int(),
+                        SecondEyebrowsColor = c.Int(),
+                        SecondLipstickColor = c.Int(),
+                        SecondMakeupColor = c.Int(),
+                        ShapeMix = c.Single(),
+                        TopId = c.Int(),
+                        TopTexture = c.Int(),
+                        TorsoId = c.Int(),
+                        UndershirtId = c.Int(),
                         Account_Id = c.Int(),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Account", t => t.Account_Id)
                 .Index(t => t.Account_Id);
-            
+
             CreateTable(
-                "dbo.Building",
-                c => new
+                    "dbo.Building",
+                    c => new
                     {
                         Id = c.Long(nullable: false, identity: true),
                         Name = c.String(unicode: false),
-                        EnterCharge = c.Decimal(nullable: false, precision: 18, scale: 2),
+                        EnterCharge = c.Decimal(precision: 18, scale: 2),
                         ExternalPickupPositionX = c.Single(nullable: false),
                         ExternalPickupPositionY = c.Single(nullable: false),
                         ExternalPickupPositionZ = c.Single(nullable: false),
@@ -110,6 +148,7 @@ namespace Serverside.Migrations
                         InternalDimension = c.Int(nullable: false),
                         Description = c.String(unicode: false),
                         CreatorsId = c.Long(nullable: false),
+                        Cost = c.Decimal(precision: 18, scale: 2),
                         Character_Id = c.Long(),
                         Group_Id = c.Long(),
                     })
@@ -118,24 +157,26 @@ namespace Serverside.Migrations
                 .ForeignKey("dbo.Group", t => t.Group_Id)
                 .Index(t => t.Character_Id)
                 .Index(t => t.Group_Id);
-            
+
             CreateTable(
-                "dbo.Group",
-                c => new
+                    "dbo.Group",
+                    c => new
                     {
                         Id = c.Long(nullable: false, identity: true),
+                        BossId = c.Long(nullable: false),
                         Name = c.String(unicode: false),
                         Tag = c.String(unicode: false),
                         Dotation = c.Int(nullable: false),
                         MaxPayday = c.Int(nullable: false),
                         Money = c.Decimal(nullable: false, precision: 18, scale: 2),
                         GroupType = c.Int(nullable: false),
+                        Color = c.String(unicode: false),
                     })
                 .PrimaryKey(t => t.Id);
-            
+
             CreateTable(
-                "dbo.Worker",
-                c => new
+                    "dbo.Worker",
+                    c => new
                     {
                         Id = c.Long(nullable: false, identity: true),
                         Salary = c.Int(nullable: false),
@@ -161,10 +202,10 @@ namespace Serverside.Migrations
                 .ForeignKey("dbo.Group", t => t.Group_Id)
                 .Index(t => t.Character_Id)
                 .Index(t => t.Group_Id);
-            
+
             CreateTable(
-                "dbo.Item",
-                c => new
+                    "dbo.Item",
+                    c => new
                     {
                         Id = c.Long(nullable: false, identity: true),
                         Name = c.String(unicode: false),
@@ -188,10 +229,10 @@ namespace Serverside.Migrations
                 .Index(t => t.Building_Id)
                 .Index(t => t.Character_Id)
                 .Index(t => t.Vehicle_Id);
-            
+
             CreateTable(
-                "dbo.Vehicle",
-                c => new
+                    "dbo.Vehicle",
+                    c => new
                     {
                         Id = c.Long(nullable: false, identity: true),
                         CreatorId = c.Long(nullable: false),
@@ -232,10 +273,10 @@ namespace Serverside.Migrations
                 .ForeignKey("dbo.Group", t => t.Group_Id)
                 .Index(t => t.Character_Id)
                 .Index(t => t.Group_Id);
-            
+
             CreateTable(
-                "dbo.Description",
-                c => new
+                    "dbo.Description",
+                    c => new
                     {
                         Id = c.Long(nullable: false, identity: true),
                         Title = c.String(unicode: false),
@@ -245,22 +286,153 @@ namespace Serverside.Migrations
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Character", t => t.Character_Id)
                 .Index(t => t.Character_Id);
-            
+
             CreateTable(
-                "dbo.CrimeBot",
-                c => new
+                    "dbo.CrimeBot",
+                    c => new
                     {
                         Id = c.Long(nullable: false, identity: true),
                         Name = c.String(unicode: false),
+                        Vehicle = c.Int(nullable: false),
+                        Model = c.Int(nullable: false),
+                        PistolCost = c.Decimal(precision: 18, scale: 2),
+                        PistolCount = c.Int(),
+                        PistolDefaultCount = c.Int(),
+                        PistolMk2Cost = c.Decimal(precision: 18, scale: 2),
+                        PistolMk2Count = c.Int(),
+                        PistolMk2rDefaultCount = c.Int(),
+                        CombatPistolCost = c.Decimal(precision: 18, scale: 2),
+                        CombatPistolCount = c.Int(),
+                        CombatPistolDefaultCount = c.Int(),
+                        Pistol50Cost = c.Decimal(precision: 18, scale: 2),
+                        Pistol50Count = c.Int(),
+                        Pistol50DefaultCount = c.Int(),
+                        SNSPistolCost = c.Decimal(precision: 18, scale: 2),
+                        SNSPistolCount = c.Int(),
+                        SNSPistolDefaultCount = c.Int(),
+                        HeavyPistolCost = c.Decimal(precision: 18, scale: 2),
+                        HeavyPistolCount = c.Int(),
+                        HeavyPistolDefaultCount = c.Int(),
+                        RevolverCost = c.Decimal(precision: 18, scale: 2),
+                        RevolverCount = c.Int(),
+                        RevolverDefaultCount = c.Int(),
+                        MicroSMGCost = c.Decimal(precision: 18, scale: 2),
+                        MicroSMGCount = c.Int(),
+                        MicroSMGDefaultCount = c.Int(),
+                        SMGCost = c.Decimal(precision: 18, scale: 2),
+                        SMGCount = c.Int(),
+                        SMGDefaultCount = c.Int(),
+                        SMGMk2Cost = c.Decimal(precision: 18, scale: 2),
+                        SMGMk2Count = c.Int(),
+                        SMGMk2DefaultCount = c.Int(),
+                        MiniSMGCost = c.Decimal(precision: 18, scale: 2),
+                        MiniSMGCount = c.Int(),
+                        MiniSMGDefaultCount = c.Int(),
+                        AssaultRifleCost = c.Decimal(precision: 18, scale: 2),
+                        AssaultRifleCount = c.Int(),
+                        AssaultRifleDefaultCount = c.Int(),
+                        AssaultRifleMk2Cost = c.Decimal(precision: 18, scale: 2),
+                        AssaultRifleMk2Count = c.Int(),
+                        AssaultRifleMk2DefaultCount = c.Int(),
+                        SniperRifleCost = c.Decimal(precision: 18, scale: 2),
+                        SniperRifleCount = c.Int(),
+                        SniperRifleDefaultCount = c.Int(),
+                        DoubleBarrelShotgunCost = c.Decimal(precision: 18, scale: 2),
+                        DoubleBarrelShotgunCount = c.Int(),
+                        DoubleBarrelShotgunDefaultCount = c.Int(),
+                        PumpShotgunCost = c.Decimal(precision: 18, scale: 2),
+                        PumpShotgunCount = c.Int(),
+                        PumpShotgunDefaultCount = c.Int(),
+                        SawnoffShotgunCost = c.Decimal(precision: 18, scale: 2),
+                        SawnoffShotgunCount = c.Int(),
+                        SawnoffShotgunDefaultCount = c.Int(),
+                        PistolMagazineCost = c.Decimal(precision: 18, scale: 2),
+                        PistolMagazineCount = c.Int(),
+                        PistolMagazineDefaultCount = c.Int(),
+                        PistolMk2MagazineCost = c.Decimal(precision: 18, scale: 2),
+                        PistolMk2MagazineCount = c.Int(),
+                        PistolMk2rMagazineDefaultCount = c.Int(),
+                        CombatPistolMagazineCost = c.Decimal(precision: 18, scale: 2),
+                        CombatPistolMagazineCount = c.Int(),
+                        CombatPistolMagazineDefaultCount = c.Int(),
+                        Pistol50MagazineCost = c.Decimal(precision: 18, scale: 2),
+                        Pistol50MagazineCount = c.Int(),
+                        Pistol50MagazineDefaultCount = c.Int(),
+                        SNSPistolMagazineCost = c.Decimal(precision: 18, scale: 2),
+                        SNSPistolMagazineCount = c.Int(),
+                        SNSPistolMagazineDefaultCount = c.Int(),
+                        HeavyPistolMagazineCost = c.Decimal(precision: 18, scale: 2),
+                        HeavyPistolMagazineCount = c.Int(),
+                        HeavyPistolMagazineDefaultCount = c.Int(),
+                        RevolverMagazineCost = c.Decimal(precision: 18, scale: 2),
+                        RevolverMagazineCount = c.Int(),
+                        RevolverMagazineDefaultCount = c.Int(),
+                        MicroSMGMagazineCost = c.Decimal(precision: 18, scale: 2),
+                        MicroSMGMagazineCount = c.Int(),
+                        MicroSMGMagazineDefaultCount = c.Int(),
+                        SMGMagazineCost = c.Decimal(precision: 18, scale: 2),
+                        SMGMagazineCount = c.Int(),
+                        SMGMagazineDefaultCount = c.Int(),
+                        SMGMk2MagazineCost = c.Decimal(precision: 18, scale: 2),
+                        SMGMk2MagazineCount = c.Int(),
+                        SMGMk2MagazineDefaultCount = c.Int(),
+                        MiniSMGMagazineCost = c.Decimal(precision: 18, scale: 2),
+                        MiniSMGMagazineCount = c.Int(),
+                        MiniSMGMagazineDefaultCount = c.Int(),
+                        AssaultRifleMagazineCost = c.Decimal(precision: 18, scale: 2),
+                        AssaultRifleMagazineCount = c.Int(),
+                        AssaultRifleMagazineDefaultCount = c.Int(),
+                        AssaultRifleMk2MagazineCost = c.Decimal(precision: 18, scale: 2),
+                        AssaultRifleMk2MagazineCount = c.Int(),
+                        AssaultRifleMk2MagazineDefaultCount = c.Int(),
+                        SniperRifleMagazineCost = c.Decimal(precision: 18, scale: 2),
+                        SniperRifleMagazineCount = c.Int(),
+                        SniperRifleMagazineDefaultCount = c.Int(),
+                        DoubleBarrelShotgunMagazineCost = c.Decimal(precision: 18, scale: 2),
+                        DoubleBarrelShotgunMagazineCount = c.Int(),
+                        DoubleBarrelShotgunMagazineDefaultCount = c.Int(),
+                        PumpShotgunMagazineCost = c.Decimal(precision: 18, scale: 2),
+                        PumpShotgunMagazineCount = c.Int(),
+                        PumpShotgunMagazineDefaultCount = c.Int(),
+                        SawnoffShotgunMagazineCost = c.Decimal(precision: 18, scale: 2),
+                        SawnoffShotgunMagazineCount = c.Int(),
+                        SawnoffShotgunMagazineDefaultCount = c.Int(),
+                        MarijuanaCost = c.Decimal(precision: 18, scale: 2),
+                        MarijuanaCount = c.Int(),
+                        MarijuanaDefaultCount = c.Int(),
+                        LsdCost = c.Decimal(precision: 18, scale: 2),
+                        LsdCount = c.Int(),
+                        LsdDefaultCount = c.Int(),
+                        ExcstasyCost = c.Decimal(precision: 18, scale: 2),
+                        ExcstasyCount = c.Int(),
+                        ExcstasyDefaultCount = c.Int(),
+                        AmphetamineCost = c.Decimal(precision: 18, scale: 2),
+                        AmphetamineCount = c.Int(),
+                        AmphetamineDefaultCount = c.Int(),
+                        MetaamphetamineCost = c.Decimal(precision: 18, scale: 2),
+                        MetaamphetamineCount = c.Int(),
+                        MetaamphetamineDefaultCount = c.Int(),
+                        CrackCost = c.Decimal(precision: 18, scale: 2),
+                        CrackCount = c.Int(),
+                        CrackDefaultCount = c.Int(),
+                        CocaineCost = c.Decimal(precision: 18, scale: 2),
+                        CocaineCount = c.Int(),
+                        CocaineDefaultCount = c.Int(),
+                        HasishCost = c.Decimal(precision: 18, scale: 2),
+                        HasishCount = c.Int(),
+                        HasishDefaultCount = c.Int(),
+                        HeroinCost = c.Decimal(precision: 18, scale: 2),
+                        HeroinCount = c.Int(),
+                        HeroinDefaultCount = c.Int(),
                         Group_Id = c.Long(),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Group", t => t.Group_Id)
                 .Index(t => t.Group_Id);
-            
+
             CreateTable(
-                "dbo.TelephoneContact",
-                c => new
+                    "dbo.TelephoneContact",
+                    c => new
                     {
                         Id = c.Long(nullable: false, identity: true),
                         PhoneNumber = c.Int(nullable: false),
@@ -268,10 +440,10 @@ namespace Serverside.Migrations
                         Number = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id);
-            
+
             CreateTable(
-                "dbo.TelephoneMessage",
-                c => new
+                    "dbo.TelephoneMessage",
+                    c => new
                     {
                         Id = c.Long(nullable: false, identity: true),
                         PhoneNumber = c.Int(nullable: false),
@@ -279,9 +451,9 @@ namespace Serverside.Migrations
                         SenderNumber = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id);
-            
+
         }
-        
+
         public override void Down()
         {
             DropForeignKey("dbo.CrimeBot", "Group_Id", "dbo.Group");
@@ -311,6 +483,7 @@ namespace Serverside.Migrations
             DropIndex("dbo.Character", new[] { "Account_Id" });
             DropIndex("dbo.Ban", new[] { "AccountId" });
             DropIndex("dbo.Account", new[] { "SocialClub" });
+            DropIndex("dbo.Account", new[] { "UserId" });
             DropTable("dbo.TelephoneMessage");
             DropTable("dbo.TelephoneContact");
             DropTable("dbo.CrimeBot");
