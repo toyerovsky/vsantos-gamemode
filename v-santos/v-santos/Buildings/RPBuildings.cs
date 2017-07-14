@@ -58,7 +58,7 @@ namespace Serverside.Buildings
 
                 building.Save();
 
-                sender.Notify("Dodawanie budynku zakończyło się pomyślnie.");
+                sender.Notify("Dodawanie budynku zakończyło się ~h~~g~pomyślnie.");
                 sender.position = externalPosition;
             }
             else if (eventName == "EdingBuildingInfo")
@@ -230,6 +230,7 @@ namespace Serverside.Buildings
 
                     o.SetData("AdminDoorPosition", o.position);
                     sender.triggerEvent("ShowAdminBuildingMenu", JsonConvert.SerializeObject(ConstantItems.DefaultInteriors));
+                    sender.Notify("Dodawanie budynku zakończyło się ~h~~g~pomyślnie.");
                     API.onChatCommand -= Handler;
                 }
             }

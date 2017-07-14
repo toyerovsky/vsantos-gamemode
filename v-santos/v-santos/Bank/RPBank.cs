@@ -95,7 +95,7 @@ namespace Serverside.Bank
                     };
                     XmlHelper.AddXmlObject(atm, $@"{Constant.ConstantAssemblyInfo.XmlDirectory}Atms\");
                     Atms.Add(new Atm(API, atm)); //Nowa instancja bankomatu spawnuje go w świecie gry
-                    sender.Notify("Dodawanie bankomatu zakończyło się pomyślnie.");
+                    sender.Notify("Dodawanie bankomatu zakończyło się ~h~~g~pomyślnie.");
                     API.onChatCommand -= Handler;
                 }
             }
@@ -113,13 +113,13 @@ namespace Serverside.Bank
             var atm = Atms.OrderBy(a => a.Data.Position.Position.DistanceTo(sender.position)).First();
             if (XmlHelper.TryDeleteXmlObject(atm.Data.FilePath))
             {
-                sender.Notify("Usuwanie bankomatu zakończyło się pomyślnie.");
+                sender.Notify("Usuwanie bankomatu zakończyło się ~h~~g~pomyślnie.");
                 Atms.Remove(atm);
                 atm.Dispose();
             }
             else
             {
-                sender.Notify("Usuwanie bankomatu zakończyło się niepomyślnie.");
+                sender.Notify("Usuwanie bankomatu zakończyło się ~h~~r~niepomyślnie.");
             }
         }
         #endregion

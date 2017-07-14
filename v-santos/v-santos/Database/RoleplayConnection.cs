@@ -89,6 +89,7 @@ namespace Serverside.Database
             }
             APIExtensions.ConsoleOutput("[RPCore] Połączono z bazą danych!", ConsoleColor.DarkGreen);
             return new RoleplayConnection(connectionString);
+            //return new RoleplayConnection("Server=137.74.4.8;Database=rpchat;Uid=chat;Pwd=%$*!H#%NFK{!EFjmcr903umn1CM[4RJX913RY8V1[M!$!vASFFG35215;");
         }
 
         public static void Destroy()

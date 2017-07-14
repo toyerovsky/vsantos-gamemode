@@ -11,7 +11,7 @@ namespace Serverside.Jobs.Base
 
         public string JobName { get; set; }
         public decimal MoneyLimit { get; set; }
-        public string XmlDirectory { get; set; }
+        public string JsonDirectory { get; set; }
 
         private API Api { get; set; }
 
@@ -20,7 +20,7 @@ namespace Serverside.Jobs.Base
             Api = api;
             JobName = jobName;
             MoneyLimit = moneyLimit;
-            XmlDirectory = xmlDirectory;
+            JsonDirectory = xmlDirectory;
         }
     }
 }

@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GrandTheftMultiplayer.Server;
 using GrandTheftMultiplayer.Server.API;
 using Serverside.Core.Extensions;
 using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Server.Managers;
 using Newtonsoft.Json;
-using Serverside.Admin;
 using Serverside.Admin.Enums;
 using Serverside.Database;
 using Serverside.Database.Models;
@@ -19,7 +17,7 @@ namespace Serverside.Groups
 {
     public class RPGroupWarehouse : Script
     {
-        public static List<GroupWarehouseOrder> CurrentOrders { get; set; } = new List<GroupWarehouseOrder>();
+        public static List<WarehouseOrderInfo> CurrentOrders { get; set; } = new List<WarehouseOrderInfo>();
 
         public RPGroupWarehouse()
         {
@@ -48,7 +46,7 @@ namespace Serverside.Groups
                 {
                     var groupWarehouseItem = new GroupWarehouseItem
                     {
-                        Item = new Database.Models.Item()
+                        Item = new Database.Models.Item
                         {
                             CreatorId = 0,
                             Name = arguments[0].ToString(),
@@ -94,7 +92,7 @@ namespace Serverside.Groups
                         var shipment = new GroupWarehouseOrder
                         {
                             Getter = group.GroupData,
-                            OrderJson = JsonConvert.SerializeObject(items),
+                            OrderItemsJson = JsonConvert.SerializeObject(items),
                             ShipmentLog = $"[{DateTime.Now}] Złożenie zamówienia w magazynie. \n"
                         };
 
@@ -102,7 +100,10 @@ namespace Serverside.Groups
                         ContextFactory.Instance.SaveChanges();
                         group.RemoveMoney(sum);
 
-                        CurrentOrders.Add(shipment);
+                        CurrentOrders.Add(new WarehouseOrderInfo
+                        {
+                            Data = ContextFactory.Instance.GroupWarehouseOrders.Single(x => x.OrderItemsJson == shipment.OrderItemsJson && x.Getter == shipment.Getter)
+                        });
 
                         sender.Notify("Zamawianie przesyłki zakończyło się ~h~ ~g~ pomyślnie.");
                     }

@@ -16,6 +16,7 @@ namespace Serverside.Bank
         public Marker AtmMarker { get; }
         public CylinderColShape AtmShape { get; }
         public AtmModel Data { get; set; }
+        public Blip AtmBlip { get; set; }
 
         private API Api { get; }
 
@@ -57,12 +58,18 @@ namespace Serverside.Bank
                     Api.triggerClientEvent(player, "OnPlayerExitAtm");
                 }
             };
+
+            AtmBlip = Api.createBlip(Data.Position.Position);
+            AtmBlip.sprite = 434;
+            AtmBlip.color = 69;
+            AtmBlip.transparency = 60;
         }
 
         public void Dispose()
         {
             Api.deleteEntity(AtmMarker);
             Api.deleteColShape(AtmShape);
+            AtmBlip.transparency = 0;
         }
     }
 }

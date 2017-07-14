@@ -173,7 +173,6 @@ namespace Serverside.Jobs
                     var vehicle = o.vehicle.GetVehicleController();
                     AddVehicleToJob(vehicle.VehicleData, type);
 
-
                     o.Notify("Dodawanie auta do pracy zakończyło się ~h~ ~g~pomyślnie.");
                     API.onChatCommand -= Handler;
                 }
@@ -187,20 +186,20 @@ namespace Serverside.Jobs
                 var vehicle = new DustmanVehicle(data);
                 var job = (DustmanJob)Jobs.First(x => x.GetType() == typeof(DustmanJob));
                 job.Vehicles.Add(vehicle);
-                JsonHelper.AddJsonObject(vehicle.VehicleData, job.jsonDirectory);
+                JsonHelper.AddJsonObject(vehicle.VehicleData, job.JsonDirectory);
             }
             else if (type == JobType.Ogrodnik)
             {
                 var vehicle = new GreenkeeperVehicle(data);
                 var job = (GreenkeeperJob)Jobs.First(x => x.GetType() == typeof(GreenkeeperJob));
                 job.Vehicles.Add(vehicle);
-                JsonHelper.AddJsonObject(vehicle.VehicleData, job.jsonDirectory);
+                JsonHelper.AddJsonObject(vehicle.VehicleData, job.JsonDirectory);
             }
             else if (type == JobType.Kurier)
             {
                 var vehicle = new CourierVehicle(data);
                 var job = ((CourierJob)Jobs.First(x => x.GetType() == typeof(CourierJob)));
-                JsonHelper.AddJsonObject(vehicle.VehicleData, jobController.XmlDirectory);
+                JsonHelper.AddJsonObject(vehicle.VehicleData, job.JsonDirectory);
             }
         }
         #endregion

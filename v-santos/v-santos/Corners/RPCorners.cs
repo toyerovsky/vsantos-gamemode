@@ -114,7 +114,7 @@ namespace Serverside.Corners
                     XmlHelper.AddXmlObject(corner, Constant.ConstantAssemblyInfo.XmlDirectory + @"Corners\");
                     Corners.Add(new Corner(corner));
 
-                    sender.Notify("Dodawanie rogu zakończyło się pomyślnie.");
+                    sender.Notify("Dodawanie rogu zakończyło się ~h~~g~pomyślnie.");
                     API.onChatCommand -= Handler;
                 }
                 else if (botPositions.Count != 0 && position != null && o == sender && command == "/usun")
@@ -137,13 +137,13 @@ namespace Serverside.Corners
             var corner = Corners.OrderBy(a => a.Data.Position.Position.DistanceTo(sender.position)).First();
             if (XmlHelper.TryDeleteXmlObject(corner.Data.FilePath))
             {
-                sender.Notify("Usuwanie rogu zakończyło się pomyślnie.");
+                sender.Notify("Usuwanie rogu zakończyło się ~h~~g~pomyślnie.");
                 Corners.Remove(corner);
                 corner.Dispose();
             }
             else
             {
-                sender.Notify("Usuwanie rogu zakończyło się niepomyślnie.");
+                sender.Notify("Usuwanie rogu zakończyło się ~h~~r~niepomyślnie.");
             }
         }
         #endregion

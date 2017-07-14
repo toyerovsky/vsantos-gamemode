@@ -85,7 +85,9 @@
     <Compile Include="Admin\RPAdminList.cs" />
     <Compile Include="Admin\RPAdminVehicles.cs" />
     <Compile Include="Admin\Structs\ReportData.cs" />
-    <Compile Include="Autonomic\Carshop\Models\CarshopVehicle.cs" />
+    <Compile Include="Autonomic\Carshop\Carshop.cs" />
+    <Compile Include="Autonomic\Carshop\Models\CarshopModel.cs" />
+    <Compile Include="Autonomic\Carshop\Models\CarshopVehicleModel.cs" />
     <Compile Include="Autonomic\Carshop\RPCarshop.cs" />
     <Compile Include="Autonomic\FuelStation\FuelStation.cs" />
     <Compile Include="Autonomic\FuelStation\RPFuelStation.cs" />
@@ -186,6 +188,7 @@
     <Compile Include="Groups\RPGroups.cs" />
     <Compile Include="Groups\RPGroupWarehouse.cs" />
     <Compile Include="Groups\Stucts\WarehouseItemInfo.cs" />
+    <Compile Include="Groups\Stucts\WarehouseOrderInfo.cs" />
     <Compile Include="Interfaces\IXmlObject.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\RPItems.cs" />
@@ -210,6 +213,10 @@
     <Compile Include="Migrations\201707131959411_Initial.cs" />
     <Compile Include="Migrations\201707131959411_Initial.Designer.cs">
       <DependentUpon>201707131959411_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201707141721052_Neww.cs" />
+    <Compile Include="Migrations\201707141721052_Neww.Designer.cs">
+      <DependentUpon>201707141721052_Neww.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Offers\Enums.cs" />
@@ -536,6 +543,7 @@
     <Content Include="_Clientside\TypeScript\AtmMenu.ts" />
     <Content Include="_Clientside\TypeScript\GroupMenu.ts" />
     <Content Include="_Clientside\TypeScript\ReportMenu.ts" />
+    <TypeScriptCompile Include="_Clientside\TypeScript\CourierMenu.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
@@ -543,6 +551,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201707131959411_Initial.resx">
       <DependentUpon>201707131959411_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707141721052_Neww.resx">
+      <DependentUpon>201707141721052_Neww.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

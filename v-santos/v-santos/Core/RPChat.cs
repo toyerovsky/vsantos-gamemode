@@ -68,6 +68,16 @@ namespace Serverside.Core
 
         #region PLAYER COMMANDS
 
+        [Command("sprobuj", "~y~UŻYJ: ~w~ /sprobuj [treść]", GreedyArg = true)]
+        public void Try(Client player, string message)
+        {
+            SendMessageToNearbyPlayers(player, new Random().Next(2) == 0 ? "zawiódł " : "odniósł sukces " + " próbując " + message, ChatMessageType.ServerMe);
+
+            SaidEventHandler handler = OnPlayerSaid;
+            SaidEventArgs eventArgs = new SaidEventArgs(player, message, ChatMessageType.ServerMe);
+            handler?.Invoke(this, eventArgs);
+        }
+
         [Command("c", "~y~UŻYJ: ~w~ /c [treść]", GreedyArg = true)]
         public void SendQuietMessage(Client player, string message)
         {

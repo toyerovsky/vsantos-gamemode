@@ -2,15 +2,21 @@
 using GrandTheftMultiplayer.Shared.Math;
 using Serverside.Interfaces;
 
-namespace Serverside.Jobs.Courier.CourierWarehouse.Models
+namespace Serverside.Autonomic.Carshop.Models
 {
-    [Serializable]
-    public class CourierWarehouseModel : IXmlObject
+    public enum CarshopType
     {
-        public long Id { get; set; }
-        public string Name { get; set; }
+        Biedny,
+        Sredni,
+        Luksus,
+        Empty
+    }
+
+    [Serializable]
+    public class CarshopModel : IXmlObject
+    {
         public Vector3 Position { get; set; }
-        public int BlipId { get; set; }
+        public CarshopType Type { get; set; }
         public string FilePath { get; set; }
         public string CreatorForumName { get; set; }
     }

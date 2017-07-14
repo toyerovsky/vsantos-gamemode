@@ -36,7 +36,7 @@ namespace Serverside.Corners
                     BadFarewell = (string) arguments[6]
                 };
                 XmlHelper.AddXmlObject(bot, Constant.ConstantAssemblyInfo.XmlDirectory + @"CornerBots\");
-                sender.Notify("Dodanie NPC zakończone pomyślnie.");
+                sender.Notify("Dodanie NPC zakończyło się ~h~~g~pomyślnie.");
             }
         }
 
