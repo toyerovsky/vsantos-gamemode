@@ -192,7 +192,9 @@
     <Compile Include="Jobs\Base\JobWorkerController.cs" />
     <Compile Include="Jobs\Courier\CourierJob.cs" />
     <Compile Include="Jobs\Courier\CourierVehicle.cs" />
+    <Compile Include="Jobs\Courier\CourierWarehouse\CourierWarehouse.cs" />
     <Compile Include="Jobs\Courier\CourierWarehouse\Models\CourierWarehouseModel.cs" />
+    <Compile Include="Jobs\Courier\CourierWarehouse\RPCourierWarehouse.cs" />
     <Compile Include="Jobs\Courier\CourierWorker.cs" />
     <Compile Include="Jobs\Dustman\DustmanJob.cs" />
     <Compile Include="Jobs\Dustman\DustmanVehicle.cs" />
