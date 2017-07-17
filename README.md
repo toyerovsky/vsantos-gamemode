@@ -1,9 +1,9 @@
 # Licencja
-/* Copyright (C) P.P.H.U ANPO - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Przemysław Postrach, Dawid Kanafa, Michał Łatyński July 2017
- */
+Copyright (C) P.P.H.U ANPO - All Rights Reserved
+Unauthorized copying of this file, via any medium is strictly prohibited
+Proprietary and confidential
+Written by Przemysław Postrach, Dawid Kanafa, Michał Łatyński July 2017
+
 
 ## v-santos
 Projekt gamemod'a na platforme GT-MP.
