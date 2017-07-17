@@ -1,4 +1,10 @@
-﻿using System;
+﻿/* Copyright (C) Przemysław Postrach - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Przemysław Postrach <toyerek@gmail.com> July 2017
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using GrandTheftMultiplayer.Server.API;
@@ -8,7 +14,6 @@ using Newtonsoft.Json;
 using Serverside.Core;
 using Serverside.Core.Telephone;
 using Serverside.Database.Models;
-//using Serverside.Groups.CrimeBots;
 using Serverside.Core.Extensions;
 using Serverside.CrimeBot.Models;
 using Serverside.Groups.Base;

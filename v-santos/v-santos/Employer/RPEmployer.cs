@@ -1,11 +1,16 @@
-﻿using System;
+﻿/* Copyright (C) Przemysław Postrach - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Przemysław Postrach <toyerek@gmail.com> July 2017
+ */
+
+using System;
 using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Constant;
 using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Shared.Math;
 using Serverside.Core;
 using Serverside.Core.Extensions;
-
 
 namespace Serverside.Employer
 {

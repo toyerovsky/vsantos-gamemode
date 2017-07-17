@@ -1,4 +1,10 @@
-﻿using System.Collections.Generic;
+﻿/* Copyright (C) Przemysław Postrach - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Przemysław Postrach <toyerek@gmail.com> July 2017
+ */
+
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using GrandTheftMultiplayer.Shared;
 
@@ -12,8 +18,6 @@ namespace Serverside.Database.Models
         public Group Group { get; set; }
         //Zamysł: Przy tworzeniu przedmiotu będzie zapisywane kto go stworzył, a jak stworzy go serwer to 0
         public long CreatorId { get; set; }
-
-        //public string Name { get; set; }
         public string NumberPlate { get; set; }
 
         public int NumberPlateStyle { get; set; }
@@ -51,5 +55,6 @@ namespace Serverside.Database.Models
         public int WheelColor { get; set; }
 
         public virtual ICollection<Item> Tunings { get; set; }
+        public virtual ICollection<Item> ItemsInVehicle { get; set; }
     }
 }

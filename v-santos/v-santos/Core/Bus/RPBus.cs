@@ -1,4 +1,10 @@
-﻿using System;
+﻿/* Copyright (C) Przemysław Postrach - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Przemysław Postrach <toyerek@gmail.com> July 2017
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using GrandTheftMultiplayer.Server.API;
@@ -48,7 +54,11 @@ namespace Serverside.Core.Bus
         public void ShowBusMenu(Client sender)
         {
             //Jeśli gracz nie jest na przystanku to anulujemy proces
-            if(!sender.HasData("Bus")) return;
+            if (!sender.HasData("Bus") || _busStops.Count < 2)
+            {
+                sender.Notify("Liczba przystanków autobusowych musi być większa lub równa dwa.");
+                return;
+            }
             //Wybieramy wszystkie przystanki oprócz tego w którym obecnie się znajduje
             var json = JsonConvert.SerializeObject(_busStops.Select(x => new
             {
@@ -63,6 +73,12 @@ namespace Serverside.Core.Bus
         [Command("dodajbusbez", GreedyArg = true)]
         public void AddBusStop(Client sender, string name)
         {
+            //if (sender.GetAccountController().AccountData.ServerRank < ServerRank.GameMaster)
+            //{
+            //    sender.Notify("Nie posiadasz uprawnień do usuwania przystanku autobusowego.");
+            //    return;
+            //}
+
             sender.Notify("Ustaw się na środku przystanku aby stworzyć sferyczną strefę o promieniu 5f.");
             sender.Notify("Ustaw się w wybranej pozycji, a następnie wpisz /tu.");
             sender.Notify("...użyj /diag aby poznać swoją obecną pozycję.");
@@ -98,10 +114,15 @@ namespace Serverside.Core.Bus
         {
             //if (sender.GetAccountController().AccountData.ServerRank < ServerRank.GameMaster)
             //{
-            //    sender.Notify("Nie posiadasz uprawnień do usuwania bankomatu.");
+            //    sender.Notify("Nie posiadasz uprawnień do usuwania przystanku autobusowego.");
             //    return;
             //}
 
+            if (_busStops.Count == 0)
+            {
+                sender.Notify("Nie znaleziono drivethru które można usunąć.");
+                return;
+            }
             var busStop = _busStops.OrderBy(a => a.Data.Center.DistanceTo(sender.position)).First();
             if (XmlHelper.TryDeleteXmlObject(busStop.Data.FilePath))
             {

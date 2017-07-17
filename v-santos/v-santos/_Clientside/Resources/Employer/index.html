@@ -38,10 +38,13 @@
 <script>
     var job;
 
-    function UpdateJob(value)
-    {
-        job = value;
-    }
+    document.addEventListener("DOMContentLoaded", function (event) {
+        UpdateJob();
+    });
+
+    function UpdateJob() {
+        job = resourceCal("getInfo");
+    } 
 
     function UpdateInfo(moneyCount)
     {
@@ -57,7 +60,6 @@
 
     document.getElementById("getMoneyJob").onclick = function ()
     {
-        
         resourceCall("TakeMoneyJob");
     }
 
@@ -67,13 +69,12 @@
         if (job != null)
         {
             resourceCall("SelectJob", job);
-            resourceCall("CloseCef");
+            resourceCall("CloseEmployerCef");
         }
     }
     document.getElementById("cancelJob").onclick = function ()
-    {
-        
-        resourceCall("CloseCef");
+    {   
+        resourceCall("CloseEmployerCef");
     }
 </script>
 </body>

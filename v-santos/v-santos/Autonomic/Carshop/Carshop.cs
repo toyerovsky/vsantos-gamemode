@@ -1,4 +1,10 @@
-﻿using System;
+﻿/* Copyright (C) Przemysław Postrach - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Przemysław Postrach <toyerek@gmail.com> July 2017
+ */
+
+using System;
 using System.Linq;
 using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Elements;
@@ -27,7 +33,7 @@ namespace Serverside.Autonomic.Carshop
             CarshopMarker = Api.createMarker(0, Data.Position, new Vector3(1f, 1f, 1f), new Vector3(1f, 1f, 1f),
                 new Vector3(1f, 1f, 1f), 255, 106, 148, 40);
 
-            CarshopColshape = Api.createCylinderColShape(new Vector3(-41, -1674.76, 28.5), 2f, 5f);
+            CarshopColshape = Api.createCylinderColShape(Data.Position, 2f, 5f);
             CarshopColshape.onEntityEnterColShape += (shape, entity) =>
             {
                 if (API.shared.getEntityType(entity) != EntityType.Player) return;

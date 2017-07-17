@@ -1,10 +1,17 @@
-﻿using System;
+﻿/* Copyright (C) Przemysław Postrach - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Przemysław Postrach <toyerek@gmail.com> July 2017
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Server.Managers;
 using GrandTheftMultiplayer.Shared.Math;
+using Serverside.Admin.Enums;
 using Serverside.Bank.Models;
 using Serverside.Core;
 using Serverside.Core.Extensions;
@@ -58,11 +65,11 @@ namespace Serverside.Bank
         [Command("dodajbankomat")]
         public void CreateAtm(Client sender)
         {
-            //if (sender.GetAccountController().AccountData.ServerRank < ServerRank.GameMaster)
-            //{
-            //    sender.Notify("Nie posiadasz uprawnień do tworzenia grupy.");
-            //    return;
-            //}
+            if (sender.GetAccountController().AccountData.ServerRank < ServerRank.GameMaster)
+            {
+                sender.Notify("Nie posiadasz uprawnień do tworzenia grupy.");
+                return;
+            }
 
             sender.Notify("Ustaw się w wybranej pozycji, a następnie wpisz /tu.");
             sender.Notify("...użyj /diag aby poznać swoją obecną pozycję.");
@@ -110,6 +117,11 @@ namespace Serverside.Bank
             //    return;
             //}
 
+            if (Atms.Count == 0)
+            {
+                sender.Notify("Nie znaleziono bankomatu który można usunąć.");
+                return;
+            }
             var atm = Atms.OrderBy(a => a.Data.Position.Position.DistanceTo(sender.position)).First();
             if (XmlHelper.TryDeleteXmlObject(atm.Data.FilePath))
             {

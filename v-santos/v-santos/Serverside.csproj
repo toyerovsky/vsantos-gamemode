@@ -122,6 +122,9 @@
     <Compile Include="Core\Bus\RPBus.cs" />
     <Compile Include="Core\Description\Description.cs" />
     <Compile Include="Core\Description\RPDescriptions.cs" />
+    <Compile Include="Core\DriveThru\DriveThru.cs" />
+    <Compile Include="Core\DriveThru\RPDriveThru.cs" />
+    <Compile Include="Core\DriveThru\Models\DriveThruModel.cs" />
     <Compile Include="Core\Extensions\APIExtensions.cs" />
     <Compile Include="Core\Extensions\ClientExtension.cs" />
     <Compile Include="Core\Extensions\CustomEvents.cs" />
@@ -543,6 +546,9 @@
     <Content Include="_Clientside\TypeScript\AtmMenu.ts" />
     <Content Include="_Clientside\TypeScript\GroupMenu.ts" />
     <Content Include="_Clientside\TypeScript\ReportMenu.ts" />
+    <Content Include="_Clientside\DriveThruMenu.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <TypeScriptCompile Include="_Clientside\TypeScript\CourierMenu.ts" />
   </ItemGroup>
   <ItemGroup>

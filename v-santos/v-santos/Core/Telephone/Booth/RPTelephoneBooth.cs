@@ -1,4 +1,10 @@
-﻿using System;
+﻿/* Copyright (C) Przemysław Postrach - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Przemysław Postrach <toyerek@gmail.com> July 2017
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using GrandTheftMultiplayer.Server.API;
@@ -92,7 +98,7 @@ namespace Serverside.Core.Telephone.Booth
             }
         }
 
-        #region Komendy administracji
+        #region ADMIN COMMANDS
         [Command("dodajbudke")]
         public void CreateAtm(Client sender, decimal cost, string number)
         {
@@ -149,6 +155,12 @@ namespace Serverside.Core.Telephone.Booth
             //    sender.Notify("Nie posiadasz uprawnień do usuwania bankomatu.");
             //    return;
             //}
+
+            if (Booths.Count == 0)
+            {
+                sender.Notify("Nie znaleziono budki telefonicznej którą można usunąć.");
+                return;
+            }
 
             var telephoneBooth = Booths.OrderBy(a => a.Data.Position.Position.DistanceTo(sender.position)).First();
             if (XmlHelper.TryDeleteXmlObject(telephoneBooth.Data.FilePath))

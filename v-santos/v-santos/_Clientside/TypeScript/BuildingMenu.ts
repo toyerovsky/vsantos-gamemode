@@ -1,4 +1,10 @@
-﻿/// <reference path="../../types-gt-mp/index.d.ts" />
+﻿/* Copyright (C) Przemysław Postrach - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Przemysław Postrach <toyerek@gmail.com> July 2017
+ */
+
+/// <reference path="../../types-gt-mp/index.d.ts" />
 
 class BuildingInfo
 {

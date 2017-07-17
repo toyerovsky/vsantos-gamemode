@@ -1,14 +1,19 @@
-﻿using System;
+﻿/* Copyright (C) Przemysław Postrach - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Przemysław Postrach <toyerek@gmail.com> July 2017
+ */
+
+using System;
 using System.Timers;
 using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Constant;
 using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Server.Managers;
 using GrandTheftMultiplayer.Shared;
+using Serverside.Core.Bus;
+using Serverside.Core.Bus.Models;
 using Serverside.Core.Extensions;
-
-//using Serverside.Core.Finders;
-
 
 namespace Serverside.Core
 {
@@ -37,10 +42,20 @@ namespace Serverside.Core
         [Command("akceptujsmierc")]
         public void CharacterKill(Client sender)
         {
-            var player = sender.GetAccountController();
-            player.CharacterController.Character.IsAlive = false;
-            player.Save();
-            sender.kick("CK");
+            API.onChatCommand += Handler;
+            sender.triggerEvent("SendNotification", "Raz uśmierconej postaci nie można odblokować. Aby kontynuować wpisz /ck");
+
+            void Handler(Client o, string command, CancelEventArgs cancel)
+            {
+                if (o == sender && command == "ck")
+                {
+                    cancel.Cancel = true;
+                    var player = sender.GetAccountController();
+                    player.CharacterController.Character.IsAlive = false;
+                    player.Save();
+                    sender.kick("CK");
+                }
+            }
         }
 
         [Command("bw", "~y~UŻYJ: ~w~ /bw [id]")]

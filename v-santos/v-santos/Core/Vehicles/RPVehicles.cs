@@ -1,4 +1,11 @@
-﻿using System;
+﻿/* Copyright (C) Przemysław Postrach - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Przemysław Postrach <toyerek@gmail.com> July 2017
+ */
+
+using System;
+using System.Collections;
 using System.Linq;
 using Newtonsoft.Json;
 using Serverside.Controllers;
@@ -218,8 +225,21 @@ namespace Serverside.Core.Vehicles
                     VehicleController controller = RPEntityManager.GetVehicle(API.getPlayerVehicle(player.Client));
                     if (controller == null) return;
 
-                    string tuningJson = JsonConvert.SerializeObject(controller.VehicleData.Tunings);
-                    API.triggerClientEvent(sender, "OnPlayerManageVehicle", tuningJson);
+                    string tuningJson = JsonConvert.SerializeObject(controller.VehicleData.Tunings.Select(i => new
+                    {
+                        i.Name
+                    }));
+                    string itemsInVehicleJson = JsonConvert.SerializeObject(controller.VehicleData.ItemsInVehicle.Select(i => new
+                    {
+                        i.Name
+                    }));
+                    string playerGroups = JsonConvert.SerializeObject(RPEntityManager.GetPlayerGroups(sender.GetAccountController())
+                        .Select(g => new
+                        {
+                            g.GroupData.Name
+                        }));
+
+                    API.triggerClientEvent(sender, "OnPlayerManageVehicle", tuningJson, itemsInVehicleJson, playerGroups);
                 }
                 else
                 {

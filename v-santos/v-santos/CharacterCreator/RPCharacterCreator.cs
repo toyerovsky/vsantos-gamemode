@@ -1,9 +1,13 @@
-﻿using System;
+﻿/* Copyright (C) Przemysław Postrach - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Przemysław Postrach <toyerek@gmail.com> July 2017
+ */
+
+using System;
 using System.Globalization;
 using GrandTheftMultiplayer.Server.API;
-using GrandTheftMultiplayer.Server.Constant;
 using GrandTheftMultiplayer.Server.Elements;
-using GrandTheftMultiplayer.Server.Managers;
 using Serverside.Core.Extensions;
 
 namespace Serverside.CharacterCreator
@@ -326,25 +330,25 @@ namespace Serverside.CharacterCreator
         }
         #endregion
 
-        [Command("kreator")]
-        public void Test(Client sender)
-        {
-            API.shared.setPlayerSkin(sender, PedHash.FreemodeMale01);
+        //[Command("kreator")]
+        //public void Test(Client sender)
+        //{
+        //    API.shared.setPlayerSkin(sender, PedHash.FreemodeMale01);
 
-            var player = sender.GetAccountController().CharacterController.Character;
+        //    var player = sender.GetAccountController().CharacterController.Character;
 
-            sender.triggerEvent("OnPlayerCreateCharacter", CharacterCreator.Mens, CharacterCreator.Womans,
-                player.Gender ? CharacterCreator.MensHairId : CharacterCreator.WomansHairId, player.Gender ? CharacterCreator.MenFeet : CharacterCreator.WomanFeets,
-                player.Gender ? CharacterCreator.MenLegs : CharacterCreator.WomanLegs, player.Gender ? CharacterCreator.MenLegs : CharacterCreator.WomanLegs,
-                player.Gender ? CharacterCreator.MenHats : CharacterCreator.WomanHats, player.Gender ? CharacterCreator.MenGlasses : CharacterCreator.WomanGlasses,
-                player.Gender ? CharacterCreator.MenEars : CharacterCreator.WomanEars, player.Gender ? CharacterCreator.MenAccesories : CharacterCreator.WomanAccesories,
-                player.Name + " " + player.Surname);
+        //    sender.triggerEvent("OnPla  yerCreateCharacter", CharacterCreator.Mens, CharacterCreator.Womans,
+        //        player.Gender ? CharacterCreator.MensHairId : CharacterCreator.WomansHairId, player.Gender ? CharacterCreator.MenFeet : CharacterCreator.WomanFeets,
+        //        player.Gender ? CharacterCreator.MenLegs : CharacterCreator.WomanLegs, player.Gender ? CharacterCreator.MenLegs : CharacterCreator.WomanLegs,
+        //        player.Gender ? CharacterCreator.MenHats : CharacterCreator.WomanHats, player.Gender ? CharacterCreator.MenGlasses : CharacterCreator.WomanGlasses,
+        //        player.Gender ? CharacterCreator.MenEars : CharacterCreator.WomanEars, player.Gender ? CharacterCreator.MenAccesories : CharacterCreator.WomanAccesories,
+        //        player.Name + " " + player.Surname);
 
-            new CharacterCreator(sender.GetAccountController().CharacterController)
-            {
-                FatherId = 0,
-                MotherId = 0
-            };
-        }
+        //    new CharacterCreator(sender.GetAccountController().CharacterController)
+        //    {
+        //        FatherId = 0,
+        //        MotherId = 0
+        //    };
+        //}
     }
 }

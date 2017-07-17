@@ -1,4 +1,10 @@
-﻿using System;
+﻿/* Copyright (C) Przemysław Postrach - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Przemysław Postrach <toyerek@gmail.com> July 2017
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using GrandTheftMultiplayer.Server.API;
@@ -7,11 +13,8 @@ using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Server.Managers;
 using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
-using Newtonsoft.Json;
 using Serverside.Admin.Enums;
 using Serverside.Autonomic.Carshop.Models;
-using Serverside.Bank;
-using Serverside.Bank.Models;
 using Serverside.Controllers;
 using Serverside.Core;
 using Serverside.Core.Extensions;
@@ -113,6 +116,7 @@ namespace Serverside.Autonomic.Carshop
 
                     new VehicleController(new FullPosition(new Vector3(-50, -1680, 29.5), new Vector3(0, 0, 0)),
                         vehicleHash, "", 0, 0, new Color().GetRandomColor(), new Color().GetRandomColor(), 0f, 0f, sender.GetAccountController().CharacterController.Character);
+                    sender.Notify($"Pojazd {vehicleHash.ToString()} zakupiony ~h~~g~pomyślnie.");
                 }
                 else
                 {
@@ -158,11 +162,11 @@ namespace Serverside.Autonomic.Carshop
         [Command("dodajsalon", "~y~ UŻYJ ~w~ /dodajsalon [nazwa] [typ]")]
         public void AddCarshop(Client sender, string name, CarshopType type)
         {
-            //if (sender.GetAccountController().AccountData.ServerRank < ServerRank.GameMaster)
-            //{
-            //    sender.Notify("Nie posiadasz uprawnień do tworzenia grupy.");
-            //    return;
-            //}
+            if (sender.GetAccountController().AccountData.ServerRank < ServerRank.GameMaster)
+            {
+                sender.Notify("Nie posiadasz uprawnień do tworzenia grupy.");
+                return;
+            }
 
             sender.Notify("Ustaw się w wybranej pozycji, a następnie wpisz /tu.");
             sender.Notify("...użyj /diag aby poznać swoją obecną pozycję.");
@@ -194,11 +198,17 @@ namespace Serverside.Autonomic.Carshop
         [Command("usunsalon", "~y~ UŻYJ ~w~ /usunsalon")]
         public void DeleteCarshop(Client sender)
         {
-            //if (sender.GetAccountController().AccountData.ServerRank < ServerRank.GameMaster)
-            //{
-            //    sender.Notify("Nie posiadasz uprawnień do usuwania bankomatu.");
-            //    return;
-            //}
+            if (sender.GetAccountController().AccountData.ServerRank < ServerRank.GameMaster)
+            {
+                sender.Notify("Nie posiadasz uprawnień do usuwania salonu samochodowego.");
+                return;
+            }
+
+            if (Carshops.Count == 0)
+            {
+                sender.Notify("Nie znaleziono salonu pojazdów który można usunąć.");
+                return;
+            }
 
             var carshop = Carshops.OrderBy(a => a.Data.Position.DistanceTo(sender.position)).First();
             if (XmlHelper.TryDeleteXmlObject(carshop.Data.FilePath))

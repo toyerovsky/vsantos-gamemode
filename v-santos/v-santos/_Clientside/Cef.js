@@ -1,53 +1,59 @@
+/* Copyright (C) Przemys³aw Postrach - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Przemys³aw Postrach <toyerek@gmail.com> July 2017
+ */
+
 class WebBrowser {
     constructor(local) {
         var resolution = API.getScreenResolution();
 
-        this.browser = API.createCefBrowser(resolution.Width, resolution.Height, local)
-        API.waitUntilCefBrowserInit(this.browser)
-        API.setCefBrowserPosition(this.browser, 0, 0)
+        this.browser = API.createCefBrowser(resolution.Width, resolution.Height, local);
+        API.waitUntilCefBrowserInit(this.browser);
+        API.setCefBrowserPosition(this.browser, 0, 0);
     }
 
     load(path, local = true, chatstate = false, cursorstate = true) {
         if (API.isCefBrowserInitialized(this.browser)) {
-            API.setCefBrowserHeadless(false)
+            API.setCefBrowserHeadless(this.browser, false);
         }
 
-        this.path = path
-        API.loadPageCefBrowser(this.browser, this.path)
-        API.setCanOpenChat(chatstate)
-        API.showCursor(cursorstate)
+        this.path = path;
+        API.loadPageCefBrowser(this.browser, this.path);
+        API.setCanOpenChat(chatstate);
+        API.showCursor(cursorstate);
 
     }
 
     show(chatstate = false) {
         if (API.isCefBrowserInitialized(this.browser)) {
-            API.setCefBrowserHeadless(true)
-            API.setCanOpenChat(chatstate)
-            API.showCursor(true)
+            API.setCefBrowserHeadless(this.browser, true);
+            API.setCanOpenChat(chatstate);
+            API.showCursor(true);
         }
     }
 
     hide() {
         if (API.isCefBrowserInitialized(this.browser)) {
-            API.setCefBrowserHeadless(true)
-            API.setCanOpenChat(true)
-            API.showCursor(false)
+            API.setCefBrowserHeadless(this.browser, true);
+            API.setCanOpenChat(true);
+            API.showCursor(false);
         }
     }
 
     destroy() {
-        API.setCefDrawState(false)
-        API.destroyCefBrowser(this.browser)
-        API.setCanOpenChat(true)
-        API.showCursor(false)
+        API.setCefDrawState(false);
+        API.destroyCefBrowser(this.browser);
+        API.setCanOpenChat(true);
+        API.showCursor(false);
     }
 
     call(func, args) {
-        this.browser.call(func, args)
+        this.browser.call(func, args);
     }
 
     eval(string) {
-        this.browser.eval(string)
+        this.browser.eval(string);
     }
 }
 

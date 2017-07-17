@@ -1,4 +1,11 @@
-﻿using System.Linq;
+﻿/* Copyright (C) Przemysław Postrach - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Przemysław Postrach <toyerek@gmail.com> July 2017
+ */
+
+using System;
+using System.Linq;
 using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Server.Managers;
@@ -14,7 +21,7 @@ using Serverside.Jobs.Enums;
 
 namespace Serverside.Jobs.Courier.CourierWarehouse
 {
-    public class CourierWarehouse
+    public class CourierWarehouse : IDisposable
     {
         public CourierWarehouseModel Data { get; set; }
         
@@ -32,7 +39,7 @@ namespace Serverside.Jobs.Courier.CourierWarehouse
                 new Vector3(1f, 1f, 1f), 255, 255, 0, 0);
             WarehouseColshape = Api.createCylinderColShape(Data.Position, 5f, 5f);
             WarehouseBlip = Api.createBlip(Data.Position);
-            WarehouseBlip.sprite = 479;
+            WarehouseBlip.sprite = 478;
 
             WarehouseColshape.onEntityEnterColShape += (shape, entity) =>
             {
@@ -68,6 +75,13 @@ namespace Serverside.Jobs.Courier.CourierWarehouse
                     player.Client.triggerEvent("DisposeCourierMenu");
                 }
             };
+        }
+
+        public void Dispose()
+        {
+            Api.deleteColShape(WarehouseColshape);
+            Api.deleteEntity(WarehouseMarker);
+            WarehouseBlip.transparency = 0;
         }
     }
 }

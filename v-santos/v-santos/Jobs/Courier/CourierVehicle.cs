@@ -1,4 +1,10 @@
-﻿using GrandTheftMultiplayer.Server.Constant;
+﻿/* Copyright (C) Przemysław Postrach - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Przemysław Postrach <toyerek@gmail.com> July 2017
+ */
+
+using GrandTheftMultiplayer.Server.Constant;
 using GrandTheftMultiplayer.Shared;
 using Serverside.Core;
 using Serverside.Database.Models;
